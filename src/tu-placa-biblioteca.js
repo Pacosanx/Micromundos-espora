@@ -35,7 +35,7 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
   for (const g of grupos) for (const estado of estados) for (const variante of variantes) {
     const perfil=perfiles[variante.columna],colores=paletas[g.id],orden=g.id==='B'&&variante.columna===1?[1,0,1]:perfil.orden;
     const style = { ...BASE, size:100, c1:colores[orden[0]], c2:colores[orden[1]], c3:colores[orden[2]], seed:g.seed,
-      opacity:100, blur:12, core:78, irregularity:2, filaments:0, studyLobes:0, asym:0,
+      opacity:100, blur:12, core:78, grain:30, irregularity:2, filaments:0, studyLobes:0, asym:0,
       ...estado.style, ...variante.style,gradient:perfil.gradient,midpoint:perfil.midpoint,offset:perfil.offset,angle:perfil.angle };
     estilos.push({ id:`${g.id}-${estado.id}-${variante.id}`, g:g.id, estado:estado.id, variante:variante.id,
       codigo:`${estado.id==='MO'?'M':estado.id}-${variante.id}`, tamano:estado.tamano||variante.tamano, composicion:!!estado.composicion, style });

@@ -22,7 +22,7 @@ function prepararTuPlaca(){
   function restaurar(texto){const s=JSON.parse(texto);items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);$('tpEncuentros').checked=s.reacciones!==false;seleccionado=null;menu.cerrar();dibujar();actualizar();guardar();}
   function deshacer(){if(historico.length){futuro.push(snapshot());restaurar(historico.pop());}}
   function rehacer(){if(futuro.length){historico.push(snapshot());restaurar(futuro.pop());}}
-  function crear(e,x,y,tamano=e.tamano,parent=null){if(items.length>=120)return null;const it={id:++secuencia,modelo:e.id,x,y,tamano,escala:100,rot:0,foco:70,seed:e.style.seed%1000,parent,manual:false,org:0,sinReacciones:!!e.composicion};items.push(it);return it;}
+  function crear(e,x,y,tamano=e.tamano,parent=null){if(items.length>=120)return null;const it={id:++secuencia,modelo:e.id,x,y,tamano,escala:100,rot:0,foco:100,seed:e.style.seed%1000,parent,manual:false,org:0,sinReacciones:!!e.composicion};items.push(it);return it;}
   function quitar(it){if(!it)return;const ids=new Set([it.id]);for(const a of items)if(ids.has(a.parent))ids.add(a.id);for(let i=items.length-1;i>=0;i--)if(ids.has(items[i].id))items.splice(i,1);if(ids.has(seleccionado?.id))seleccionado=null;menu.cerrar();dibujar();}
   const hijos=it=>items.filter(i=>i.parent===it.id);
   function sincronizarHijos(it){const hs=hijos(it),t=(it.org||0)/100,s=it.escala/100;hs.forEach((h,i)=>{
@@ -38,10 +38,13 @@ function prepararTuPlaca(){
       else it[k==='tamano'?'escala':k==='girar'?'rot':k==='variacion'?'seed':'foco']=v;
       sincronizarHijos(it);solicitarDibujo();menu.actualizar();
     }});
-  function sprite(it){const m=modelo(it),key=m.id+'-'+it.seed;if(sprites.has(key))return sprites.get(key).canvas;
-    const canvas=document.createElement('canvas');canvas.style.width='280px';pagina.querySelector('.tp-sprites').appendChild(canvas);
-    const obra=mountColonias(canvas,{recipe:pieza({...m.style,seed:it.seed}),maxResolution:280});sprites.set(key,{canvas,obra});
-    if(sprites.size>90){const [vieja,s]=sprites.entries().next().value;s.obra.destroy();s.canvas.remove();sprites.delete(vieja);}return canvas;
+  // La resolución del sprite sigue el tamaño con el que se muestra (antes fijo en 280 px: los elementos grandes se estiraban hasta 2,6 veces).
+  function sprite(it){const m=modelo(it),esc=pagina.getBoundingClientRect().width/pagina.offsetWidth||1,dpr=Math.max(1,devicePixelRatio||1);
+    if(!it.resB){const necesario=it.tamano*it.escala/100/WF*esc*dpr;it.resB=necesario<=280?280:necesario<=420?420:necesario<=560?560:720;}
+    const res=it.resB,key=m.id+'-'+it.seed+'-'+res;if(sprites.has(key))return sprites.get(key).canvas;
+    const canvas=document.createElement('canvas'),caja=document.createElement('div');caja.style.width=(res/(esc*dpr))+'px';caja.appendChild(canvas);pagina.querySelector('.tp-sprites').appendChild(caja);
+    const obra=mountColonias(canvas,{recipe:pieza({...m.style,seed:it.seed}),maxResolution:res});sprites.set(key,{canvas,obra});
+    if(sprites.size>90){const [vieja,s]=sprites.entries().next().value;s.obra.destroy();s.canvas.parentElement.remove();sprites.delete(vieja);}return canvas;
   }
   function dibujar(){
     for(const [id,el]of elementos)if(!items.some(i=>i.id===id)){el.remove();elementos.delete(id);}
