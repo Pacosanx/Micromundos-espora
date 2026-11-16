@@ -5,21 +5,30 @@
   touch-action: pan-x pan-y; -webkit-overflow-scrolling: touch;
 }
 .ficha-galeria::-webkit-scrollbar { display: none; }
-.ficha-galeria-niebla{position:absolute;right:0;width:260px;height:664px;pointer-events:none;z-index:3}
-.ficha-galeria-niebla i{position:absolute;top:0;bottom:0;width:calc(12.5% + 8px);mask-image:linear-gradient(to right,transparent,#000 8px,#000 calc(100% - 8px),transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 8px,#000 calc(100% - 8px),transparent)}
-.ficha-galeria-niebla i:last-child{width:12.5%;mask-image:linear-gradient(to right,transparent,#000 8px);-webkit-mask-image:linear-gradient(to right,transparent,#000 8px)}
+/* Desenfoque progresivo de los márgenes: capas de ancho completo con máscaras superpuestas (ver ficha-galeria.js). */
+.ficha-galeria-niebla{position:absolute;width:300px;height:664px;pointer-events:none;z-index:3}
+.ficha-galeria-niebla--der{right:0}
+.ficha-galeria-niebla--izq{left:0}
+.ficha-galeria-niebla i{position:absolute;inset:0}
 .ficha-galeria:focus-visible { box-shadow: inset 0 -3px 0 #0d0f17; }
 .ficha-galeria__track { display: flex; align-items: stretch; width: max-content; gap: var(--ficha-galeria-gap); padding: 0; }
 .ficha-galeria__tarjeta {
   position: relative; display: flex; box-sizing: border-box; flex: 0 0 402px; width: 402px; height: 664px;
-  flex-direction: column; overflow: hidden; padding: 24px; border: 0; border-radius: 0;
-  background: rgb(255 255 255 / 8%); box-shadow: none; scroll-snap-align: start;
-  backdrop-filter: blur(8px); isolation: isolate;
+  flex-direction: column; overflow: visible; padding: 24px; border: 0; border-radius: 0;
+  background: none; box-shadow: none; scroll-snap-align: start; isolation: isolate;
+  /* La "forma" del contenedor (tinte, textura y desenfoque de fondo) vive en dos capas con los bordes difuminados por máscara,
+     de modo que no se marca un rectángulo; el contenido queda nítido y sin máscara. */
+  --borde-suave: linear-gradient(to right, transparent, #000 44px, #000 calc(100% - 44px), transparent),
+    linear-gradient(to bottom, transparent, #000 44px, #000 calc(100% - 44px), transparent);
 }
-.ficha-galeria__tarjeta::before {
-  position: absolute; z-index: -1; inset: 0; background: url('src/assets/detalles/38083.png') center / cover;
-  content: ''; opacity: .15; filter:blur(4px);
+.ficha-galeria__tarjeta::before, .ficha-galeria__tarjeta::after {
+  /* Sólo se extiende hacia los costados: la galería recorta en vertical, así que arriba y abajo el difuminado queda dentro de la tarjeta. */
+  position: absolute; z-index: -1; inset: 0 -22px; content: ''; pointer-events: none;
+  -webkit-mask-image: var(--borde-suave); mask-image: var(--borde-suave);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
 }
+.ficha-galeria__tarjeta::before { background: rgb(255 255 255 / 8%); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.ficha-galeria__tarjeta::after { background: url('src/assets/detalles/38083.png') center / cover; opacity: .15; filter: blur(4px); }
 .ficha-galeria__encabezado { position: relative; min-height: 72px; }
 .ficha-galeria__origen {
   margin: 0; overflow: hidden; color: #0d0f17; font: 400 var(--t-titulo)/var(--l-titulo) Arimo, Arial, sans-serif;

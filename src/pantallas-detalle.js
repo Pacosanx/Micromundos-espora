@@ -183,6 +183,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     interactivo(desliza?.parentElement,()=>scroll.scrollTo({top:1100,behavior:movimientoReducido()?'instant':'smooth'}),'Continuar hacia abajo');
     if(id==='ficha')prepararFicha(raiz);else prepararUniverso(raiz,id);
     prepararReferenciasGlosario(raiz,abrirTermino);
+    if(id==='ficha'&&!fichaArchivo)enlazarConceptosFicha(raiz);
     adaptarMargenesDetalle(raiz);
     if(id!=='ficha')limpiezasVista.add(prepararFondoUniverso(raiz,id));
     if(id==='ficha')ajustarFinFicha(raiz);
@@ -519,6 +520,28 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       interactivo(flecha,()=>cambiar(indice+delta),'Lugar '+nombre);
     }
     cambiar(0);
+  }
+  // La ficha de muestra enlaza al glosario las palabras que ya usa (sin cambiar su texto): primera aparición de cada concepto, en frases de lectura.
+  function enlazarConceptosFicha(raiz){
+    const conceptos=[['fermentacion',/\bfermentad[oa]s?\b|\bfermentaci[oó]n\b/i],['colonia',/\bcolonias?\b/i]];
+    const candidatos=[...raiz.querySelectorAll('p')].filter(p=>!p.closest('.ficha-galeria,[role="button"],button,.cartel')&&texto(p).length>30);
+    for(const [id,patron] of conceptos){
+      const t=TERMINOS_GLOSARIO.find(x=>x.id===id);if(!t)continue;
+      for(const p of candidatos){
+        const walker=document.createTreeWalker(p,4);let hecho=false;
+        while(walker.nextNode()){
+          const nodo=walker.currentNode,m=patron.exec(nodo.textContent);
+          if(!m||nodo.parentElement.closest('.referencia-glosario'))continue;
+          const b=document.createElement('button');b.type='button';b.className='referencia-glosario';b.dataset.termino=t.id;
+          b.setAttribute('aria-label','Definición de '+t.termino+' ('+String(t.numero).padStart(2,'0')+')');b.textContent=m[0];
+          const indice=document.createElement('sup');indice.className='indice-glosario';indice.textContent='('+String(t.numero).padStart(2,'0')+')';b.appendChild(indice);
+          b.addEventListener('click',ev=>{ev.stopPropagation();abrirTermino(t.id,true,b);});
+          const antes=document.createTextNode(nodo.textContent.slice(0,m.index)),despues=document.createTextNode(nodo.textContent.slice(m.index+m[0].length));
+          nodo.replaceWith(antes,b,despues);hecho=true;break;
+        }
+        if(hecho)break;
+      }
+    }
   }
   function semillaNombre(s){return [...s].reduce((a,c)=>a+c.charCodeAt(0),1);}
   function prepararFicha(raiz){

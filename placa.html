@@ -567,21 +567,30 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
   touch-action: pan-x pan-y; -webkit-overflow-scrolling: touch;
 }
 .ficha-galeria::-webkit-scrollbar { display: none; }
-.ficha-galeria-niebla{position:absolute;right:0;width:260px;height:664px;pointer-events:none;z-index:3}
-.ficha-galeria-niebla i{position:absolute;top:0;bottom:0;width:calc(12.5% + 8px);mask-image:linear-gradient(to right,transparent,#000 8px,#000 calc(100% - 8px),transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 8px,#000 calc(100% - 8px),transparent)}
-.ficha-galeria-niebla i:last-child{width:12.5%;mask-image:linear-gradient(to right,transparent,#000 8px);-webkit-mask-image:linear-gradient(to right,transparent,#000 8px)}
+/* Desenfoque progresivo de los márgenes: capas de ancho completo con máscaras superpuestas (ver ficha-galeria.js). */
+.ficha-galeria-niebla{position:absolute;width:300px;height:664px;pointer-events:none;z-index:3}
+.ficha-galeria-niebla--der{right:0}
+.ficha-galeria-niebla--izq{left:0}
+.ficha-galeria-niebla i{position:absolute;inset:0}
 .ficha-galeria:focus-visible { box-shadow: inset 0 -3px 0 #0d0f17; }
 .ficha-galeria__track { display: flex; align-items: stretch; width: max-content; gap: var(--ficha-galeria-gap); padding: 0; }
 .ficha-galeria__tarjeta {
   position: relative; display: flex; box-sizing: border-box; flex: 0 0 402px; width: 402px; height: 664px;
-  flex-direction: column; overflow: hidden; padding: 24px; border: 0; border-radius: 0;
-  background: rgb(255 255 255 / 8%); box-shadow: none; scroll-snap-align: start;
-  backdrop-filter: blur(8px); isolation: isolate;
+  flex-direction: column; overflow: visible; padding: 24px; border: 0; border-radius: 0;
+  background: none; box-shadow: none; scroll-snap-align: start; isolation: isolate;
+  /* La "forma" del contenedor (tinte, textura y desenfoque de fondo) vive en dos capas con los bordes difuminados por máscara,
+     de modo que no se marca un rectángulo; el contenido queda nítido y sin máscara. */
+  --borde-suave: linear-gradient(to right, transparent, #000 44px, #000 calc(100% - 44px), transparent),
+    linear-gradient(to bottom, transparent, #000 44px, #000 calc(100% - 44px), transparent);
 }
-.ficha-galeria__tarjeta::before {
-  position: absolute; z-index: -1; inset: 0; background: url('src/assets/detalles/38083.png') center / cover;
-  content: ''; opacity: .15; filter:blur(4px);
+.ficha-galeria__tarjeta::before, .ficha-galeria__tarjeta::after {
+  /* Sólo se extiende hacia los costados: la galería recorta en vertical, así que arriba y abajo el difuminado queda dentro de la tarjeta. */
+  position: absolute; z-index: -1; inset: 0 -22px; content: ''; pointer-events: none;
+  -webkit-mask-image: var(--borde-suave); mask-image: var(--borde-suave);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
 }
+.ficha-galeria__tarjeta::before { background: rgb(255 255 255 / 8%); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.ficha-galeria__tarjeta::after { background: url('src/assets/detalles/38083.png') center / cover; opacity: .15; filter: blur(4px); }
 .ficha-galeria__encabezado { position: relative; min-height: 72px; }
 .ficha-galeria__origen {
   margin: 0; overflow: hidden; color: #0d0f17; font: 400 var(--t-titulo)/var(--l-titulo) Arimo, Arial, sans-serif;
@@ -45516,12 +45525,16 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
   const track = document.createElement('div');
   track.className = 'ficha-galeria__track';
   const tarjetas = [];
-  for (let ciclo = 0; ciclo < 3; ciclo++) {
+  // Hay ciclos suficientes a cada lado del central para llenar la pantalla aunque haya pocas muestras relacionadas:
+  // así el recorrido nunca termina (antes, con 1 o 2 relacionadas, el scroll se acababa).
+  const paso = 402 + 64, anchoPantalla = Math.max(1920, (galeria.closest('.detalle-composicion')?.offsetWidth) || 0);
+  const lado = Math.ceil(anchoPantalla / (originales.length * paso)) + 1, ciclos = lado * 2 + 1;
+  for (let ciclo = 0; ciclo < ciclos; ciclo++) {
     for (const otra of originales) {
       const tarjeta = document.createElement('article');
       tarjeta.className = 'ficha-galeria__tarjeta';
       tarjeta.setAttribute('aria-label', `${otra.origen}, ${otra.codigo}`);
-      if (ciclo !== 1) tarjeta.setAttribute('aria-hidden', 'true');
+      if (ciclo !== lado) tarjeta.setAttribute('aria-hidden', 'true');
       tarjeta.dataset.ciclo = String(ciclo);
 
       const encabezado = document.createElement('header');
@@ -45573,7 +45586,7 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
       boton.className = 'ficha-galeria__cta';
       boton.type = 'button';
       boton.textContent = 'VER FICHA DE MUESTRA ↗';
-      if (ciclo !== 1) boton.tabIndex = -1;
+      if (ciclo !== lado) boton.tabIndex = -1;
       boton.addEventListener('click', () => alAbrir(otra));
       tarjeta.append(encabezado, marco, grupo, especies, boton);
       track.appendChild(tarjeta);
@@ -45584,9 +45597,20 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
 
   // El único recorte horizontal coincide con los bordes de la pantalla.
   const raiz=galeria.closest('.detalle-composicion');
-  const niebla=document.createElement('div');niebla.className='ficha-galeria-niebla';niebla.setAttribute('aria-hidden','true');
-  for(let i=0;i<8;i++){const banda=document.createElement('i');banda.style.left=(i*12.5)+'%';banda.style.backdropFilter=`blur(${[.5,1,2,4,8,14,24,40][i]}px)`;banda.style.webkitBackdropFilter=banda.style.backdropFilter;niebla.appendChild(banda);}
-  raiz.appendChild(niebla);
+  // Desenfoque progresivo en ambos márgenes: capas superpuestas de ancho completo, cada una con una máscara suave, para que el aumento
+  // sea continuo (antes eran 8 bandas con bordes de 8 px: se veían "por bloques" y a la izquierda faltaba).
+  const nieblas=['izq','der'].map(lado=>{
+    const niebla=document.createElement('div');niebla.className='ficha-galeria-niebla ficha-galeria-niebla--'+lado;niebla.setAttribute('aria-hidden','true');
+    const BLURS=[.4,.8,1.6,3,5.5,9,14,22],N=BLURS.length,s=100/(N-1);
+    BLURS.forEach((px,i)=>{
+      const capa=document.createElement('i'),p=n=>(n*s).toFixed(2)+'%';
+      const mascara=`linear-gradient(to ${lado==='der'?'right':'left'},transparent ${p(i-1)},#000 ${p(i)},#000 ${p(i+1)},transparent ${p(i+2)})`;
+      capa.style.backdropFilter=capa.style.webkitBackdropFilter=`blur(${px}px)`;
+      capa.style.maskImage=capa.style.webkitMaskImage=i===N-1?`linear-gradient(to ${lado==='der'?'right':'left'},transparent ${p(i-1)},#000 ${p(i)})`:mascara;
+      niebla.appendChild(capa);
+    });
+    raiz.appendChild(niebla);return niebla;
+  });
   let margen=0;
 
   let anchoCiclo = 0;
@@ -45600,14 +45624,18 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
     const r=raiz.getBoundingClientRect(),p=galeria.parentElement.getBoundingClientRect(),factor=r.width/raiz.offsetWidth||1;
     margen=(p.left-r.left)/factor;
     galeria.style.marginLeft=-margen+'px';galeria.style.width=raiz.offsetWidth+'px';
-    niebla.style.top=((galeria.getBoundingClientRect().top-r.top)/factor)+'px';
-    medir();if(anchoCiclo)galeria.scrollLeft=anchoCiclo-margen;
+    const arriba=((galeria.getBoundingClientRect().top-r.top)/factor)+'px';
+    for(const n of nieblas)n.style.top=arriba;
+    medir();
+    // Empieza desde la segunda tarjeta del ciclo central; la primera queda antes (se llega a ella desplazando hacia atrás).
+    if(anchoCiclo){const a=tarjetas[originales.length*lado],b=tarjetas[originales.length*lado+1];galeria.scrollLeft=anchoCiclo*lado-margen+(a&&b?b.offsetLeft-a.offsetLeft:0);}
   };
   const enScroll = () => {
     if (ajustando || !anchoCiclo) return;
-    if (galeria.scrollLeft < anchoCiclo * .5-margen || galeria.scrollLeft >= anchoCiclo * 1.5-margen) {
+    const piso = anchoCiclo * (lado - .5) - margen, techo = anchoCiclo * (lado + .5) - margen;
+    if (galeria.scrollLeft < piso || galeria.scrollLeft >= techo) {
       ajustando = true;
-      galeria.scrollLeft += galeria.scrollLeft < anchoCiclo * .5-margen ? anchoCiclo : -anchoCiclo;
+      galeria.scrollLeft += galeria.scrollLeft < piso ? anchoCiclo : -anchoCiclo;
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => { ajustando = false; });
     }
@@ -45637,7 +45665,7 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
     galeria.removeEventListener('wheel', enWheel);
     galeria.removeEventListener('keydown', enTecla);
     galeria.replaceChildren();
-    niebla.remove();
+    for(const n of nieblas)n.remove();
     galeria.classList.remove('ficha-galeria');
     galeria.removeAttribute('role');
     galeria.removeAttribute('aria-label');
@@ -46362,6 +46390,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     interactivo(desliza?.parentElement,()=>scroll.scrollTo({top:1100,behavior:movimientoReducido()?'instant':'smooth'}),'Continuar hacia abajo');
     if(id==='ficha')prepararFicha(raiz);else prepararUniverso(raiz,id);
     prepararReferenciasGlosario(raiz,abrirTermino);
+    if(id==='ficha'&&!fichaArchivo)enlazarConceptosFicha(raiz);
     adaptarMargenesDetalle(raiz);
     if(id!=='ficha')limpiezasVista.add(prepararFondoUniverso(raiz,id));
     if(id==='ficha')ajustarFinFicha(raiz);
@@ -46698,6 +46727,28 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       interactivo(flecha,()=>cambiar(indice+delta),'Lugar '+nombre);
     }
     cambiar(0);
+  }
+  // La ficha de muestra enlaza al glosario las palabras que ya usa (sin cambiar su texto): primera aparición de cada concepto, en frases de lectura.
+  function enlazarConceptosFicha(raiz){
+    const conceptos=[['fermentacion',/\bfermentad[oa]s?\b|\bfermentaci[oó]n\b/i],['colonia',/\bcolonias?\b/i]];
+    const candidatos=[...raiz.querySelectorAll('p')].filter(p=>!p.closest('.ficha-galeria,[role="button"],button,.cartel')&&texto(p).length>30);
+    for(const [id,patron] of conceptos){
+      const t=TERMINOS_GLOSARIO.find(x=>x.id===id);if(!t)continue;
+      for(const p of candidatos){
+        const walker=document.createTreeWalker(p,4);let hecho=false;
+        while(walker.nextNode()){
+          const nodo=walker.currentNode,m=patron.exec(nodo.textContent);
+          if(!m||nodo.parentElement.closest('.referencia-glosario'))continue;
+          const b=document.createElement('button');b.type='button';b.className='referencia-glosario';b.dataset.termino=t.id;
+          b.setAttribute('aria-label','Definición de '+t.termino+' ('+String(t.numero).padStart(2,'0')+')');b.textContent=m[0];
+          const indice=document.createElement('sup');indice.className='indice-glosario';indice.textContent='('+String(t.numero).padStart(2,'0')+')';b.appendChild(indice);
+          b.addEventListener('click',ev=>{ev.stopPropagation();abrirTermino(t.id,true,b);});
+          const antes=document.createTextNode(nodo.textContent.slice(0,m.index)),despues=document.createTextNode(nodo.textContent.slice(m.index+m[0].length));
+          nodo.replaceWith(antes,b,despues);hecho=true;break;
+        }
+        if(hecho)break;
+      }
+    }
   }
   function semillaNombre(s){return [...s].reduce((a,c)=>a+c.charCodeAt(0),1);}
   function prepararFicha(raiz){
