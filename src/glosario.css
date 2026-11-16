@@ -7,7 +7,7 @@
 #cabecera .fila{color:#0d0f17;mix-blend-mode:normal}
 #cabecera .regla{mix-blend-mode:normal;background:linear-gradient(90deg,#601EB0 1.44%,#1A4077 42.31%,#DA6C82 70.67%,#769A92 98.56%)}
 #seccion{z-index:6}
-#cabecera button{all:unset;cursor:pointer;font-weight:700;font-size:var(--t-boton);line-height:22px}
+#cabecera button{all:unset;cursor:pointer;font-weight:700;font-size:var(--t-boton);line-height:var(--l-boton)}
 #cabecera button:focus-visible{color:#8eaf6b;text-shadow:0 0 8px #7b9c62}
 #glosario{position:absolute;inset:0;z-index:4;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;color:#0d0f17}
 #glosario[hidden]{display:none}
@@ -22,7 +22,7 @@
 .g-colonia{all:unset;position:absolute;width:632px;height:700px;cursor:pointer;text-align:left}
 .g-colonia>img{position:absolute;left:-25px;top:-25px;width:682px;height:682px;pointer-events:none}
 .g-colonia .g-rotulo{position:absolute;top:554px;left:179px;font-size:var(--t-titulo);line-height:var(--l-titulo);filter:blur(2px);text-transform:uppercase;color:#e35d81}
-.g-colonia sup{position:absolute;left:452px;top:546px;font-size:var(--t-etiqueta);line-height:18px}
+.g-colonia sup{position:absolute;left:452px;top:546px;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
 .g-colonia-b{left:calc(18% - 316px);top:54px}
 .g-colonia-l{left:calc(50% - 316px);top:-27px}
 .g-colonia-l .g-rotulo{left:188px;color:#d2a359}
@@ -36,12 +36,12 @@
 .g-bajar img{width:16px;height:12px;rotate:90deg;filter:brightness(0)}
 #glosarioIndice{margin:0 40px;padding-bottom:250px;translate:0 var(--adelanto-indice,0px)}
 .g-encabezado,.g-fila{display:grid;grid-template-columns:300px 140px minmax(0,1fr) 360px 120px;align-items:center;width:100%;box-sizing:border-box}
-.g-encabezado{font-size:var(--t-etiqueta);line-height:18px;padding-bottom:14px;opacity:.6;text-transform:uppercase}
+.g-encabezado{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);padding-bottom:14px;opacity:.6;text-transform:uppercase}
 .g-encabezado>:last-child{text-align:right}
 .g-fila{appearance:none;border:0;padding:0;background:none;text-align:left;color:inherit;font:400 14.667px/18px Arimo,Arial,sans-serif;height:56px;text-transform:uppercase;cursor:pointer;opacity:.6;transition:opacity .25s}
 .g-fila:focus-visible,.g-abierta>.g-fila{opacity:1}
 .g-fila:focus-visible{outline:0;background:rgba(146,170,104,.12)}
-.g-termino{font-size:var(--t-lectura);line-height:31px}
+.g-termino{font-size:var(--t-lectura);line-height:var(--l-lectura)}
 .g-cuenta{font-size:var(--t-cuerpo);display:flex;gap:12px;align-items:center}
 .g-chips{display:flex;gap:5px;justify-content:flex-end;align-items:center}
 .g-chips i{width:14px;height:14px;border-radius:50%;filter:blur(.7px)}
@@ -53,16 +53,16 @@
 .g-abierta>.g-desplegable{grid-template-rows:1fr;visibility:visible}
 .g-desplegable-interior{overflow:hidden;min-height:0}
 .g-muestras{padding:2px 0 16px;margin-left:calc(100% - 604px);min-height:180px}
-.g-muestra{all:unset;display:grid;grid-template-columns:100px minmax(0,1fr);gap:24px;min-height:30px;width:100%;cursor:pointer;text-transform:uppercase;font-size:var(--t-cuerpo);line-height:24px}
+.g-muestra{all:unset;display:grid;grid-template-columns:100px minmax(0,1fr);gap:24px;min-height:30px;width:100%;cursor:pointer;text-transform:uppercase;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo)}
 .g-muestra>span:first-child{font-size:var(--t-etiqueta);opacity:.75}
 .g-muestra>span:last-child{overflow-wrap:anywhere}
 .g-muestra img{width:12px;height:12px;rotate:-45deg;filter:brightness(0);margin-left:8px}
 .g-muestra:focus-visible{color:#687f42;outline:0}
-.g-vacio{margin:0;max-width:380px;font-size:var(--t-cuerpo);line-height:24px;opacity:.65}
+.g-vacio{margin:0;max-width:380px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);opacity:.65}
 @media(prefers-reduced-motion:reduce){#glosario,.g-desplegable,#centro,#derecha,#leyenda,#izqAbajo{transition:none}}
 
 /* Carteles con el mismo material y el mismo arrastre que las muestras. */
-.cartel-glosario .definicionGlosario{font-size:var(--t-cuerpo);line-height:24px;margin:0;white-space:pre-line;filter:blur(var(--blur-lectura))}
+.cartel-glosario .definicionGlosario{font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);margin:0;white-space:pre-line;filter:blur(var(--blur-lectura))}
 .cartel-glosario .fi{min-height:265px}
 .cartel-glosario .cabCartel{margin-bottom:100px}
 .cartel-glosario{translate:0 var(--oleaje-y,0px)}

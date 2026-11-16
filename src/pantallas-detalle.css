@@ -18,10 +18,10 @@
 .cartel-especie .nom{font-style:normal}
 .cartel-especie .cabCartel{margin-bottom:24px}
 .cartel-especie .fi{max-height:820px}
-.cartel-especie .definicionGlosario{font-size:var(--t-cuerpo);line-height:24px;filter:blur(var(--blur-lectura))}
+.cartel-especie .definicionGlosario{font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);filter:blur(var(--blur-lectura))}
 .detalle-especie-figura{position:relative;height:354px;border-radius:24px;background:rgba(248,245,246,.6);display:flex;align-items:center;justify-content:center;margin:0 0 24px;overflow:hidden}
 .detalle-especie-figura img,.detalle-especie-figura canvas{width:354px;height:354px;object-fit:contain}
-.detalle-fichas-especie{margin-top:24px;padding-top:16px;border-top:1px solid rgba(13,15,23,.3);font-size:var(--t-cuerpo);line-height:24px}
+.detalle-fichas-especie{margin-top:24px;padding-top:16px;border-top:1px solid rgba(13,15,23,.3);font-size:var(--t-cuerpo);line-height:var(--l-cuerpo)}
 .detalle-fichas-especie button{all:unset;display:block;cursor:pointer;padding:5px 0}
 .detalle-fichas-especie button:focus-visible{color:#6a813e}
 .detalle-fichas-especie[hidden]{display:none}
@@ -60,7 +60,7 @@
 .tp-leyenda p{font:17.333px/24px Arimo,Arial,sans-serif;margin:0 0 24px;display:flex;align-items:center;gap:24px}
 .tp-leyenda i{display:inline-block;width:18px;height:18px;border-radius:50%;filter:blur(1px)}
 .tp-leyenda h2:not(:first-child){margin-top:38px}
-.tp-leyenda small{display:block;font-size:var(--t-etiqueta);line-height:21px;opacity:.6;margin-top:14px}
+.tp-leyenda small{display:block;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);opacity:.6;margin-top:14px}
 .tp-opcion{font:17.333px/24px Arimo,Arial,sans-serif;display:flex;align-items:center;gap:12px;cursor:pointer}
 .tp-opcion input{accent-color:#92aa68;width:16px;height:16px}
 .tp-leyenda button,.tp-pie button,.tp-recuerdo button,.tp-recuerdo a{all:unset;cursor:pointer;color:#0d0f17;font:17px/24px Arimo,Arial,sans-serif}
@@ -72,7 +72,7 @@
 #tpLineas,#tpColonias{position:absolute;inset:0;overflow:visible}
 #tpLineas{pointer-events:none}
 #tpLineas line{stroke-width:2;opacity:.6;filter:blur(.35px)}
-#tpVacia{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:var(--t-cuerpo)!important;line-height:25px;text-align:center;white-space:pre;opacity:.5;pointer-events:none}
+#tpVacia{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:var(--t-cuerpo)!important;line-height:var(--l-cuerpo);text-align:center;white-space:pre;opacity:.5;pointer-events:none}
 #tpVacia[hidden]{display:none}
 .tp-colonia{all:unset;position:absolute;left:0;top:0;cursor:grab;touch-action:none;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .tp-colonia canvas{display:block;width:100%;height:100%;animation:flota 9s ease-in-out infinite;pointer-events:none}
@@ -84,7 +84,7 @@
 .tp-paleta-colonia{all:unset;display:block;width:132px;height:132px;cursor:grab;touch-action:none}
 .tp-paleta-colonia canvas{display:block;width:100%;height:100%;pointer-events:none}
 .tp-paleta-colonia:focus-visible{background:rgba(146,170,104,.12);border-radius:50%}
-.tp-paleta p{font-size:var(--t-etiqueta)!important;line-height:21px;opacity:.6;max-width:300px}
+.tp-paleta p{font-size:var(--t-etiqueta)!important;line-height:var(--l-etiqueta);opacity:.6;max-width:300px}
 .tp-pie{position:absolute;left:40px;right:40px;bottom:68px;display:flex;align-items:baseline;gap:60px}
 #tuPlaca .tp-pie h1{font:400 72px/72px Arimo,Arial,sans-serif;margin:0;filter:blur(3px)}
 .tp-pie button{font-size:var(--t-sub);filter:blur(.7px)}
@@ -114,9 +114,9 @@
 .detalle-ficha-nueva .detalle-muestra-relacionada{font:400 17.33px/24px Arimo,Arial,sans-serif;color:#0d0f17;white-space:normal}
 .detalle-ficha-nueva .detalle-muestra-relacionada canvas{width:160px;height:160px;margin-bottom:24px}
 .detalle-ficha-nueva .detalle-muestra-relacionada p{margin:0 0 6px}
-.detalle-ficha-nueva .ficha-relacion-codigo,.detalle-ficha-nueva .ficha-relacion-comparte{font-size:var(--t-etiqueta);line-height:18px}
+.detalle-ficha-nueva .ficha-relacion-codigo,.detalle-ficha-nueva .ficha-relacion-comparte{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
 .detalle-ficha-nueva .ficha-relacion-comparte{margin-top:24px!important;opacity:.7}
-.detalle-ficha-nueva .ficha-relacion-especie{font-size:var(--t-cuerpo);line-height:21.7px;font-style:italic}
+.detalle-ficha-nueva .ficha-relacion-especie{font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);font-style:italic}
 .ficha-colonias:focus-visible{background:none;filter:brightness(1.06)}
 .detalle-ficha-nueva .detalle-galeria.ficha-galeria{display:block!important;overflow-x:auto!important;overflow-y:hidden!important}
 .ficha-paquete-flotante,.ficha-pie-colonia{animation:ficha-flotar var(--flotar-duracion,9s) ease-in-out var(--flotar-demora,0s) infinite alternate}
