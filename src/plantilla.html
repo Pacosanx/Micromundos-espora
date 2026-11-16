@@ -75,7 +75,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 
 /* buscador */
 #buscador{left:1677px;top:214px;width:203px;height:20px;display:flex;align-items:center;gap:10px}
-#alternarListado{position:absolute;left:1490px;top:122px;width:390px;min-height:44px;padding:0;border:0;background:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:400 17.33px/20px Arimo,Arial,sans-serif;color:#fff;mix-blend-mode:difference;filter:blur(.5px);cursor:pointer}
+#alternarListado{position:absolute;left:1490px;top:122px;width:390px;min-height:var(--area-tactil);padding:0;border:0;background:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:400 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#fff;mix-blend-mode:difference;filter:blur(.5px);cursor:pointer}
 #alternarListado svg{transition:transform .3s;flex:none}
 #alternarListado[aria-expanded="true"] svg{transform:rotate(180deg)}
 #alternarListado:focus-visible{outline:0;background:rgba(146,170,104,.18);border-radius:8px}
@@ -128,7 +128,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #navegacionVistas{position:absolute;left:0;top:940px;width:1000px;height:140px;overflow:hidden;pointer-events:none}
 #titulo{left:40px;top:33px;font-size:var(--t-display);line-height:var(--l-display);filter:blur(3px)}
 #navegacionVistas [role="button"],.copiaVista{font-weight:400;white-space:nowrap;mix-blend-mode:difference;color:#fff}
-#navegacionVistas [role="button"]{cursor:pointer;pointer-events:auto;min-height:44px}
+#navegacionVistas [role="button"]{cursor:pointer;pointer-events:auto;min-height:var(--area-tactil)}
 .copiaVista{pointer-events:none}
 #seccion{left:39px;top:134px;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#fff;mix-blend-mode:difference;filter:blur(.5px);pointer-events:none}
 #seccion span{margin-right:13px}
@@ -198,7 +198,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 
 .coloresCartel{display:flex;align-items:center;gap:4px;flex:none;height:24px;mix-blend-mode:normal}
 .coloresCartel i{display:block;width:10px;height:10px;border-radius:50%}
-.masCartel{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:44px;margin-top:14px;padding:0;background:none;border:0;color:inherit;font:700 14.667px/18.333px Arimo,Arial,sans-serif;text-transform:uppercase;cursor:pointer}
+.masCartel{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:var(--area-tactil);margin-top:14px;padding:0;background:none;border:0;color:inherit;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;text-transform:uppercase;cursor:pointer}
 .masCartel img{transform:rotate(-45deg);flex:none;filter:brightness(0);opacity:.92}
 .masCartel:focus-visible,:is(#ficha,.cartel-glosario,.cartel-especie) .x:focus-visible{outline:0;background:rgba(146,170,104,.25);border-radius:8px}
 .detalleCartel{margin-top:16px;border-top:1px solid rgba(100,110,90,.2)}
@@ -251,7 +251,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .apertura-tinte.tinte-a{left:-1190px;top:-1190px}.apertura-tinte.tinte-b{left:817px;top:878px}
 .apertura-marca{position:absolute;left:calc(50% - 186.6715px);top:calc(50% + 72px);width:373.343px;height:85.148px;filter:blur(2px);opacity:var(--salida-apertura)}
 .apertura-marca img{position:absolute;left:-.44%;top:-1.92%;width:100.88%;height:103.85%;filter:brightness(0)}
-.apertura-invitacion{position:absolute;left:50%;bottom:77px;transform:translateX(-50%);font:400 24px/24px Arimo,Arial,sans-serif;white-space:nowrap;color:#0d0f17;filter:blur(1.5px);opacity:var(--salida-apertura)}
+.apertura-invitacion{position:absolute;left:50%;bottom:77px;transform:translateX(-50%);font:400 var(--t-sub)/var(--l-sub) Arimo,Arial,sans-serif;white-space:nowrap;color:#0d0f17;filter:blur(1.5px);opacity:var(--salida-apertura)}
 #aperturaPalabra{position:absolute;left:calc(50% - 850px);top:calc(50% - 599px);width:1700px;height:1134px;mix-blend-mode:darken;pointer-events:none}
 .apertura-lista #aperturaPalabra{display:none}
 .apertura-particula{position:absolute;left:0;top:0;pointer-events:none;mix-blend-mode:darken}
