@@ -16,7 +16,7 @@ function prepararNavegacionPrincipal(cambiar){
     animaciones=[];copias=[];
     const salto=orden.indexOf(activa),envuelven=new Set(orden.slice(0,salto));
     orden=[...orden.slice(salto),...orden.slice(0,salto)];
-    medidor.font='700 17.3333px Arimo,Arial,sans-serif';
+    medidor.font='700 17px Arimo,Arial,sans-serif';
     const ancho=contenedor.clientWidth;
     const medir=id=>medidor.measureText(botones[id].textContent).width;
     const posiciones=[0,ancho-medir(orden[2])-61-medir(orden[1]),ancho-medir(orden[2])];

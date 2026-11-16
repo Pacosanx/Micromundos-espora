@@ -10,6 +10,18 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap" rel="stylesheet">
 <style>
+:root{
+  --t-display:72px;--l-display:72px;
+  --t-titulo:32px;--l-titulo:36px;
+  --t-sub:24px;--l-sub:28px;
+  --t-lectura:20px;--l-lectura:28px;
+  --t-cuerpo:17px;--l-cuerpo:24px;
+  --t-boton:17px;--l-boton:20px;
+  --t-etiqueta:14.667px;--l-etiqueta:18px;
+  --t-micro:12px;--l-micro:14px;
+  --area-tactil:48px;
+  --blur-lectura:0px;--blur-etiqueta:.5px;--blur-nav:2.5px;--blur-display:3px;
+}
 html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #stage{position:absolute;left:50%;top:50%;width:1920px;height:1100px;transform:translate(-50%,-50%) scale(var(--escala-inicial,1));transform-origin:50% 50%}
 /* sin filter (el Figma tenía blur .5px): cualquier filtro en la pantalla o sus contenedores anula el desenfoque de fondo de los carteles */
@@ -42,7 +54,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #etqs{position:absolute;left:0;top:0;pointer-events:none;transition:opacity .4s}
 .etq{position:absolute;left:0;top:0;width:47px;height:20px;margin:-10px 0 0 -23.5px;pointer-events:none;will-change:transform,opacity}
 .etq .pop{position:absolute;inset:0;background:rgba(255,255,255,.8);filter:blur(5px);border-radius:24px}
-.etq .txt{position:absolute;inset:3px 0 0;font-size:12px;line-height:14px;text-align:center;color:#fff;mix-blend-mode:difference;opacity:.8}
+.etq .txt{position:absolute;inset:3px 0 0;font-size:var(--t-micro);line-height:14px;text-align:center;color:#fff;mix-blend-mode:difference;opacity:.8}
 .sel-on .aros{opacity:.15}
 .sel-on #etqs{opacity:.25}
 #aros{visibility:hidden}
@@ -51,13 +63,13 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 
 /* zoom */
 #zoomSvg{position:absolute;left:0;top:0;pointer-events:none;mix-blend-mode:difference;overflow:visible;opacity:0;transform-origin:0 0}
-.signo{position:absolute;font-size:24px;line-height:28px;text-align:center;color:#fff;mix-blend-mode:difference;pointer-events:none}
+.signo{position:absolute;font-size:var(--t-sub);line-height:28px;text-align:center;color:#fff;mix-blend-mode:difference;pointer-events:none}
 .btnZoom{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;cursor:pointer}
 
 /* cabecera */
 #cabecera{left:39px;top:53px;width:1841px}
 #cabecera .fila{display:flex;justify-content:space-between;align-items:center;height:22px;mix-blend-mode:difference;filter:blur(1.5px)}
-#cabecera .fila b{font-weight:700;font-size:17.3333px;line-height:22px}
+#cabecera .fila b{font-weight:700;font-size:var(--t-boton);line-height:22px}
 #cabecera .der{display:flex;gap:61px}
 #cabecera .regla{margin-top:30px;height:2px;border-radius:4px;background:linear-gradient(90deg,#5CD238 1.44%,#D8B071 42.31%,#188466 70.67%,#7C5656 98.56%);mix-blend-mode:difference;filter:blur(3px)}
 
@@ -68,29 +80,29 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #alternarListado[aria-expanded="true"] svg{transform:rotate(180deg)}
 #alternarListado:focus-visible{outline:0;background:rgba(146,170,104,.18);border-radius:8px}
 #buscador svg{mix-blend-mode:difference;filter:blur(.5px);flex:none}
-#buscador input{all:unset;width:173px;font-size:17.33px;line-height:20px;color:#fff;mix-blend-mode:difference;filter:blur(.5px);caret-color:#fff}
+#buscador input{all:unset;width:173px;font-size:var(--t-cuerpo);line-height:20px;color:#fff;mix-blend-mode:difference;filter:blur(var(--blur-lectura));caret-color:#fff}
 #buscador input::placeholder{color:#fff;opacity:1}
 
 /* leyenda */
 #leyenda{left:39px;top:284px;width:281px;display:flex;flex-direction:column;gap:32px}
 .bloque{display:flex;flex-direction:column;gap:24px}
-.rotulo{font-size:14.67px;line-height:17px;color:#fff;mix-blend-mode:difference;opacity:.7;filter:blur(.5px)}
+.rotulo{font-size:var(--t-etiqueta);line-height:17px;color:#fff;mix-blend-mode:difference;opacity:.7;filter:blur(.5px)}
 .items{display:flex;flex-direction:column;gap:12px}
 .item{display:flex;align-items:center;height:40px;cursor:pointer}
 .item .ic{width:40px;height:40px;flex:none;transition:opacity .35s,filter .35s}
 .item .ic canvas{display:block}
 .item.estado .ic{mix-blend-mode:darken}
-.item span{white-space:nowrap;margin-left:116px;font-size:17.3333px;line-height:29px;color:#fff;mix-blend-mode:difference;filter:blur(.5px);transition:opacity .35s,filter .35s}
+.item span{white-space:nowrap;margin-left:116px;font-size:var(--t-cuerpo);line-height:29px;color:#fff;mix-blend-mode:difference;filter:blur(.5px);transition:opacity .35s,filter .35s}
 /* deseleccionados: la opacidad va en cada pieza (no en .item) para que el texto conserve el modo "diferencia" y no se vuelva blanco */
 .bloque.filtrando .item:not(.activo) .ic{opacity:.35;filter:blur(1.5px)}
 .bloque.filtrando .item:not(.activo) span{opacity:.35;filter:blur(2.5px)}
 .tam{display:flex;align-items:center;height:26px}
 .tam .circs{position:relative;width:50px;height:26px;flex:none}
 .tam .circs i{position:absolute;border:1.5px solid #9C8889;border-radius:50%;box-sizing:border-box}
-.tam span{white-space:nowrap;margin-left:105px;font-size:17.33px;line-height:20px;color:#fff;mix-blend-mode:difference;filter:blur(.5px)}
+.tam span{white-space:nowrap;margin-left:105px;font-size:var(--t-cuerpo);line-height:20px;color:#fff;mix-blend-mode:difference;filter:blur(.5px)}
 
 /* lista */
-#listaCab{left:1438px;top:284px;width:442px;display:flex;font-size:14.67px;line-height:17px}
+#listaCab{left:1438px;top:284px;width:442px;display:flex;font-size:var(--t-etiqueta);line-height:17px}
 #listaCab span{color:#fff;mix-blend-mode:difference;opacity:.7}
 #listaCab span:first-child{width:155px}
 /* la caja es más grande que la zona de lectura (80 px de aire arriba, 40 a cada costado) para que el desenfoque no se corte */
@@ -98,8 +110,8 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #lista::-webkit-scrollbar{display:none}
 #lista .pad{height:240px}
 .fila{display:flex;align-items:center;height:24px;cursor:pointer;color:#fff;mix-blend-mode:difference;text-transform:uppercase}
-.fila .c{width:100px;margin-right:55px;font-size:14.667px;line-height:18px}
-.fila .n{flex:1;display:flex;justify-content:space-between;align-items:center;padding-right:1px;font-size:17px;line-height:24px}
+.fila .c{width:100px;margin-right:55px;font-size:var(--t-etiqueta);line-height:18px}
+.fila .n{flex:1;display:flex;justify-content:space-between;align-items:center;padding-right:1px;font-size:var(--t-cuerpo);line-height:24px}
 .fila .n svg{display:none}
 .fila.sel{font-weight:700}
 .fila.sel .n svg{display:block}
@@ -114,13 +126,13 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 
 /* títulos inferiores */
 #navegacionVistas{position:absolute;left:0;top:940px;width:1000px;height:140px;overflow:hidden;pointer-events:none}
-#titulo{left:40px;top:33px;font-size:72px;line-height:72px;filter:blur(3px)}
+#titulo{left:40px;top:33px;font-size:var(--t-display);line-height:72px;filter:blur(3px)}
 #navegacionVistas [role="button"],.copiaVista{font-weight:400;white-space:nowrap;mix-blend-mode:difference;color:#fff}
 #navegacionVistas [role="button"]{cursor:pointer;pointer-events:auto;min-height:44px}
 .copiaVista{pointer-events:none}
-#seccion{left:39px;top:134px;font-size:14.67px;line-height:20px;color:#fff;mix-blend-mode:difference;filter:blur(.5px);pointer-events:none}
+#seccion{left:39px;top:134px;font-size:var(--t-etiqueta);line-height:20px;color:#fff;mix-blend-mode:difference;filter:blur(.5px);pointer-events:none}
 #seccion span{margin-right:13px}
-.vista{top:73px;font-size:24px;line-height:24px;filter:blur(2.5px);cursor:pointer}
+.vista{top:73px;font-size:var(--t-sub);line-height:24px;filter:blur(2.5px);cursor:pointer}
 
 /* ───── Cartel abierto ─────
    El vidrio de los carteles (backdrop-filter) no puede desenfocar lo que está en modo "diferencia": el navegador lo dibuja aparte.
@@ -173,14 +185,14 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .cartel .grano{position:absolute;inset:0;border-radius:24px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 320 320'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3' intercept='-1'/%3E%3CfeFuncG type='linear' slope='3' intercept='-1'/%3E%3CfeFuncB type='linear' slope='3' intercept='-1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/160px 160px;opacity:var(--cartel-noise-opacity);mix-blend-mode:soft-light;-webkit-mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent),linear-gradient(180deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);-webkit-mask-composite:source-in;mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent),linear-gradient(180deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);mask-composite:intersect;pointer-events:none}
 .cartel .co{position:relative;color:#13151b}
 .cabCartel{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:40px}
-:is(#ficha,.cartel-glosario,.cartel-especie) .nom{font-size:32px;line-height:1.12;text-transform:uppercase;filter:blur(.75px);min-width:0;overflow-wrap:anywhere}
-:is(#ficha,.cartel-glosario,.cartel-especie) .cod{font-weight:400;font-size:14.667px;line-height:18px;white-space:nowrap;text-align:right;filter:blur(.5px);padding-top:3px}
+:is(#ficha,.cartel-glosario,.cartel-especie) .nom{font-size:var(--t-titulo);line-height:1.12;text-transform:uppercase;filter:blur(.75px);min-width:0;overflow-wrap:anywhere}
+:is(#ficha,.cartel-glosario,.cartel-especie) .cod{font-weight:400;font-size:var(--t-etiqueta);line-height:18px;white-space:nowrap;text-align:right;filter:blur(.5px);padding-top:3px}
 .reglaCartel{position:relative;height:1px;margin-bottom:14px}
 .reglaCartel::before{content:"";position:absolute;left:-2px;top:-3px;width:358px;height:5px;background:linear-gradient(90deg,#7d3b3b,#9a7448 24%,#4f7a3a 62%,#7d3b3b 85%);-webkit-mask:url('src/assets/cartel-linea.svg') center/358px 5px no-repeat;mask:url('src/assets/cartel-linea.svg') center/358px 5px no-repeat}
 :is(#ficha,.cartel-glosario,.cartel-especie) dl{margin:0;display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:12px;row-gap:14px;line-height:24px}
-:is(#ficha,.cartel-glosario,.cartel-especie) dt{font-size:14.667px;text-transform:uppercase;opacity:.6}
-:is(#ficha,.cartel-glosario,.cartel-especie) dd{margin:0;font-size:17px;overflow-wrap:anywhere}
-:is(#ficha,.cartel-glosario,.cartel-especie) dd small{display:block;font-size:17px;line-height:24px;opacity:.6;margin-top:2px}
+:is(#ficha,.cartel-glosario,.cartel-especie) dt{font-size:var(--t-etiqueta);text-transform:uppercase;opacity:.6}
+:is(#ficha,.cartel-glosario,.cartel-especie) dd{margin:0;font-size:var(--t-cuerpo);overflow-wrap:anywhere}
+:is(#ficha,.cartel-glosario,.cartel-especie) dd small{display:block;font-size:var(--t-cuerpo);line-height:24px;opacity:.6;margin-top:2px}
 .grupoCartel{display:flex;align-items:flex-start;gap:8px}
 :is(#ficha,.cartel-glosario,.cartel-especie) dd.valorGrupo{mix-blend-mode:normal}
 
@@ -190,15 +202,15 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .masCartel img{transform:rotate(-45deg);flex:none;filter:brightness(0);opacity:.92}
 .masCartel:focus-visible,:is(#ficha,.cartel-glosario,.cartel-especie) .x:focus-visible{outline:0;background:rgba(146,170,104,.25);border-radius:8px}
 .detalleCartel{margin-top:16px;border-top:1px solid rgba(100,110,90,.2)}
-.especieDetalle{padding-top:16px;font-size:15px;line-height:22px}
-.especieDetalle h3{font-size:17px;font-weight:400;margin:0 0 8px}
+.especieDetalle{padding-top:16px;font-size:var(--t-cuerpo);line-height:22px}
+.especieDetalle h3{font-size:var(--t-cuerpo);font-weight:400;margin:0 0 8px}
 .especieDetalle p{margin:8px 0;opacity:.75}
-.especieDetalle b{display:block;font-size:12px;text-transform:uppercase;font-weight:400;opacity:.7}
+.especieDetalle b{display:block;font-size:var(--t-etiqueta);text-transform:uppercase;font-weight:400;opacity:.7}
 :is(#ficha,.cartel-glosario,.cartel-especie) .x{display:none;position:absolute;right:-14px;top:-14px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(242,240,232,.85);padding:0;cursor:pointer;color:#344035;font:400 22px/44px 'Arimo',Arial,sans-serif;text-align:center}
 @keyframes flota{0%,100%{transform:translate(0,0)}33%{transform:translate(2px,-5px)}66%{transform:translate(-2px,3px)}}
 
 /* aviso */
-#aviso{position:absolute;width:300px;opacity:1;visibility:hidden;transition:visibility .35s;color:#1f2422;font-size:15px;line-height:21px;z-index:7}
+#aviso{position:absolute;width:300px;opacity:1;visibility:hidden;transition:visibility .35s;color:#1f2422;font-size:var(--t-cuerpo);line-height:21px;z-index:7}
 #aviso.vis{visibility:visible}
 #aviso>.vidrio,#aviso>.fondoCartel,#aviso>.grano,#aviso>.fi{opacity:0;transition:opacity .35s}
 #aviso.vis>.vidrio,#aviso.vis>.fondoCartel,#aviso.vis>.fi{opacity:1}
@@ -281,22 +293,22 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 #cabecera .fila{color:#0d0f17;mix-blend-mode:normal}
 #cabecera .regla{mix-blend-mode:normal;background:linear-gradient(90deg,#601EB0 1.44%,#1A4077 42.31%,#DA6C82 70.67%,#769A92 98.56%)}
 #seccion{z-index:6}
-#cabecera button{all:unset;cursor:pointer;font-weight:700;font-size:17.3333px;line-height:22px}
+#cabecera button{all:unset;cursor:pointer;font-weight:700;font-size:var(--t-boton);line-height:22px}
 #cabecera button:focus-visible{color:#8eaf6b;text-shadow:0 0 8px #7b9c62}
 #glosario{position:absolute;inset:0;z-index:4;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;color:#0d0f17}
 #glosario[hidden]{display:none}
 .en-glosario #glosario{opacity:1;visibility:visible}
 #centro,#derecha,#leyenda,#izqAbajo{transition:opacity .4s,visibility .4s}
 .en-glosario #centro,.en-glosario #derecha,.en-glosario #leyenda,.en-glosario #izqAbajo{opacity:0!important;visibility:hidden;pointer-events:none}
-.g-volver{all:unset;position:absolute;right:40px;top:130px;min-height:32px;display:flex;align-items:center;gap:8px;font-size:14.667px;text-transform:uppercase;cursor:pointer;filter:blur(.4px);z-index:5}
+.g-volver{all:unset;position:absolute;right:40px;top:130px;min-height:32px;display:flex;align-items:center;gap:8px;font-size:var(--t-boton);text-transform:uppercase;cursor:pointer;filter:blur(.4px);z-index:5}
 .g-volver img{width:18px;height:12px;rotate:180deg;filter:brightness(0)}
 #glosarioScroll{position:absolute;left:0;right:0;top:0;bottom:0;padding-top:180px;box-sizing:border-box;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none}
 #glosarioScroll::-webkit-scrollbar{display:none}
 .g-portada{position:relative;height:926px}
 .g-colonia{all:unset;position:absolute;width:632px;height:700px;cursor:pointer;text-align:left}
 .g-colonia>img{position:absolute;left:-25px;top:-25px;width:682px;height:682px;pointer-events:none}
-.g-colonia .g-rotulo{position:absolute;top:554px;left:179px;font-size:48px;line-height:52px;filter:blur(2px);text-transform:uppercase;color:#e35d81}
-.g-colonia sup{position:absolute;left:452px;top:546px;font-size:14.667px;line-height:18px}
+.g-colonia .g-rotulo{position:absolute;top:554px;left:179px;font-size:var(--t-titulo);line-height:var(--l-titulo);filter:blur(2px);text-transform:uppercase;color:#e35d81}
+.g-colonia sup{position:absolute;left:452px;top:546px;font-size:var(--t-etiqueta);line-height:18px}
 .g-colonia-b{left:calc(18% - 316px);top:54px}
 .g-colonia-l{left:calc(50% - 316px);top:-27px}
 .g-colonia-l .g-rotulo{left:188px;color:#d2a359}
@@ -306,17 +318,17 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .g-colonia-m sup{left:407px;top:563px}
 .g-colonia:focus-visible .g-rotulo{filter:blur(.7px)}
 .g-esquina{position:absolute;left:-13px;top:3px;width:225px;height:121px;opacity:.4;filter:blur(7.5px);pointer-events:none}
-.g-bajar{all:unset;position:absolute;left:50%;top:824px;transform:translateX(-50%);display:flex;align-items:center;gap:24px;padding:20px;font-size:16px;cursor:pointer;filter:blur(.5px);opacity:var(--indicacion-deslizar,1)}
+.g-bajar{all:unset;position:absolute;left:50%;top:824px;transform:translateX(-50%);display:flex;align-items:center;gap:24px;padding:20px;font-size:var(--t-boton);cursor:pointer;filter:blur(.5px);opacity:var(--indicacion-deslizar,1)}
 .g-bajar img{width:16px;height:12px;rotate:90deg;filter:brightness(0)}
 #glosarioIndice{margin:0 40px;padding-bottom:250px;translate:0 var(--adelanto-indice,0px)}
 .g-encabezado,.g-fila{display:grid;grid-template-columns:300px 140px minmax(0,1fr) 360px 120px;align-items:center;width:100%;box-sizing:border-box}
-.g-encabezado{font-size:14.667px;line-height:18px;padding-bottom:14px;opacity:.6;text-transform:uppercase}
+.g-encabezado{font-size:var(--t-etiqueta);line-height:18px;padding-bottom:14px;opacity:.6;text-transform:uppercase}
 .g-encabezado>:last-child{text-align:right}
 .g-fila{appearance:none;border:0;padding:0;background:none;text-align:left;color:inherit;font:400 14.667px/18px Arimo,Arial,sans-serif;height:56px;text-transform:uppercase;cursor:pointer;opacity:.6;transition:opacity .25s}
 .g-fila:focus-visible,.g-abierta>.g-fila{opacity:1}
 .g-fila:focus-visible{outline:0;background:rgba(146,170,104,.12)}
-.g-termino{font-size:20px;line-height:31px}
-.g-cuenta{font-size:17.333px;display:flex;gap:12px;align-items:center}
+.g-termino{font-size:var(--t-lectura);line-height:31px}
+.g-cuenta{font-size:var(--t-cuerpo);display:flex;gap:12px;align-items:center}
 .g-chips{display:flex;gap:5px;justify-content:flex-end;align-items:center}
 .g-chips i{width:14px;height:14px;border-radius:50%;filter:blur(.7px)}
 .g-entrada{position:relative}
@@ -327,16 +339,16 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .g-abierta>.g-desplegable{grid-template-rows:1fr;visibility:visible}
 .g-desplegable-interior{overflow:hidden;min-height:0}
 .g-muestras{padding:2px 0 16px;margin-left:calc(100% - 604px);min-height:180px}
-.g-muestra{all:unset;display:grid;grid-template-columns:100px minmax(0,1fr);gap:24px;min-height:30px;width:100%;cursor:pointer;text-transform:uppercase;font-size:17px;line-height:24px}
-.g-muestra>span:first-child{font-size:14.667px;opacity:.75}
+.g-muestra{all:unset;display:grid;grid-template-columns:100px minmax(0,1fr);gap:24px;min-height:30px;width:100%;cursor:pointer;text-transform:uppercase;font-size:var(--t-cuerpo);line-height:24px}
+.g-muestra>span:first-child{font-size:var(--t-etiqueta);opacity:.75}
 .g-muestra>span:last-child{overflow-wrap:anywhere}
 .g-muestra img{width:12px;height:12px;rotate:-45deg;filter:brightness(0);margin-left:8px}
 .g-muestra:focus-visible{color:#687f42;outline:0}
-.g-vacio{margin:0;max-width:380px;font-size:17px;line-height:24px;opacity:.65}
+.g-vacio{margin:0;max-width:380px;font-size:var(--t-cuerpo);line-height:24px;opacity:.65}
 @media(prefers-reduced-motion:reduce){#glosario,.g-desplegable,#centro,#derecha,#leyenda,#izqAbajo{transition:none}}
 
 /* Carteles con el mismo material y el mismo arrastre que las muestras. */
-.cartel-glosario .definicionGlosario{font-size:17px;line-height:24px;margin:0;white-space:pre-line;filter:blur(.5px)}
+.cartel-glosario .definicionGlosario{font-size:var(--t-cuerpo);line-height:24px;margin:0;white-space:pre-line;filter:blur(var(--blur-lectura))}
 .cartel-glosario .fi{min-height:265px}
 .cartel-glosario .cabCartel{margin-bottom:100px}
 .cartel-glosario{translate:0 var(--oleaje-y,0px)}
@@ -357,8 +369,8 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 #tuPlaca{position:absolute;inset:180px 40px 40px;visibility:hidden;opacity:0;transition:opacity .4s,visibility .4s;color:#0d0f17}
 .en-tuplaca #tuPlaca{visibility:visible;opacity:1}
 .en-tuplaca #centro,.en-tuplaca #derecha,.en-tuplaca #leyenda,.en-tuplaca #izqAbajo{opacity:0!important;visibility:hidden;pointer-events:none}
-#tuPlaca h1{font-size:72px;font-weight:400;filter:blur(2px);margin:100px 0 24px}
-#tuPlaca p{font-size:20px}
+#tuPlaca h1{font-size:var(--t-display);font-weight:400;filter:blur(2px);margin:100px 0 24px}
+#tuPlaca p{font-size:var(--t-lectura)}
 @media(prefers-reduced-motion:reduce){.g-colonia{animation:none}#tuPlaca{transition:none}}
 
 /* Universo: el mismo disco y el mismo eje tipográfico en todas sus apariciones. */
@@ -400,10 +412,10 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .cartel-especie .nom{font-style:normal}
 .cartel-especie .cabCartel{margin-bottom:24px}
 .cartel-especie .fi{max-height:820px}
-.cartel-especie .definicionGlosario{font-size:17px;line-height:24px;filter:blur(.5px)}
+.cartel-especie .definicionGlosario{font-size:var(--t-cuerpo);line-height:24px;filter:blur(var(--blur-lectura))}
 .detalle-especie-figura{position:relative;height:354px;border-radius:24px;background:rgba(248,245,246,.6);display:flex;align-items:center;justify-content:center;margin:0 0 24px;overflow:hidden}
 .detalle-especie-figura img,.detalle-especie-figura canvas{width:354px;height:354px;object-fit:contain}
-.detalle-fichas-especie{margin-top:24px;padding-top:16px;border-top:1px solid rgba(13,15,23,.3);font-size:17px;line-height:24px}
+.detalle-fichas-especie{margin-top:24px;padding-top:16px;border-top:1px solid rgba(13,15,23,.3);font-size:var(--t-cuerpo);line-height:24px}
 .detalle-fichas-especie button{all:unset;display:block;cursor:pointer;padding:5px 0}
 .detalle-fichas-especie button:focus-visible{color:#6a813e}
 .detalle-fichas-especie[hidden]{display:none}
@@ -416,13 +428,13 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .detalle-lupa[hidden]{display:none}
 .ficha-placa{touch-action:none}
 .ficha-placa{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-.ficha-archivo-indicacion{position:absolute;top:136px;left:40px;right:40px;display:flex;justify-content:space-between;font-size:14.67px}
+.ficha-archivo-indicacion{position:absolute;top:136px;left:40px;right:40px;display:flex;justify-content:space-between;font-size:var(--t-etiqueta)}
 .ficha-archivo-indicacion button,.ficha-archivo-especies button{all:unset;cursor:pointer}
 .ficha-archivo-dibujo{position:absolute;left:calc(50% - 160px);top:180px;width:800px;height:800px}
 .detalle-ficha-archivo h1{position:absolute;top:930px;left:40px;font:400 72px/1 Arimo,Arial,sans-serif;text-transform:uppercase;margin:0}
 .ficha-archivo-datos{position:absolute;top:1120px;left:40px;right:40px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:48px}
 .ficha-archivo-datos dt,.ficha-archivo-especies h2{font:400 14.67px/20px Arimo,Arial,sans-serif;opacity:.7}
-.ficha-archivo-datos dd{margin:24px 0 0;font-size:17.33px}
+.ficha-archivo-datos dd{margin:24px 0 0;font-size:var(--t-cuerpo)}
 .ficha-archivo-especies{position:absolute;top:1390px;left:40px;right:40px}
 .ficha-archivo-especies button{display:block;width:100%;font:italic 24px/32px Arimo,Arial,sans-serif;padding:16px 0;border-bottom:1px solid #0d0f1733}
 .ficha-archivo-especies button:focus-visible{background:#ed74a020}
@@ -433,7 +445,7 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .cartel-ficha-especie .detalle-especie-figura{border-radius:24px;background:rgba(248,245,246,.6)}
 .cartel-ficha-especie .detalle-especie-figura img{transform:scale(1.2171)}
 .cartel-ficha-especie .detalle-especie-figura img{width:350px;height:350px}
-.cartel-especie .cod{position:relative;flex:0 0 48px;height:48px;padding:0!important;text-align:center!important;display:flex;align-items:center;justify-content:center;font-size:16px!important;isolation:isolate}
+.cartel-especie .cod{position:relative;flex:0 0 48px;height:48px;padding:0!important;text-align:center!important;display:flex;align-items:center;justify-content:center;font-size:var(--t-etiqueta)!important;isolation:isolate}
 .cartel-especie .cod::before{content:"";position:absolute;inset:-4.5px;background:var(--especie-insignia) center/100% 100% no-repeat;z-index:-1}
 /* Tu placa: composición con el mismo material de Colonias y controles del atlas. */
 #tuPlaca{inset:0!important;z-index:4;overflow:hidden}
@@ -442,11 +454,11 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .tp-leyenda p{font:17.333px/24px Arimo,Arial,sans-serif;margin:0 0 24px;display:flex;align-items:center;gap:24px}
 .tp-leyenda i{display:inline-block;width:18px;height:18px;border-radius:50%;filter:blur(1px)}
 .tp-leyenda h2:not(:first-child){margin-top:38px}
-.tp-leyenda small{display:block;font-size:14.667px;line-height:21px;opacity:.6;margin-top:14px}
+.tp-leyenda small{display:block;font-size:var(--t-etiqueta);line-height:21px;opacity:.6;margin-top:14px}
 .tp-opcion{font:17.333px/24px Arimo,Arial,sans-serif;display:flex;align-items:center;gap:12px;cursor:pointer}
 .tp-opcion input{accent-color:#92aa68;width:16px;height:16px}
 .tp-leyenda button,.tp-pie button,.tp-recuerdo button,.tp-recuerdo a{all:unset;cursor:pointer;color:#0d0f17;font:17px/24px Arimo,Arial,sans-serif}
-.tp-leyenda button{font-size:14.667px}
+.tp-leyenda button{font-size:var(--t-etiqueta)}
 .tp-leyenda button:focus-visible,.tp-pie button:focus-visible,.tp-recuerdo button:focus-visible,.tp-recuerdo a:focus-visible{color:#6a813e;text-shadow:0 0 8px #a6b585}
 .tp-board{position:absolute;width:720px;height:720px;left:50%;top:190px;transform:translateX(-50%);border-radius:50%;transition:transform .7s}
 .tp-agar{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(242,237,216,.48),rgba(230,232,212,.4));border:1px solid rgba(73,84,55,.2);box-shadow:inset 0 0 35px rgba(176,184,142,.1),0 0 12px rgba(201,205,160,.15);pointer-events:none}
@@ -454,7 +466,7 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 #tpLineas,#tpColonias{position:absolute;inset:0;overflow:visible}
 #tpLineas{pointer-events:none}
 #tpLineas line{stroke-width:2;opacity:.6;filter:blur(.35px)}
-#tpVacia{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:17px!important;line-height:25px;text-align:center;white-space:pre;opacity:.5;pointer-events:none}
+#tpVacia{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:var(--t-cuerpo)!important;line-height:25px;text-align:center;white-space:pre;opacity:.5;pointer-events:none}
 #tpVacia[hidden]{display:none}
 .tp-colonia{all:unset;position:absolute;left:0;top:0;cursor:grab;touch-action:none;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .tp-colonia canvas{display:block;width:100%;height:100%;animation:flota 9s ease-in-out infinite;pointer-events:none}
@@ -466,10 +478,10 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .tp-paleta-colonia{all:unset;display:block;width:132px;height:132px;cursor:grab;touch-action:none}
 .tp-paleta-colonia canvas{display:block;width:100%;height:100%;pointer-events:none}
 .tp-paleta-colonia:focus-visible{background:rgba(146,170,104,.12);border-radius:50%}
-.tp-paleta p{font-size:14.667px!important;line-height:21px;opacity:.6;max-width:300px}
+.tp-paleta p{font-size:var(--t-etiqueta)!important;line-height:21px;opacity:.6;max-width:300px}
 .tp-pie{position:absolute;left:40px;right:40px;bottom:68px;display:flex;align-items:baseline;gap:60px}
 #tuPlaca .tp-pie h1{font:400 72px/72px Arimo,Arial,sans-serif;margin:0;filter:blur(3px)}
-.tp-pie button{font-size:24px;filter:blur(.7px)}
+.tp-pie button{font-size:var(--t-sub);filter:blur(.7px)}
 .tp-pie button:disabled{opacity:.3;cursor:default}
 .tp-contemplando .tp-leyenda,.tp-contemplando .tp-paleta{opacity:0;visibility:hidden;pointer-events:none}
 .tp-leyenda,.tp-paleta{transition:opacity .5s,visibility .5s}
@@ -496,9 +508,9 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .detalle-ficha-nueva .detalle-muestra-relacionada{font:400 17.33px/24px Arimo,Arial,sans-serif;color:#0d0f17;white-space:normal}
 .detalle-ficha-nueva .detalle-muestra-relacionada canvas{width:160px;height:160px;margin-bottom:24px}
 .detalle-ficha-nueva .detalle-muestra-relacionada p{margin:0 0 6px}
-.detalle-ficha-nueva .ficha-relacion-codigo,.detalle-ficha-nueva .ficha-relacion-comparte{font-size:14.67px;line-height:18px}
+.detalle-ficha-nueva .ficha-relacion-codigo,.detalle-ficha-nueva .ficha-relacion-comparte{font-size:var(--t-etiqueta);line-height:18px}
 .detalle-ficha-nueva .ficha-relacion-comparte{margin-top:24px!important;opacity:.7}
-.detalle-ficha-nueva .ficha-relacion-especie{font-size:15.5px;line-height:21.7px;font-style:italic}
+.detalle-ficha-nueva .ficha-relacion-especie{font-size:var(--t-cuerpo);line-height:21.7px;font-style:italic}
 .ficha-colonias:focus-visible{background:none;filter:brightness(1.06)}
 .detalle-ficha-nueva .detalle-galeria.ficha-galeria{display:block!important;overflow-x:auto!important;overflow-y:hidden!important}
 .ficha-paquete-flotante,.ficha-pie-colonia{animation:ficha-flotar var(--flotar-duracion,9s) ease-in-out var(--flotar-demora,0s) infinite alternate}
@@ -507,7 +519,7 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 @keyframes ficha-flotar{from{transform:translate3d(-3px,-9px,0) rotate(-.35deg)}to{transform:translate3d(4px,9px,0) rotate(.35deg)}}
 @media(prefers-reduced-motion:reduce){.ficha-paquete-flotante,.ficha-pie-colonia{animation:none}}
 .cartel-composicion .cabCartel{margin-bottom:24px}
-.cartel-composicion .nom{font-size:28px}
+.cartel-composicion .nom{font-size:var(--t-titulo)}
 .cartel-composicion .cod{color:#0d0f17!important;background:rgba(237,116,160,.35);border-radius:50%}
 .cartel-composicion .ficha-celula{display:grid;grid-template-columns:140px minmax(0,1fr);gap:20px;margin-top:24px}
 .ficha-celula-figura{height:160px;display:flex;align-items:center;justify-content:center;background:rgba(248,245,246,.6);border-radius:20px;overflow:hidden}
@@ -556,7 +568,7 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .ficha-galeria__especies { min-height: 42px; margin-top: 8px; color: #0d0f17; }
 .ficha-galeria__especies p { margin: 0; font: italic 400 17px/21px Arimo, Arial, sans-serif; }
 .ficha-galeria__comparte { display: block; margin-bottom: 2px; font: 400 11px/14px Arimo, Arial, sans-serif; }
-.ficha-galeria__cta { align-self: flex-start; margin: auto 0 0; padding: 8px 0; border: 0; background: transparent; color: #0d0f17; cursor: pointer; font: 600 14px/20px Arimo, Arial, sans-serif; letter-spacing: .05em; }
+.ficha-galeria__cta { align-self: flex-start; margin: auto 0 0; padding: 8px 0; border: 0; background: transparent; color: #0d0f17; cursor: pointer; font: 700 var(--t-boton)/var(--l-boton) Arimo, Arial, sans-serif; letter-spacing: .05em; }
 .ficha-galeria__cta:focus-visible { background: rgb(255 255 255 / 35%); outline: 2px solid #0d0f17; outline-offset: 3px; }
 
 .tp-biblioteca { width:640px; color:#0d0f17; font-family:Arimo,Arial,sans-serif; }
@@ -589,26 +601,26 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 #tuPlaca{color:#0d0f17;touch-action:none;user-select:none;-webkit-user-select:none}
 #tuPlaca button{font-family:Arimo,Arial,sans-serif;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #tuPlaca button:disabled{opacity:.3;cursor:default}
-.tp-indicacion{position:absolute;left:50px;right:30px;top:134px;display:flex;justify-content:space-between;font-size:14.67px;filter:blur(.4px);z-index:5}
-#tpReacciones{position:relative;font-size:17.33px}
+.tp-indicacion{position:absolute;left:50px;right:30px;top:134px;display:flex;justify-content:space-between;font-size:var(--t-etiqueta);filter:blur(.4px);z-index:5}
+#tpReacciones{position:relative;font-size:var(--t-cuerpo)}
 #tpReacciones summary{list-style:none;display:flex;align-items:center;cursor:pointer}
 #tpReacciones summary::-webkit-details-marker{display:none}
 #tpReacciones summary img{width:24px;height:20px;filter:brightness(0)}
 #tpReacciones[open]{padding:16px;background:#f2f0e8c9;backdrop-filter:blur(12px);border-radius:12px;margin:-16px}
 #tpReacciones label{display:flex;align-items:center;gap:12px;margin-top:20px}
-#tpReacciones p{max-width:240px;font-size:14px;line-height:20px;opacity:.6}
+#tpReacciones p{max-width:240px;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);opacity:.6}
 #tpBiblioteca{position:absolute;left:40px;top:284px;height:634px}
 #tpBiblioteca .tp-biblioteca__top{position:absolute;left:0;top:0;width:640px;height:65px;margin:0}
 #tpBiblioteca .tp-biblioteca__top h2{font-weight:400;opacity:.7;margin:0}
-#tpBiblioteca .tp-biblioteca__top p{position:absolute;top:41px;left:0;font-size:17.33px;line-height:24px;filter:blur(.5px)}
+#tpBiblioteca .tp-biblioteca__top p{position:absolute;top:41px;left:0;font-size:var(--t-cuerpo);line-height:24px;filter:blur(.5px)}
 #tpBiblioteca .tp-biblioteca__modes{position:absolute;top:89px;left:0;width:450px;height:34px;gap:32px;align-items:start}
 #tpBiblioteca .tp-biblioteca__mode-label{min-width:73px;margin:0 8px 0 0}
-#tpBiblioteca .tp-biblioteca__mode{position:relative;white-space:nowrap;padding:0 0 10px;font-size:17.33px}
+#tpBiblioteca .tp-biblioteca__mode{position:relative;white-space:nowrap;padding:0 0 10px;font-size:var(--t-cuerpo)}
 #tpBiblioteca .tp-biblioteca__mode[aria-pressed="false"]{opacity:.45;filter:blur(1px)}
 #tpBiblioteca .tp-biblioteca__mode[aria-pressed="true"]::after,#tpBiblioteca .tp-biblioteca__tab[aria-selected="true"]::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,#b5599f,#c9a6bd,#7fb7ab);filter:blur(.5px)}
 #tpBiblioteca .tp-biblioteca__tabs{position:absolute;top:147px;left:0;width:640px;height:38px;border:0;gap:48px;align-items:start}
-#tpBiblioteca .tp-biblioteca__tab{padding:0 0 12px;font-size:17.33px;line-height:22px}
-#tpBiblioteca .tp-biblioteca__hint{position:absolute;right:0;top:6px;font-size:16px}
+#tpBiblioteca .tp-biblioteca__tab{padding:0 0 12px;font-size:var(--t-cuerpo);line-height:22px}
+#tpBiblioteca .tp-biblioteca__hint{position:absolute;right:0;top:6px;font-size:var(--t-boton)}
 #tpBiblioteca .tp-biblioteca__content{position:absolute;top:234px;left:0;border:0}
 #tpBiblioteca .tp-biblioteca__content::before{content:'';position:absolute;top:-25px;left:0;width:640px;height:1px;background:#0d0f174d}
 #tpBiblioteca .tp-biblioteca__viewport{touch-action:pan-y}
@@ -642,7 +654,7 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 #tpRotulos button:focus-visible{background:#f2f0e8aa;text-shadow:0 0 8px #ed74a0}
 #tpTrazo path{fill:none;stroke:#ed74a088;stroke-width:2;stroke-dasharray:1 5}
 #tpVacia{font:400 17.33px/26px Arimo,Arial,sans-serif;opacity:.55;filter:blur(.7px)}
-#tpAvisoQuitar{position:absolute;left:50%;top:50%;translate:-50% -50%;font-size:14px;pointer-events:none;z-index:7;color:#c4163f}
+#tpAvisoQuitar{position:absolute;left:50%;top:50%;translate:-50% -50%;font-size:var(--t-etiqueta);pointer-events:none;z-index:7;color:#c4163f}
 #tpAvisoQuitar[hidden]{display:none}
 .tp-acciones{position:absolute;left:calc(50% + 144px);top:994px;display:flex;gap:24px;align-items:center}
 .tp-acciones button{all:unset;font:700 14.67px/19px Arimo,Arial,sans-serif;white-space:nowrap;filter:blur(.6px)}
@@ -666,12 +678,12 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .tp-menu-boton output{position:absolute;left:24px;top:54px;translate:-50% 0;font:400 15px/19px Arimo,Arial,sans-serif;background:#f2f0e8a8;border-radius:10px;padding:2px 6px;pointer-events:none}
 .tp-menu-boton output[hidden]{display:none}
 .tp-menu-boton.tp-menu-secundario{filter:blur(1.5px)}
-.tp-menu-boton.tp-menu-secundario span{font-size:12px}
+.tp-menu-boton.tp-menu-secundario span{font-size:var(--t-etiqueta)}
 .tp-menu-boton.tp-menu-elegido .tp-menu-superficie{content:url('src/assets/tu-placa/tp-boton-activo.svg');left:-1.8px;top:-1.8px;width:51.6px;height:51.6px}
 .tp-menu-boton[data-accion="girar"].tp-menu-elegido .tp-menu-icono{content:url('src/assets/tu-placa/tp-girar-activo.svg')}
 .tp-menu-boton:focus-visible{filter:brightness(1.15);outline:0}
 .tp-menu-ajustando .tp-menu-boton{transition:none}
-.cartel-reaccion .nom{font-size:32px;text-transform:none}
+.cartel-reaccion .nom{font-size:var(--t-titulo);text-transform:none}
 .cartel-reaccion .cod{display:none}
 .cartel-reaccion .reglaCartel{margin-top:75px}
 .tp-reaccion-combinacion{font:400 14.67px/20px Arimo,Arial,sans-serif;opacity:.7;text-transform:uppercase;margin-top:16px!important}
@@ -47111,7 +47123,7 @@ function prepararNavegacionPrincipal(cambiar){
     animaciones=[];copias=[];
     const salto=orden.indexOf(activa),envuelven=new Set(orden.slice(0,salto));
     orden=[...orden.slice(salto),...orden.slice(0,salto)];
-    medidor.font='700 17.3333px Arimo,Arial,sans-serif';
+    medidor.font='700 17px Arimo,Arial,sans-serif';
     const ancho=contenedor.clientWidth;
     const medir=id=>medidor.measureText(botones[id].textContent).width;
     const posiciones=[0,ancho-medir(orden[2])-61-medir(orden[1]),ancho-medir(orden[2])];
