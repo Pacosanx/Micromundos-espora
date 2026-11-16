@@ -38,10 +38,13 @@ function prepararTuPlaca(){
       else it[k==='tamano'?'escala':k==='girar'?'rot':k==='variacion'?'seed':'foco']=v;
       sincronizarHijos(it);solicitarDibujo();menu.actualizar();
     }});
-  function sprite(it){const m=modelo(it),key=m.id+'-'+it.seed;if(sprites.has(key))return sprites.get(key).canvas;
-    const canvas=document.createElement('canvas');canvas.style.width='280px';pagina.querySelector('.tp-sprites').appendChild(canvas);
-    const obra=mountColonias(canvas,{recipe:pieza({...m.style,seed:it.seed}),maxResolution:280});sprites.set(key,{canvas,obra});
-    if(sprites.size>90){const [vieja,s]=sprites.entries().next().value;s.obra.destroy();s.canvas.remove();sprites.delete(vieja);}return canvas;
+  // La resolución del sprite sigue el tamaño con el que se muestra (antes fijo en 280 px: los elementos grandes se estiraban hasta 2,6 veces).
+  function sprite(it){const m=modelo(it),esc=pagina.getBoundingClientRect().width/pagina.offsetWidth||1,dpr=Math.max(1,devicePixelRatio||1);
+    if(!it.resB){const necesario=it.tamano*it.escala/100/WF*esc*dpr;it.resB=necesario<=280?280:necesario<=420?420:necesario<=560?560:720;}
+    const res=it.resB,key=m.id+'-'+it.seed+'-'+res;if(sprites.has(key))return sprites.get(key).canvas;
+    const canvas=document.createElement('canvas'),caja=document.createElement('div');caja.style.width=(res/(esc*dpr))+'px';caja.appendChild(canvas);pagina.querySelector('.tp-sprites').appendChild(caja);
+    const obra=mountColonias(canvas,{recipe:pieza({...m.style,seed:it.seed}),maxResolution:res});sprites.set(key,{canvas,obra});
+    if(sprites.size>90){const [vieja,s]=sprites.entries().next().value;s.obra.destroy();s.canvas.parentElement.remove();sprites.delete(vieja);}return canvas;
   }
   function dibujar(){
     for(const [id,el]of elementos)if(!items.some(i=>i.id===id)){el.remove();elementos.delete(id);}
