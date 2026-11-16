@@ -10,6 +10,18 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap" rel="stylesheet">
 <style>
+:root{
+  --t-display:72px;--l-display:72px;
+  --t-titulo:32px;--l-titulo:36px;
+  --t-sub:24px;--l-sub:28px;
+  --t-lectura:20px;--l-lectura:28px;
+  --t-cuerpo:17px;--l-cuerpo:24px;
+  --t-boton:17px;--l-boton:20px;
+  --t-etiqueta:14.667px;--l-etiqueta:18px;
+  --t-micro:12px;--l-micro:14px;
+  --area-tactil:48px;
+  --blur-lectura:0px;--blur-etiqueta:.5px;--blur-nav:2.5px;--blur-display:3px;
+}
 html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #stage{position:absolute;left:50%;top:50%;width:1920px;height:1100px;transform:translate(-50%,-50%) scale(var(--escala-inicial,1));transform-origin:50% 50%}
 /* sin filter (el Figma tenía blur .5px): cualquier filtro en la pantalla o sus contenedores anula el desenfoque de fondo de los carteles */
@@ -42,7 +54,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #etqs{position:absolute;left:0;top:0;pointer-events:none;transition:opacity .4s}
 .etq{position:absolute;left:0;top:0;width:47px;height:20px;margin:-10px 0 0 -23.5px;pointer-events:none;will-change:transform,opacity}
 .etq .pop{position:absolute;inset:0;background:rgba(255,255,255,.8);filter:blur(5px);border-radius:24px}
-.etq .txt{position:absolute;inset:3px 0 0;font-size:12px;line-height:14px;text-align:center;color:#fff;mix-blend-mode:difference;opacity:.8}
+.etq .txt{position:absolute;inset:3px 0 0;font-size:var(--t-micro);line-height:var(--l-micro);text-align:center;color:#fff;mix-blend-mode:difference;opacity:.8}
 .sel-on .aros{opacity:.15}
 .sel-on #etqs{opacity:.25}
 #aros{visibility:hidden}
@@ -51,46 +63,46 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 
 /* zoom */
 #zoomSvg{position:absolute;left:0;top:0;pointer-events:none;mix-blend-mode:difference;overflow:visible;opacity:0;transform-origin:0 0}
-.signo{position:absolute;font-size:24px;line-height:28px;text-align:center;color:#fff;mix-blend-mode:difference;pointer-events:none}
+.signo{position:absolute;font-size:var(--t-sub);line-height:var(--l-sub);text-align:center;color:#fff;mix-blend-mode:difference;pointer-events:none}
 .btnZoom{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;cursor:pointer}
 
 /* cabecera */
 #cabecera{left:39px;top:53px;width:1841px}
 #cabecera .fila{display:flex;justify-content:space-between;align-items:center;height:22px;mix-blend-mode:difference;filter:blur(1.5px)}
-#cabecera .fila b{font-weight:700;font-size:17.3333px;line-height:22px}
+#cabecera .fila b{font-weight:700;font-size:var(--t-boton);line-height:var(--l-boton)}
 #cabecera .der{display:flex;gap:61px}
 #cabecera .regla{margin-top:30px;height:2px;border-radius:4px;background:linear-gradient(90deg,#5CD238 1.44%,#D8B071 42.31%,#188466 70.67%,#7C5656 98.56%);mix-blend-mode:difference;filter:blur(3px)}
 
 /* buscador */
 #buscador{left:1677px;top:214px;width:203px;height:20px;display:flex;align-items:center;gap:10px}
-#alternarListado{position:absolute;left:1490px;top:122px;width:390px;min-height:44px;padding:0;border:0;background:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:400 17.33px/20px Arimo,Arial,sans-serif;color:#fff;mix-blend-mode:difference;filter:blur(.5px);cursor:pointer}
+#alternarListado{position:absolute;left:1490px;top:122px;width:390px;min-height:var(--area-tactil);padding:0;border:0;background:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:400 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#fff;mix-blend-mode:difference;filter:blur(.5px);cursor:pointer}
 #alternarListado svg{transition:transform .3s;flex:none}
 #alternarListado[aria-expanded="true"] svg{transform:rotate(180deg)}
 #alternarListado:focus-visible{outline:0;background:rgba(146,170,104,.18);border-radius:8px}
 #buscador svg{mix-blend-mode:difference;filter:blur(.5px);flex:none}
-#buscador input{all:unset;width:173px;font-size:17.33px;line-height:20px;color:#fff;mix-blend-mode:difference;filter:blur(.5px);caret-color:#fff}
+#buscador input{all:unset;width:173px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);color:#fff;mix-blend-mode:difference;filter:blur(var(--blur-lectura));caret-color:#fff}
 #buscador input::placeholder{color:#fff;opacity:1}
 
 /* leyenda */
 #leyenda{left:39px;top:284px;width:281px;display:flex;flex-direction:column;gap:32px}
 .bloque{display:flex;flex-direction:column;gap:24px}
-.rotulo{font-size:14.67px;line-height:17px;color:#fff;mix-blend-mode:difference;opacity:.7;filter:blur(.5px)}
+.rotulo{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#fff;mix-blend-mode:difference;opacity:.7;filter:blur(.5px)}
 .items{display:flex;flex-direction:column;gap:12px}
 .item{display:flex;align-items:center;height:40px;cursor:pointer}
 .item .ic{width:40px;height:40px;flex:none;transition:opacity .35s,filter .35s}
 .item .ic canvas{display:block}
 .item.estado .ic{mix-blend-mode:darken}
-.item span{white-space:nowrap;margin-left:116px;font-size:17.3333px;line-height:29px;color:#fff;mix-blend-mode:difference;filter:blur(.5px);transition:opacity .35s,filter .35s}
+.item span{white-space:nowrap;margin-left:116px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);color:#fff;mix-blend-mode:difference;filter:blur(.5px);transition:opacity .35s,filter .35s}
 /* deseleccionados: la opacidad va en cada pieza (no en .item) para que el texto conserve el modo "diferencia" y no se vuelva blanco */
 .bloque.filtrando .item:not(.activo) .ic{opacity:.35;filter:blur(1.5px)}
 .bloque.filtrando .item:not(.activo) span{opacity:.35;filter:blur(2.5px)}
 .tam{display:flex;align-items:center;height:26px}
 .tam .circs{position:relative;width:50px;height:26px;flex:none}
 .tam .circs i{position:absolute;border:1.5px solid #9C8889;border-radius:50%;box-sizing:border-box}
-.tam span{white-space:nowrap;margin-left:105px;font-size:17.33px;line-height:20px;color:#fff;mix-blend-mode:difference;filter:blur(.5px)}
+.tam span{white-space:nowrap;margin-left:105px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);color:#fff;mix-blend-mode:difference;filter:blur(.5px)}
 
 /* lista */
-#listaCab{left:1438px;top:284px;width:442px;display:flex;font-size:14.67px;line-height:17px}
+#listaCab{left:1438px;top:284px;width:442px;display:flex;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
 #listaCab span{color:#fff;mix-blend-mode:difference;opacity:.7}
 #listaCab span:first-child{width:155px}
 /* la caja es más grande que la zona de lectura (80 px de aire arriba, 40 a cada costado) para que el desenfoque no se corte */
@@ -98,8 +110,8 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #lista::-webkit-scrollbar{display:none}
 #lista .pad{height:240px}
 .fila{display:flex;align-items:center;height:24px;cursor:pointer;color:#fff;mix-blend-mode:difference;text-transform:uppercase}
-.fila .c{width:100px;margin-right:55px;font-size:14.667px;line-height:18px}
-.fila .n{flex:1;display:flex;justify-content:space-between;align-items:center;padding-right:1px;font-size:17px;line-height:24px}
+.fila .c{width:100px;margin-right:55px;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
+.fila .n{flex:1;display:flex;justify-content:space-between;align-items:center;padding-right:1px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo)}
 .fila .n svg{display:none}
 .fila.sel{font-weight:700}
 .fila.sel .n svg{display:block}
@@ -114,13 +126,13 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 
 /* títulos inferiores */
 #navegacionVistas{position:absolute;left:0;top:940px;width:1000px;height:140px;overflow:hidden;pointer-events:none}
-#titulo{left:40px;top:33px;font-size:72px;line-height:72px;filter:blur(3px)}
+#titulo{left:40px;top:33px;font-size:var(--t-display);line-height:var(--l-display);filter:blur(3px)}
 #navegacionVistas [role="button"],.copiaVista{font-weight:400;white-space:nowrap;mix-blend-mode:difference;color:#fff}
-#navegacionVistas [role="button"]{cursor:pointer;pointer-events:auto;min-height:44px}
+#navegacionVistas [role="button"]{cursor:pointer;pointer-events:auto;min-height:var(--area-tactil)}
 .copiaVista{pointer-events:none}
-#seccion{left:39px;top:134px;font-size:14.67px;line-height:20px;color:#fff;mix-blend-mode:difference;filter:blur(.5px);pointer-events:none}
+#seccion{left:39px;top:134px;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#fff;mix-blend-mode:difference;filter:blur(.5px);pointer-events:none}
 #seccion span{margin-right:13px}
-.vista{top:73px;font-size:24px;line-height:24px;filter:blur(2.5px);cursor:pointer}
+.vista{top:73px;font-size:var(--t-sub);line-height:var(--l-sub);filter:blur(2.5px);cursor:pointer}
 
 /* ───── Cartel abierto ─────
    El vidrio de los carteles (backdrop-filter) no puede desenfocar lo que está en modo "diferencia": el navegador lo dibuja aparte.
@@ -173,32 +185,32 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .cartel .grano{position:absolute;inset:0;border-radius:24px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 320 320'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3' intercept='-1'/%3E%3CfeFuncG type='linear' slope='3' intercept='-1'/%3E%3CfeFuncB type='linear' slope='3' intercept='-1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/160px 160px;opacity:var(--cartel-noise-opacity);mix-blend-mode:soft-light;-webkit-mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent),linear-gradient(180deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);-webkit-mask-composite:source-in;mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent),linear-gradient(180deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);mask-composite:intersect;pointer-events:none}
 .cartel .co{position:relative;color:#13151b}
 .cabCartel{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:40px}
-:is(#ficha,.cartel-glosario,.cartel-especie) .nom{font-size:32px;line-height:1.12;text-transform:uppercase;filter:blur(.75px);min-width:0;overflow-wrap:anywhere}
-:is(#ficha,.cartel-glosario,.cartel-especie) .cod{font-weight:400;font-size:14.667px;line-height:18px;white-space:nowrap;text-align:right;filter:blur(.5px);padding-top:3px}
+:is(#ficha,.cartel-glosario,.cartel-especie) .nom{font-size:var(--t-titulo);line-height:var(--l-titulo);text-transform:uppercase;filter:blur(.75px);min-width:0;overflow-wrap:anywhere}
+:is(#ficha,.cartel-glosario,.cartel-especie) .cod{font-weight:400;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);white-space:nowrap;text-align:right;filter:blur(.5px);padding-top:3px}
 .reglaCartel{position:relative;height:1px;margin-bottom:14px}
 .reglaCartel::before{content:"";position:absolute;left:-2px;top:-3px;width:358px;height:5px;background:linear-gradient(90deg,#7d3b3b,#9a7448 24%,#4f7a3a 62%,#7d3b3b 85%);-webkit-mask:url('__CARTEL_LINEA__') center/358px 5px no-repeat;mask:url('__CARTEL_LINEA__') center/358px 5px no-repeat}
-:is(#ficha,.cartel-glosario,.cartel-especie) dl{margin:0;display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:12px;row-gap:14px;line-height:24px}
-:is(#ficha,.cartel-glosario,.cartel-especie) dt{font-size:14.667px;text-transform:uppercase;opacity:.6}
-:is(#ficha,.cartel-glosario,.cartel-especie) dd{margin:0;font-size:17px;overflow-wrap:anywhere}
-:is(#ficha,.cartel-glosario,.cartel-especie) dd small{display:block;font-size:17px;line-height:24px;opacity:.6;margin-top:2px}
+:is(#ficha,.cartel-glosario,.cartel-especie) dl{margin:0;display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:12px;row-gap:14px;line-height:var(--l-cuerpo)}
+:is(#ficha,.cartel-glosario,.cartel-especie) dt{font-size:var(--t-etiqueta);text-transform:uppercase;opacity:.6}
+:is(#ficha,.cartel-glosario,.cartel-especie) dd{margin:0;font-size:var(--t-cuerpo);overflow-wrap:anywhere}
+:is(#ficha,.cartel-glosario,.cartel-especie) dd small{display:block;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);opacity:.6;margin-top:2px}
 .grupoCartel{display:flex;align-items:flex-start;gap:8px}
 :is(#ficha,.cartel-glosario,.cartel-especie) dd.valorGrupo{mix-blend-mode:normal}
 
 .coloresCartel{display:flex;align-items:center;gap:4px;flex:none;height:24px;mix-blend-mode:normal}
 .coloresCartel i{display:block;width:10px;height:10px;border-radius:50%}
-.masCartel{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:44px;margin-top:14px;padding:0;background:none;border:0;color:inherit;font:700 14.667px/18.333px Arimo,Arial,sans-serif;text-transform:uppercase;cursor:pointer}
+.masCartel{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:var(--area-tactil);margin-top:14px;padding:0;background:none;border:0;color:inherit;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;text-transform:uppercase;cursor:pointer}
 .masCartel img{transform:rotate(-45deg);flex:none;filter:brightness(0);opacity:.92}
 .masCartel:focus-visible,:is(#ficha,.cartel-glosario,.cartel-especie) .x:focus-visible{outline:0;background:rgba(146,170,104,.25);border-radius:8px}
 .detalleCartel{margin-top:16px;border-top:1px solid rgba(100,110,90,.2)}
-.especieDetalle{padding-top:16px;font-size:15px;line-height:22px}
-.especieDetalle h3{font-size:17px;font-weight:400;margin:0 0 8px}
+.especieDetalle{padding-top:16px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo)}
+.especieDetalle h3{font-size:var(--t-cuerpo);font-weight:400;margin:0 0 8px}
 .especieDetalle p{margin:8px 0;opacity:.75}
-.especieDetalle b{display:block;font-size:12px;text-transform:uppercase;font-weight:400;opacity:.7}
+.especieDetalle b{display:block;font-size:var(--t-etiqueta);text-transform:uppercase;font-weight:400;opacity:.7}
 :is(#ficha,.cartel-glosario,.cartel-especie) .x{display:none;position:absolute;right:-14px;top:-14px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(242,240,232,.85);padding:0;cursor:pointer;color:#344035;font:400 22px/44px 'Arimo',Arial,sans-serif;text-align:center}
 @keyframes flota{0%,100%{transform:translate(0,0)}33%{transform:translate(2px,-5px)}66%{transform:translate(-2px,3px)}}
 
 /* aviso */
-#aviso{position:absolute;width:300px;opacity:1;visibility:hidden;transition:visibility .35s;color:#1f2422;font-size:15px;line-height:21px;z-index:7}
+#aviso{position:absolute;width:300px;opacity:1;visibility:hidden;transition:visibility .35s;color:#1f2422;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);z-index:7}
 #aviso.vis{visibility:visible}
 #aviso>.vidrio,#aviso>.fondoCartel,#aviso>.grano,#aviso>.fi{opacity:0;transition:opacity .35s}
 #aviso.vis>.vidrio,#aviso.vis>.fondoCartel,#aviso.vis>.fi{opacity:1}
@@ -239,7 +251,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .apertura-tinte.tinte-a{left:-1190px;top:-1190px}.apertura-tinte.tinte-b{left:817px;top:878px}
 .apertura-marca{position:absolute;left:calc(50% - 186.6715px);top:calc(50% + 72px);width:373.343px;height:85.148px;filter:blur(2px);opacity:var(--salida-apertura)}
 .apertura-marca img{position:absolute;left:-.44%;top:-1.92%;width:100.88%;height:103.85%;filter:brightness(0)}
-.apertura-invitacion{position:absolute;left:50%;bottom:77px;transform:translateX(-50%);font:400 24px/24px Arimo,Arial,sans-serif;white-space:nowrap;color:#0d0f17;filter:blur(1.5px);opacity:var(--salida-apertura)}
+.apertura-invitacion{position:absolute;left:50%;bottom:77px;transform:translateX(-50%);font:400 var(--t-sub)/var(--l-sub) Arimo,Arial,sans-serif;white-space:nowrap;color:#0d0f17;filter:blur(1.5px);opacity:var(--salida-apertura)}
 #aperturaPalabra{position:absolute;left:calc(50% - 850px);top:calc(50% - 599px);width:1700px;height:1134px;mix-blend-mode:darken;pointer-events:none}
 .apertura-lista #aperturaPalabra{display:none}
 .apertura-particula{position:absolute;left:0;top:0;pointer-events:none;mix-blend-mode:darken}

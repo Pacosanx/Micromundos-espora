@@ -22,16 +22,16 @@
 }
 .ficha-galeria__encabezado { position: relative; min-height: 72px; }
 .ficha-galeria__origen {
-  margin: 0; overflow: hidden; color: #0d0f17; font: 400 32px/1.12 Arimo, Arial, sans-serif;
+  margin: 0; overflow: hidden; color: #0d0f17; font: 400 var(--t-titulo)/var(--l-titulo) Arimo, Arial, sans-serif;
   text-overflow: ellipsis; white-space: nowrap; padding-right:100px;
 }
-.ficha-galeria__codigo { position: absolute; top: 0; right: 0; margin: 0; color: #0d0f17; font: 400 14px/20px Arimo, Arial, sans-serif; }
+.ficha-galeria__codigo { position: absolute; top: 0; right: 0; margin: 0; color: #0d0f17; font: 400 var(--t-etiqueta)/var(--l-etiqueta) Arimo, Arial, sans-serif; }
 .ficha-galeria__marco { display: grid; flex: 0 0 354px; width: 354px; height: 354px; place-items: center; overflow: hidden; background: transparent; }
 .ficha-galeria__canvas { display: block; width: 354px; height: 354px; }
-.ficha-galeria__grupo { display: flex; justify-content: space-between; gap: 12px; margin: 14px 0 0; color: #0d0f17; font: 400 14px/20px Arimo, Arial, sans-serif; }
+.ficha-galeria__grupo { display: flex; justify-content: space-between; gap: 12px; margin: 14px 0 0; color: #0d0f17; font: 400 var(--t-etiqueta)/var(--l-etiqueta) Arimo, Arial, sans-serif; }
 .ficha-galeria__grupo span:first-child, .ficha-galeria__comparte { letter-spacing: .08em; }
 .ficha-galeria__especies { min-height: 42px; margin-top: 8px; color: #0d0f17; }
-.ficha-galeria__especies p { margin: 0; font: italic 400 17px/21px Arimo, Arial, sans-serif; }
-.ficha-galeria__comparte { display: block; margin-bottom: 2px; font: 400 11px/14px Arimo, Arial, sans-serif; }
-.ficha-galeria__cta { align-self: flex-start; margin: auto 0 0; padding: 8px 0; border: 0; background: transparent; color: #0d0f17; cursor: pointer; font: 600 14px/20px Arimo, Arial, sans-serif; letter-spacing: .05em; }
+.ficha-galeria__especies p { margin: 0; font: italic 400 var(--t-cuerpo)/var(--l-cuerpo) Arimo, Arial, sans-serif; }
+.ficha-galeria__comparte { display: block; margin-bottom: 2px; font: 400 var(--t-etiqueta)/var(--l-etiqueta) Arimo, Arial, sans-serif; }
+.ficha-galeria__cta { align-self: flex-start; margin: auto 0 0; padding: 14px 0; border: 0; background: transparent; color: #0d0f17; cursor: pointer; font: 700 var(--t-boton)/var(--l-boton) Arimo, Arial, sans-serif; letter-spacing: .05em; }
 .ficha-galeria__cta:focus-visible { background: rgb(255 255 255 / 35%); outline: 2px solid #0d0f17; outline-offset: 3px; }
