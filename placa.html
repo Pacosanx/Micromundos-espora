@@ -46189,7 +46189,7 @@ function adaptarMargenesDetalle(raiz){
       const x=longitudDetalle(estilo.left||''),w=longitudDetalle(estilo.width||'');
       const marcoCompleto=marcoAmplio&&pos==='absolute'&&x===0&&w===1920&&el.tagName!=='IMG';
       if(marcoCompleto)estilo.width='100%';
-      else if(marcoAmplio&&pos==='absolute'&&!contenido&&x!==null){
+      else if(marcoAmplio&&pos==='absolute'&&!contenido&&x!==null&&!el.dataset.anclaCentro){
         if(x>=0&&x<=40&&w>=1800){estilo.right='40px';estilo.width='auto';}
         else if(x>=1434)estilo.left=`calc(100% - ${(1920-x).toFixed(3)}px)`;
         else if(x>=320||(el.dataset.name||'').startsWith('Colonia ·')){
@@ -46533,8 +46533,18 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     }
     // Cada etapa centra sus textos (número, nombre, tiempo) sobre su guía vertical.
     for(const et of raiz.querySelectorAll('[data-name^="Etapa"]')){
-      const guia=et.querySelector(':scope > [data-name="guía al tiempo"]');if(!guia)continue;
-      for(const t of et.children){if(t.dataset.name||!t.textContent.trim())continue;t.style.left=guia.style.left;t.style.translate='-50% 0';t.style.textAlign='center';}
+      // En Figma la última guía iba anclada al borde derecho y el resto al centro: en ventanas más anchas que 1920 se separaban.
+      // Todo el eje de la etapa (guía, marca y textos) se ancla al centro del círculo de la etapa.
+      const guia=et.querySelector(':scope > [data-name="guía al tiempo"]'),circulo=et.querySelector(':scope > [data-name^="Colonias"],:scope > [data-name="placa · agar"]');
+      if(!guia||!circulo)continue;
+      // El círculo puede traer su posición en px (marco de 1920) o ya como calc(50% ± Npx).
+      const crudo=circulo.style.left,m=crudo.match(/^calc\(\s*50%\s*([+-])\s*([\d.]+)px\s*\)$/),ancho=parseFloat(circulo.style.width);
+      const desde=m?(m[1]==='-'?-1:1)*parseFloat(m[2]):parseFloat(crudo)-960;
+      if(!Number.isFinite(desde)||!Number.isFinite(ancho))continue;
+      const centro='calc(50% + '+(desde+ancho/2)+'px)';
+      guia.style.left=centro;guia.dataset.anclaCentro='1';
+      const marca=et.querySelector(':scope > [data-name="marca"]');if(marca){marca.style.left='calc('+centro+' - 3.5px)';marca.dataset.anclaCentro='1';}
+      for(const t of et.children){if(t.dataset.name||!t.textContent.trim())continue;t.style.left=centro;t.style.translate='-50% 0';t.style.textAlign='center';t.dataset.anclaCentro='1';}
     }
     const ejeTiempo=raiz.querySelector('[data-name="eje · tiempo"]');
     if(ejeTiempo&&/^tiempo$/i.test(ejeTiempo.nextElementSibling?.textContent.trim()||''))ejeTiempo.nextElementSibling.remove();
