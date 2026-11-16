@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#195;&#173;cono &#194;&#183; Variaci&#195;&#179;n" filter="url(#filter0_f_0_9)">
+<path id="Vector" d="M14.7981 10.9159C14.9285 11.2522 15 11.6177 15 12C15 12.3823 14.9285 12.7478 14.7981 13.0841M13.0841 9.20185C12.7478 9.0715 12.3823 9 12 9C11.6177 9 11.2522 9.0715 10.9159 9.20185M9.20185 10.9159C9.0715 11.2522 9 11.6177 9 12C9 12.3823 9.0715 12.7478 9.20185 13.0841M10.9159 14.7981C11.2522 14.9285 11.6177 15 12 15C12.3823 15 12.7478 14.9285 13.0841 14.7981" stroke-width="1.5" stroke="#212121"/>
+<path id="Vector_2" d="M5 9.5C5.37748 8.15567 6.12274 6.94342 7.15188 5.99972C8.18102 5.05602 9.45317 4.41836 10.8251 4.15853C12.197 3.89869 13.6142 4.027 14.9172 4.52902C16.2201 5.03103 17.3571 5.88681 18.2 7" stroke-width="1.6" stroke-linecap="round" stroke="#212121"/>
+<path id="Vector_3" d="M18.6 3.6V7.4H14.8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke="#212121"/>
+<path id="Vector_4" d="M19 14.5C18.6225 15.8443 17.8773 17.0566 16.8481 18.0003C15.819 18.944 14.5468 19.5816 13.1749 19.8415C11.803 20.1013 10.3858 19.973 9.0828 19.471C7.77985 18.969 6.64291 18.1132 5.8 17" stroke-width="1.6" stroke-linecap="round" stroke="#212121"/>
+<path id="Vector_5" d="M5.4 20.4V16.6H9.2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke="#212121"/>
+</g>
+<defs>
+<filter id="filter0_f_0_9" x="-0.5" y="-0.5" width="25" height="25" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="0.25" result="effect1_foregroundBlur_0_9"/>
+</filter>
+</defs>
+</svg>

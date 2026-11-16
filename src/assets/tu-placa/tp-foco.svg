@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#195;&#173;cono &#194;&#183; Foco" filter="url(#filter0_f_0_18)">
+<path id="Vector" opacity="0.6" d="M20.419 8.51197C20.4723 8.83341 20.5 9.16347 20.5 9.5C20.5 9.83653 20.4723 10.1666 20.419 10.488M19.3835 6.01331C18.998 5.4744 18.5256 5.00196 17.9867 4.6165M15.488 3.58096C15.1666 3.52771 14.8365 3.5 14.5 3.5C14.1635 3.5 13.8334 3.52771 13.512 3.58096M11.0133 4.6165C10.4744 5.00196 10.002 5.4744 9.6165 6.01331M8.58096 8.51197C8.52771 8.83341 8.5 9.16347 8.5 9.5C8.5 9.83653 8.52771 10.1666 8.58096 10.488M9.6165 12.9867C10.002 13.5256 10.4744 13.998 11.0133 14.3835M13.512 15.419C13.8334 15.4723 14.1635 15.5 14.5 15.5C14.8365 15.5 15.1666 15.4723 15.488 15.419M17.9867 14.3835C18.5256 13.998 18.998 13.5256 19.3835 12.9867" stroke-width="1.4" stroke="#212121"/>
+<path id="Vector_2" d="M15.5 14.5C15.5 17.8137 12.8137 20.5 9.5 20.5C6.18629 20.5 3.5 17.8137 3.5 14.5C3.5 11.1863 6.18629 8.5 9.5 8.5C12.8137 8.5 15.5 11.1863 15.5 14.5Z" stroke-width="1.6" stroke="#212121"/>
+</g>
+<defs>
+<filter id="filter0_f_0_18" x="-0.5" y="-0.5" width="25" height="25" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="0.25" result="effect1_foregroundBlur_0_18"/>
+</filter>
+</defs>
+</svg>

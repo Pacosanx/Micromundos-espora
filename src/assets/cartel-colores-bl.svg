@@ -1,0 +1,25 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="10" viewBox="0 0 24 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Colores" clip-path="url(#clip0_0_5)">
+<g id="Ellipse" filter="url(#filter0_f_0_5)">
+<circle cx="5" cy="5" r="5" fill="#E67DAB"/>
+</g>
+<g id="Ellipse_2" filter="url(#filter1_f_0_5)">
+<circle cx="19" cy="5" r="5" fill="#F2C75E"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_0_5" x="-1" y="-1" width="12" height="12" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="0.5" result="effect1_foregroundBlur_0_5"/>
+</filter>
+<filter id="filter1_f_0_5" x="13" y="-1" width="12" height="12" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="0.5" result="effect1_foregroundBlur_0_5"/>
+</filter>
+<clipPath id="clip0_0_5">
+<rect width="24" height="10" fill="white"/>
+</clipPath>
+</defs>
+</svg>

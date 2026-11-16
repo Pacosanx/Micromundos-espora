@@ -1,0 +1,4100 @@
+/* 01 · Colonias · PLACA */
+
+position: relative;
+width: 1920px;
+height: 1100px;
+
+background: #F2F0E8;
+filter: blur(0.5px);
+border-radius: 48px;
+
+
+/* Ellipse 4 */
+
+position: absolute;
+width: 837px;
+height: 837px;
+left: 373.96px;
+top: -620.04px;
+
+border: 1px dashed #FFA600;
+filter: blur(3px);
+transform: rotate(-146.7deg);
+
+
+/* Ellipse 4 */
+
+position: absolute;
+width: 1248px;
+height: 1248px;
+left: -387.23px;
+top: 80.77px;
+
+border: 1px dashed #92AA68;
+filter: blur(3px);
+transform: rotate(19.61deg);
+
+
+/* Ellipse 4 */
+
+position: absolute;
+width: 1248px;
+height: 1248px;
+left: 1033px;
+top: 131px;
+
+border: 1px dashed #DD82AB;
+filter: blur(3px);
+
+
+/* Ellipse 3 */
+
+position: absolute;
+width: 2380px;
+height: 2380px;
+left: -1190px;
+top: -1190px;
+
+background: radial-gradient(50% 50% at 50% 50%, #08221E 18.75%, rgba(24, 10, 77, 0) 100%);
+mix-blend-mode: difference;
+
+
+/* Ellipse 5 */
+
+position: absolute;
+width: 2380px;
+height: 2380px;
+left: 817px;
+top: 878px;
+
+background: radial-gradient(50% 50% at 50% 50%, #08221E 18.75%, rgba(24, 10, 77, 0) 100%);
+mix-blend-mode: difference;
+
+
+/* colonias-piece-1794444175993 1 */
+
+position: absolute;
+visibility: hidden;
+width: 40px;
+height: 40px;
+left: 40px;
+top: 53px;
+
+background: url(colonias-piece-1794444175993.png);
+
+
+/* Frame 293 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 32px;
+
+position: absolute;
+width: 281px;
+height: 553px;
+left: 39px;
+top: 284px;
+
+
+
+/* Frame 289 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 24px;
+
+width: 281px;
+height: 185px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* rótulo FORMA */
+
+width: 281px;
+height: 17px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.67px;
+line-height: 17px;
+/* identical to box height */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.7;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 273 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 281px;
+height: 144px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 265 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 116px;
+
+width: 281px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* bacterias_16_disco 1 */
+
+width: 40px;
+height: 40px;
+
+background: url(bacterias_16_disco.png);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Bacterias */
+
+width: 125px;
+height: 30px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17.3333px;
+line-height: 29px;
+/* identical to box height, or 170% */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 268 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 116px;
+
+width: 281px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* mohos_28_zonada 1 */
+
+width: 40px;
+height: 40px;
+
+background: url(mohos_28_zonada.png);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Mohos */
+
+width: 125px;
+height: 30px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17.3333px;
+line-height: 29px;
+/* identical to box height, or 170% */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 269 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 116px;
+
+width: 281px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* levaduras_29_lisa 1 */
+
+width: 40px;
+height: 40px;
+
+background: url(levaduras_29_lisa.png);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Levaduras */
+
+width: 125px;
+height: 30px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17.3333px;
+line-height: 29px;
+/* identical to box height, or 170% */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 290 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 24px;
+
+width: 281px;
+height: 237px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* rótulo FORMA */
+
+width: 281px;
+height: 17px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.67px;
+line-height: 17px;
+/* identical to box height */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.7;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 275 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 281px;
+height: 196px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 265 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 125.5px;
+
+width: 281px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 288 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 30px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Activa 1 */
+
+width: 40px;
+height: 40px;
+
+background: url(Activa.png);
+mix-blend-mode: darken;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Activa */
+
+width: 48px;
+height: 30px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17.3333px;
+line-height: 29px;
+/* identical to box height, or 170% */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 268 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 126px;
+
+width: 281px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 286 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 30px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* En conservación 1 */
+
+width: 40px;
+height: 40px;
+
+background: url(En conservación.png);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* En conservación */
+
+width: 129px;
+height: 30px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17.3333px;
+line-height: 29px;
+/* identical to box height, or 170% */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 269 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 126px;
+
+width: 281px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 287 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 30px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Montada 2 */
+
+width: 40px;
+height: 40px;
+
+background: url(Montada.png);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Montada */
+
+width: 68px;
+height: 30px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17.3333px;
+line-height: 29px;
+/* identical to box height, or 170% */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 270 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 126px;
+
+width: 281px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 287 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 30px;
+height: 40px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Registro digital 1 */
+
+width: 40px;
+height: 40px;
+
+background: url(Registro digital.png);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Registro digital */
+
+width: 115px;
+height: 30px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17.3333px;
+line-height: 29px;
+/* identical to box height, or 170% */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 292 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 24px;
+
+width: 281px;
+height: 67px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* TAMAÑO */
+
+width: 281px;
+height: 17px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.67px;
+line-height: 17px;
+/* identical to box height */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.7;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 291 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 105px;
+
+width: 281px;
+height: 26px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Group 27 */
+
+width: 50px;
+height: 26px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* tamaño chico */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 10px;
+height: 10px;
+left: 0px;
+top: 8px;
+
+border: 1.5px solid #9C8889;
+
+
+/* tamaño grande */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 26px;
+height: 26px;
+left: 24px;
+top: 0px;
+
+border: 1.5px solid #9C8889;
+
+
+/* leyenda tamaño */
+
+width: 137px;
+height: 20px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17.33px;
+line-height: 20px;
+/* identical to box height */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(0.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Group 28 */
+
+position: absolute;
+width: 848.5px;
+height: 817px;
+left: 452px;
+top: 131px;
+
+
+
+/* Placa de petri - colonias microbianas 1 */
+
+position: absolute;
+width: 817px;
+height: 817px;
+left: calc(50% - 817px/2 - 99.5px);
+top: calc(50% - 817px/2 - 10.5px);
+
+background: url(Placa de petri - colonias microbianas.png);
+mix-blend-mode: darken;
+border-radius: 518.5px;
+
+
+/* Años */
+
+position: absolute;
+width: 721px;
+height: 721px;
+left: 500px;
+top: 179px;
+
+
+
+/* Group 20 */
+
+position: absolute;
+width: 721px;
+height: 721px;
+left: 500px;
+top: 179px;
+
+
+
+/* Group 14 */
+
+position: absolute;
+width: 121px;
+height: 121px;
+left: 800px;
+top: 479px;
+
+
+
+/* anillo de fecha MAR 2026 */
+
+position: absolute;
+width: 121px;
+height: 121px;
+left: 800px;
+top: 479px;
+
+opacity: 0.6;
+border: 3px dashed #FFFFFF;
+filter: blur(10px);
+
+
+/* anillo de fecha MAR 2032 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 121px;
+height: 121px;
+left: 800px;
+top: 479px;
+
+mix-blend-mode: difference;
+opacity: 0.6;
+border: 0.5px dashed #FFFFFF;
+
+
+/* Group 15 */
+
+position: absolute;
+width: 241px;
+height: 241px;
+left: 740px;
+top: 419px;
+
+
+
+/* anillo de fecha MAR 2027 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 241px;
+height: 241px;
+left: 740px;
+top: 419px;
+
+opacity: 0.6;
+border: 3px dashed #FFFFFF;
+filter: blur(10px);
+
+
+/* anillo de fecha MAR 2028 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 241px;
+height: 241px;
+left: 740px;
+top: 419px;
+
+mix-blend-mode: difference;
+opacity: 0.6;
+border: 0.5px dashed #FFFFFF;
+
+
+/* Group 16 */
+
+position: absolute;
+width: 361px;
+height: 361px;
+left: 680px;
+top: 359px;
+
+
+
+/* anillo de fecha MAR 2029 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 361px;
+height: 361px;
+left: 680px;
+top: 359px;
+
+opacity: 0.6;
+border: 3px dashed #FFFFFF;
+filter: blur(10px);
+
+
+/* anillo de fecha MAR 2028 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 361px;
+height: 361px;
+left: 680px;
+top: 359px;
+
+mix-blend-mode: difference;
+opacity: 0.6;
+border: 0.5px dashed #FFFFFF;
+
+
+/* Group 17 */
+
+position: absolute;
+width: 481px;
+height: 481px;
+left: 620px;
+top: 299px;
+
+
+
+/* anillo de fecha MAR 2030 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 481px;
+height: 481px;
+left: 620px;
+top: 299px;
+
+opacity: 0.6;
+border: 3px dashed #FFFFFF;
+filter: blur(10px);
+
+
+/* anillo de fecha MAR 2029 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 481px;
+height: 481px;
+left: 620px;
+top: 299px;
+
+mix-blend-mode: difference;
+opacity: 0.6;
+border: 0.5px dashed #FFFFFF;
+
+
+/* Group 18 */
+
+position: absolute;
+width: 601px;
+height: 601px;
+left: 560px;
+top: 239px;
+
+
+
+/* anillo de fecha MAR 2031 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 601px;
+height: 601px;
+left: 560px;
+top: 239px;
+
+opacity: 0.6;
+border: 3px dashed #FFFFFF;
+filter: blur(10px);
+
+
+/* anillo de fecha MAR 2030 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 601px;
+height: 601px;
+left: 560px;
+top: 239px;
+
+mix-blend-mode: difference;
+opacity: 0.6;
+border: 0.5px dashed #FFFFFF;
+
+
+/* Group 19 */
+
+position: absolute;
+width: 721px;
+height: 721px;
+left: 500px;
+top: 179px;
+
+
+
+/* anillo de fecha MAR 2032 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 721px;
+height: 721px;
+left: 500px;
+top: 179px;
+
+opacity: 0.6;
+border: 3px dashed #FFFFFF;
+filter: blur(10px);
+
+
+/* anillo de fecha MAR 2031 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 721px;
+height: 721px;
+left: 500px;
+top: 179px;
+
+mix-blend-mode: difference;
+opacity: 0.6;
+border: 0.5px dashed #FFFFFF;
+
+
+/* Group 13 */
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 881px;
+top: 489px;
+
+
+
+/* popup nivel 4 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 881px;
+top: 489px;
+
+background: rgba(255, 255, 255, 0.8);
+filter: blur(5px);
+backdrop-filter: blur(5.45px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 24px;
+
+
+/* fecha SEP 2026 */
+
+position: absolute;
+width: 27px;
+height: 14px;
+left: 891px;
+top: 492px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 14px;
+/* identical to box height */
+text-align: center;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.8;
+
+
+/* Group 21 */
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 924px;
+top: 446px;
+
+
+
+/* popup nivel 4 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 924px;
+top: 446px;
+
+background: rgba(255, 255, 255, 0.8);
+filter: blur(5px);
+backdrop-filter: blur(5.45px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 24px;
+
+
+/* fecha SEP 2026 */
+
+position: absolute;
+width: 27px;
+height: 14px;
+left: 934px;
+top: 449px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 14px;
+/* identical to box height */
+text-align: center;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.8;
+
+
+/* Group 22 */
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 967px;
+top: 403px;
+
+
+
+/* popup nivel 4 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 967px;
+top: 403px;
+
+background: rgba(255, 255, 255, 0.8);
+filter: blur(5px);
+backdrop-filter: blur(5.45px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 24px;
+
+
+/* fecha SEP 2026 */
+
+position: absolute;
+width: 27px;
+height: 14px;
+left: 977px;
+top: 406px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 14px;
+/* identical to box height */
+text-align: center;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.8;
+
+
+/* Group 23 */
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 1010px;
+top: 360px;
+
+
+
+/* popup nivel 4 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 1010px;
+top: 360px;
+
+background: rgba(255, 255, 255, 0.8);
+filter: blur(5px);
+backdrop-filter: blur(5.45px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 24px;
+
+
+/* fecha SEP 2026 */
+
+position: absolute;
+width: 27px;
+height: 14px;
+left: 1020px;
+top: 363px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 14px;
+/* identical to box height */
+text-align: center;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.8;
+
+
+/* Group 24 */
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 1053px;
+top: 317px;
+
+
+
+/* popup nivel 4 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 1053px;
+top: 317px;
+
+background: rgba(255, 255, 255, 0.8);
+filter: blur(5px);
+backdrop-filter: blur(5.45px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 24px;
+
+
+/* fecha SEP 2026 */
+
+position: absolute;
+width: 27px;
+height: 14px;
+left: 1063px;
+top: 320px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 14px;
+/* identical to box height */
+text-align: center;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.8;
+
+
+/* Group 25 */
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 1096px;
+top: 274px;
+
+
+
+/* popup nivel 4 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 47px;
+height: 20px;
+left: 1096px;
+top: 274px;
+
+background: rgba(255, 255, 255, 0.8);
+filter: blur(5px);
+backdrop-filter: blur(5.45px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 24px;
+
+
+/* fecha SEP 2026 */
+
+position: absolute;
+width: 27px;
+height: 14px;
+left: 1106px;
+top: 277px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 14px;
+/* identical to box height */
+text-align: center;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.8;
+
+
+/* Group 26 */
+
+position: absolute;
+width: 104.5px;
+height: 558.07px;
+left: 1196px;
+top: 259px;
+
+
+
+/* anillo de fecha MAR 2031 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 79.5px;
+height: 504.99px;
+left: 1221px;
+top: 287.01px;
+
+mix-blend-mode: difference;
+border: 2px solid #FFFFFF;
+
+
+/* - */
+
+position: absolute;
+width: 8px;
+height: 28px;
+left: 1203px;
+top: 789px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 28px;
+/* identical to box height */
+text-align: center;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+transform: rotate(31.35deg);
+
+
+/* + */
+
+position: absolute;
+width: 15px;
+height: 28px;
+left: 1196px;
+top: 259px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 28px;
+/* identical to box height */
+text-align: center;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+transform: rotate(137.6deg);
+
+
+/* Frame 317 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+position: absolute;
+width: 203px;
+height: 20px;
+left: 1677px;
+top: 134px;
+
+mix-blend-mode: difference;
+filter: blur(0.5px);
+
+
+/* search */
+
+width: 20px;
+height: 20px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+width: 20px;
+height: 20px;
+left: 0px;
+top: 0px;
+
+background: #D9D9D9;
+
+
+/* search */
+
+position: absolute;
+left: 1.48%;
+right: 91.77%;
+top: 15%;
+bottom: 16.56%;
+
+background: #FFFFFF;
+
+
+/* buscador placeholder */
+
+width: 173px;
+height: 20px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17.33px;
+line-height: 20px;
+/* identical to box height */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 318 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 24px;
+
+position: absolute;
+width: 442px;
+height: 815px;
+left: 1438px;
+top: 284px;
+
+
+
+/* Frame 315 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 73px;
+
+width: 213px;
+height: 17px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* rótulo MUESTRAS */
+
+width: 60px;
+height: 17px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.67px;
+line-height: 17px;
+/* identical to box height */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.7;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* rótulo ORIGEN */
+
+width: 58px;
+height: 17px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.67px;
+line-height: 17px;
+/* identical to box height */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+opacity: 0.7;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 314 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 442px;
+height: 893px;
+
+mix-blend-mode: difference;
+filter: blur(40px);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 30 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 700;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 149px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 700;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 294 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 156px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 295 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 157px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 5;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 296 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 6;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 114px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 7;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 297 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 8;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 165px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 9;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 298 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 10;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 128px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 11;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 300 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 12;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 155px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 13;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 301 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 14;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 153px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 15;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 302 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 16;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 136px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 17;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 303 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 18;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 194px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 19;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 304 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 20;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 152px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 21;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 305 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 22;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 247px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 23;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 306 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 24;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 178px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 25;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 307 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 26;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 171px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 308 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 27;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 122px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 28;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 309 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 29;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 86px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 30;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 310 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 31;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 160px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 32;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 311 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 33;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 198px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* filete */
+
+width: 442px;
+height: 1px;
+
+background: #FFFFFF;
+mix-blend-mode: difference;
+opacity: 0.4;
+
+/* Inside auto layout */
+flex: none;
+order: 34;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 312 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 55px;
+
+width: 442px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 35;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Código */
+
+width: 100px;
+height: 18px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 14.667px;
+line-height: 18px;
+/* identical to box height, or 123% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 1px 0px 0px;
+gap: 12px;
+
+width: 287px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Nombre */
+
+width: 139px;
+height: 24px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 17px;
+line-height: 24px;
+/* identical to box height, or 141% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Arrow 4 */
+
+box-sizing: border-box;
+
+display: none;
+width: 9.9px;
+height: 0px;
+
+mix-blend-mode: difference;
+border: 1.5px solid #FFFFFF;
+transform: rotate(-45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* PLACA */
+
+position: absolute;
+width: 237px;
+height: 72px;
+left: 40px;
+top: 951px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 72px;
+line-height: 72px;
+/* identical to box height, or 100% */
+display: flex;
+align-items: center;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(3px);
+
+
+/* VÍNCULOS */
+
+position: absolute;
+width: 123px;
+height: 24px;
+left: 1437px;
+top: 991px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 24px;
+/* identical to box height, or 100% */
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(1.5px);
+
+
+/* MUESTRARIO */
+
+position: absolute;
+width: 161px;
+height: 24px;
+left: 1719px;
+top: 991px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 24px;
+/* identical to box height, or 100% */
+text-align: right;
+
+color: #FFFFFF;
+
+mix-blend-mode: difference;
+filter: blur(1.5px);
+
+
+/* Cabecera */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+padding: 0px;
+gap: 30px;
+
+position: absolute;
+width: 1841px;
+height: 54px;
+left: 39px;
+top: 53px;
+
+
+
+/* Frame 281 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 1371px;
+
+width: 1841px;
+height: 22px;
+
+mix-blend-mode: difference;
+filter: blur(1.5px);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* MUESTRAS */
+
+width: 98px;
+height: 22px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 700;
+font-size: 17.3333px;
+line-height: 22px;
+/* identical to box height, or 125% */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 280 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 61px;
+
+width: 287px;
+height: 22px;
+
+mix-blend-mode: difference;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* CONCEPTOS */
+
+width: 110px;
+height: 22px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 700;
+font-size: 17.3333px;
+line-height: 22px;
+/* identical to box height, or 125% */
+text-align: right;
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* COLONIAS */
+
+width: 92px;
+height: 22px;
+
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 700;
+font-size: 17.3333px;
+line-height: 22px;
+/* identical to box height, or 125% */
+text-align: right;
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Rectangle */
+
+width: 1841px;
+height: 2px;
+
+background: linear-gradient(90deg, #5CD238 1.44%, #D8B071 42.31%, #188466 70.67%, #7C5656 98.56%);
+mix-blend-mode: difference;
+filter: blur(3px);
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;

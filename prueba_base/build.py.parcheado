@@ -1,0 +1,65 @@
+import pathlib, csv, json, base64
+base = pathlib.Path(__file__).resolve().parent
+d = base / 'src'
+r = lambda n: (d/n).read_text(encoding='utf-8')
+t = r('plantilla.html')
+t = t.replace('/*ESTILOS_DETALLES*/', r('pantallas-detalle.css'))
+t = t.replace('/*PANTALLAS_DETALLE*/', 'const CELULAS_FICHA = ' + r('ficha-colonias.json') + ';const ENTORNOS_DETALLE = ' + (base/'base'/'entornos.json').read_text(encoding='utf-8-sig') + ';const DISENOS_DETALLE = ' + r('pantallas-detalle.json') + ';\nconst FONDOS_UNIVERSOS = ' + r('fondos-universos.json') + ';\n' + r('fondos-universos.js') + '\n' + r('pantallas-detalle.js') + '\n' + r('tu-placa.js'))
+t = t.replace('/*ESTILOS_GLOSARIO*/', r('glosario.css'))
+t = t.replace('/*APERTURA*/', 'const RECETA_APERTURA = ' + r('apertura-palabra.json') + ';const RECETA_FONDO_APERTURA = ' + r('apertura-fondo.json') + ';\n' + r('apertura.js'))
+t = t.replace('/*LISTADO*/', r('listado.js'))
+t = t.replace('/*MUESTRARIO*/', 'const GUIA_MUESTRARIO = ' + r('muestrario.json') + ';\n' + r('muestrario.js'))
+def filas(nombre):
+    with (base/'base'/nombre).open(encoding='utf-8-sig', newline='') as f:
+        return list(csv.DictReader(f, delimiter=';'))
+especies = {}
+t = t.replace('/*GLOSARIO*/', 'const TERMINOS_GLOSARIO = ' + json.dumps(filas('glosario.csv'), ensure_ascii=False) + ';const VINCULOS_GLOSARIO = ' + json.dumps(filas('glosario_muestras.csv'), ensure_ascii=False) + ';\n' + r('glosario.js'))
+grupos_especies = {}
+for fila in filas('colonias.csv'):
+    especies.setdefault(fila['codigo'], set()).add(fila['especie'])
+    grupos_especies[fila['especie']] = fila['grupo']
+vinculos = {f"{f['receta']}:{f['id']}": {
+    'especies': sorted(especies.get(f['codigo'], set())), 'hallazgo': f['hallazgo']
+} for f in filas('muestras.csv')}
+t = t.replace('/*VINCULOS*/', 'const DATOS_VINCULOS = ' + json.dumps(vinculos, ensure_ascii=False) + ';\nconst GRUPOS_ESPECIES = ' + json.dumps(grupos_especies, ensure_ascii=False) + ';\n' + r('vinculos.js'))
+catalogo = {f['especie']: {k:f[k] for k in ('definicion','donde_esta','que_produce_o_transforma')} for f in filas('especies.csv')}
+t = t.replace('/*CARTELES*/', 'const CATALOGO_ESPECIES = ' + json.dumps(catalogo, ensure_ascii=False) + ';\n' + r('carteles.js'))
+DATOS_MUESTRAS = {f"{f['receta']}:{f['id']}": f for f in filas('muestras.csv')}
+t = (t.replace('/*DATOS*/', r('datos.js') + '\nconst DATOS_MUESTRAS = ' + json.dumps(DATOS_MUESTRAS, ensure_ascii=False) + ';')
+      .replace('/*COLONIAS*/', r('colonias-core.js'))
+      .replace('/*RECETA_A*/', r('receta_A.json'))
+      .replace('/*RECETA_B*/', r('receta_B.json'))
+      .replace('/*APP*/', r('app.js')))
+for marca, archivo, mime in [
+    ('__G_BACTERIA__','glosario-bacteria.png','image/png'),
+    ('__G_LEVADURA__','glosario-levadura.png','image/png'),
+    ('__G_MOHO__','glosario-moho.png','image/png'),
+    ('__G_ESQUINA__','glosario-esquina.png','image/png'),
+    ('__G_CARTEL__','glosario-cartel.png','image/png'),
+    ('__G_VOLVER__','glosario-volver.svg','image/svg+xml'),
+    ('__G_BAJAR__','glosario-bajar.svg','image/svg+xml'),
+    ('__G_ENLACE__','glosario-enlace.svg','image/svg+xml'),
+    ('__G_LINEA__','glosario-linea.svg','image/svg+xml'),
+    ('__TINTE_SUAVE__','fondo-tinte-suave.svg','image/svg+xml'),
+    ('__APERTURA_FONDO__','apertura-fondo.png','image/png'),
+    ('__APERTURA_ARCO_A__','apertura-arco-a.svg','image/svg+xml'),
+    ('__APERTURA_ARCO_B__','apertura-arco-b.svg','image/svg+xml'),
+    ('__APERTURA_ARCO_C__','apertura-arco-c.svg','image/svg+xml'),
+    ('__APERTURA_TINTE__','apertura-tinte.svg','image/svg+xml'),
+    ('__APERTURA_MARCA__','apertura-marca.svg','image/svg+xml'),
+    ('__CARTEL_FONDO__','cartel-colonias.jpg','image/jpeg'),
+    ('__CARTEL_LINEA__','cartel-linea.svg','image/svg+xml'),
+    ('__CARTEL_COLORES__','cartel-colores-bl.svg','image/svg+xml'),
+    ('__CARTEL_FLECHA__','cartel-flecha.svg','image/svg+xml'),
+]:
+    if not (d/'assets'/archivo).is_file():
+        raise FileNotFoundError(d/'assets'/archivo)
+    t = t.replace(marca, 'src/assets/' + archivo)
+for marca, archivo in [
+    ('__MASCARA_CAMPO_SUAVE__', 'mascara-campo-suave.png'),
+    ('__MASCARA_FICHA_TRANSFORMACION__', 'mascara-transformacion.png'),
+]:
+    data = (d/'assets'/'detalles'/archivo).read_bytes()
+    t = t.replace(marca, 'data:image/png;base64,' + base64.b64encode(data).decode('ascii'))
+(base/'placa.html').write_text(t, encoding='utf-8')
+print('placa.html listo', len(t))

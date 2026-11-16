@@ -1,0 +1,38 @@
+universo;entorno;codigo;relacion
+bacterias;Mano;B-048-PDA;cercana
+bacterias;Yogur;B-083-YNA;directa
+bacterias;Yogur;BL-141-CAG;cercana
+bacterias;Yogur;BL-072-KEF;cercana
+bacterias;Tierra de maceta;B-302-SDC;cercana
+bacterias;Agua de charco;B-173-ADC;directa
+bacterias;Agua de charco;B-308-ADF;cercana
+bacterias;Esponja de cocina;B-148-EDC;directa
+levaduras;Pan;BL-187-PDC;directa
+levaduras;Pan;L-239-MDP;cercana
+levaduras;Pan;BL-189-MDE;cercana
+levaduras;Cerveza;L-115-CAR;directa
+levaduras;Cerveza;BL-129-KVA;cercana
+levaduras;Cerveza;L-242-CDM;cercana
+levaduras;Cerveza;BL-163-CHI;cercana
+levaduras;Uvas;L-201-UDM;directa
+levaduras;Uvas;L-199-URO;directa
+levaduras;Uvas;L-204-UCH;directa
+levaduras;Uvas;BL-193-PDU;cercana
+levaduras;Uvas;L-203-MOS;cercana
+levaduras;Uvas;L-112-MDM;cercana
+levaduras;Uvas;L-006-VCA;cercana
+levaduras;Masa madre;BL-298-MMA;directa
+levaduras;Masa madre;BL-187-PDC;cercana
+levaduras;Piel;L-030-MDI;directa
+mohos;Pan viejo;M-054-PCA;directa
+mohos;Pan viejo;M-229-PDM;directa
+mohos;Naranja;M-049-MAN;cercana
+mohos;Naranja;M-061-LIM;cercana
+mohos;Queso azul;M-204-QAZ;directa
+mohos;Tierra de maceta;M-115-HOJ;cercana
+mohos;Tierra de maceta;M-186-HDA;cercana
+mohos;Tierra de maceta;M-296-PAJ;cercana
+mohos;Tierra de maceta;M-260-CDP;cercana
+mohos;Pared húmeda;M-223-PHU;directa
+mohos;Pared húmeda;M-203-CDB;cercana
+mohos;Pared húmeda;M-286-JDA;cercana

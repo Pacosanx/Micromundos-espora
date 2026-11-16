@@ -1,0 +1,221 @@
+{
+  "bacterias": [
+    {
+      "nombre": "Mano",
+      "imagen": "src/assets/detalles/lugar-mano.jfif",
+      "titulo1": "EN LA MANO",
+      "parrafo1": "La piel de las manos alberga comunidades de bacterias. Algunas viven allí habitualmente; otras llegan al tocar objetos, alimentos o personas. Su composición cambia entre zonas y a lo largo del día.",
+      "titulo2": "AL LAVARSE",
+      "parrafo2": "El agua y el jabón ayudan a desprender suciedad y microorganismos. El lavado reduce su cantidad, aunque no vuelve estéril la piel.",
+      "encuadre": {
+        "escala": 0.9578,
+        "x": 0.0213,
+        "y": 0.004
+      }
+    },
+    {
+      "nombre": "Yogur",
+      "imagen": "src/assets/detalles/lugar-yogur.png",
+      "titulo1": "EN EL YOGUR",
+      "parrafo1": "Para elaborar yogur se incorporan bacterias a la leche. Al fermentar la lactosa producen ácido láctico: baja el pH y las proteínas forman la textura espesa característica.",
+      "titulo2": "UNA TRANSFORMACIÓN COMPARTIDA",
+      "parrafo2": "Los cultivos de Streptococcus thermophilus y Lactobacillus delbrueckii subsp. bulgaricus trabajan juntos. El tiempo y la temperatura influyen en la acidez y la textura.",
+      "encuadre": {
+        "escala": 0.9043,
+        "x": 0.0301,
+        "y": -0.0528
+      }
+    },
+    {
+      "nombre": "Tierra de maceta",
+      "imagen": "src/assets/detalles/lugar-tierra.png",
+      "titulo1": "EN LA TIERRA",
+      "parrafo1": "Entre partículas de tierra, raíces y restos vegetales viven comunidades de bacterias. La humedad, el oxígeno y la materia orgánica disponible crean pequeños ambientes distintos dentro de una misma maceta.",
+      "titulo2": "NUTRIENTES EN CIRCULACIÓN",
+      "parrafo2": "Muchas bacterias participan en la descomposición de restos orgánicos. Al transformarlos, contribuyen a liberar nutrientes que vuelven a circular por el suelo y las plantas.",
+      "encuadre": {
+        "escala": 0.8161,
+        "x": 0,
+        "y": -0.0045
+      }
+    },
+    {
+      "nombre": "Agua de charco",
+      "imagen": "src/assets/detalles/lugar-agua.png",
+      "titulo1": "EN EL CHARCO",
+      "parrafo1": "La lluvia arrastra partículas del suelo y microorganismos hasta los charcos. Allí, algunas bacterias encuentran agua y materia orgánica; la comunidad cambia cuando el charco se calienta, se renueva o se seca.",
+      "titulo2": "LO TRANSPARENTE TAMBIÉN TIENE VIDA",
+      "parrafo2": "El aspecto del agua no revela qué bacterias contiene. Para reconocerlas hacen falta observaciones o análisis: un charco transparente también puede albergar una comunidad microscópica diversa.",
+      "encuadre": {
+        "escala": 0.9332,
+        "x": 0.0026,
+        "y": 0
+      }
+    },
+    {
+      "nombre": "Esponja de cocina",
+      "imagen": "src/assets/detalles/lugar-esponja.png",
+      "titulo1": "EN LA ESPONJA",
+      "parrafo1": "Los poros de una esponja retienen humedad y restos de comida. Esa combinación puede favorecer comunidades de bacterias que se distribuyen por su interior y llegan desde las superficies que limpiamos.",
+      "titulo2": "DE UNA SUPERFICIE A OTRA",
+      "parrafo2": "Una esponja también puede trasladar microorganismos entre objetos. La humedad persistente favorece su permanencia; dejarla secar cambia las condiciones de ese pequeño ambiente.",
+      "encuadre": {
+        "escala": 0.9885,
+        "x": 0.011,
+        "y": -0.0055
+      }
+    }
+  ],
+  "levaduras": [
+    {
+      "nombre": "Pan",
+      "imagen": "src/assets/detalles/lugar-pan.png",
+      "titulo1": "EN LA MASA DEL PAN",
+      "parrafo1": "Las levaduras fermentan azúcares de la masa y liberan dióxido de carbono. El gas queda atrapado en su estructura y forma burbujas que hacen aumentar el volumen durante el levado.",
+      "titulo2": "DEL LEVADO A LA MIGA",
+      "parrafo2": "Al hornearse, la estructura se fija y conserva los huecos de las burbujas. El calor inactiva las levaduras; la miga guarda las huellas de su actividad.",
+      "encuadre": {
+        "escala": 0.8817,
+        "x": 0.0098,
+        "y": -0.0012
+      }
+    },
+    {
+      "nombre": "Cerveza",
+      "imagen": "src/assets/detalles/lugar-cerveza.png",
+      "titulo1": "EN LA CERVEZA",
+      "parrafo1": "Durante la elaboración, las levaduras fermentan los azúcares del mosto y producen alcohol y dióxido de carbono. También generan compuestos que contribuyen a los aromas de la bebida.",
+      "titulo2": "DISTINTAS FERMENTACIONES",
+      "parrafo2": "La cepa utilizada, la temperatura y el tiempo influyen en el resultado. Por eso distintas levaduras pueden transformar un mosto parecido en cervezas con perfiles diferentes.",
+      "encuadre": {
+        "escala": 0.8538,
+        "x": 0.0012,
+        "y": -0.0107
+      }
+    },
+    {
+      "nombre": "Uvas",
+      "imagen": "src/assets/detalles/lugar-uvas.png",
+      "titulo1": "SOBRE LAS UVAS",
+      "parrafo1": "La superficie de las uvas puede albergar levaduras y otros microorganismos. Cuando se rompe la piel, el jugo deja disponibles azúcares que algunas levaduras pueden aprovechar y fermentar.",
+      "titulo2": "DEL FRUTO AL VINO",
+      "parrafo2": "En la vinificación, la fermentación transforma azúcares del jugo en alcohol y gas. Puede iniciarse con microorganismos presentes o con cultivos seleccionados que se incorporan.",
+      "encuadre": {
+        "escala": 1,
+        "x": 0.0056,
+        "y": -0.0014
+      }
+    },
+    {
+      "nombre": "Masa madre",
+      "imagen": "src/assets/detalles/lugar-masa-madre.png",
+      "titulo1": "EN LA MASA MADRE",
+      "parrafo1": "Una masa madre activa reúne levaduras y bacterias lácticas en una mezcla de harina y agua. Durante la fermentación producen gases, ácidos y compuestos que contribuyen a su aroma.",
+      "titulo2": "UNA COMUNIDAD QUE SE ALIMENTA",
+      "parrafo2": "Agregar harina y agua renueva los nutrientes disponibles. El tiempo, la temperatura y la frecuencia de alimentación cambian el ritmo de fermentación de esta comunidad.",
+      "encuadre": {
+        "escala": 0.8742,
+        "x": 0.0024,
+        "y": -0.0049
+      }
+    },
+    {
+      "nombre": "Piel",
+      "imagen": "src/assets/detalles/lugar-piel.png",
+      "titulo1": "SOBRE LA PIEL",
+      "parrafo1": "La piel también alberga hongos microscópicos, incluidas levaduras. Algunas aprovechan lípidos del sebo y forman parte de comunidades que varían según la zona corporal y las condiciones de su superficie.",
+      "titulo2": "UN PAISAJE DESIGUAL",
+      "parrafo2": "El hombro, la frente y las manos ofrecen ambientes distintos. La grasa, la humedad y la temperatura ayudan a explicar por qué sus comunidades no son iguales.",
+      "encuadre": {
+        "escala": 0.7111,
+        "x": 0.004,
+        "y": -0.002
+      }
+    }
+  ],
+  "mohos": [
+    {
+      "nombre": "Pan viejo",
+      "imagen": "src/assets/detalles/lugar-pan-viejo.png",
+      "titulo1": "EN EL PAN VIEJO",
+      "parrafo1": "Las esporas de moho pueden asentarse en el pan y germinar si encuentran condiciones favorables. Sus filamentos se extienden por la miga, más allá de las manchas visibles.",
+      "titulo2": "POR QUÉ NO COMERLO",
+      "parrafo2": "El pan es poroso: el crecimiento puede avanzar bajo la superficie. Si tiene moho, hay que descartar el pan completo; retirar la mancha visible no alcanza.",
+      "encuadre": {
+        "escala": 0.8527,
+        "x": 0.0201,
+        "y": -0.0012
+      }
+    },
+    {
+      "nombre": "Naranja",
+      "imagen": "src/assets/detalles/lugar-naranja.png",
+      "titulo1": "EN LA NARANJA",
+      "parrafo1": "Las esporas pueden llegar a la cáscara de una naranja. Las pequeñas heridas facilitan el acceso a tejidos húmedos y nutrientes, donde algunos mohos crecen y contribuyen al deterioro del fruto.",
+      "titulo2": "DE LA CÁSCARA HACIA ADENTRO",
+      "parrafo2": "El crecimiento puede extenderse más allá de lo visible. El color de una mancha no permite identificar la especie ni evaluar por sí solo el estado del fruto.",
+      "encuadre": {
+        "escala": 1,
+        "x": 0.0153,
+        "y": -0.0111
+      }
+    },
+    {
+      "nombre": "Queso azul",
+      "imagen": "src/assets/detalles/lugar-queso.png",
+      "titulo1": "EN EL QUESO AZUL",
+      "parrafo1": "En ciertos quesos se incorporan mohos seleccionados durante la elaboración. La entrada de aire favorece su crecimiento en el interior y permite que se desarrollen las vetas características durante la maduración.",
+      "titulo2": "UN CULTIVO PLANIFICADO",
+      "parrafo2": "Estos mohos contribuyen al aroma, el sabor y la textura. Forman parte de un proceso controlado: no equivalen al crecimiento accidental en un alimento deteriorado.",
+      "encuadre": {
+        "escala": 0.7851,
+        "x": -0.0022,
+        "y": -0.0087
+      }
+    },
+    {
+      "nombre": "Tierra de maceta",
+      "imagen": "src/assets/detalles/lugar-tierra-moho.png",
+      "titulo1": "EN LA TIERRA",
+      "parrafo1": "En la tierra y los restos vegetales pueden crecer hongos filamentosos. Sus hifas recorren el sustrato y liberan sustancias que les permiten descomponer materia orgánica y absorber nutrientes.",
+      "titulo2": "DESCOMPONER Y RECICLAR",
+      "parrafo2": "Ese trabajo devuelve componentes de los restos vegetales al ciclo de nutrientes. La humedad y la materia orgánica influyen en qué hongos pueden desarrollarse.",
+      "encuadre": {
+        "escala": 0.8343,
+        "x": 0.0023,
+        "y": -0.0093
+      }
+    },
+    {
+      "nombre": "Pared húmeda",
+      "imagen": "src/assets/detalles/lugar-pared.png",
+      "titulo1": "EN LA PARED HÚMEDA",
+      "parrafo1": "Las esporas del aire pueden asentarse sobre una pared. Si la humedad persiste, algunos mohos crecen sobre pintura, papel u otros materiales y se extienden formando redes de filamentos.",
+      "titulo2": "LA HUMEDAD ABRE LA PUERTA",
+      "parrafo2": "Las filtraciones y la condensación sostienen ese ambiente. Corregir el origen de la humedad ayuda a limitar el crecimiento; el color no revela qué especie hay.",
+      "encuadre": {
+        "escala": 0.8276,
+        "x": 0.0046,
+        "y": -0.0034
+      }
+    }
+  ],
+  "fuentes": [
+    {
+      "tema": "Pan con moho y quesos",
+      "url": "https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/molds-food-are-they-dangerous"
+    },
+    {
+      "tema": "Yogur",
+      "url": "https://extension.usu.edu/preserve-the-harvest/fermented-yogurt"
+    },
+    {
+      "tema": "Microbiota de las manos",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19004758/"
+    },
+    {
+      "tema": "Moho y humedad",
+      "url": "https://www.cdc.gov/mold-health/about/index.html"
+    }
+  ]
+}

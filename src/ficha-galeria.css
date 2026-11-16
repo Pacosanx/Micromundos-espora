@@ -1,0 +1,37 @@
+.ficha-galeria {
+  --ficha-galeria-gap: 64px;
+  position: relative; display: block; overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain; scrollbar-width: none;
+  touch-action: pan-x pan-y; -webkit-overflow-scrolling: touch;
+}
+.ficha-galeria::-webkit-scrollbar { display: none; }
+.ficha-galeria-niebla{position:absolute;right:0;width:260px;height:664px;pointer-events:none;z-index:3}
+.ficha-galeria-niebla i{position:absolute;top:0;bottom:0;width:calc(12.5% + 8px);mask-image:linear-gradient(to right,transparent,#000 8px,#000 calc(100% - 8px),transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 8px,#000 calc(100% - 8px),transparent)}
+.ficha-galeria-niebla i:last-child{width:12.5%;mask-image:linear-gradient(to right,transparent,#000 8px);-webkit-mask-image:linear-gradient(to right,transparent,#000 8px)}
+.ficha-galeria:focus-visible { box-shadow: inset 0 -3px 0 #0d0f17; }
+.ficha-galeria__track { display: flex; align-items: stretch; width: max-content; gap: var(--ficha-galeria-gap); padding: 0; }
+.ficha-galeria__tarjeta {
+  position: relative; display: flex; box-sizing: border-box; flex: 0 0 402px; width: 402px; height: 664px;
+  flex-direction: column; overflow: hidden; padding: 24px; border: 0; border-radius: 0;
+  background: rgb(255 255 255 / 8%); box-shadow: none; scroll-snap-align: start;
+  backdrop-filter: blur(8px); isolation: isolate;
+}
+.ficha-galeria__tarjeta::before {
+  position: absolute; z-index: -1; inset: 0; background: url('src/assets/detalles/38083.png') center / cover;
+  content: ''; opacity: .15; filter:blur(4px);
+}
+.ficha-galeria__encabezado { position: relative; min-height: 72px; }
+.ficha-galeria__origen {
+  margin: 0; overflow: hidden; color: #0d0f17; font: 400 32px/1.12 Arimo, Arial, sans-serif;
+  text-overflow: ellipsis; white-space: nowrap; padding-right:100px;
+}
+.ficha-galeria__codigo { position: absolute; top: 0; right: 0; margin: 0; color: #0d0f17; font: 400 14px/20px Arimo, Arial, sans-serif; }
+.ficha-galeria__marco { display: grid; flex: 0 0 354px; width: 354px; height: 354px; place-items: center; overflow: hidden; background: transparent; }
+.ficha-galeria__canvas { display: block; width: 354px; height: 354px; }
+.ficha-galeria__grupo { display: flex; justify-content: space-between; gap: 12px; margin: 14px 0 0; color: #0d0f17; font: 400 14px/20px Arimo, Arial, sans-serif; }
+.ficha-galeria__grupo span:first-child, .ficha-galeria__comparte { letter-spacing: .08em; }
+.ficha-galeria__especies { min-height: 42px; margin-top: 8px; color: #0d0f17; }
+.ficha-galeria__especies p { margin: 0; font: italic 400 17px/21px Arimo, Arial, sans-serif; }
+.ficha-galeria__comparte { display: block; margin-bottom: 2px; font: 400 11px/14px Arimo, Arial, sans-serif; }
+.ficha-galeria__cta { align-self: flex-start; margin: auto 0 0; padding: 8px 0; border: 0; background: transparent; color: #0d0f17; cursor: pointer; font: 600 14px/20px Arimo, Arial, sans-serif; letter-spacing: .05em; }
+.ficha-galeria__cta:focus-visible { background: rgb(255 255 255 / 35%); outline: 2px solid #0d0f17; outline-offset: 3px; }

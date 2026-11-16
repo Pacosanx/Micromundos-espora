@@ -1,0 +1,36 @@
+{
+  "bacterias": {
+    "fondo": "0eea6.png",
+    "oscuro": "1492a.png",
+    "cercano": "1492a.png",
+    "medio": "57e1e.png",
+    "lejano": "3662b.png",
+    "nodos": [
+      "441:10437",
+      "441:10441",
+      "441:10442"
+    ]
+  },
+  "levaduras": {
+    "fondo": "f93a0.png",
+    "oscuro": "09d37.png",
+    "cercano": "a8f90.png",
+    "medio": "5b23a.png",
+    "lejano": "42079.png",
+    "nodos": [
+      "446:5403",
+      "446:5408"
+    ]
+  },
+  "mohos": {
+    "fondo": "9b120.png",
+    "oscuro": "72343.png",
+    "cercano": "e3e53.png",
+    "medio": "14599.png",
+    "lejano": "9f141.png",
+    "nodos": [
+      "446:5749",
+      "446:5754"
+    ]
+  }
+}

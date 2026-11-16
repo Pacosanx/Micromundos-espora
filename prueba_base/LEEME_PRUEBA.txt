@@ -1,0 +1,7 @@
+PRUEBA: codigo, origen y metodo de cada muestra leidos de base/muestras.csv (15/11/2026)
+
+- placa_prueba_base.html (carpeta placa): el prototipo con el cambio. Se ve igual que placa.html.
+- app.js.parcheado y build.py.parcheado: solo para consultar. Cambios: build.py agrega DATOS_MUESTRAS
+  (muestras.csv) al HTML; app.js, justo despues de generar los nombres, reemplaza codigo, origen y metodo
+  por los del CSV y avisa por consola ([base]) si el dibujo y el CSV no coinciden.
+- Los archivos originales (placa.html, src/, build.*) no se tocaron.

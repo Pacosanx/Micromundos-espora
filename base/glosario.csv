@@ -1,0 +1,22 @@
+id;numero;termino;grupo;bloque;definicion;estado;criterio_grupo;fuente;tipo
+bacterias;1;Bacterias;B;Bacterias;;borrador;B;;universo
+levaduras;2;Levaduras;L;Levaduras;;borrador;L;;universo
+mohos;3;Mohos;M;Mohos;;borrador;M;;universo
+bacilo;4;Bacilo;B;Bacterias;Célula bacteriana con forma de bastón. El nombre describe su forma, no una especie en particular.;redactado;;https://openstax.org/books/biology-2e/pages/22-2-structure-of-prokaryotes-bacteria-and-archaea;termino
+coco;5;Coco;B;Bacterias;Célula bacteriana de forma redondeada. Los cocos pueden encontrarse solos, en pares, en cadenas o en racimos.;redactado;;https://openstax.org/books/biology-2e/pages/22-2-structure-of-prokaryotes-bacteria-and-archaea;termino
+espiral;21;Espiral;B;Bacterias;Forma alargada y curva o helicoidal que presentan algunas bacterias. Describe la forma de la célula, no una especie.;redactado;;https://openstax.org/books/biology-2e/pages/22-2-structure-of-prokaryotes-bacteria-and-archaea;termino
+flagelo;6;Flagelo;B;Bacterias;;borrador;;;termino
+fision-binaria;7;Fisión binaria;B;Bacterias;Forma de multiplicación en la que una célula copia su material genético y se divide en dos células hijas.;redactado;;https://openstax.org/books/biology-2e/pages/22-2-structure-of-prokaryotes-bacteria-and-archaea;termino
+gemacion;8;Gemación;L;Levaduras;Forma de reproducción en la que aparece un brote en la célula madre. El brote crece y puede separarse para formar otra célula.;redactado;;https://openstax.org/books/microbiology/pages/5-3-fungi;termino
+saccharomyces;9;Saccharomyces;L;Levaduras;Género de levaduras que incluye especies utilizadas para elaborar pan y bebidas fermentadas. Transforman azúcares y pueden producir gas y alcohol.;redactado;;https://openstax.org/books/microbiology/pages/5-3-fungi;taxon
+hifa;10;Hifa;M;Mohos;Filamento que forma parte del cuerpo de muchos hongos. Las hifas crecen y se ramifican para explorar su entorno.;redactado;;https://openstax.org/books/microbiology/pages/5-3-fungi;termino
+micelio;11;Micelio;M;Mohos;Red de hifas que constituye el cuerpo de un hongo y le permite extenderse por el sustrato.;redactado;;https://openstax.org/books/microbiology/pages/5-3-fungi;termino
+esporangio;12;Esporangio;M;Mohos;Estructura de ciertos hongos en cuyo interior se forman esporas.;redactado;;https://openstax.org/books/microbiology/pages/5-3-fungi;termino
+penicilina;13;Penicilina;M;Mohos;Antibiótico producido por ciertos hongos del género Penicillium. Actúa contra algunas bacterias al impedir la formación de su pared celular.;redactado;;https://openstax.org/books/microbiology/pages/5-3-fungi;termino
+biofilm;14;Biofilm;BL;Compartidos;;borrador;;;termino
+fermentacion;15;Fermentación;BL;Compartidos;Proceso en el que las células obtienen energía al transformar azúcares sin usar oxígeno. Según el organismo, produce sustancias como ácidos, alcohol o gases.;redactado;;https://openstax.org/books/biology-2e/pages/24-1-characteristics-of-fungi;termino
+masa-madre;16;Masa madre;BL;Compartidos;;borrador;;;termino
+espora;17;Espora;BLM;Compartidos;Célula o estructura que permite a distintos microorganismos dispersarse, reproducirse o resistir condiciones adversas. Su función cambia según el organismo.;redactado;;https://openstax.org/books/microbiology/pages/5-3-fungi;termino
+colonia;18;Colonia;BLM;Compartidos;Conjunto visible de microorganismos que crecen juntos en un lugar. En un cultivo suele originarse a partir de una célula o de un pequeño grupo.;redactado;;https://www.atcc.org/en/resources/culture-guides/introduction-to-microbiology;termino
+agar;19;Agar;BLM;Compartidos;;borrador;;;termino
+crecimiento;20;Crecimiento;BLM;Compartidos;;borrador;;;termino

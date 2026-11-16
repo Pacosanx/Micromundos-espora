@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#195;&#173;cono &#194;&#183; Quitar" filter="url(#filter0_f_0_4)">
+<path id="Vector" opacity="0.6" d="M18.0668 13.0776C18.0351 13.4019 17.9764 13.7278 17.8893 14.0529C17.8022 14.378 17.69 14.6896 17.5554 14.9863M17.7133 10.3961C17.4804 9.77575 17.1464 9.19712 16.7256 8.68532M14.5801 7.03837C14.2834 6.90373 13.9717 6.79155 13.6467 6.70445C13.3216 6.61734 12.9956 6.55868 12.6714 6.52693M9.98981 6.88048C9.3695 7.11332 8.79087 7.44739 8.27907 7.86817M6.63212 10.0137C6.49748 10.3104 6.3853 10.622 6.2982 10.9471C6.21109 11.2722 6.15243 11.5981 6.12068 11.9224M6.47423 14.6039C6.70707 15.2243 7.04114 15.8029 7.46193 16.3147M9.60743 17.9616C9.90413 18.0963 10.2158 18.2085 10.5408 18.2956C10.8659 18.3827 11.1919 18.4413 11.5161 18.4731M14.1977 18.1195C14.818 17.8867 15.3966 17.5526 15.9084 17.1318" stroke-width="1.4" stroke="#212121"/>
+<g id="Frame 429">
+<line id="Line 3" x1="6.59375" y1="17.8921" x2="17.4832" y2="7.00262" stroke-width="1.6" stroke-linecap="round" stroke="#212121"/>
+<line id="Line 4" x1="6.73196" y1="7" x2="17.6214" y2="17.8894" stroke-width="1.6" stroke-linecap="round" stroke="#212121"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_0_4" x="-0.5" y="-0.5" width="25" height="25" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="0.25" result="effect1_foregroundBlur_0_4"/>
+</filter>
+</defs>
+</svg>

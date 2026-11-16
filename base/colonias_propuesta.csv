@@ -1,0 +1,242 @@
+codigo;especie;descripcion;grupo;colonias
+M-056-PAP;Aspergillus niger;moho negro;M;4
+M-056-PAP;Alternaria alternata;moho de hojas y plantas;M;2
+M-056-PAP;Fusarium oxysporum;moho del suelo;M;3
+BL-189-MDE;Lactobacillus plantarum;bacteria de los fermentos vegetales;B;4
+BL-189-MDE;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;2
+BL-129-KVA;Leuconostoc mesenteroides;bacteria del chucrut;B;3
+BL-129-KVA;Hanseniaspora uvarum;levadura de la uva;L;1
+M-060-DUR;Rhizopus stolonifer;moho del pan;M;3
+M-060-DUR;Alternaria alternata;moho de hojas y plantas;M;2
+M-060-DUR;Fusarium oxysporum;moho del suelo;M;1
+L-284-PDL;Hanseniaspora uvarum;levadura de la uva;L;5
+L-284-PDL;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+M-305-ALF;Alternaria alternata;moho de hojas y plantas;M;1
+M-040-FRA;Botrytis cinerea;moho gris de las frutas;M;1
+L-242-CDM;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;3
+L-242-CDM;Pichia kudriavzevii;levadura de frutas;L;3
+B-067-CDD;Lactobacillus acidophilus;bacteria del yogur;B;3
+B-067-CDD;Enterococcus faecalis;bacteria intestinal;B;1
+L-115-CAR;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+L-115-CAR;Kluyveromyces marxianus;levadura de los lácteos;L;2
+L-201-UDM;Hanseniaspora uvarum;levadura de la uva;L;2
+L-201-UDM;Torulaspora delbrueckii;levadura del vino;L;2
+L-201-UDM;Rhodotorula mucilaginosa;levadura rosada;L;2
+L-082-LCA;Torulaspora delbrueckii;levadura del vino;L;1
+M-273-CMO;Alternaria alternata;moho de hojas y plantas;M;1
+M-273-CMO;Mucor racemosus;moho algodonoso;M;3
+B-238-BAR;Micrococcus luteus;bacteria amarilla del aire y la piel;B;2
+B-238-BAR;Staphylococcus epidermidis;bacteria de la piel;B;1
+M-109-ZGU;Aspergillus niger;moho negro;M;4
+M-109-ZGU;Rhizopus stolonifer;moho del pan;M;1
+M-109-ZGU;Penicillium chrysogenum;moho verde de la penicilina;M;2
+M-157-PER;Cladosporium herbarum;moho de paredes húmedas;M;5
+M-157-PER;Penicillium sp.;moho del género Penicillium;M;1
+M-157-PER;Rhizopus stolonifer;moho del pan;M;1
+L-148-NDF;Torulaspora delbrueckii;levadura del vino;L;2
+L-148-NDF;Kluyveromyces marxianus;levadura de los lácteos;L;1
+B-189-CAU;Bacillus subtilis;bacteria del suelo;B;4
+B-189-CAU;Staphylococcus epidermidis;bacteria de la piel;B;3
+BL-093-LDC;Staphylococcus epidermidis;bacteria de la piel;B;1
+BL-093-LDC;Debaryomyces hansenii;levadura de quesos y fiambres;L;1
+L-175-MOR;Debaryomyces hansenii;levadura de quesos y fiambres;L;1
+M-068-ACO;Geotrichum candidum;moho blanco de los quesos;M;1
+BL-011-MDA;Lactobacillus plantarum;bacteria de los fermentos vegetales;B;4
+BL-011-MDA;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;2
+L-199-URO;Hanseniaspora uvarum;levadura de la uva;L;1
+L-088-CDR;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+L-280-FDJ;Hanseniaspora uvarum;levadura de la uva;L;1
+B-268-JOY;Staphylococcus epidermidis;bacteria de la piel;B;1
+L-306-PDD;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+BL-187-PDC;Lactobacillus plantarum;bacteria de los fermentos vegetales;B;6
+BL-187-PDC;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;3
+M-124-CVI;Aspergillus niger;moho negro;M;1
+B-273-TDP;Enterococcus faecalis;bacteria intestinal;B;1
+M-009-HSE;Aspergillus niger;moho negro;M;80
+M-009-HSE;Cladosporium herbarum;moho de paredes húmedas;M;65
+M-009-HSE;Alternaria alternata;moho de hojas y plantas;M;52
+M-009-HSE;Penicillium chrysogenum;moho verde de la penicilina;M;23
+M-281-POL;Fusarium oxysporum;moho del suelo;M;1
+BL-193-PDU;Lactobacillus plantarum;bacteria de los fermentos vegetales;B;1
+BL-193-PDU;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+B-293-CDS;Staphylococcus epidermidis;bacteria de la piel;B;1
+M-082-CHO;Fusarium oxysporum;moho del suelo;M;1
+B-021-PDC;Staphylococcus epidermidis;bacteria de la piel;B;1
+L-243-MEL;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;2
+L-243-MEL;Zygosaccharomyces rouxii;levadura de la miel y el azúcar;L;5
+L-243-MEL;Debaryomyces hansenii;levadura de quesos y fiambres;L;1
+L-058-JDA;Rhodotorula mucilaginosa;levadura rosada;L;48
+L-058-JDA;Candida parapsilosis;levadura de la piel;L;24
+L-058-JDA;Debaryomyces hansenii;levadura de quesos y fiambres;L;19
+L-058-JDA;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;12
+L-192-CIR;Pichia kudriavzevii;levadura de frutas;L;1
+BL-141-CAG;Streptococcus thermophilus;bacteria de los lácteos;B;1
+BL-141-CAG;Torulaspora delbrueckii;levadura del vino;L;1
+B-038-MAN;Streptococcus thermophilus;bacteria de los lácteos;B;1
+M-001-TMA;Alternaria alternata;moho de hojas y plantas;M;1
+B-140-MOU;Staphylococcus epidermidis;bacteria de la piel;B;1
+L-230-SID;Torulaspora delbrueckii;levadura del vino;L;1
+M-251-ZAN;Alternaria alternata;moho de hojas y plantas;M;1
+M-058-CDM;Geotrichum candidum;moho blanco de los quesos;M;1
+B-218-TDC;Staphylococcus epidermidis;bacteria de la piel;B;3
+M-080-AVE;Mucor racemosus;moho algodonoso;M;1
+M-061-LIM;Alternaria alternata;moho de hojas y plantas;M;1
+M-204-QAZ;Penicillium roqueforti;moho del queso azul;M;2
+M-204-QAZ;Alternaria alternata;moho de hojas y plantas;M;1
+M-204-QAZ;Mucor racemosus;moho algodonoso;M;2
+M-063-SAL;Penicillium chrysogenum;moho verde de la penicilina;M;1
+B-308-ADF;Pseudomonas fluorescens;bacteria del agua y el suelo;B;1
+B-250-ALM;Serratia marcescens;bacteria de pigmento rojo;B;1
+BL-290-PCA;Serratia marcescens;bacteria de pigmento rojo;B;1
+BL-290-PCA;Rhodotorula mucilaginosa;levadura rosada;L;1
+BL-271-ANE;Bacillus subtilis;bacteria del suelo;B;1
+BL-271-ANE;Torulaspora delbrueckii;levadura del vino;L;1
+L-208-FSI;Pichia kudriavzevii;levadura de frutas;L;1
+L-208-FSI;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;3
+BL-082-KIM;Leuconostoc mesenteroides;bacteria del chucrut;B;1
+BL-082-KIM;Debaryomyces hansenii;levadura de quesos y fiambres;L;1
+B-170-PIC;Staphylococcus epidermidis;bacteria de la piel;B;1
+BL-072-KEF;Lactobacillus acidophilus;bacteria del yogur;B;36
+BL-072-KEF;Leuconostoc mesenteroides;bacteria del chucrut;B;39
+BL-072-KEF;Acetobacter aceti;bacteria del vinagre;B;3
+BL-072-KEF;Kluyveromyces marxianus;levadura de los lácteos;L;28
+L-187-POM;Pichia kudriavzevii;levadura de frutas;L;7
+L-187-POM;Debaryomyces hansenii;levadura de quesos y fiambres;L;1
+L-187-POM;Rhodotorula mucilaginosa;levadura rosada;L;1
+L-289-SAN;Candida parapsilosis;levadura de la piel;L;2
+L-289-SAN;Torulaspora delbrueckii;levadura del vino;L;2
+L-289-SAN;Hanseniaspora uvarum;levadura de la uva;L;2
+L-046-RDJ;Hanseniaspora uvarum;levadura de la uva;L;1
+L-006-VCA;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+B-226-LAV;Micrococcus luteus;bacteria amarilla del aire y la piel;B;1
+M-244-PIM;Alternaria alternata;moho de hojas y plantas;M;1
+BL-213-TEP;Bacillus subtilis;bacteria del suelo;B;1
+BL-213-TEP;Rhodotorula mucilaginosa;levadura rosada;L;1
+BL-198-PUL;Leuconostoc mesenteroides;bacteria del chucrut;B;1
+BL-198-PUL;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+B-173-ADC;Escherichia coli;bacteria intestinal;B;1
+M-296-PAJ;Trichoderma viride;moho verde de la madera;M;1
+B-301-TDC;Staphylococcus epidermidis;bacteria de la piel;B;1
+B-313-MON;Bacillus subtilis;bacteria del suelo;B;1
+B-132-BDP;Pseudomonas fluorescens;bacteria del agua y el suelo;B;1
+L-203-MOS;Hanseniaspora uvarum;levadura de la uva;L;1
+B-199-SDZ;Acetobacter aceti;bacteria del vinagre;B;2
+B-199-SDZ;Micrococcus luteus;bacteria amarilla del aire y la piel;B;1
+M-049-MAN;Mucor racemosus;moho algodonoso;M;68
+M-049-MAN;Penicillium chrysogenum;moho verde de la penicilina;M;41
+M-049-MAN;Alternaria alternata;moho de hojas y plantas;M;31
+M-049-MAN;Fusarium oxysporum;moho del suelo;M;41
+M-049-MAN;Botrytis cinerea;moho gris de las frutas;M;23
+BL-128-RFE;Enterococcus faecalis;bacteria intestinal;B;1
+BL-128-RFE;Candida parapsilosis;levadura de la piel;L;1
+L-195-CDV;Zygosaccharomyces rouxii;levadura de la miel y el azúcar;L;1
+M-203-CDB;Cladosporium herbarum;moho de paredes húmedas;M;1
+B-111-CRE;Staphylococcus epidermidis;bacteria de la piel;B;1
+B-026-PDE;Micrococcus luteus;bacteria amarilla del aire y la piel;B;1
+L-048-KIW;Candida parapsilosis;levadura de la piel;L;1
+M-286-JDA;Cladosporium herbarum;moho de paredes húmedas;M;1
+M-087-FRU;Botrytis cinerea;moho gris de las frutas;M;1
+BL-199-SDS;Bacillus subtilis;bacteria del suelo;B;1
+BL-199-SDS;Zygosaccharomyces rouxii;levadura de la miel y el azúcar;L;1
+M-186-HDA;Geotrichum candidum;moho blanco de los quesos;M;1
+B-291-BDC;Staphylococcus epidermidis;bacteria de la piel;B;1
+M-115-HOJ;Cladosporium herbarum;moho de paredes húmedas;M;1
+L-030-MDI;Candida parapsilosis;levadura de la piel;L;1
+L-007-JDM;Hanseniaspora uvarum;levadura de la uva;L;1
+L-168-DAT;Debaryomyces hansenii;levadura de quesos y fiambres;L;1
+M-111-FDF;Rhizopus stolonifer;moho del pan;M;1
+L-279-SDJ;Pichia kudriavzevii;levadura de frutas;L;1
+L-261-MEM;Rhodotorula mucilaginosa;levadura rosada;L;1
+L-121-ARA;Torulaspora delbrueckii;levadura del vino;L;117
+L-121-ARA;Candida parapsilosis;levadura de la piel;L;34
+L-121-ARA;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;23
+L-121-ARA;Zygosaccharomyces rouxii;levadura de la miel y el azúcar;L;54
+L-121-ARA;Rhodotorula mucilaginosa;levadura rosada;L;73
+B-048-PDA;Staphylococcus epidermidis;bacteria de la piel;B;150
+B-048-PDA;Micrococcus luteus;bacteria amarilla del aire y la piel;B;95
+BL-073-BOZ;Enterococcus faecalis;bacteria intestinal;B;1
+BL-073-BOZ;Hanseniaspora uvarum;levadura de la uva;L;2
+BL-073-BOZ;Rhodotorula mucilaginosa;levadura rosada;L;2
+BL-038-CHU;Leuconostoc mesenteroides;bacteria del chucrut;B;1
+BL-038-CHU;Hanseniaspora uvarum;levadura de la uva;L;1
+B-046-GDB;Pseudomonas fluorescens;bacteria del agua y el suelo;B;7
+L-204-UCH;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+BL-076-NAT;Bacillus subtilis;bacteria del suelo;B;1
+BL-076-NAT;Debaryomyces hansenii;levadura de quesos y fiambres;L;1
+BL-294-MIS;Enterococcus faecalis;bacteria intestinal;B;1
+BL-294-MIS;Zygosaccharomyces rouxii;levadura de la miel y el azúcar;L;1
+M-054-PCA;Cladosporium herbarum;moho de paredes húmedas;M;1
+BL-255-FAI;Lactobacillus plantarum;bacteria de los fermentos vegetales;B;1
+BL-255-FAI;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+BL-230-CFE;Pseudomonas fluorescens;bacteria del agua y el suelo;B;1
+BL-230-CFE;Pichia kudriavzevii;levadura de frutas;L;1
+L-292-CDA;Zygosaccharomyces rouxii;levadura de la miel y el azúcar;L;1
+BL-004-HDT;Enterococcus faecalis;bacteria intestinal;B;1
+BL-004-HDT;Rhodotorula mucilaginosa;levadura rosada;L;1
+M-045-RDM;Botrytis cinerea;moho gris de las frutas;M;1
+M-260-CDP;Alternaria alternata;moho de hojas y plantas;M;1
+L-016-FDC;Hanseniaspora uvarum;levadura de la uva;L;1
+L-239-MDP;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+BL-236-RCA;Serratia marcescens;bacteria de pigmento rojo;B;1
+BL-236-RCA;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+B-269-BIL;Micrococcus luteus;bacteria amarilla del aire y la piel;B;1
+L-145-MMA;Pichia kudriavzevii;levadura de frutas;L;1
+B-192-MES;Streptomyces griseus;bacteria con olor a tierra mojada;B;1
+M-229-PDM;Alternaria alternata;moho de hojas y plantas;M;1
+L-060-DAM;Pichia kudriavzevii;levadura de frutas;L;6
+L-060-DAM;Rhodotorula mucilaginosa;levadura rosada;L;3
+L-060-DAM;Debaryomyces hansenii;levadura de quesos y fiambres;L;1
+L-105-HID;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+L-089-HDP;Kluyveromyces marxianus;levadura de los lácteos;L;1
+BL-227-QDO;Acetobacter aceti;bacteria del vinagre;B;1
+BL-227-QDO;Torulaspora delbrueckii;levadura del vino;L;1
+M-023-NUE;Aspergillus niger;moho negro;M;2
+M-023-NUE;Penicillium sp.;moho del género Penicillium;M;3
+M-023-NUE;Fusarium oxysporum;moho del suelo;M;1
+M-223-PHU;Cladosporium herbarum;moho de paredes húmedas;M;1
+BL-245-MCA;Lactobacillus plantarum;bacteria de los fermentos vegetales;B;1
+BL-245-MCA;Candida parapsilosis;levadura de la piel;L;1
+BL-226-AES;Leuconostoc mesenteroides;bacteria del chucrut;B;3
+BL-226-AES;Brettanomyces bruxellensis;levadura de vinos y cervezas;L;1
+BL-226-AES;Escherichia coli;bacteria intestinal;B;5
+B-214-CDM;Staphylococcus epidermidis;bacteria de la piel;B;3
+B-214-CDM;Lactobacillus acidophilus;bacteria del yogur;B;1
+M-147-ANA;Mucor racemosus;moho algodonoso;M;1
+M-220-LAN;Penicillium sp.;moho del género Penicillium;M;1
+M-300-BDC;Mucor racemosus;moho algodonoso;M;1
+BL-238-KDA;Leuconostoc mesenteroides;bacteria del chucrut;B;3
+BL-238-KDA;Pichia kudriavzevii;levadura de frutas;L;2
+BL-238-KDA;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+BL-231-TEM;Streptococcus thermophilus;bacteria de los lácteos;B;1
+BL-231-TEM;Candida parapsilosis;levadura de la piel;L;1
+L-112-MDM;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;2
+L-112-MDM;Torulaspora delbrueckii;levadura del vino;L;1
+BL-298-MMA;Leuconostoc mesenteroides;bacteria del chucrut;B;15
+BL-298-MMA;Lactobacillus plantarum;bacteria de los fermentos vegetales;B;53
+BL-298-MMA;Torulaspora delbrueckii;levadura del vino;L;36
+BL-298-MMA;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;29
+M-123-BAT;Rhizopus stolonifer;moho del pan;M;2
+M-123-BAT;Cladosporium herbarum;moho de paredes húmedas;M;1
+L-108-PDA;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
+BL-240-YMA;Enterococcus faecalis;bacteria intestinal;B;1
+BL-240-YMA;Brettanomyces bruxellensis;levadura de vinos y cervezas;L;1
+B-148-EDC;Pseudomonas fluorescens;bacteria del agua y el suelo;B;1
+B-096-ADA;Micrococcus luteus;bacteria amarilla del aire y la piel;B;1
+M-259-SDG;Botrytis cinerea;moho gris de las frutas;M;4
+M-259-SDG;Fusarium oxysporum;moho del suelo;M;1
+M-259-SDG;Rhizopus stolonifer;moho del pan;M;1
+BL-314-PEV;Bacillus subtilis;bacteria del suelo;B;1
+BL-314-PEV;Hanseniaspora uvarum;levadura de la uva;L;1
+B-083-YNA;Streptococcus thermophilus;bacteria de los lácteos;B;4
+B-083-YNA;Lactobacillus delbrueckii subsp. bulgaricus;bacteria del yogur;B;4
+B-150-LCR;Pseudomonas fluorescens;bacteria del agua y el suelo;B;4
+B-302-SDC;Bacillus subtilis;bacteria del suelo;B;60
+B-302-SDC;Pseudomonas fluorescens;bacteria del agua y el suelo;B;50
+M-189-BDH;Penicillium sp.;moho del género Penicillium;M;1
+M-048-MAB;Penicillium verrucosum;moho de alimentos conservados;M;4
+BL-043-CDN;Bacillus subtilis;bacteria del suelo;B;4
+BL-043-CDN;Debaryomyces hansenii;levadura de quesos y fiambres;L;3
+BL-183-KOM;Komagataeibacter rhaeticus;bacteria acética;B;1
+BL-183-KOM;Brettanomyces bruxellensis;levadura de bebidas fermentadas;L;1
+BL-163-CHI;Lactobacillus plantarum;bacteria de los fermentos vegetales;B;1
+BL-163-CHI;Saccharomyces cerevisiae;levadura del pan y la cerveza;L;1
