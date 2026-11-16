@@ -12,7 +12,8 @@ function universoCartel(el,grupo='BL'){
   let h=2166136261;for(const c of clave+grupo)h=Math.imul(h^c.charCodeAt(0),16777619)>>>0;
   if(clave==='|')h=(h+Math.imul(++universoCartel.n,2654435761))>>>0;
   const azar=()=>{h=(Math.imul(h,1664525)+1013904223)>>>0;return h/4294967296;};
-  el.style.setProperty('--tx-ox',Math.round(azar()*100)+'%');el.style.setProperty('--tx-oy',Math.round(azar()*100)+'%');
+  el.style.setProperty('--tx-ox',Math.round(azar()*100)+'%');/* oy ≤ 80 %: la capa de textura termina al 95 % del alto del cartel; con el origen más abajo, el zoom la deja corta y asoma un corte horizontal. */
+  el.style.setProperty('--tx-oy',Math.round(azar()*80)+'%');
   el.style.setProperty('--tx-s',(1.35+azar()*.9).toFixed(2));el.style.setProperty('--tx-f',azar()<.5?'-1':'1');
   el.style.setProperty('--cartel-fondo',`linear-gradient(90deg,${stops.map(rgba).join(',')})`);
   el.style.setProperty('--cartel-linea',`linear-gradient(90deg,${stops.join(',')})`);
