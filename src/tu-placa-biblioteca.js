@@ -60,7 +60,6 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
     modeButtons.set(id,button);modes.appendChild(button);
   }
   const tabs=document.createElement('div');tabs.className='tp-biblioteca__tabs';tabs.setAttribute('role','tablist');
-  const hint=document.createElement('span');hint.className='tp-biblioteca__hint';hint.textContent='Deslizá ↓';tabs.appendChild(hint);
   const content=document.createElement('div');content.className='tp-biblioteca__content';
   const labels=document.createElement('div');labels.className='tp-biblioteca__labels';
   const viewport=document.createElement('div');viewport.id='tpPaleta';viewport.className='tp-biblioteca__viewport';viewport.tabIndex=0;viewport.setAttribute('aria-label','Variantes de colonias');
@@ -71,7 +70,7 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
   let grupoActual='B', elegido=estilos[0], montajes=[], destruido=false;
   const limpiarMontajes=()=>{for(const m of montajes)m?.destroy?.();montajes=[]};
   function drawGroup(){
-    limpiarMontajes();tabs.replaceChildren();tabs.appendChild(hint);labels.replaceChildren();track.replaceChildren();
+    limpiarMontajes();tabs.replaceChildren();labels.replaceChildren();track.replaceChildren();
     for(const g of grupos){
     const tab=document.createElement('button');tab.type='button';tab.role='tab';tab.className='tp-biblioteca__tab';tab.textContent=g.nombre;
       tab.setAttribute('aria-selected',g.id===grupoActual?'true':'false');tab.tabIndex=g.id===grupoActual?0:-1;

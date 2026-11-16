@@ -73,7 +73,8 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #cabecera .der{display:flex;gap:61px}
 #cabecera .regla{margin-top:30px;height:2px;border-radius:4px;background:linear-gradient(90deg,#5CD238 1.44%,#D8B071 42.31%,#188466 70.67%,#7C5656 98.56%);mix-blend-mode:difference;filter:blur(3px)}
 
-/* buscador */
+/* buscador: oculto por pedido (el código queda inactivo) */
+#buscador{display:none!important}
 #buscador{left:1677px;top:214px;width:203px;height:20px;display:flex;align-items:center;gap:10px}
 #alternarListado{position:absolute;left:1490px;top:122px;width:390px;min-height:var(--area-tactil);padding:0;border:0;background:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:400 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#fff;mix-blend-mode:difference;filter:blur(.5px);cursor:pointer}
 #alternarListado svg{transition:transform .3s;flex:none}
@@ -180,6 +181,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .cartel .textura{position:absolute;inset:0;border-radius:24px;overflow:hidden;pointer-events:none}
 .cartel .textura::before{content:"";position:absolute;left:-5px;top:-72.29%;width:calc(100% + 10px);height:167.5%;background:url('__CARTEL_FONDO__') center/100% 100% no-repeat;opacity:.26;mix-blend-mode:darken}
 .cartel:not([data-universo="BL"]) .textura::before{filter:grayscale(1);mix-blend-mode:multiply}
+.cartel:not(.cartel-especie) .textura::before{transform-origin:var(--tx-ox,50%) var(--tx-oy,50%);transform:scale(calc(var(--tx-s,1)*var(--tx-f,1)),var(--tx-s,1))}
 /* Ruido multitono fijo y fino (tamaño de referencia 0,5). Se aplica después del blur,
    solo en el material, para conservar el grano y la nitidez del texto. */
 .cartel .grano{position:absolute;inset:0;border-radius:24px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 320 320'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3' intercept='-1'/%3E%3CfeFuncG type='linear' slope='3' intercept='-1'/%3E%3CfeFuncB type='linear' slope='3' intercept='-1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/160px 160px;opacity:var(--cartel-noise-opacity);mix-blend-mode:soft-light;-webkit-mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent),linear-gradient(180deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);-webkit-mask-composite:source-in;mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent),linear-gradient(180deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);mask-composite:intersect;pointer-events:none}

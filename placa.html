@@ -73,7 +73,8 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #cabecera .der{display:flex;gap:61px}
 #cabecera .regla{margin-top:30px;height:2px;border-radius:4px;background:linear-gradient(90deg,#5CD238 1.44%,#D8B071 42.31%,#188466 70.67%,#7C5656 98.56%);mix-blend-mode:difference;filter:blur(3px)}
 
-/* buscador */
+/* buscador: oculto por pedido (el código queda inactivo) */
+#buscador{display:none!important}
 #buscador{left:1677px;top:214px;width:203px;height:20px;display:flex;align-items:center;gap:10px}
 #alternarListado{position:absolute;left:1490px;top:122px;width:390px;min-height:var(--area-tactil);padding:0;border:0;background:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:400 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#fff;mix-blend-mode:difference;filter:blur(.5px);cursor:pointer}
 #alternarListado svg{transition:transform .3s;flex:none}
@@ -180,6 +181,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .cartel .textura{position:absolute;inset:0;border-radius:24px;overflow:hidden;pointer-events:none}
 .cartel .textura::before{content:"";position:absolute;left:-5px;top:-72.29%;width:calc(100% + 10px);height:167.5%;background:url('src/assets/cartel-colonias.jpg') center/100% 100% no-repeat;opacity:.26;mix-blend-mode:darken}
 .cartel:not([data-universo="BL"]) .textura::before{filter:grayscale(1);mix-blend-mode:multiply}
+.cartel:not(.cartel-especie) .textura::before{transform-origin:var(--tx-ox,50%) var(--tx-oy,50%);transform:scale(calc(var(--tx-s,1)*var(--tx-f,1)),var(--tx-s,1))}
 /* Ruido multitono fijo y fino (tamaño de referencia 0,5). Se aplica después del blur,
    solo en el material, para conservar el grano y la nitidez del texto. */
 .cartel .grano{position:absolute;inset:0;border-radius:24px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 320 320'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3' intercept='-1'/%3E%3CfeFuncG type='linear' slope='3' intercept='-1'/%3E%3CfeFuncB type='linear' slope='3' intercept='-1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/160px 160px;opacity:var(--cartel-noise-opacity);mix-blend-mode:soft-light;-webkit-mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent),linear-gradient(180deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);-webkit-mask-composite:source-in;mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent),linear-gradient(180deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);mask-composite:intersect;pointer-events:none}
@@ -466,7 +468,7 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 #tpLineas,#tpColonias{position:absolute;inset:0;overflow:visible}
 #tpLineas{pointer-events:none}
 #tpLineas line{stroke-width:2;opacity:.6;filter:blur(.35px)}
-#tpVacia{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:var(--t-cuerpo)!important;line-height:var(--l-cuerpo);text-align:center;white-space:pre;opacity:.5;pointer-events:none}
+#tpVacia{position:absolute;left:50%;top:50%;margin:0;transform:translate(-50%,-50%);font-size:var(--t-cuerpo)!important;line-height:var(--l-cuerpo);text-align:center;white-space:pre;opacity:.5;pointer-events:none}
 #tpVacia[hidden]{display:none}
 .tp-colonia{all:unset;position:absolute;left:0;top:0;cursor:grab;touch-action:none;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .tp-colonia canvas{display:block;width:100%;height:100%;animation:flota 9s ease-in-out infinite;pointer-events:none}
@@ -532,6 +534,16 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 /* Las tipografías claras de Figma se resuelven en tinta: translate crea grupos que aíslan el modo diferencia. */
 .detalle-ficha-nueva p{color:#0d0f17!important;mix-blend-mode:normal!important}
 
+
+/* Tabla de especies: la cuenta de fichas despliega sus muestras, como en el glosario */
+.u-anima{transition:height .4s ease}
+.u-anima-mov{transition:translate .4s ease}
+.u-desplegable{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .4s ease,visibility .4s;width:604px;flex-shrink:0;color:#efe3e1}
+.u-desplegable.abierta{grid-template-rows:1fr;visibility:visible}
+.u-interior{overflow:hidden;min-height:0}
+.u-muestras{padding:2px 0 16px}
+.u-fichas{cursor:pointer;align-self:stretch;height:auto!important;display:flex;align-items:center}
+.u-fichas:focus-visible{outline:0;color:#c9e7a4}
 
 .ficha-galeria {
   --ficha-galeria-gap: 64px;
@@ -602,13 +614,13 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 #tuPlaca button{font-family:Arimo,Arial,sans-serif;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #tuPlaca button:disabled{opacity:.3;cursor:default}
 .tp-indicacion{position:absolute;left:50px;right:30px;top:134px;display:flex;justify-content:space-between;font-size:var(--t-etiqueta);filter:blur(.4px);z-index:5}
-#tpReacciones{position:relative;font-size:var(--t-cuerpo)}
-#tpReacciones summary{list-style:none;display:flex;align-items:center;cursor:pointer}
-#tpReacciones summary::-webkit-details-marker{display:none}
-#tpReacciones summary img{width:24px;height:20px;filter:brightness(0)}
-#tpReacciones[open]{padding:16px;background:#f2f0e8c9;backdrop-filter:blur(12px);border-radius:12px;margin:-16px}
-#tpReacciones label{display:flex;align-items:center;gap:12px;margin-top:20px}
-#tpReacciones p{max-width:240px;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);opacity:.6}
+#tpReacciones{position:relative;width:256px;font-size:var(--t-cuerpo)}
+#tpReacciones .tp-check{position:relative;display:flex;align-items:center;gap:12px;min-height:var(--area-tactil);cursor:pointer}
+#tpReacciones .tp-check input{position:absolute;left:0;top:50%;width:20px;height:20px;margin:-10px 0 0;opacity:0;cursor:pointer}
+.tp-check__caja{flex:none;box-sizing:border-box;width:20px;height:20px;border:1.5px solid #0d0f17;border-radius:50%;background:transparent;filter:blur(.4px);transition:background .25s,border-color .25s}
+.tp-check input:checked+.tp-check__caja{border-color:transparent;background:linear-gradient(135deg,#b5599f,#c9a6bd 55%,#7fb7ab)}
+.tp-check input:focus-visible+.tp-check__caja{outline:2px solid #0d0f17;outline-offset:3px}
+#tpReacciones p{max-width:240px;margin:0;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);opacity:.6}
 #tpBiblioteca{position:absolute;left:40px;top:284px;height:634px}
 #tpBiblioteca .tp-biblioteca__top{position:absolute;left:0;top:0;width:640px;height:65px;margin:0}
 #tpBiblioteca .tp-biblioteca__top h2{font-weight:400;opacity:.7;margin:0}
@@ -2283,9 +2295,17 @@ function universoCartel(el,grupo='BL'){
   const rgba=h=>`rgba(${[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)).join(',')},.25)`;
   const stops=colores.length===1?[colores[0],colores[0]]:colores;
   el.dataset.universo=grupo;
+  // Cada cartel recorta y refleja la textura de fondo de otra manera (semilla = su nombre y código).
+  const clave=(el.querySelector('.nom')?.textContent||'')+'|'+(el.querySelector('.cod')?.textContent||'');
+  let h=2166136261;for(const c of clave+grupo)h=Math.imul(h^c.charCodeAt(0),16777619)>>>0;
+  if(clave==='|')h=(h+Math.imul(++universoCartel.n,2654435761))>>>0;
+  const azar=()=>{h=(Math.imul(h,1664525)+1013904223)>>>0;return h/4294967296;};
+  el.style.setProperty('--tx-ox',Math.round(azar()*100)+'%');el.style.setProperty('--tx-oy',Math.round(azar()*100)+'%');
+  el.style.setProperty('--tx-s',(1.35+azar()*.9).toFixed(2));el.style.setProperty('--tx-f',azar()<.5?'-1':'1');
   el.style.setProperty('--cartel-fondo',`linear-gradient(90deg,${stops.map(rgba).join(',')})`);
   el.style.setProperty('--cartel-linea',`linear-gradient(90deg,${stops.join(',')})`);
 }
+universoCartel.n=0;
 function coloresCartel(grupo){
   if(grupo==='BL')return `<img src="${RECURSOS_CARTEL.coloresBL}" width="24" height="10" alt="">`;
   return [...grupo].map(g=>`<i style="background:${PALETA_CARTEL[g]}"></i>`).join('');
@@ -2304,8 +2324,7 @@ function contenidoCartel(s){
     <dt>Recolección</dt><dd>${esc(fechaTexto(s))}</dd>
     <dt>Colonias</dt><dd>${s.colonias>N_MAX?'Más de 300':s.colonias}</dd>
     <dt>Especies</dt><dd>${especies.map(e=>`<small>${esc(e)}</small>`).join('')}</dd></dl>
-    ${esFichaPreparada(s)?`<button class="masCartel" data-ficha-completa><span>Ver ficha de muestra</span><img src="${RECURSOS_CARTEL.flecha}" width="11.3995" height="11.0459" alt=""></button>`:''}
-    ${detalles?`<button class="masCartel" id="fichaMas" aria-expanded="false" aria-controls="fichaDetalle"><span>Leer más al respecto</span><img src="${RECURSOS_CARTEL.flecha}" width="11.3995" height="11.0459" alt=""></button><div id="fichaDetalle" class="detalleCartel" hidden>${detalles}</div>`:''}`;
+    ${esFichaPreparada(s)?`<button class="masCartel" data-ficha-completa><span>Ver ficha de muestra</span><img src="${RECURSOS_CARTEL.flecha}" width="11.3995" height="11.0459" alt=""></button>`:''}`;
 }
 
 // Arrastre común para muestras y términos: blur de borde, retorno e inercia.
@@ -46170,7 +46189,7 @@ function adaptarMargenesDetalle(raiz){
       const x=longitudDetalle(estilo.left||''),w=longitudDetalle(estilo.width||'');
       const marcoCompleto=marcoAmplio&&pos==='absolute'&&x===0&&w===1920&&el.tagName!=='IMG';
       if(marcoCompleto)estilo.width='100%';
-      else if(marcoAmplio&&pos==='absolute'&&!contenido&&x!==null){
+      else if(marcoAmplio&&pos==='absolute'&&!contenido&&x!==null&&!el.dataset.anclaCentro){
         if(x>=0&&x<=40&&w>=1800){estilo.right='40px';estilo.width='auto';}
         else if(x>=1434)estilo.left=`calc(100% - ${(1920-x).toFixed(3)}px)`;
         else if(x>=320||(el.dataset.name||'').startsWith('Colonia ·')){
@@ -46512,9 +46531,52 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       Object.assign(img.style,{inset:'auto',left:'-20%',top:'-20%',width:'140%',height:'140%',objectFit:'contain'});
       etapa.querySelector('[data-name="contorno etapa"]')?.remove();
     }
+    // Cada etapa centra sus textos (número, nombre, tiempo) sobre su guía vertical.
+    for(const et of raiz.querySelectorAll('[data-name^="Etapa"]')){
+      // En Figma la última guía iba anclada al borde derecho y el resto al centro: en ventanas más anchas que 1920 se separaban.
+      // Todo el eje de la etapa (guía, marca y textos) se ancla al centro del círculo de la etapa.
+      const guia=et.querySelector(':scope > [data-name="guía al tiempo"]'),circulo=et.querySelector(':scope > [data-name^="Colonias"],:scope > [data-name="placa · agar"]');
+      if(!guia||!circulo)continue;
+      // El círculo puede traer su posición en px (marco de 1920) o ya como calc(50% ± Npx).
+      const crudo=circulo.style.left,m=crudo.match(/^calc\(\s*50%\s*([+-])\s*([\d.]+)px\s*\)$/),ancho=parseFloat(circulo.style.width);
+      const desde=m?(m[1]==='-'?-1:1)*parseFloat(m[2]):parseFloat(crudo)-960;
+      if(!Number.isFinite(desde)||!Number.isFinite(ancho))continue;
+      const centro='calc(50% + '+(desde+ancho/2)+'px)';
+      guia.style.left=centro;guia.dataset.anclaCentro='1';
+      const marca=et.querySelector(':scope > [data-name="marca"]');if(marca){marca.style.left='calc('+centro+' - 3.5px)';marca.dataset.anclaCentro='1';}
+      for(const t of et.children){if(t.dataset.name||!t.textContent.trim())continue;t.style.left=centro;t.style.translate='-50% 0';t.style.textAlign='center';t.dataset.anclaCentro='1';}
+    }
+    // Listados de una sola línea con puntos medios ("Redonda · Ovalada · En cadena"): un ítem por línea, sin puntos.
+    for(const p of raiz.querySelectorAll('p')){
+      if(!/^[^·\[]+(?:\s·\s[^·]+)+$/.test(p.textContent.trim().replace(/\s+/g,' '))||/\d{2}\s·\s\d{2}/.test(p.textContent))continue;
+      const nodos=[];const caminante=document.createTreeWalker(p,4);while(caminante.nextNode())nodos.push(caminante.currentNode);
+      for(const n of nodos)n.textContent=n.textContent.replace(/\s*·\s*/g,'\n');
+      if(nodos[0])nodos[0].textContent=nodos[0].textContent.replace(/^\s+/,'');
+      if(nodos.length)nodos[nodos.length-1].textContent=nodos[nodos.length-1].textContent.replace(/\s+$/,'');
+      p.style.whiteSpace='pre-line';
+    }
+    const ejeTiempo=raiz.querySelector('[data-name="eje · tiempo"]');
+    if(ejeTiempo&&/^tiempo$/i.test(ejeTiempo.nextElementSibling?.textContent.trim()||''))ejeTiempo.nextElementSibling.remove();
     const grupo=grupos[id],base=DISENOS_DETALLE[claves[id]];
     const imagen={html:base.especieVisual};
     const listado=raiz.querySelector('[data-name="Listado"]');
+    // Las filas desplegadas empujan hacia abajo lo que sigue a la tabla.
+    const envoltura=listado?.parentElement,abiertasU=new Set();let ajusteU=null;
+    const iniciarAjusteU=()=>{
+      if(ajusteU||!listado||!envoltura)return ajusteU;
+      const fin=(parseFloat(getComputedStyle(envoltura).top)||0)+envoltura.offsetHeight,mover=[];
+      const visitar=padre=>{for(const ch of padre.children){const cs=getComputedStyle(ch);if(cs.display==='contents'){visitar(ch);continue;}if(ch===envoltura||ch.contains(listado))continue;if(cs.position==='absolute'&&parseFloat(cs.top)>=fin-1)mover.push(ch);}};
+      visitar(raiz);
+      envoltura.classList.add('u-anima');listado.classList.add('u-anima');for(const m of mover)m.classList.add('u-anima-mov');
+      ajusteU={altoEnv:envoltura.offsetHeight,altoLis:listado.offsetHeight,altoRaiz:raiz.offsetHeight,mover};return ajusteU;
+    };
+    const reacomodarU=()=>{
+      const a=iniciarAjusteU();if(!a)return;
+      let extra=0;for(const d of abiertasU)extra+=d.firstElementChild.scrollHeight;
+      envoltura.style.height=(a.altoEnv+extra)+'px';listado.style.height=(a.altoLis+extra)+'px';
+      for(const m of a.mover)m.style.translate='0 '+extra+'px';
+      raiz.style.height=lienzo.style.height=(a.altoRaiz+extra)+'px';
+    };
     for(const fila of listado?.querySelectorAll('[data-name^="Fila ·"]')||[]){
       const textos=[...fila.querySelectorAll('p')];
       const nombre=texto(textos[2]);const n=texto(textos[1]);
@@ -46523,6 +46585,29 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       if(cuenta)cuenta.textContent=String(relacionadas.length).padStart(2,'0');
       const ilustrada=['Streptococcus thermophilus','Saccharomyces cerevisiae','Penicillium roqueforti'].includes(nombre);
       interactivo(fila,ev=>cartelEspecie(nombre,n,grupo,ilustrada?imagen:null,ev),nombre);
+      const celda=fila.querySelector('[data-name="Fichas"]');
+      if(celda){
+        const desp=document.createElement('div');desp.className='u-desplegable';desp.inert=true;
+        desp.innerHTML='<div class="u-interior"><div class="u-muestras"></div></div>';
+        const listaU=desp.querySelector('.u-muestras');
+        if(!relacionadas.length){const vacio=document.createElement('p');vacio.className='g-vacio';vacio.textContent='Todavía no hay muestras vinculadas a esta especie.';listaU.appendChild(vacio);}
+        for(const s of relacionadas){
+          const b=document.createElement('button');b.type='button';b.className='g-muestra';
+          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+' ↗</span>';
+          b.addEventListener('click',ev=>{ev.stopPropagation();if(esFichaPreparada(s))abrir('ficha');else{irSeccion('muestras');seleccionar(s);}});listaU.appendChild(b);
+        }
+        fila.after(desp);
+        const indicador=[...celda.querySelectorAll('p')].pop();
+        celda.classList.add('u-fichas');celda.tabIndex=0;celda.setAttribute('role','button');celda.setAttribute('aria-expanded','false');celda.setAttribute('aria-label','Muestras de '+nombre);
+        const alternar=ev=>{
+          ev.stopPropagation();const abre=!desp.classList.contains('abierta');
+          desp.classList.toggle('abierta',abre);desp.inert=!abre;celda.setAttribute('aria-expanded',String(abre));
+          if(indicador)indicador.textContent=abre?'↑':'+';
+          if(abre)abiertasU.add(desp);else abiertasU.delete(desp);reacomodarU();
+        };
+        celda.addEventListener('click',alternar);
+        celda.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();alternar(ev);}});
+      }
     }
     for(const tarjeta of raiz.querySelectorAll('[data-name^="Colonia ·"]')){
       const nombre=texto(tarjeta).toLowerCase();
@@ -46862,7 +46947,6 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
     modeButtons.set(id,button);modes.appendChild(button);
   }
   const tabs=document.createElement('div');tabs.className='tp-biblioteca__tabs';tabs.setAttribute('role','tablist');
-  const hint=document.createElement('span');hint.className='tp-biblioteca__hint';hint.textContent='Deslizá ↓';tabs.appendChild(hint);
   const content=document.createElement('div');content.className='tp-biblioteca__content';
   const labels=document.createElement('div');labels.className='tp-biblioteca__labels';
   const viewport=document.createElement('div');viewport.id='tpPaleta';viewport.className='tp-biblioteca__viewport';viewport.tabIndex=0;viewport.setAttribute('aria-label','Variantes de colonias');
@@ -46873,7 +46957,7 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
   let grupoActual='B', elegido=estilos[0], montajes=[], destruido=false;
   const limpiarMontajes=()=>{for(const m of montajes)m?.destroy?.();montajes=[]};
   function drawGroup(){
-    limpiarMontajes();tabs.replaceChildren();tabs.appendChild(hint);labels.replaceChildren();track.replaceChildren();
+    limpiarMontajes();tabs.replaceChildren();labels.replaceChildren();track.replaceChildren();
     for(const g of grupos){
     const tab=document.createElement('button');tab.type='button';tab.role='tab';tab.className='tp-biblioteca__tab';tab.textContent=g.nombre;
       tab.setAttribute('aria-selected',g.id===grupoActual?'true':'false');tab.tabIndex=g.id===grupoActual?0:-1;
@@ -46967,7 +47051,7 @@ function montarMenuTuPlaca(host,{obtener,cambiar,quitar,empezar,terminar}){
 // Composición pública 1:1: independiente del archivo de muestras y sus semillas.
 function prepararTuPlaca(){
   const pagina=$('tuPlaca'),ruta='src/assets/tu-placa/',clave='micromundos-tuplaca-v2',ns='http://www.w3.org/2000/svg';
-  pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><details id="tpReacciones"><summary>REACCIONES ACTIVADAS <img src="${ruta}tp-desplegable.svg" alt=""></summary><label><input id="tpEncuentros" type="checkbox" checked>Mostrar reacciones</label><p>Una interpretación gráfica de cómo conviven las colonias.</p></details></div><aside id="tpBiblioteca"></aside>
+  pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones"><label class="tp-check"><input id="tpEncuentros" type="checkbox" checked><span class="tp-check__caja" aria-hidden="true"></span><span>Mostrar reacciones</span></label><p>Una interpretación gráfica de cómo conviven las colonias.</p></div></div><aside id="tpBiblioteca"></aside>
     <div id="tpBoard" class="tp-board" aria-label="Tu placa. Tocar o deslizar para sembrar" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><p id="tpVacia">ELEGÍ UNA FORMA\nY SEMBRALA EN LA PLACA</p><div id="tpMenu"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
     <button id="tpGenerar" class="tp-generar" type="button">GENERAR COMPOSICIÓN ↻</button><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA →</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
     <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a></div></div></div><div class="tp-sprites" aria-hidden="true"></div>`;
@@ -47023,7 +47107,7 @@ function prepararTuPlaca(){
     dibujarReacciones();if(seleccionado)menu.situar(seleccionado.x,seleccionado.y);pedido=false;
   }
   function solicitarDibujo(){if(!pedido){pedido=true;frame=requestAnimationFrame(dibujar);}}
-  function actualizar(){const n=items.length;$('tpCuenta').textContent=n+(n===1?' colonia':' colonias');$('tpVacia').hidden=!!n;$('tpRecuerdo').disabled=!n;$('tpDeshacer').disabled=!historico.length;$('tpRehacer').disabled=!futuro.length;$('tpReiniciar').disabled=!n;$('tpReacciones').querySelector('summary').firstChild.textContent=$('tpEncuentros').checked?'REACCIONES ACTIVADAS ':'REACCIONES DESACTIVADAS ';}
+  function actualizar(){const n=items.length;$('tpCuenta').textContent=n+(n===1?' colonia':' colonias');$('tpVacia').hidden=!!n;$('tpRecuerdo').disabled=!n;$('tpDeshacer').disabled=!historico.length;$('tpRehacer').disabled=!futuro.length;$('tpReiniciar').disabled=!n;}
   function abrirMenu(it){if(seleccionado===it&&!$('tpMenu').hidden){menu.cerrar();return;}seleccionado=it;menu.abrir(it.x,it.y);dibujar();}
   function iniciarArrastre(ev,it){if(ev.button>0)return;ev.preventDefault();ev.stopPropagation();iniciarCambio();const p=punto(ev);arrastre={it,inicio:p,x:it.x,y:it.y,movido:false};elementos.get(it.id).setPointerCapture?.(ev.pointerId);}
   function tecladoColonia(ev,it){if(['Enter',' '].includes(ev.key)){ev.preventDefault();abrirMenu(it);return;}if(['Delete','Backspace'].includes(ev.key)){ev.preventDefault();iniciarCambio();quitar(it);terminarCambio();return;}

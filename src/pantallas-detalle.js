@@ -20,7 +20,7 @@ function adaptarMargenesDetalle(raiz){
       const x=longitudDetalle(estilo.left||''),w=longitudDetalle(estilo.width||'');
       const marcoCompleto=marcoAmplio&&pos==='absolute'&&x===0&&w===1920&&el.tagName!=='IMG';
       if(marcoCompleto)estilo.width='100%';
-      else if(marcoAmplio&&pos==='absolute'&&!contenido&&x!==null){
+      else if(marcoAmplio&&pos==='absolute'&&!contenido&&x!==null&&!el.dataset.anclaCentro){
         if(x>=0&&x<=40&&w>=1800){estilo.right='40px';estilo.width='auto';}
         else if(x>=1434)estilo.left=`calc(100% - ${(1920-x).toFixed(3)}px)`;
         else if(x>=320||(el.dataset.name||'').startsWith('Colonia ·')){
@@ -362,9 +362,52 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       Object.assign(img.style,{inset:'auto',left:'-20%',top:'-20%',width:'140%',height:'140%',objectFit:'contain'});
       etapa.querySelector('[data-name="contorno etapa"]')?.remove();
     }
+    // Cada etapa centra sus textos (número, nombre, tiempo) sobre su guía vertical.
+    for(const et of raiz.querySelectorAll('[data-name^="Etapa"]')){
+      // En Figma la última guía iba anclada al borde derecho y el resto al centro: en ventanas más anchas que 1920 se separaban.
+      // Todo el eje de la etapa (guía, marca y textos) se ancla al centro del círculo de la etapa.
+      const guia=et.querySelector(':scope > [data-name="guía al tiempo"]'),circulo=et.querySelector(':scope > [data-name^="Colonias"],:scope > [data-name="placa · agar"]');
+      if(!guia||!circulo)continue;
+      // El círculo puede traer su posición en px (marco de 1920) o ya como calc(50% ± Npx).
+      const crudo=circulo.style.left,m=crudo.match(/^calc\(\s*50%\s*([+-])\s*([\d.]+)px\s*\)$/),ancho=parseFloat(circulo.style.width);
+      const desde=m?(m[1]==='-'?-1:1)*parseFloat(m[2]):parseFloat(crudo)-960;
+      if(!Number.isFinite(desde)||!Number.isFinite(ancho))continue;
+      const centro='calc(50% + '+(desde+ancho/2)+'px)';
+      guia.style.left=centro;guia.dataset.anclaCentro='1';
+      const marca=et.querySelector(':scope > [data-name="marca"]');if(marca){marca.style.left='calc('+centro+' - 3.5px)';marca.dataset.anclaCentro='1';}
+      for(const t of et.children){if(t.dataset.name||!t.textContent.trim())continue;t.style.left=centro;t.style.translate='-50% 0';t.style.textAlign='center';t.dataset.anclaCentro='1';}
+    }
+    // Listados de una sola línea con puntos medios ("Redonda · Ovalada · En cadena"): un ítem por línea, sin puntos.
+    for(const p of raiz.querySelectorAll('p')){
+      if(!/^[^·\[]+(?:\s·\s[^·]+)+$/.test(p.textContent.trim().replace(/\s+/g,' '))||/\d{2}\s·\s\d{2}/.test(p.textContent))continue;
+      const nodos=[];const caminante=document.createTreeWalker(p,4);while(caminante.nextNode())nodos.push(caminante.currentNode);
+      for(const n of nodos)n.textContent=n.textContent.replace(/\s*·\s*/g,'\n');
+      if(nodos[0])nodos[0].textContent=nodos[0].textContent.replace(/^\s+/,'');
+      if(nodos.length)nodos[nodos.length-1].textContent=nodos[nodos.length-1].textContent.replace(/\s+$/,'');
+      p.style.whiteSpace='pre-line';
+    }
+    const ejeTiempo=raiz.querySelector('[data-name="eje · tiempo"]');
+    if(ejeTiempo&&/^tiempo$/i.test(ejeTiempo.nextElementSibling?.textContent.trim()||''))ejeTiempo.nextElementSibling.remove();
     const grupo=grupos[id],base=DISENOS_DETALLE[claves[id]];
     const imagen={html:base.especieVisual};
     const listado=raiz.querySelector('[data-name="Listado"]');
+    // Las filas desplegadas empujan hacia abajo lo que sigue a la tabla.
+    const envoltura=listado?.parentElement,abiertasU=new Set();let ajusteU=null;
+    const iniciarAjusteU=()=>{
+      if(ajusteU||!listado||!envoltura)return ajusteU;
+      const fin=(parseFloat(getComputedStyle(envoltura).top)||0)+envoltura.offsetHeight,mover=[];
+      const visitar=padre=>{for(const ch of padre.children){const cs=getComputedStyle(ch);if(cs.display==='contents'){visitar(ch);continue;}if(ch===envoltura||ch.contains(listado))continue;if(cs.position==='absolute'&&parseFloat(cs.top)>=fin-1)mover.push(ch);}};
+      visitar(raiz);
+      envoltura.classList.add('u-anima');listado.classList.add('u-anima');for(const m of mover)m.classList.add('u-anima-mov');
+      ajusteU={altoEnv:envoltura.offsetHeight,altoLis:listado.offsetHeight,altoRaiz:raiz.offsetHeight,mover};return ajusteU;
+    };
+    const reacomodarU=()=>{
+      const a=iniciarAjusteU();if(!a)return;
+      let extra=0;for(const d of abiertasU)extra+=d.firstElementChild.scrollHeight;
+      envoltura.style.height=(a.altoEnv+extra)+'px';listado.style.height=(a.altoLis+extra)+'px';
+      for(const m of a.mover)m.style.translate='0 '+extra+'px';
+      raiz.style.height=lienzo.style.height=(a.altoRaiz+extra)+'px';
+    };
     for(const fila of listado?.querySelectorAll('[data-name^="Fila ·"]')||[]){
       const textos=[...fila.querySelectorAll('p')];
       const nombre=texto(textos[2]);const n=texto(textos[1]);
@@ -373,6 +416,29 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       if(cuenta)cuenta.textContent=String(relacionadas.length).padStart(2,'0');
       const ilustrada=['Streptococcus thermophilus','Saccharomyces cerevisiae','Penicillium roqueforti'].includes(nombre);
       interactivo(fila,ev=>cartelEspecie(nombre,n,grupo,ilustrada?imagen:null,ev),nombre);
+      const celda=fila.querySelector('[data-name="Fichas"]');
+      if(celda){
+        const desp=document.createElement('div');desp.className='u-desplegable';desp.inert=true;
+        desp.innerHTML='<div class="u-interior"><div class="u-muestras"></div></div>';
+        const listaU=desp.querySelector('.u-muestras');
+        if(!relacionadas.length){const vacio=document.createElement('p');vacio.className='g-vacio';vacio.textContent='Todavía no hay muestras vinculadas a esta especie.';listaU.appendChild(vacio);}
+        for(const s of relacionadas){
+          const b=document.createElement('button');b.type='button';b.className='g-muestra';
+          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+' ↗</span>';
+          b.addEventListener('click',ev=>{ev.stopPropagation();if(esFichaPreparada(s))abrir('ficha');else{irSeccion('muestras');seleccionar(s);}});listaU.appendChild(b);
+        }
+        fila.after(desp);
+        const indicador=[...celda.querySelectorAll('p')].pop();
+        celda.classList.add('u-fichas');celda.tabIndex=0;celda.setAttribute('role','button');celda.setAttribute('aria-expanded','false');celda.setAttribute('aria-label','Muestras de '+nombre);
+        const alternar=ev=>{
+          ev.stopPropagation();const abre=!desp.classList.contains('abierta');
+          desp.classList.toggle('abierta',abre);desp.inert=!abre;celda.setAttribute('aria-expanded',String(abre));
+          if(indicador)indicador.textContent=abre?'↑':'+';
+          if(abre)abiertasU.add(desp);else abiertasU.delete(desp);reacomodarU();
+        };
+        celda.addEventListener('click',alternar);
+        celda.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();alternar(ev);}});
+      }
     }
     for(const tarjeta of raiz.querySelectorAll('[data-name^="Colonia ·"]')){
       const nombre=texto(tarjeta).toLowerCase();
