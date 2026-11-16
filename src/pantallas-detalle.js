@@ -377,6 +377,15 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       const marca=et.querySelector(':scope > [data-name="marca"]');if(marca){marca.style.left='calc('+centro+' - 3.5px)';marca.dataset.anclaCentro='1';}
       for(const t of et.children){if(t.dataset.name||!t.textContent.trim())continue;t.style.left=centro;t.style.translate='-50% 0';t.style.textAlign='center';t.dataset.anclaCentro='1';}
     }
+    // Listados de una sola línea con puntos medios ("Redonda · Ovalada · En cadena"): un ítem por línea, sin puntos.
+    for(const p of raiz.querySelectorAll('p')){
+      if(!/^[^·\[]+(?:\s·\s[^·]+)+$/.test(p.textContent.trim().replace(/\s+/g,' '))||/\d{2}\s·\s\d{2}/.test(p.textContent))continue;
+      const nodos=[];const caminante=document.createTreeWalker(p,4);while(caminante.nextNode())nodos.push(caminante.currentNode);
+      for(const n of nodos)n.textContent=n.textContent.replace(/\s*·\s*/g,'\n');
+      if(nodos[0])nodos[0].textContent=nodos[0].textContent.replace(/^\s+/,'');
+      if(nodos.length)nodos[nodos.length-1].textContent=nodos[nodos.length-1].textContent.replace(/\s+$/,'');
+      p.style.whiteSpace='pre-line';
+    }
     const ejeTiempo=raiz.querySelector('[data-name="eje · tiempo"]');
     if(ejeTiempo&&/^tiempo$/i.test(ejeTiempo.nextElementSibling?.textContent.trim()||''))ejeTiempo.nextElementSibling.remove();
     const grupo=grupos[id],base=DISENOS_DETALLE[claves[id]];
