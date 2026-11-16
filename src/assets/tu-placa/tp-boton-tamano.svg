@@ -18,7 +18,7 @@
 </feComponentTransfer>
 <feComposite operator="in" in2="shape" in="coloredNoise1" result="noise1Clipped" />
 <feComponentTransfer in="noise1Clipped" result="color1">
-<feFuncA type="table" tableValues="0 0.25" />
+<feFuncA type="table" tableValues="0 0.12" />
 </feComponentTransfer>
 <feMerge result="effect1_noise_0_25">
 <feMergeNode in="shape" />
