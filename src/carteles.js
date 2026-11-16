@@ -7,9 +7,17 @@ function universoCartel(el,grupo='BL'){
   const rgba=h=>`rgba(${[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)).join(',')},.25)`;
   const stops=colores.length===1?[colores[0],colores[0]]:colores;
   el.dataset.universo=grupo;
+  // Cada cartel recorta y refleja la textura de fondo de otra manera (semilla = su nombre y código).
+  const clave=(el.querySelector('.nom')?.textContent||'')+'|'+(el.querySelector('.cod')?.textContent||'');
+  let h=2166136261;for(const c of clave+grupo)h=Math.imul(h^c.charCodeAt(0),16777619)>>>0;
+  if(clave==='|')h=(h+Math.imul(++universoCartel.n,2654435761))>>>0;
+  const azar=()=>{h=(Math.imul(h,1664525)+1013904223)>>>0;return h/4294967296;};
+  el.style.setProperty('--tx-ox',Math.round(azar()*100)+'%');el.style.setProperty('--tx-oy',Math.round(azar()*100)+'%');
+  el.style.setProperty('--tx-s',(1.35+azar()*.9).toFixed(2));el.style.setProperty('--tx-f',azar()<.5?'-1':'1');
   el.style.setProperty('--cartel-fondo',`linear-gradient(90deg,${stops.map(rgba).join(',')})`);
   el.style.setProperty('--cartel-linea',`linear-gradient(90deg,${stops.join(',')})`);
 }
+universoCartel.n=0;
 function coloresCartel(grupo){
   if(grupo==='BL')return `<img src="${RECURSOS_CARTEL.coloresBL}" width="24" height="10" alt="">`;
   return [...grupo].map(g=>`<i style="background:${PALETA_CARTEL[g]}"></i>`).join('');
@@ -28,8 +36,7 @@ function contenidoCartel(s){
     <dt>Recolección</dt><dd>${esc(fechaTexto(s))}</dd>
     <dt>Colonias</dt><dd>${s.colonias>N_MAX?'Más de 300':s.colonias}</dd>
     <dt>Especies</dt><dd>${especies.map(e=>`<small>${esc(e)}</small>`).join('')}</dd></dl>
-    ${esFichaPreparada(s)?`<button class="masCartel" data-ficha-completa><span>Ver ficha de muestra</span><img src="${RECURSOS_CARTEL.flecha}" width="11.3995" height="11.0459" alt=""></button>`:''}
-    ${detalles?`<button class="masCartel" id="fichaMas" aria-expanded="false" aria-controls="fichaDetalle"><span>Leer más al respecto</span><img src="${RECURSOS_CARTEL.flecha}" width="11.3995" height="11.0459" alt=""></button><div id="fichaDetalle" class="detalleCartel" hidden>${detalles}</div>`:''}`;
+    ${esFichaPreparada(s)?`<button class="masCartel" data-ficha-completa><span>Ver ficha de muestra</span><img src="${RECURSOS_CARTEL.flecha}" width="11.3995" height="11.0459" alt=""></button>`:''}`;
 }
 
 // Arrastre común para muestras y términos: blur de borde, retorno e inercia.

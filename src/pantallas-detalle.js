@@ -362,9 +362,33 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       Object.assign(img.style,{inset:'auto',left:'-20%',top:'-20%',width:'140%',height:'140%',objectFit:'contain'});
       etapa.querySelector('[data-name="contorno etapa"]')?.remove();
     }
+    // Cada etapa centra sus textos (número, nombre, tiempo) sobre su guía vertical.
+    for(const et of raiz.querySelectorAll('[data-name^="Etapa"]')){
+      const guia=et.querySelector(':scope > [data-name="guía al tiempo"]');if(!guia)continue;
+      for(const t of et.children){if(t.dataset.name||!t.textContent.trim())continue;t.style.left=guia.style.left;t.style.translate='-50% 0';t.style.textAlign='center';}
+    }
+    const ejeTiempo=raiz.querySelector('[data-name="eje · tiempo"]');
+    if(ejeTiempo&&/^tiempo$/i.test(ejeTiempo.nextElementSibling?.textContent.trim()||''))ejeTiempo.nextElementSibling.remove();
     const grupo=grupos[id],base=DISENOS_DETALLE[claves[id]];
     const imagen={html:base.especieVisual};
     const listado=raiz.querySelector('[data-name="Listado"]');
+    // Las filas desplegadas empujan hacia abajo lo que sigue a la tabla.
+    const envoltura=listado?.parentElement,abiertasU=new Set();let ajusteU=null;
+    const iniciarAjusteU=()=>{
+      if(ajusteU||!listado||!envoltura)return ajusteU;
+      const fin=(parseFloat(getComputedStyle(envoltura).top)||0)+envoltura.offsetHeight,mover=[];
+      const visitar=padre=>{for(const ch of padre.children){const cs=getComputedStyle(ch);if(cs.display==='contents'){visitar(ch);continue;}if(ch===envoltura||ch.contains(listado))continue;if(cs.position==='absolute'&&parseFloat(cs.top)>=fin-1)mover.push(ch);}};
+      visitar(raiz);
+      envoltura.classList.add('u-anima');listado.classList.add('u-anima');for(const m of mover)m.classList.add('u-anima-mov');
+      ajusteU={altoEnv:envoltura.offsetHeight,altoLis:listado.offsetHeight,altoRaiz:raiz.offsetHeight,mover};return ajusteU;
+    };
+    const reacomodarU=()=>{
+      const a=iniciarAjusteU();if(!a)return;
+      let extra=0;for(const d of abiertasU)extra+=d.firstElementChild.scrollHeight;
+      envoltura.style.height=(a.altoEnv+extra)+'px';listado.style.height=(a.altoLis+extra)+'px';
+      for(const m of a.mover)m.style.translate='0 '+extra+'px';
+      raiz.style.height=lienzo.style.height=(a.altoRaiz+extra)+'px';
+    };
     for(const fila of listado?.querySelectorAll('[data-name^="Fila ·"]')||[]){
       const textos=[...fila.querySelectorAll('p')];
       const nombre=texto(textos[2]);const n=texto(textos[1]);
@@ -373,6 +397,29 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       if(cuenta)cuenta.textContent=String(relacionadas.length).padStart(2,'0');
       const ilustrada=['Streptococcus thermophilus','Saccharomyces cerevisiae','Penicillium roqueforti'].includes(nombre);
       interactivo(fila,ev=>cartelEspecie(nombre,n,grupo,ilustrada?imagen:null,ev),nombre);
+      const celda=fila.querySelector('[data-name="Fichas"]');
+      if(celda){
+        const desp=document.createElement('div');desp.className='u-desplegable';desp.inert=true;
+        desp.innerHTML='<div class="u-interior"><div class="u-muestras"></div></div>';
+        const listaU=desp.querySelector('.u-muestras');
+        if(!relacionadas.length){const vacio=document.createElement('p');vacio.className='g-vacio';vacio.textContent='Todavía no hay muestras vinculadas a esta especie.';listaU.appendChild(vacio);}
+        for(const s of relacionadas){
+          const b=document.createElement('button');b.type='button';b.className='g-muestra';
+          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+' ↗</span>';
+          b.addEventListener('click',ev=>{ev.stopPropagation();if(esFichaPreparada(s))abrir('ficha');else{irSeccion('muestras');seleccionar(s);}});listaU.appendChild(b);
+        }
+        fila.after(desp);
+        const indicador=[...celda.querySelectorAll('p')].pop();
+        celda.classList.add('u-fichas');celda.tabIndex=0;celda.setAttribute('role','button');celda.setAttribute('aria-expanded','false');celda.setAttribute('aria-label','Muestras de '+nombre);
+        const alternar=ev=>{
+          ev.stopPropagation();const abre=!desp.classList.contains('abierta');
+          desp.classList.toggle('abierta',abre);desp.inert=!abre;celda.setAttribute('aria-expanded',String(abre));
+          if(indicador)indicador.textContent=abre?'↑':'+';
+          if(abre)abiertasU.add(desp);else abiertasU.delete(desp);reacomodarU();
+        };
+        celda.addEventListener('click',alternar);
+        celda.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();alternar(ev);}});
+      }
     }
     for(const tarjeta of raiz.querySelectorAll('[data-name^="Colonia ·"]')){
       const nombre=texto(tarjeta).toLowerCase();
