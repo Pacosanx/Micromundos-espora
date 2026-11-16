@@ -1,3 +1,16 @@
+// Identidad visual estable de cada colonia en las máscaras de la ficha.
+// Es una asignación de interacción entre las especies registradas, no un análisis del dibujo.
+const mapasColoniasFicha=new WeakMap();
+function indiceColoniaFicha(mapa,x,y){
+  let etiquetas=mapasColoniasFicha.get(mapa);
+  if(!etiquetas){const w=mapa.width,h=mapa.height,ocupado=new Uint8Array(w*h);etiquetas=new Int16Array(w*h);let numero=0;
+    mapa.rows.forEach((fila,yy)=>{for(let j=0;j<fila.length;j+=2)for(let xx=fila[j];xx<=fila[j+1];xx++)ocupado[yy*w+xx]=1;});
+    for(let i=0;i<ocupado.length;i++)if(ocupado[i]&&!etiquetas[i]){const cola=[i];etiquetas[i]=++numero;for(let n=0;n<cola.length;n++){const q=cola[n],qx=q%w,qy=Math.floor(q/w);for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const xx=qx+dx,yy=qy+dy,k=yy*w+xx;if(xx>=0&&xx<w&&yy>=0&&yy<h&&ocupado[k]&&!etiquetas[k]){etiquetas[k]=numero;cola.push(k);}}}}
+    mapasColoniasFicha.set(mapa,etiquetas);
+  }
+  for(let d=0;d<=1;d++)for(let dy=-d;dy<=d;dy++)for(let dx=-d;dx<=d;dx++){const xx=x+dx,yy=y+dy;if(xx>=0&&xx<mapa.width&&yy>=0&&yy<mapa.height){const id=etiquetas[yy*mapa.width+xx];if(id)return id-1;}}return -1;
+}
+function imagenCelulaEspecie(nombre){return nombre==='Streptococcus thermophilus'?'src/assets/detalles/bfb61.png':nombre==='Lactobacillus delbrueckii subsp. bulgaricus'?'src/assets/detalles/micro-47710.png':null;}
 // Tres objetivos solidarios: mismo radio, órbita fija y un giro de 120 grados.
 function geometriaObjetivos(t,ancho,alto){
   const u=Math.max(0,Math.min(1,t/.78)),giro=u*u*(3-2*u)*Math.PI*2/3;
@@ -311,13 +324,13 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     el.style.setProperty('--especie-textura',`url("src/assets/detalles/${recursosEspecie[1]}")`);
     const enFicha=actual==='ficha';
     if(enFicha){
-      el.classList.add('cartel-ficha-especie');
+      el.classList.add('cartel-ficha-especie','cartel-celula');universoCartel(el,grupo);
       el.querySelector('.cod').textContent=nombre.split(/\s+/).slice(0,2).map(s=>s[0]).join('').toUpperCase();
     }
     const co=el.querySelector('.co'),p=el.querySelector('.definicionGlosario');
     const figura=document.createElement('div');figura.className='detalle-especie-figura';let limpiarGrafico=()=>{};
     if(imagen?.html){figura.innerHTML=imagen.html;}
-    else if(imagen){const img=document.createElement('img');img.src=imagen;img.alt='';figura.appendChild(img);}
+    else if(imagen){const img=document.createElement('img');img.src=imagen;img.alt='Células de '+nombre;if(imagen.endsWith('/micro-47710.png'))img.className='celula-bacilo';figura.appendChild(img);}
     else{
       const cv=document.createElement('canvas');figura.appendChild(cv);
       const estilo={...BASE,shape:nombre.startsWith('Lactobacillus')?'capsule':'disk',elongation:65,c1:grupo==='B'?'#ed74a0':grupo==='L'?'#efcc6d':'#92aa68',c2:grupo==='B'?'#f06779':grupo==='L'?'#ffc21c':'#6a983a',c3:'#fffbee',seed:nombre.length*17};
@@ -332,10 +345,10 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     }
     if(!relacionadas.length)lista.textContent='No hay muestras vinculadas en el archivo actual.';
     if(enFicha){
-      const boton=document.createElement('button');boton.type='button';boton.className='masCartel';boton.setAttribute('aria-expanded','false');boton.textContent='LEER MÁS AL RESPECTO ↗';
+      const boton=document.createElement('button');boton.type='button';boton.className='masCartel';boton.setAttribute('aria-expanded','false');boton.innerHTML='LEER MÁS AL RESPECTO <img src="src/assets/detalles/c46dc.svg" alt="">';
       const detalle=document.createElement('section');detalle.className='detalleCartel';detalle.hidden=true;
       for(const [etiqueta,valor]of [['Dónde se encuentra',datos?.donde_esta],['Qué produce o transforma',datos?.que_produce_o_transforma]])if(valor){const h=document.createElement('h3'),p=document.createElement('p');h.textContent=etiqueta;p.textContent=valor;detalle.append(h,p);}
-      boton.addEventListener('click',()=>{detalle.hidden=!detalle.hidden;boton.setAttribute('aria-expanded',String(!detalle.hidden));boton.textContent=detalle.hidden?'LEER MÁS AL RESPECTO ↗':'CERRAR INFORMACIÓN ↑';});co.append(boton,detalle);
+      boton.addEventListener('click',()=>{detalle.hidden=!detalle.hidden;boton.setAttribute('aria-expanded',String(!detalle.hidden));boton.innerHTML=detalle.hidden?'LEER MÁS AL RESPECTO <img src="src/assets/detalles/c46dc.svg" alt="">':'CERRAR INFORMACIÓN ↑';});co.append(boton,detalle);
     }else{
       const boton=document.createElement('button');boton.type='button';boton.className='masCartel';boton.setAttribute('aria-expanded','false');
       boton.textContent='VER MUESTRAS VINCULADAS ↗';lista.hidden=true;
@@ -526,20 +539,20 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     const aviso=nodo('500:7158').parentElement;aviso.classList.add('ficha-aviso-desliza');
     const flecha=aviso.querySelector('img');if(flecha){flecha.style.filter='brightness(0)';let p=flecha.parentElement;while(p&&p!==aviso){p.style.mixBlendMode='normal';p=p.parentElement;}}
     const miniatura=nodo('500:7166');miniatura.replaceChildren();const cv=document.createElement('canvas');cv.width=cv.height=116;cv.style.width=cv.style.height='100%';cv.getContext('2d').drawImage(muestra.el.querySelector('canvas'),0,0,116,116);miniatura.appendChild(cv);
-    const compuesto=ev=>cartelComposicion(muestra,ev);
-    const tocaCirculo=(img,ev,tipo)=>{
-      if(!Number.isFinite(ev?.clientX)||ev.type==='keydown')return true;
-      const mapa=CELULAS_FICHA[tipo],r=img.getBoundingClientRect();
-      const x=Math.floor((ev.clientX-r.left)/r.width*mapa.width),y=Math.floor((ev.clientY-r.top)/r.height*mapa.height);
-      const fila=mapa.rows[y]||[];for(let i=0;i<fila.length;i+=2)if(x>=fila[i]-1&&x<=fila[i+1]+1)return true;return false;
+    let siguienteEspecie=0;
+    const compuesto=(img,ev,tipo)=>{
+      let indice;
+      if(!Number.isFinite(ev?.clientX)||ev.type==='keydown'||ev.type==='click'&&ev.detail===0)indice=siguienteEspecie++;
+      else{const mapa=CELULAS_FICHA[tipo],r=img.getBoundingClientRect();indice=indiceColoniaFicha(mapa,Math.floor((ev.clientX-r.left)/r.width*mapa.width),Math.floor((ev.clientY-r.top)/r.height*mapa.height));}
+      if(indice<0)return;const especies=muestra.vinculosDatos.especies;if(especies.length)cartelComposicion(muestra,ev,especies[indice%especies.length]);
     };
     const placa=nodo('500:7152');placa.classList.add('ficha-placa');
-    prepararLupa(raiz,ev=>{if(tocaCirculo(nodo('500:7153').querySelector('img'),ev,'placa'))compuesto(ev);});
+    prepararLupa(raiz,ev=>compuesto(nodo('500:7153').querySelector('img'),ev,'placa'));
     const colonias=nodo('500:7198');colonias.classList.add('ficha-colonias');
-    interactivo(colonias,ev=>{if(tocaCirculo(colonias.querySelector('img'),ev,'especies'))compuesto(ev);},'Ver las dos especies de las colonias');
+    interactivo(colonias,ev=>compuesto(colonias.querySelector('img'),ev,'especies'),'Tocar cada colonia para ver las células de su especie');
     for(const nombre of muestra.vinculosDatos.especies){
       const p=[...raiz.querySelectorAll('p')].find(p=>texto(p)===nombre);
-      interactivo(p,ev=>cartelEspecie(nombre,'','B',nombre==='Streptococcus thermophilus'?'src/assets/detalles/bfb61.png':null,ev),nombre);
+      interactivo(p,ev=>cartelEspecie(nombre,'','B',imagenCelulaEspecie(nombre),ev),nombre);
     }
     const mascara=nodo('500:7046');mascara.style.maskImage=mascara.style.webkitMaskImage='var(--mascara-ficha-transformacion)';
     // Los paquetes conservan sus coordenadas del frame y flotan por separado.
@@ -579,21 +592,9 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     }
     limpiezasVista.add(()=>limpiezas.forEach(l=>l()));
   }
-  function cartelComposicion(muestra,evento){
-    const clave='composicion-'+muestra.codigo;if(carteles.has(clave))return;
-    const el=$('plantillaCartelGlosario').content.firstElementChild.cloneNode(true),limpiezas=[];
-    el.classList.remove('cartel-glosario');el.classList.add('cartel-especie','cartel-composicion');el.style.width='577px';universoCartel(el,muestra.grupo);
-    el.querySelector('.nom').textContent='Células de esta colonia';el.querySelector('.cod').textContent=muestra.grupo;
-    const co=el.querySelector('.co');el.querySelector('.reglaCartel').remove();
-    el.querySelector('.definicionGlosario').textContent='Las dos especies registradas en '+muestra.origen.toLowerCase()+':';
-    for(const nombre of muestra.vinculosDatos.especies){
-      const seccion=document.createElement('section');seccion.className='ficha-celula';
-      const figura=document.createElement('div');figura.className='ficha-celula-figura';
-      if(nombre==='Streptococcus thermophilus'){const img=document.createElement('img');img.src='src/assets/detalles/bfb61.png';img.alt='';figura.appendChild(img);}
-      else{const cv=document.createElement('canvas');figura.appendChild(cv);limpiezas.push(dibujoProcedural(cv,pieza({...BASE,size:100,halo:8,blur:4,core:85,irregularity:0,shape:'capsule',elongation:80,c1:'#ed74a0',c2:'#f06779',c3:'#fffbee',seed:nombre.length*17}),160));}
-      const textos=document.createElement('div'),h=document.createElement('h3'),p=document.createElement('p');h.textContent=nombre;p.textContent=CATALOGO_ESPECIES[nombre]?.definicion||'';textos.append(h,p);seccion.append(figura,textos);co.appendChild(seccion);
-    }
-    montarCartelDetalle(el,clave,evento,()=>limpiezas.forEach(f=>f()));
+  function cartelComposicion(muestra,evento,nombre){
+    if(!muestra.vinculosDatos.especies.includes(nombre))return;
+    cartelEspecie(nombre,'',CATALOGO_ESPECIES[nombre]?.grupo||muestra.grupo,imagenCelulaEspecie(nombre),evento);
   }
   function prepararLupa(raiz,alTocar){
     const placa=raiz.querySelector('.ficha-placa');if(!placa)return;
