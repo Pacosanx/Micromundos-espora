@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>document.documentElement.style.setProperty('--escala-inicial',Math.min(innerWidth/1920,innerHeight/1100));</script>
 <link rel="preload" as="image" href="src/assets/apertura-palabra.png" fetchpriority="high">
-<title>Placa Â· Muestras (Micromundos)</title>
+<title>Placa · Muestras (Micromundos)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap" rel="stylesheet">
@@ -24,12 +24,12 @@
 }
 html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #stage{position:absolute;left:50%;top:50%;width:1920px;height:1100px;transform:translate(-50%,-50%) scale(var(--escala-inicial,1));transform-origin:50% 50%}
-/* sin filter (el Figma tenÃ­a blur .5px): cualquier filtro en la pantalla o sus contenedores anula el desenfoque de fondo de los carteles */
+/* sin filter (el Figma tenía blur .5px): cualquier filtro en la pantalla o sus contenedores anula el desenfoque de fondo de los carteles */
 #screen{position:absolute;inset:0;background:#F2F0E8;border-radius:48px;overflow:clip;font-family:'Arimo',Arial,sans-serif;color:#fff}
 /* Una base apenas perceptible: las capas que ya tienen blur lo conservan. */
 #stage{filter:blur(.3px)}
 .abs{position:absolute}
-/* grupos de tamaÃ±o cero: solo corren a sus hijos (sin transform, para no romper los modos de fusiÃ³n) */
+/* grupos de tamaño cero: solo corren a sus hijos (sin transform, para no romper los modos de fusión) */
 .ancla{position:absolute;left:0;top:0;width:0;height:0}
 .dif{mix-blend-mode:difference}
 
@@ -47,7 +47,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #elegida{position:absolute;left:0;top:0;pointer-events:none;z-index:3}
 #elegida .it .mi{transform:scale(1.25)}
 
-/* aros de aÃ±os */
+/* aros de años */
 .aros{position:absolute;pointer-events:none;transition:opacity .4s}
 .aros.glow{filter:blur(8px);opacity:.6}
 .aros.linea{mix-blend-mode:difference;opacity:.6}
@@ -105,7 +105,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #listaCab{left:1438px;top:284px;width:442px;display:flex;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
 #listaCab span{color:#fff;mix-blend-mode:difference;opacity:.7}
 #listaCab span:first-child{width:155px}
-/* la caja es mÃ¡s grande que la zona de lectura (80 px de aire arriba, 40 a cada costado) para que el desenfoque no se corte */
+/* la caja es más grande que la zona de lectura (80 px de aire arriba, 40 a cada costado) para que el desenfoque no se corte */
 #lista{left:1398px;top:245px;width:522px;height:855px;padding:0 40px;box-sizing:border-box;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;touch-action:pan-y}
 #lista::-webkit-scrollbar{display:none}
 #lista .pad{height:240px}
@@ -124,7 +124,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #buscador input::placeholder{color:#0d0f17}
 #buscador svg{mix-blend-mode:normal;filter:brightness(0) blur(.5px)}
 
-/* tÃ­tulos inferiores */
+/* títulos inferiores */
 #navegacionVistas{position:absolute;left:0;top:940px;width:1000px;height:140px;overflow:hidden;pointer-events:none}
 #titulo{left:40px;top:33px;font-size:var(--t-display);line-height:var(--l-display);filter:blur(3px)}
 #navegacionVistas [role="button"],.copiaVista{font-weight:400;white-space:nowrap;mix-blend-mode:difference;color:#fff}
@@ -134,10 +134,10 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #seccion span{margin-right:13px}
 .vista{top:73px;font-size:var(--t-sub);line-height:var(--l-sub);filter:blur(2.5px);cursor:pointer}
 
-/* â”€â”€â”€â”€â”€ Cartel abierto â”€â”€â”€â”€â”€
-   El vidrio de los carteles (backdrop-filter) no puede desenfocar lo que estÃ¡ en modo "diferencia": el navegador lo dibuja aparte.
-   Mientras hay un cartel abierto, esos elementos pasan a su color equivalente sin fusiÃ³n: blanco en "diferencia" sobre el papel
-   #F2F0E8 da #0D0F17, asÃ­ que sobre el fondo crema no cambia nada a la vista y el vidrio sÃ­ los desenfoca. */
+/* ───── Cartel abierto ─────
+   El vidrio de los carteles (backdrop-filter) no puede desenfocar lo que está en modo "diferencia": el navegador lo dibuja aparte.
+   Mientras hay un cartel abierto, esos elementos pasan a su color equivalente sin fusión: blanco en "diferencia" sobre el papel
+   #F2F0E8 da #0D0F17, así que sobre el fondo crema no cambia nada a la vista y el vidrio sí los desenfoca. */
 body.con-cartel .rotulo, body.con-cartel .item span, body.con-cartel .tam span, body.con-cartel #listaCab span,
 body.con-cartel .fila, body.con-cartel #navegacionVistas [role="button"], body.con-cartel .copiaVista, body.con-cartel #seccion,
 body.con-cartel #cabecera .fila, body.con-cartel #buscador input, body.con-cartel #alternarListado, body.con-cartel .signo, body.con-cartel .etq .txt
@@ -168,19 +168,19 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 :is(#ficha,.cartel-glosario,.cartel-especie).saliendo{transition:transform .6s ease-in,visibility .6s}
 :is(#ficha,.cartel-glosario,.cartel-especie).saliendo .vidrio,:is(#ficha,.cartel-glosario,.cartel-especie).saliendo .flota,:is(#ficha,.cartel-glosario,.cartel-especie).saliendo>.x{filter:blur(40px);opacity:0;transition:filter .6s ease-in,opacity .6s ease-in}
 .cartel{--cartel-fondo:linear-gradient(90deg,rgba(229,125,171,.25),rgba(242,199,94,.25));--cartel-linea:linear-gradient(90deg,#e57dab,#f2c75e)}
-/* Figma 396:8048: sin fondo opaco ni sombra; el contenido mantiene su tinta directa y el material vive detrÃ¡s. */
+/* Figma 396:8048: sin fondo opaco ni sombra; el contenido mantiene su tinta directa y el material vive detrás. */
 .cartel .fi{position:relative;padding:24px;border-radius:24px;max-height:740px;overflow:auto;box-sizing:border-box;scrollbar-width:none}
 /* Material de Figma 396:8048. El radio de efecto se convierte a sigma CSS (radio / 2),
    igual que el layer blur 8 de la imagen se exporta como blur(4px).
-   El fill estÃ¡ Ãºnicamente en .vidrio: no hay otra placa opaca detrÃ¡s del contenido. */
+   El fill está únicamente en .vidrio: no hay otra placa opaca detrás del contenido. */
 .cartel{--figma-background-blur:10.9px;--figma-layer-blur:10px;--cartel-background-blur:calc(var(--figma-background-blur)/2);--cartel-layer-blur:calc(var(--figma-layer-blur)/2);--cartel-noise-opacity:.25}
 .cartel .vidrio{position:absolute;inset:0;border-radius:24px;background:var(--cartel-fondo);-webkit-backdrop-filter:blur(var(--cartel-background-blur));backdrop-filter:blur(var(--cartel-background-blur));filter:blur(var(--cartel-layer-blur));pointer-events:none}
-/* La imagen conserva su propio blur 8 de Figma y su opacidad 26 %. Se desenfoca despuÃ©s del recorte. */
+/* La imagen conserva su propio blur 8 de Figma y su opacidad 26 %. Se desenfoca después del recorte. */
 .cartel .fondoCartel{position:absolute;inset:0;filter:blur(4px);pointer-events:none}
 .cartel .textura{position:absolute;inset:0;border-radius:24px;overflow:hidden;pointer-events:none}
 .cartel .textura::before{content:"";position:absolute;left:-5px;top:-72.29%;width:calc(100% + 10px);height:167.5%;background:url('__CARTEL_FONDO__') center/100% 100% no-repeat;opacity:.26;mix-blend-mode:darken}
 .cartel:not([data-universo="BL"]) .textura::before{filter:grayscale(1);mix-blend-mode:multiply}
-/* Ruido multitono fijo y fino (tamaÃ±o de referencia 0,5). Se aplica despuÃ©s del blur,
+/* Ruido multitono fijo y fino (tamaño de referencia 0,5). Se aplica después del blur,
    solo en el material, para conservar el grano y la nitidez del texto. */
 .cartel .grano{position:absolute;inset:0;border-radius:24px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 320 320'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3' intercept='-1'/%3E%3CfeFuncG type='linear' slope='3' intercept='-1'/%3E%3CfeFuncB type='linear' slope='3' intercept='-1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/160px 160px;opacity:var(--cartel-noise-opacity);mix-blend-mode:soft-light;-webkit-mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent),linear-gradient(180deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);-webkit-mask-composite:source-in;mask:linear-gradient(90deg,transparent,#000 10px,#000 calc(100% - 10px),transparent),linear-gradient(180deg,transparent,#000 10px,#000 calc(100% - 10px),transparent);mask-composite:intersect;pointer-events:none}
 .cartel .co{position:relative;color:#13151b}
@@ -218,7 +218,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 #aviso .fi{padding:24px}
 #aviso .co{mix-blend-mode:normal;color:#1f2422}
 
-/* VÃ­nculos: los mismos canvas de muestras, distribuidos sobre una circunferencia. */
+/* Vínculos: los mismos canvas de muestras, distribuidos sobre una circunferencia. */
 #hilos{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
 #hilos path{fill:none;stroke-width:1.2;stroke-linecap:round;transition:opacity .3s}
 #hilos[hidden]{display:none}
@@ -226,7 +226,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .vista-muestrario #aros{display:none}
 #lista,#listaCab,#buscador{transition:opacity .4s,visibility .4s}
 .listado-cerrado #lista,.listado-cerrado #listaCab,.listado-cerrado #buscador{opacity:0;visibility:hidden;pointer-events:none}
-/* Las posiciones las anima app.js junto con los hilos, sin una segunda interpolaciÃ³n CSS. */
+/* Las posiciones las anima app.js junto con los hilos, sin una segunda interpolación CSS. */
 .transicion-vista #zoomToque,.transicion-vista .btnZoom{pointer-events:none!important}
 .vista-vinculos .capaR{filter:none;opacity:1}
 .vista-vinculos .it.sin-vinculo .mi{opacity:.16;filter:blur(2px)}
@@ -267,7 +267,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .en-apertura #izqAbajo #titulo,.en-apertura #izqAbajo .vista,.en-apertura #seccion,
 .en-apertura .etq .txt{mix-blend-mode:normal!important;color:#0d0f17!important}
 .en-apertura #derecha #buscador input::placeholder{color:#0d0f17}
-/* Las transiciones entre secciones aÃ­slan sus capas; fijar tinta evita el destello blanco. */
+/* Las transiciones entre secciones aíslan sus capas; fijar tinta evita el destello blanco. */
 .transicion-seccion #cabecera .fila,.transicion-seccion #derecha #alternarListado,
 .transicion-seccion #derecha #buscador input,.transicion-seccion #derecha #listaCab span,
 .transicion-seccion #derecha #lista .fila,.transicion-seccion #leyenda .rotulo,
@@ -276,7 +276,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .transicion-seccion #seccion,.transicion-seccion .etq .txt{
   mix-blend-mode:normal!important;color:#0d0f17!important
 }
-/* Ritmos del fondo: gradientes lentos, trazos en rotaciÃ³n y manchas independientes. */
+/* Ritmos del fondo: gradientes lentos, trazos en rotación y manchas independientes. */
 @keyframes fondoFlotante{0%,100%{translate:0 0}50%{translate:var(--flotar-x,0px) var(--flotar-y,40px)}}
 @keyframes fondoGiro{from{rotate:0deg}to{rotate:360deg}}
 .tinte,.apertura-tinte,.apertura-mancha,.mancha-flotante{animation:fondoFlotante var(--flotar-tiempo,35s) ease-in-out var(--flotar-fase,0s) infinite}
@@ -286,8 +286,8 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 @media(prefers-reduced-motion:reduce){.tinte,.apertura-tinte,.elipse,.apertura-arco,.apertura-mancha,.mancha-flotante{animation:none}}
 /*ESTILOS_GLOSARIO*/
 /*ESTILOS_DETALLES*/
-/* La tinta de Muestras conserva el mismo color antes y despuÃ©s de la entrada.
-   El fundido lo controla apertura.js, sin una segunda interpolaciÃ³n CSS. */
+/* La tinta de Muestras conserva el mismo color antes y después de la entrada.
+   El fundido lo controla apertura.js, sin una segunda interpolación CSS. */
 #screen:not(.en-universo) :is(#alternarListado,.rotulo,.item span,.tam span,#navegacionVistas [role="button"],.copiaVista,#seccion,.etq .txt){color:#0d0f17;mix-blend-mode:normal}
 .en-apertura :is(#centro,#derecha,#leyenda,#izqAbajo){transition:none}
 </style>
@@ -307,7 +307,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
     <img id="aperturaPalabra" src="src/assets/apertura-palabra.png" width="1700" height="1134" alt="" aria-hidden="true" fetchpriority="high" decoding="sync"/>
     <div id="aperturaColonias" aria-hidden="true"></div>
     <div class="apertura-marca"><img src="__APERTURA_MARCA__" alt="Espora"/></div>
-    <span class="apertura-invitacion">TOCÃ PARA COMENZAR</span>
+    <span class="apertura-invitacion">TOCÁ PARA COMENZAR</span>
   </div>
 
   <!-- La interfaz se arma en tres grupos que se acomodan al ancho y alto de la pantalla (ver ajustar() en app.js):
@@ -337,7 +337,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 
   <!-- zoom -->
   <svg id="zoomSvg" width="1920" height="1100"></svg>
-  <!-- el + y el âˆ’ se dibujan en el SVG del arco; estas son sus zonas de toque (las ubica app.js) -->
+  <!-- el + y el − se dibujan en el SVG del arco; estas son sus zonas de toque (las ubica app.js) -->
   <div class="btnZoom" id="zMas" data-ui></div>
   <div class="btnZoom" id="zMenos" data-ui></div>
 
@@ -351,15 +351,15 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
         <button type="button" class="g-colonia g-colonia-b" data-glosario-grupo="bacterias"><img src="__G_BACTERIA__" alt="" width="682" height="682" loading="lazy" decoding="async"/><span class="g-rotulo">Bacterias</span><sup>(01)</sup></button>
         <button type="button" class="g-colonia g-colonia-l" data-glosario-grupo="levaduras"><img src="__G_LEVADURA__" alt="" width="682" height="682" loading="lazy" decoding="async"/><span class="g-rotulo">Levaduras</span><sup>(02)</sup></button>
         <button type="button" class="g-colonia g-colonia-m" data-glosario-grupo="mohos"><img src="__G_MOHO__" alt="" width="682" height="682" loading="lazy" decoding="async"/><span class="g-rotulo">Mohos</span><sup>(03)</sup></button>
-        <button type="button" id="glosarioBajar" class="g-bajar">DeslizÃ¡<img src="__G_BAJAR__" alt=""/></button>
+        <button type="button" id="glosarioBajar" class="g-bajar">Deslizá<img src="__G_BAJAR__" alt=""/></button>
       </div>
       <div id="glosarioIndice">
-        <div class="g-encabezado"><span></span><span>N.Âº</span><span>TÃ©rmino</span><span>Fichas</span><span>Grupo</span></div>
+        <div class="g-encabezado"><span></span><span>N.º</span><span>Término</span><span>Fichas</span><span>Grupo</span></div>
         <div id="glosarioTabla"></div>
       </div>
     </div>
   </section>
-  <section id="tuPlaca" hidden inert data-ui aria-label="Tu placa"><h1>TU PLACA</h1><p>Este espacio estÃ¡ en preparaciÃ³n.</p></section>
+  <section id="tuPlaca" hidden inert data-ui aria-label="Tu placa"><h1>TU PLACA</h1><p>Este espacio está en preparación.</p></section>
   <div id="desenfoqueCabecera" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
   <div id="cabecera" class="abs">
     <div class="fila"><nav id="navegacionPrincipal" aria-label="Secciones"><button type="button" id="navMuestras" data-ui>MUESTRAS</button><button type="button" id="navGlosario" data-ui>GLOSARIO</button><button type="button" id="navTuPlaca" data-ui>TU PLACA</button></nav></div>
@@ -370,9 +370,9 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
   <button id="alternarListado" type="button" data-ui aria-expanded="false" aria-controls="lista listaCab buscador" aria-label="Abrir listado completo"><span>LISTADO COMPLETO</span><svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0H10L5 6Z" fill="currentColor"/></svg></button>
   <label id="buscador" class="abs" data-ui>
     <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-    <input id="q" type="text" placeholder="Buscar una muestraâ€¦" autocomplete="off" spellcheck="false">
+    <input id="q" type="text" placeholder="Buscar una muestra…" autocomplete="off" spellcheck="false">
   </label>
-  <div id="listaCab" class="abs"><span>CÃ“DIGO</span><span>ORIGEN</span></div>
+  <div id="listaCab" class="abs"><span>CÓDIGO</span><span>ORIGEN</span></div>
   <div id="lista" class="abs" data-ui></div>
   </div>
 
@@ -390,19 +390,19 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
       <div class="rotulo">FORMA</div>
       <div class="items">
         <div class="item estado" data-e="A"><div class="ic"><canvas></canvas></div><span>Activa</span></div>
-        <div class="item estado" data-e="C"><div class="ic"><canvas></canvas></div><span>En conservaciÃ³n</span></div>
+        <div class="item estado" data-e="C"><div class="ic"><canvas></canvas></div><span>En conservación</span></div>
         <div class="item estado" data-e="MO"><div class="ic"><canvas></canvas></div><span>Montada</span></div>
         <div class="item estado" data-e="R"><div class="ic"><canvas></canvas></div><span>Registro digital</span></div>
       </div>
     </div>
     <div class="bloque">
-      <div class="rotulo">TAMAÃ‘O</div>
+      <div class="rotulo">TAMAÑO</div>
       <div class="tam"><div class="circs"><i style="width:10px;height:10px;left:0;top:8px"></i><i style="width:26px;height:26px;left:24px;top:0"></i></div><span>1 a 300+ colonias</span></div>
     </div>
   </div>
 
   <div id="izqAbajo" class="ancla"><nav id="navegacionVistas" aria-label="Vistas de muestras"><div id="titulo" class="abs">PLACA</div>
-    <div class="abs vista" id="vVinculos" data-ui style="left:342px">VÃNCULOS</div>
+    <div class="abs vista" id="vVinculos" data-ui style="left:342px">VÍNCULOS</div>
     <div class="abs vista" id="vMuestrario" data-ui style="left:530px">MUESTRARIO</div>
     </nav>
     <div id="derAbajo" class="ancla"></div>
@@ -413,17 +413,17 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 
 </div></div>
 
-<!-- Los carteles van en una capa aparte, encima del escenario: asÃ­ el navegador arma primero la pantalla entera
-     (con todos sus modos de fusiÃ³n) y reciÃ©n despuÃ©s el vidrio del cartel la desenfoca. Dentro del escenario,
+<!-- Los carteles van en una capa aparte, encima del escenario: así el navegador arma primero la pantalla entera
+     (con todos sus modos de fusión) y recién después el vidrio del cartel la desenfoca. Dentro del escenario,
      el desenfoque de fondo ignoraba todo lo que usa "diferencia" u "oscurecer". ajustar() la mantiene alineada. -->
 <div id="capaCarteles"><div id="anclaCarteles">
 <template id="plantillaCartelGlosario"><aside class="cartel cartel-glosario" data-ui><div class="vidrio"></div><div class="flota"><div class="fondoCartel"><div class="textura"></div></div><div class="grano"></div><div class="fi"><div class="co"><header class="cabCartel"><div class="nom"></div><div class="cod"></div></header><div class="reglaCartel"></div><p class="definicionGlosario"></p></div></div></div></aside></template>
-<div id="ficha" class="cartel" data-ui><div class="vidrio"></div><div class="flota"><div class="fondoCartel"><div class="textura"></div></div><div class="grano"></div><div class="fi"><div class="co" id="fichaCo"></div></div></div><button class="x" id="fichaX" aria-label="Cerrar">Ã—</button></div>
+<div id="ficha" class="cartel" data-ui><div class="vidrio"></div><div class="flota"><div class="fondoCartel"><div class="textura"></div></div><div class="grano"></div><div class="fi"><div class="co" id="fichaCo"></div></div></div><button class="x" id="fichaX" aria-label="Cerrar">×</button></div>
 </div></div>
 
 <script defer src="src/assets/lupa-figma.js"></script>
 <script>
-// La primera pintura usa el recurso inicial; la preparaciÃ³n pesada espera a que estÃ© decodificado.
+// La primera pintura usa el recurso inicial; la preparación pesada espera a que esté decodificado.
 const palabraInicial=document.getElementById('aperturaPalabra'),portadaInicial=document.getElementById('apertura');
 const pedirEntradaTemprana=ev=>{if(!portadaInicial.classList.contains('apertura-lista')&&(ev.type==='click'||ev.key==='Enter'||ev.key===' ')){ev.preventDefault();portadaInicial.dataset.entradaPendiente='true';}};
 portadaInicial.addEventListener('click',pedirEntradaTemprana);portadaInicial.addEventListener('keydown',pedirEntradaTemprana);
