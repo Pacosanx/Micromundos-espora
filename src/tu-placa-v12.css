@@ -74,7 +74,7 @@
 .tp-menu-guia .tp-menu-compacto{stroke-dasharray:1 6;stroke-linecap:round;opacity:.55}
 .tp-menu-guia .tp-menu-toque{stroke:transparent;stroke-width:36;pointer-events:stroke;filter:none}
 .tp-menu-boton{all:unset;position:absolute;left:-24px;top:-24px;width:48px;height:48px;pointer-events:auto;cursor:pointer;transition:transform .5s cubic-bezier(.3,.9,.3,1),filter .4s;touch-action:none}
-.tp-menu-boton .tp-menu-superficie{position:absolute;left:-.8px;top:-.8px;width:49.6px;height:49.6px;pointer-events:none}
+.tp-menu-boton .tp-menu-superficie{position:absolute;left:-.8px;top:-.8px;width:49.6px;height:49.6px;filter:blur(1px);pointer-events:none}
 .tp-menu-boton .tp-menu-icono{position:absolute;left:12px;top:12px;width:24px;height:24px;pointer-events:none}
 .tp-menu-boton span{position:absolute;white-space:nowrap;text-transform:uppercase;font:700 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;filter:blur(.4px);opacity:.8;pointer-events:none}
 .tp-menu-boton output{position:absolute;left:24px;top:54px;translate:-50% 0;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif;background:#f2f0e8a8;border-radius:10px;padding:2px 6px;pointer-events:none}
