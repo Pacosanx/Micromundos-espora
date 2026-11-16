@@ -53,7 +53,9 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 .aros.linea{mix-blend-mode:difference;opacity:.6}
 #etqs{position:absolute;left:0;top:0;pointer-events:none;transition:opacity .4s}
 .etq{position:absolute;left:0;top:0;width:47px;height:20px;margin:-10px 0 0 -23.5px;pointer-events:none;will-change:transform,opacity}
-.etq .pop{position:absolute;inset:0;background:rgba(255,255,255,.8);filter:blur(5px);border-radius:24px}
+/* El halo blanco de cada año es la misma píldora desenfocada (blur 5 px) pero ya "horneada" en una imagen: antes cada etiqueta
+   aplicaba un filtro de desenfoque propio en cada fotograma. inset:-20px = margen que ocupaba el desenfoque. */
+.etq .pop{position:absolute;inset:-20px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='87' height='60'%3E%3Cfilter id='b' filterUnits='userSpaceOnUse' x='0' y='0' width='87' height='60'%3E%3CfeGaussianBlur stdDeviation='5'/%3E%3C/filter%3E%3Crect x='20' y='20' width='47' height='20' rx='10' fill='%23fff' fill-opacity='.8' filter='url(%23b)'/%3E%3C/svg%3E") center/100% 100% no-repeat}
 .etq .txt{position:absolute;inset:3px 0 0;font-size:var(--t-micro);line-height:var(--l-micro);text-align:center;color:#fff;mix-blend-mode:difference;opacity:.8}
 .sel-on .aros{opacity:.15}
 .sel-on #etqs{opacity:.25}
@@ -221,7 +223,10 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 #aviso .co{mix-blend-mode:normal;color:#1f2422}
 
 /* Vínculos: los mismos canvas de muestras, distribuidos sobre una circunferencia. */
-#hilos{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+/* Mismo resultado que el filtro SVG anterior (desenfoque .35 px + grano fractalNoise de 2 octavas, semilla 13), pero el grano es una máscara-imagen que se rasteriza una sola vez. */
+#hilos{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;filter:blur(.35px);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g' filterUnits='userSpaceOnUse' x='0' y='0' width='256' height='256' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .2 .2 .2 0 .4'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E") 0 0/256px 256px repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g' filterUnits='userSpaceOnUse' x='0' y='0' width='256' height='256' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .2 .2 .2 0 .4'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E") 0 0/256px 256px repeat}
 #hilos path{fill:none;stroke-width:1.2;stroke-linecap:round;transition:opacity .3s}
 #hilos[hidden]{display:none}
 .vista-vinculos #aros{display:none}
@@ -256,7 +261,8 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .apertura-invitacion{position:absolute;left:50%;bottom:77px;transform:translateX(-50%);font:400 var(--t-sub)/var(--l-sub) Arimo,Arial,sans-serif;white-space:nowrap;color:#0d0f17;filter:blur(1.5px);opacity:var(--salida-apertura)}
 #aperturaPalabra{position:absolute;left:calc(50% - 850px);top:calc(50% - 599px);width:1700px;height:1134px;mix-blend-mode:darken;pointer-events:none}
 .apertura-lista #aperturaPalabra{display:none}
-.apertura-particula{position:absolute;left:0;top:0;pointer-events:none;mix-blend-mode:darken}
+/* La mezcla "darken" ya la aplica #aperturaPalabra a todo el grupo; repetirla en cada una de las 173 partículas obligaba al navegador a un pase de mezcla por partícula. */
+.apertura-particula{position:absolute;left:0;top:0;pointer-events:none}
 .apertura-particula canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
 .en-apertura #cabecera,.en-apertura #derecha,.en-apertura #leyenda,.en-apertura #izqAbajo,.en-apertura #seccion{opacity:var(--entrada-interfaz,0);pointer-events:none}
 .en-apertura .capaR{opacity:1!important;transition:none}
@@ -286,6 +292,9 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .apertura-mancha{position:absolute;pointer-events:none}
 .apertura-mancha canvas{display:block;width:100%;height:100%}
 @media(prefers-reduced-motion:reduce){.tinte,.apertura-tinte,.elipse,.apertura-arco,.apertura-mancha,.mancha-flotante{animation:none}}
+/* Durante las transiciones el movimiento ambiente se pausa (conserva su posición y retoma después): así cada fotograma sólo repinta lo que realmente cambia. */
+.apertura-en-marcha :is(.tinte,.apertura-tinte,.elipse,.apertura-arco,.apertura-mancha,.mancha-flotante),
+.transicion-vista :is(.tinte,.apertura-tinte,.elipse,.apertura-arco,.apertura-mancha,.mancha-flotante){animation-play-state:paused}
 #cabecera{z-index:10}
 #desenfoqueCabecera{position:absolute;left:0;top:0;width:100%;height:136px;z-index:9;pointer-events:none}
 #desenfoqueCabecera i{display:none}
@@ -742,17 +751,10 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
        lo de la izquierda queda pegado a la izquierda, #centro va centrado y #derecha va pegado a la derecha. -->
   <div id="centro" class="ancla">
   <svg id="hilos" width="1920" height="1100" hidden aria-hidden="true">
-    <defs id="defVinculos">
-      <!-- Un filtro compartido para toda la red, sin crear ruido fuera de los trazos. -->
-      <filter id="texturaVinculos" filterUnits="userSpaceOnUse" x="350" y="80" width="1020" height="920" color-interpolation-filters="sRGB">
-        <feGaussianBlur in="SourceGraphic" stdDeviation=".35" result="suave"/>
-        <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="13" stitchTiles="stitch" result="grano"/>
-        <feColorMatrix in="grano" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  .2 .2 .2 0 .4" result="mascaraGrano"/>
-        <feComposite in="suave" in2="mascaraGrano" operator="in"/>
-      </filter>
-    </defs>
+    <!-- El desenfoque y el grano de los trazos se aplican por CSS sobre #hilos (ver estilos): antes un filtro SVG con feTurbulence se recalculaba en cada fotograma de la transición. -->
+    <defs id="defVinculos"></defs>
     <defs><mask id="mascaraMuestras" maskUnits="userSpaceOnUse" x="-2000" y="-2000" width="6000" height="6000"><rect x="-2000" y="-2000" width="6000" height="6000" fill="white"/><g id="huecosMuestras" fill="black"></g></mask></defs>
-    <g mask="url(#mascaraMuestras)"><g id="trazosVinculos" filter="url(#texturaVinculos)"></g></g>
+    <g mask="url(#mascaraMuestras)"><g id="trazosVinculos"></g></g>
   </svg>
 
   <!-- placa: las dos recetas de Colonias de Paco (A y B); cada elemento es una muestra -->
@@ -954,7 +956,8 @@ function render(target,n,padding=0){
  const colors=[rgb(state.c1),rgb(state.c2),rgb(state.c3)],rot=state.rotation*Math.PI/180,ang=state.angle*Math.PI/180,scale=n/760;
  function element(cx,cy,r,aspect=1,phase=0,palette=colors){
   cx+=padding;cy+=padding;const layer=document.createElement('canvas');layer.width=layer.height=full;
-  const lc=layer.getContext('2d'),im=lc.createImageData(full,full),data=im.data;
+  // willReadFrequently: las capas intermedias se leen y escriben píxel a píxel; en memoria de CPU es mucho más rápido que en GPU.
+  const lc=layer.getContext('2d',{willReadFrequently:true}),im=lc.createImageData(full,full),data=im.data;
   const bound=r*Math.max(1,aspect)+n*(state.halo/100*.5+state.blur/760*3)+4;
   const x0=Math.max(0,Math.floor(cx-bound)),x1=Math.min(full,Math.ceil(cx+bound)),y0=Math.max(0,Math.floor(cy-bound)),y1=Math.min(full,Math.ceil(cy+bound));
   for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
@@ -983,7 +986,7 @@ function render(target,n,padding=0){
    data[i+3]=clamp(alpha)*255;
   }
   lc.putImageData(im,0,0);let finished=layer;
-  if(state.blur){finished=document.createElement('canvas');finished.width=finished.height=full;const bc=finished.getContext('2d');bc.filter=`blur(${state.blur*scale}px)`;bc.drawImage(layer,0,0);bc.filter='none'}
+  if(state.blur){finished=document.createElement('canvas');finished.width=finished.height=full;const bc=finished.getContext('2d',{willReadFrequently:true});bc.filter=`blur(${state.blur*scale}px)`;bc.drawImage(layer,0,0);bc.filter='none'}
   if(state.grain||state.porosity||state.blur&&state.core){
    const fc=finished.getContext('2d'),pixels=fc.getImageData(0,0,full,full),rgba=pixels.data;
    for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
@@ -1014,14 +1017,19 @@ function paintScene(target,width,guide=false,progress=1){const h=Math.round(widt
  const singleRender=render;
  let progress=1,playing=false,raf=0,destroyed=false;
  canvas.style.width='100%';canvas.style.height='auto';canvas.style.aspectRatio=String(1/ratio());
- function draw(){if(destroyed)return;const width=Math.max(64,Math.min(options.maxResolution||1600,Math.round(canvas.getBoundingClientRect().width*(devicePixelRatio||1))));paintScene(canvas,width,false,progress)}
+ // Dibujar es caro (cada píxel se calcula en CPU): no se repite si el tamaño y el progreso no cambiaron.
+ // Antes cada obra se dibujaba 3 veces al montarse (directo, ResizeObserver y fonts.ready).
+ let dibujadoAncho=0,dibujadoProgreso=-1;
+ function draw(forzar=false){if(destroyed)return;const width=Math.max(64,Math.min(options.maxResolution||1600,Math.round(canvas.getBoundingClientRect().width*(devicePixelRatio||1))));if(!forzar&&width===dibujadoAncho&&progress===dibujadoProgreso)return;dibujadoAncho=width;dibujadoProgreso=progress;paintScene(canvas,width,false,progress)}
  function setProgress(value){progress=clamp(Number(value)||0);draw()}
  function pause(){playing=false;cancelAnimationFrame(raf)}
  function play({duration=9000,loop=false}={}){pause();playing=true;const start=performance.now();function tick(now){if(!playing||destroyed)return;const t=(now-start)/Math.max(100,duration);setProgress(loop?t%1:Math.min(1,t));if(t<1||loop)raf=requestAnimationFrame(tick);else playing=false}raf=requestAnimationFrame(tick)}
  function hit(event){const rect=canvas.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width*canvas.width,y=(event.clientY-rect.top)/rect.height*canvas.height;for(let n=items.length-1;n>=0;n--){const item=items[n],phase=clamp((progress-n*.82/Math.max(1,items.length))/.18),growth=.04+.96*(phase*phase*(3-2*phase));if(!phase)continue;const b=bounds(item,canvas.width,canvas.height),px=(x-item.x*canvas.width)/growth+b.w/2,py=(y-item.y*canvas.height)/growth+b.h/2;if(item.type==='text'){if(px>=0&&py>=0&&px<=b.w&&py<=b.h)return item;continue}if(item.style.opacity<=0)continue;const res=Math.max(64,Math.ceil(b.w)),image=sprite(item,res),pad=image.texturePadding||0,ix=Math.floor(px/b.w*res)+pad,iy=Math.floor(py/b.h*res)+pad;if(ix>=0&&iy>=0&&ix<image.width&&iy<image.height&&image.getContext('2d').getImageData(ix,iy,1,1).data[3]>10)return item}return null}
  const click=event=>options.onClick?.(hit(event),event);
  canvas.addEventListener('click',click);
- const observer=new ResizeObserver(draw);observer.observe(canvas);draw();document.fonts?.ready.then(draw);
+ const observer=new ResizeObserver(()=>draw());observer.observe(canvas);draw();
+ // Las fuentes sólo cambian el resultado si la obra tiene texto.
+ if(items.some(i=>i.type==='text'))document.fonts?.ready.then(()=>draw(true));
  return {setProgress,play,pause,draw,getRecipe:()=>structuredClone(scene),destroy(){destroyed=true;pause();observer.disconnect();canvas.removeEventListener('click',click)}};
 }
 
@@ -1105,7 +1113,6 @@ function prepararVinculos(){
   // La zona de toque y el recorte del filtro crecen con la visualización.
   const alcance=radio+60, lado=alcance*2;
   const limites={x:C.x-alcance,y:C.y-alcance,width:lado,height:lado};
-  for(const [atributo,valor] of Object.entries(limites)) $('texturaVinculos').setAttribute(atributo,valor);
   Object.assign($('toque').style,{left:limites.x+'px',top:limites.y+'px',width:lado+'px',height:lado+'px'});
   const factor = Math.min(1, (2*Math.PI*radio-margen*orden.length) / orden.reduce((n,s)=>n+s.d,0));
   const total = orden.reduce((n,s)=>n+s.d*factor+margen,0);
@@ -2278,11 +2285,6 @@ function ajustarZonaMuestras(){
     derecha=Math.max(derecha,m.x+m.width);abajo=Math.max(abajo,m.y+m.height);
   }
   Object.assign($('toque').style,{left:x+'px',top:y+'px',width:(derecha-x)+'px',height:(abajo-y)+'px'});
-  const filtro=$('texturaVinculos'),firma=[x,y,derecha,abajo].join(',');
-  if(filtro.dataset.zona!==firma){
-    for(const [k,v] of Object.entries({x,y,width:derecha-x,height:abajo-y}))filtro.setAttribute(k,v);
-    filtro.dataset.zona=firma;
-  }
 }
 
 const CATALOGO_ESPECIES = {"Rhodotorula mucilaginosa":{"definicion":"Levadura ambiental que forma colonias rosadas o anaranjadas.","que_produce_o_transforma":"Produce carotenoides, pigmentos de color rosa a naranja.","donde_esta":"Superficies húmedas, cortinas de baño, aire, agua"},"Trichoderma viride":{"definicion":"Moho verde de crecimiento rápido.","que_produce_o_transforma":"Descompone madera y celulosa; se usa para proteger plantas de hongos dañinos.","donde_esta":"Madera, suelo, compost"},"Komagataeibacter rhaeticus":{"definicion":"Bacteria acética que participa en algunas comunidades de kombucha.","que_produce_o_transforma":"Puede producir celulosa bacteriana y contribuir a la formación de ácidos durante la fermentación.","donde_esta":"Kombucha y otros ambientes de fermentación"},"Pseudomonas fluorescens":{"definicion":"Bacteria ambiental; algunas cepas producen pigmentos fluorescentes y pueden crecer a bajas temperaturas.","que_produce_o_transforma":"Algunas cepas transforman materia orgánica o alteran alimentos refrigerados; otras se investigan por sus interacciones con plantas.","donde_esta":"Suelo, agua, raíces de plantas, heladeras"},"Geotrichum candidum":{"definicion":"Moho blanco aterciopelado, a medio camino entre moho y levadura.","que_produce_o_transforma":"Madura la corteza de quesos como el camembert y aporta aromas.","donde_esta":"Quesos, leche, frutas"},"Staphylococcus epidermidis":{"definicion":"Bacteria que vive normalmente sobre la piel sana, sin causar daño; es parte de la microbiota humana.","que_produce_o_transforma":"Ocupa el lugar de bacterias dañinas y produce sustancias que frenan su crecimiento; también participa en el olor corporal.","donde_esta":"Piel y mucosas de todas las personas"},"Hanseniaspora uvarum":{"definicion":"La levadura más abundante sobre la uva antes de la vendimia.","que_produce_o_transforma":"Inicia la fermentación del mosto y aporta aromas frutales.","donde_esta":"Piel de uvas y otras frutas"},"Enterococcus faecalis":{"definicion":"Bacteria resistente que vive en el intestino; participa en la maduración de algunos quesos.","que_produce_o_transforma":"Fermenta azúcares en ácido láctico y aporta aromas a quesos y embutidos.","donde_esta":"Intestino humano y animal, quesos, carnes curadas"},"Botrytis cinerea":{"definicion":"Moho que puede colonizar distintas plantas, frutas y semillas; puede formar una pelusa gris.","que_produce_o_transforma":"Puede causar podredumbres en plantas y frutas; bajo ciertas condiciones, contribuye a la llamada podredumbre noble de uvas para algunos vinos dulces.","donde_esta":"Uvas, frutillas, flores"},"Serratia marcescens":{"definicion":"Bacteria ambiental conocida por formar manchas rosadas o rojas en lugares húmedos.","que_produce_o_transforma":"Produce prodigiosina, un pigmento rojo intenso.","donde_esta":"Baños húmedos, juntas de duchas, suelo, agua"},"Brettanomyces bruxellensis":{"definicion":"Levadura que crece lento y sobrevive en bebidas alcohólicas.","que_produce_o_transforma":"Produce aromas intensos (cuero, establo, especias), buscados en algunas cervezas y evitados en el vino.","donde_esta":"Barricas de madera, vino, cervezas artesanales"},"Bacillus subtilis":{"definicion":"Bacteria muy común y resistente que puede sobrevivir años en forma de espora.","que_produce_o_transforma":"Algunas cepas descomponen compuestos orgánicos; otras se utilizan para fermentar soja o producir enzimas.","donde_esta":"Suelo, plantas, polvo, intestino"},"Alternaria alternata":{"definicion":"Moho oscuro muy común en plantas; sus esporas pueden causar alergias.","que_produce_o_transforma":"Descompone hojas y frutas; produce manchas en tomates y cítricos.","donde_esta":"Hojas, frutas, suelo, aire"},"Rhizopus stolonifer":{"definicion":"Moho de crecimiento rápido que forma una pelusa blanca con puntos negros.","que_produce_o_transforma":"Descompone pan y frutas; algunos parientes se usan para hacer tempeh.","donde_esta":"Pan, frutas blandas"},"Candida parapsilosis":{"definicion":"Levadura que vive normalmente sobre la piel; en personas con defensas bajas puede causar infecciones.","que_produce_o_transforma":"Forma películas sobre superficies (biopelículas) y descompone grasas de la piel.","donde_esta":"Piel y uñas humanas, superficies"},"Torulaspora delbrueckii":{"definicion":"Levadura de las frutas usada en vinos y panificados.","que_produce_o_transforma":"Puede fermentar azúcares y aportar compuestos aromáticos; el resultado depende de la cepa y del proceso.","donde_esta":"Frutas, mostos y bebidas fermentadas como vino y sidra"},"Acetobacter aceti":{"definicion":"Bacteria que necesita oxígeno y vive donde hay alcohol.","que_produce_o_transforma":"Transforma el alcohol en ácido acético: convierte el vino en vinagre y forma la \"madre\" del vinagre y la kombucha.","donde_esta":"Frutas maduras, flores, vino y sidra expuestos al aire"},"Lactobacillus acidophilus":{"definicion":"Bacteria ácido-láctica benéfica que vive en el intestino humano y se usa como probiótico.","que_produce_o_transforma":"Fermenta la lactosa de la leche en ácido láctico; ayuda a mantener el equilibrio de la flora intestinal.","donde_esta":"Intestino, boca, yogures y leches fermentadas"},"Corynebacterium glutamicum":{"definicion":"Bacteria del suelo, inofensiva, muy usada en la industria.","que_produce_o_transforma":"Produce glutamato (el sabor umami) y otros aminoácidos a escala industrial.","donde_esta":"Suelo, restos vegetales"},"Streptococcus thermophilus":{"definicion":"Bacteria ácido-láctica utilizada como cultivo iniciador en yogures y otros productos lácteos.","que_produce_o_transforma":"Fermenta la leche y produce ácido láctico: la base del yogur y de muchos quesos.","donde_esta":"Leche, yogur, quesos"},"Aspergillus niger":{"definicion":"Moho que forma colonias negras como polvo.","que_produce_o_transforma":"Produce ácido cítrico, usado en bebidas y alimentos, y enzimas industriales.","donde_esta":"Suelo, cebollas, frutas, paredes"},"Penicillium sp.":{"definicion":"Género de mohos que agrupa numerosas especies; esta ficha no precisa una especie.","que_produce_o_transforma":"Sus especies pueden descomponer distintos materiales orgánicos; sus características varían.","donde_esta":"Suelo, aire, interiores y alimentos"},"Zygosaccharomyces rouxii":{"definicion":"Levadura capaz de vivir en medios muy dulces o salados.","que_produce_o_transforma":"Fermenta alimentos azucarados (puede alterar la miel) y aporta aroma a la salsa de soja y el miso.","donde_esta":"Miel, jarabes, mermeladas, salsa de soja"},"Penicillium verrucosum":{"definicion":"Moho del género Penicillium estudiado en cereales y alimentos conservados.","que_produce_o_transforma":"Algunas cepas pueden producir micotoxinas; su presencia no se deduce por el aspecto de una colonia.","donde_esta":"Cereales y algunos alimentos conservados"},"Pichia kudriavzevii":{"definicion":"Levadura resistente al ácido y al calor.","que_produce_o_transforma":"Fermenta azúcares en alcohol y aromas frutados; participa en la fermentación del cacao.","donde_esta":"Frutas, jugos, fermentos tradicionales como el cacao"},"Lactobacillus plantarum":{"definicion":"Bacteria ácido-láctica presente en plantas y en diversos alimentos fermentados. Su nombre taxonómico actualizado es Lactiplantibacillus plantarum.","que_produce_o_transforma":"Puede transformar azúcares en ácido láctico; su actividad depende de la cepa y del ambiente.","donde_esta":"Verduras fermentadas, aceitunas, masa madre, plantas, intestino humano"},"Penicillium roqueforti":{"definicion":"Moho verde azulado que se usa a propósito en los quesos azules.","que_produce_o_transforma":"Forma las vetas azules del roquefort y descompone grasas y proteínas, generando su sabor intenso.","donde_esta":"Quesos azules, pan viejo, cuevas"},"Streptomyces griseus":{"definicion":"Bacteria del suelo que crece formando filamentos, parecida a un moho.","que_produce_o_transforma":"Produce geosmina, responsable del olor a tierra mojada, y la estreptomicina, uno de los primeros antibióticos.","donde_esta":"Suelo"},"Cladosporium herbarum":{"definicion":"Uno de los mohos más frecuentes en el aire, de color verde oliva oscuro.","que_produce_o_transforma":"Descompone materia vegetal; forma manchas oscuras en superficies húmedas.","donde_esta":"Paredes y ventanas húmedas, aire, hojas"},"Penicillium chrysogenum":{"definicion":"Moho verde muy común en casas; es el productor industrial de la penicilina.","que_produce_o_transforma":"Produce penicilina, el primer antibiótico de uso masivo.","donde_esta":"Interiores húmedos, frutas, pan"},"Escherichia coli":{"definicion":"Bacteria que vive normalmente en el intestino; la mayoría de sus cepas son inofensivas, algunas causan enfermedades.","que_produce_o_transforma":"Produce vitamina K en el intestino; en el laboratorio se usa para fabricar insulina y otras proteínas.","donde_esta":"Intestino de humanos y animales, agua y superficies contaminadas"},"Lactobacillus delbrueckii subsp. bulgaricus":{"definicion":"Bacteria ácido-láctica utilizada junto con Streptococcus thermophilus como cultivo característico del yogur.","que_produce_o_transforma":"Transforma parte de la lactosa en ácido láctico durante la fermentación de la leche.","donde_esta":"Leche y yogur"},"Fusarium oxysporum":{"definicion":"Moho del suelo, a veces rosado o violáceo.","que_produce_o_transforma":"Descompone restos de plantas; algunas cepas enferman cultivos.","donde_esta":"Suelo, raíces, granos"},"Leuconostoc mesenteroides":{"definicion":"Bacteria ácido-láctica que inicia la fermentación de muchas verduras.","que_produce_o_transforma":"Transforma azúcares en ácido láctico y gas; también produce dextrano, una sustancia viscosa.","donde_esta":"Verduras frescas, repollo, caña de azúcar"},"Mucor racemosus":{"definicion":"Moho que crece como un algodón gris.","que_produce_o_transforma":"Descompone restos vegetales; se usa para madurar algunos quesos y el tofu fermentado.","donde_esta":"Suelo, frutas, quesos"},"Debaryomyces hansenii":{"definicion":"Levadura que tolera mucha sal.","que_produce_o_transforma":"Algunas cepas participan en la maduración de alimentos y otras se estudian por sus interacciones con mohos de frutas.","donde_esta":"Superficies de frutas, quesos, embutidos y otros ambientes"},"Saccharomyces cerevisiae":{"definicion":"La levadura más conocida y usada por los humanos desde hace miles de años.","que_produce_o_transforma":"Transforma azúcares en alcohol y dióxido de carbono: hace crecer el pan y fermenta la cerveza y el vino.","donde_esta":"Masa madre, uvas, frutas maduras, cerveza, vino"},"Kluyveromyces marxianus":{"definicion":"Levadura capaz de alimentarse de la lactosa de la leche.","que_produce_o_transforma":"Transforma la lactosa en alcohol y aromas; se usa para producir enzimas y aromas frutados.","donde_esta":"Lácteos fermentados y otras fermentaciones alimentarias estudiadas"},"Micrococcus luteus":{"definicion":"Bacteria inofensiva y muy resistente que forma colonias de color amarillo brillante.","que_produce_o_transforma":"Descompone el sudor y restos orgánicos; su pigmento amarillo la protege de la radiación solar.","donde_esta":"Aire, polvo, agua, piel humana"}};
@@ -31980,7 +31982,7 @@ const RECETA_APERTURA = {
 };
 // Las colonias del JSON original son los puntos de partida de la placa.
 function prepararApertura(iniciarMuestras){
-  const portada=$('apertura'), nube=$('aperturaColonias');
+  const portada=$('apertura'), nube=$('aperturaColonias'), fondoCompartido=$('fondoCompartido');
   const fondoObras=[];
   // Fases distintas y movimiento CSS: no se recalculan las texturas en cada frame.
   document.querySelectorAll('.tinte,.apertura-tinte').forEach((el,i)=>{
@@ -32043,10 +32045,11 @@ function prepararApertura(iniciarMuestras){
     const grupoY=movimientoReducido.matches?0:4.5*Math.sin(segundos*Math.PI*2/9.5);
     marca.style.translate=`${(grupoX*.7).toFixed(3)}px ${(grupoY*.85).toFixed(3)}px`;
     // El fondo no se reemplaza: sólo se despejan sus efectos al entrar a Muestras.
-    pantalla.style.setProperty('--fondo-blur',(175-50*e).toFixed(2)+'px');
-    pantalla.style.setProperty('--fondo-grano',(.14-.10*e).toFixed(3));
-    pantalla.style.setProperty('--puntos-blur',(1.75-.40*e).toFixed(2)+'px');
-    pantalla.style.setProperty('--tinte-ruido',(1-e).toFixed(3));
+    // Estas variables sólo las usa el fondo compartido (≈400 nodos): definirlas en #screen (≈7000 nodos) recalculaba estilos de toda la pantalla en cada fotograma.
+    fondoCompartido.style.setProperty('--fondo-blur',(175-50*e).toFixed(2)+'px');
+    fondoCompartido.style.setProperty('--fondo-grano',(.14-.10*e).toFixed(3));
+    fondoCompartido.style.setProperty('--puntos-blur',(1.75-.40*e).toFixed(2)+'px');
+    fondoCompartido.style.setProperty('--tinte-ruido',(1-e).toFixed(3));
     pantalla.style.setProperty('--entrada-interfaz',clamp((t-.55)/.45));
     portada.style.setProperty('--salida-apertura',1-clamp(t/.4));
     for(const p of particulas){

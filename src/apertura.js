@@ -1,6 +1,6 @@
 // Las colonias del JSON original son los puntos de partida de la placa.
 function prepararApertura(iniciarMuestras){
-  const portada=$('apertura'), nube=$('aperturaColonias');
+  const portada=$('apertura'), nube=$('aperturaColonias'), fondoCompartido=$('fondoCompartido');
   const fondoObras=[];
   // Fases distintas y movimiento CSS: no se recalculan las texturas en cada frame.
   document.querySelectorAll('.tinte,.apertura-tinte').forEach((el,i)=>{
@@ -63,10 +63,11 @@ function prepararApertura(iniciarMuestras){
     const grupoY=movimientoReducido.matches?0:4.5*Math.sin(segundos*Math.PI*2/9.5);
     marca.style.translate=`${(grupoX*.7).toFixed(3)}px ${(grupoY*.85).toFixed(3)}px`;
     // El fondo no se reemplaza: sólo se despejan sus efectos al entrar a Muestras.
-    pantalla.style.setProperty('--fondo-blur',(175-50*e).toFixed(2)+'px');
-    pantalla.style.setProperty('--fondo-grano',(.14-.10*e).toFixed(3));
-    pantalla.style.setProperty('--puntos-blur',(1.75-.40*e).toFixed(2)+'px');
-    pantalla.style.setProperty('--tinte-ruido',(1-e).toFixed(3));
+    // Estas variables sólo las usa el fondo compartido (≈400 nodos): definirlas en #screen (≈7000 nodos) recalculaba estilos de toda la pantalla en cada fotograma.
+    fondoCompartido.style.setProperty('--fondo-blur',(175-50*e).toFixed(2)+'px');
+    fondoCompartido.style.setProperty('--fondo-grano',(.14-.10*e).toFixed(3));
+    fondoCompartido.style.setProperty('--puntos-blur',(1.75-.40*e).toFixed(2)+'px');
+    fondoCompartido.style.setProperty('--tinte-ruido',(1-e).toFixed(3));
     pantalla.style.setProperty('--entrada-interfaz',clamp((t-.55)/.45));
     portada.style.setProperty('--salida-apertura',1-clamp(t/.4));
     for(const p of particulas){

@@ -53,7 +53,9 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 .aros.linea{mix-blend-mode:difference;opacity:.6}
 #etqs{position:absolute;left:0;top:0;pointer-events:none;transition:opacity .4s}
 .etq{position:absolute;left:0;top:0;width:47px;height:20px;margin:-10px 0 0 -23.5px;pointer-events:none;will-change:transform,opacity}
-.etq .pop{position:absolute;inset:0;background:rgba(255,255,255,.8);filter:blur(5px);border-radius:24px}
+/* El halo blanco de cada año es la misma píldora desenfocada (blur 5 px) pero ya "horneada" en una imagen: antes cada etiqueta
+   aplicaba un filtro de desenfoque propio en cada fotograma. inset:-20px = margen que ocupaba el desenfoque. */
+.etq .pop{position:absolute;inset:-20px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='87' height='60'%3E%3Cfilter id='b' filterUnits='userSpaceOnUse' x='0' y='0' width='87' height='60'%3E%3CfeGaussianBlur stdDeviation='5'/%3E%3C/filter%3E%3Crect x='20' y='20' width='47' height='20' rx='10' fill='%23fff' fill-opacity='.8' filter='url(%23b)'/%3E%3C/svg%3E") center/100% 100% no-repeat}
 .etq .txt{position:absolute;inset:3px 0 0;font-size:var(--t-micro);line-height:var(--l-micro);text-align:center;color:#fff;mix-blend-mode:difference;opacity:.8}
 .sel-on .aros{opacity:.15}
 .sel-on #etqs{opacity:.25}
@@ -221,7 +223,10 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 #aviso .co{mix-blend-mode:normal;color:#1f2422}
 
 /* Vínculos: los mismos canvas de muestras, distribuidos sobre una circunferencia. */
-#hilos{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+/* Mismo resultado que el filtro SVG anterior (desenfoque .35 px + grano fractalNoise de 2 octavas, semilla 13), pero el grano es una máscara-imagen que se rasteriza una sola vez. */
+#hilos{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;filter:blur(.35px);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g' filterUnits='userSpaceOnUse' x='0' y='0' width='256' height='256' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .2 .2 .2 0 .4'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E") 0 0/256px 256px repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g' filterUnits='userSpaceOnUse' x='0' y='0' width='256' height='256' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .2 .2 .2 0 .4'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E") 0 0/256px 256px repeat}
 #hilos path{fill:none;stroke-width:1.2;stroke-linecap:round;transition:opacity .3s}
 #hilos[hidden]{display:none}
 .vista-vinculos #aros{display:none}
@@ -256,7 +261,8 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .apertura-invitacion{position:absolute;left:50%;bottom:77px;transform:translateX(-50%);font:400 var(--t-sub)/var(--l-sub) Arimo,Arial,sans-serif;white-space:nowrap;color:#0d0f17;filter:blur(1.5px);opacity:var(--salida-apertura)}
 #aperturaPalabra{position:absolute;left:calc(50% - 850px);top:calc(50% - 599px);width:1700px;height:1134px;mix-blend-mode:darken;pointer-events:none}
 .apertura-lista #aperturaPalabra{display:none}
-.apertura-particula{position:absolute;left:0;top:0;pointer-events:none;mix-blend-mode:darken}
+/* La mezcla "darken" ya la aplica #aperturaPalabra a todo el grupo; repetirla en cada una de las 173 partículas obligaba al navegador a un pase de mezcla por partícula. */
+.apertura-particula{position:absolute;left:0;top:0;pointer-events:none}
 .apertura-particula canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
 .en-apertura #cabecera,.en-apertura #derecha,.en-apertura #leyenda,.en-apertura #izqAbajo,.en-apertura #seccion{opacity:var(--entrada-interfaz,0);pointer-events:none}
 .en-apertura .capaR{opacity:1!important;transition:none}
@@ -286,6 +292,9 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .apertura-mancha{position:absolute;pointer-events:none}
 .apertura-mancha canvas{display:block;width:100%;height:100%}
 @media(prefers-reduced-motion:reduce){.tinte,.apertura-tinte,.elipse,.apertura-arco,.apertura-mancha,.mancha-flotante{animation:none}}
+/* Durante las transiciones el movimiento ambiente se pausa (conserva su posición y retoma después): así cada fotograma sólo repinta lo que realmente cambia. */
+.apertura-en-marcha :is(.tinte,.apertura-tinte,.elipse,.apertura-arco,.apertura-mancha,.mancha-flotante),
+.transicion-vista :is(.tinte,.apertura-tinte,.elipse,.apertura-arco,.apertura-mancha,.mancha-flotante){animation-play-state:paused}
 /*ESTILOS_GLOSARIO*/
 /*ESTILOS_DETALLES*/
 /* La tinta de Muestras conserva el mismo color antes y después de la entrada.
@@ -316,17 +325,10 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
        lo de la izquierda queda pegado a la izquierda, #centro va centrado y #derecha va pegado a la derecha. -->
   <div id="centro" class="ancla">
   <svg id="hilos" width="1920" height="1100" hidden aria-hidden="true">
-    <defs id="defVinculos">
-      <!-- Un filtro compartido para toda la red, sin crear ruido fuera de los trazos. -->
-      <filter id="texturaVinculos" filterUnits="userSpaceOnUse" x="350" y="80" width="1020" height="920" color-interpolation-filters="sRGB">
-        <feGaussianBlur in="SourceGraphic" stdDeviation=".35" result="suave"/>
-        <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="13" stitchTiles="stitch" result="grano"/>
-        <feColorMatrix in="grano" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  .2 .2 .2 0 .4" result="mascaraGrano"/>
-        <feComposite in="suave" in2="mascaraGrano" operator="in"/>
-      </filter>
-    </defs>
+    <!-- El desenfoque y el grano de los trazos se aplican por CSS sobre #hilos (ver estilos): antes un filtro SVG con feTurbulence se recalculaba en cada fotograma de la transición. -->
+    <defs id="defVinculos"></defs>
     <defs><mask id="mascaraMuestras" maskUnits="userSpaceOnUse" x="-2000" y="-2000" width="6000" height="6000"><rect x="-2000" y="-2000" width="6000" height="6000" fill="white"/><g id="huecosMuestras" fill="black"></g></mask></defs>
-    <g mask="url(#mascaraMuestras)"><g id="trazosVinculos" filter="url(#texturaVinculos)"></g></g>
+    <g mask="url(#mascaraMuestras)"><g id="trazosVinculos"></g></g>
   </svg>
 
   <!-- placa: las dos recetas de Colonias de Paco (A y B); cada elemento es una muestra -->

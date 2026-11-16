@@ -76,7 +76,6 @@ function prepararVinculos(){
   // La zona de toque y el recorte del filtro crecen con la visualización.
   const alcance=radio+60, lado=alcance*2;
   const limites={x:C.x-alcance,y:C.y-alcance,width:lado,height:lado};
-  for(const [atributo,valor] of Object.entries(limites)) $('texturaVinculos').setAttribute(atributo,valor);
   Object.assign($('toque').style,{left:limites.x+'px',top:limites.y+'px',width:lado+'px',height:lado+'px'});
   const factor = Math.min(1, (2*Math.PI*radio-margen*orden.length) / orden.reduce((n,s)=>n+s.d,0));
   const total = orden.reduce((n,s)=>n+s.d*factor+margen,0);

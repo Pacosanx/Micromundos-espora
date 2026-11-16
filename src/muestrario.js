@@ -24,9 +24,4 @@ function ajustarZonaMuestras(){
     derecha=Math.max(derecha,m.x+m.width);abajo=Math.max(abajo,m.y+m.height);
   }
   Object.assign($('toque').style,{left:x+'px',top:y+'px',width:(derecha-x)+'px',height:(abajo-y)+'px'});
-  const filtro=$('texturaVinculos'),firma=[x,y,derecha,abajo].join(',');
-  if(filtro.dataset.zona!==firma){
-    for(const [k,v] of Object.entries({x,y,width:derecha-x,height:abajo-y}))filtro.setAttribute(k,v);
-    filtro.dataset.zona=firma;
-  }
 }

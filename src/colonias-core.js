@@ -12,7 +12,8 @@ function render(target,n,padding=0){
  const colors=[rgb(state.c1),rgb(state.c2),rgb(state.c3)],rot=state.rotation*Math.PI/180,ang=state.angle*Math.PI/180,scale=n/760;
  function element(cx,cy,r,aspect=1,phase=0,palette=colors){
   cx+=padding;cy+=padding;const layer=document.createElement('canvas');layer.width=layer.height=full;
-  const lc=layer.getContext('2d'),im=lc.createImageData(full,full),data=im.data;
+  // willReadFrequently: las capas intermedias se leen y escriben píxel a píxel; en memoria de CPU es mucho más rápido que en GPU.
+  const lc=layer.getContext('2d',{willReadFrequently:true}),im=lc.createImageData(full,full),data=im.data;
   const bound=r*Math.max(1,aspect)+n*(state.halo/100*.5+state.blur/760*3)+4;
   const x0=Math.max(0,Math.floor(cx-bound)),x1=Math.min(full,Math.ceil(cx+bound)),y0=Math.max(0,Math.floor(cy-bound)),y1=Math.min(full,Math.ceil(cy+bound));
   for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
@@ -41,7 +42,7 @@ function render(target,n,padding=0){
    data[i+3]=clamp(alpha)*255;
   }
   lc.putImageData(im,0,0);let finished=layer;
-  if(state.blur){finished=document.createElement('canvas');finished.width=finished.height=full;const bc=finished.getContext('2d');bc.filter=`blur(${state.blur*scale}px)`;bc.drawImage(layer,0,0);bc.filter='none'}
+  if(state.blur){finished=document.createElement('canvas');finished.width=finished.height=full;const bc=finished.getContext('2d',{willReadFrequently:true});bc.filter=`blur(${state.blur*scale}px)`;bc.drawImage(layer,0,0);bc.filter='none'}
   if(state.grain||state.porosity||state.blur&&state.core){
    const fc=finished.getContext('2d'),pixels=fc.getImageData(0,0,full,full),rgba=pixels.data;
    for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
@@ -72,13 +73,18 @@ function paintScene(target,width,guide=false,progress=1){const h=Math.round(widt
  const singleRender=render;
  let progress=1,playing=false,raf=0,destroyed=false;
  canvas.style.width='100%';canvas.style.height='auto';canvas.style.aspectRatio=String(1/ratio());
- function draw(){if(destroyed)return;const width=Math.max(64,Math.min(options.maxResolution||1600,Math.round(canvas.getBoundingClientRect().width*(devicePixelRatio||1))));paintScene(canvas,width,false,progress)}
+ // Dibujar es caro (cada píxel se calcula en CPU): no se repite si el tamaño y el progreso no cambiaron.
+ // Antes cada obra se dibujaba 3 veces al montarse (directo, ResizeObserver y fonts.ready).
+ let dibujadoAncho=0,dibujadoProgreso=-1;
+ function draw(forzar=false){if(destroyed)return;const width=Math.max(64,Math.min(options.maxResolution||1600,Math.round(canvas.getBoundingClientRect().width*(devicePixelRatio||1))));if(!forzar&&width===dibujadoAncho&&progress===dibujadoProgreso)return;dibujadoAncho=width;dibujadoProgreso=progress;paintScene(canvas,width,false,progress)}
  function setProgress(value){progress=clamp(Number(value)||0);draw()}
  function pause(){playing=false;cancelAnimationFrame(raf)}
  function play({duration=9000,loop=false}={}){pause();playing=true;const start=performance.now();function tick(now){if(!playing||destroyed)return;const t=(now-start)/Math.max(100,duration);setProgress(loop?t%1:Math.min(1,t));if(t<1||loop)raf=requestAnimationFrame(tick);else playing=false}raf=requestAnimationFrame(tick)}
  function hit(event){const rect=canvas.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width*canvas.width,y=(event.clientY-rect.top)/rect.height*canvas.height;for(let n=items.length-1;n>=0;n--){const item=items[n],phase=clamp((progress-n*.82/Math.max(1,items.length))/.18),growth=.04+.96*(phase*phase*(3-2*phase));if(!phase)continue;const b=bounds(item,canvas.width,canvas.height),px=(x-item.x*canvas.width)/growth+b.w/2,py=(y-item.y*canvas.height)/growth+b.h/2;if(item.type==='text'){if(px>=0&&py>=0&&px<=b.w&&py<=b.h)return item;continue}if(item.style.opacity<=0)continue;const res=Math.max(64,Math.ceil(b.w)),image=sprite(item,res),pad=image.texturePadding||0,ix=Math.floor(px/b.w*res)+pad,iy=Math.floor(py/b.h*res)+pad;if(ix>=0&&iy>=0&&ix<image.width&&iy<image.height&&image.getContext('2d').getImageData(ix,iy,1,1).data[3]>10)return item}return null}
  const click=event=>options.onClick?.(hit(event),event);
  canvas.addEventListener('click',click);
- const observer=new ResizeObserver(draw);observer.observe(canvas);draw();document.fonts?.ready.then(draw);
+ const observer=new ResizeObserver(()=>draw());observer.observe(canvas);draw();
+ // Las fuentes sólo cambian el resultado si la obra tiene texto.
+ if(items.some(i=>i.type==='text'))document.fonts?.ready.then(()=>draw(true));
  return {setProgress,play,pause,draw,getRecipe:()=>structuredClone(scene),destroy(){destroyed=true;pause();observer.disconnect();canvas.removeEventListener('click',click)}};
 }
