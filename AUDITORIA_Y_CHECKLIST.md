@@ -22,6 +22,42 @@ El bloque `D` es el más grande; `B` y `C` son rápidos y los docentes los pusie
 
 ---
 
+## 0-bis. Actualización 17/11/2026 · respuestas de Paco
+
+**Decisiones recibidas y su efecto en el plan**
+1. **Blur:** el problema es que el blur de la **tipografía** es demasiado fuerte. Decisión: **quitar el 100 % del blur tipográfico por ahora** (B-2). El blur decorativo (colonias, fondos, vidrio de carteles) no se toca.
+2. **Herramienta generadora:** es **COLONIAS** (`Pacosanx/colonias-espora`). La leí (ver §3-bis).
+3. **Ir primero a TU PLACA:** es sólo el orden del video (F-1). Se descarta el acceso directo por URL (F-2).
+4. **"Forzar simbiosis":** ahora significa **unir dos colonias**, ya sea en una más grande o en una forma de 8 / infinito (D-10 redefinido).
+5. **Evaluación:** los docentes **no usan la app**; corrigen desde el **video que prepara Paco, grabado con mouse**. El plan final sigue siendo pantalla táctil.
+
+**Cambio de prioridades por (5):** lo que cuenta es lo que **se ve y se entiende en el video**. Suben: blur de texto (B), onboarding/cartelitos (C: el video debe explicarse solo), TU PLACA (D) y el guion (F). Bajan: Safari/iPad (H-11, A-5, B-4), fuente sin internet (H-06, A-3) y las áreas táctiles de 48 px (H-05, A-4; siguen valiendo para la versión táctil final, no para la evaluación). H-01 (README) y H-02 (`build.py`) dejan de ser críticos para los docentes pero se mantienen como 🟠/🟡 por la integridad del repositorio.
+
+**Conflicto nuevo a tener presente:** `RELACIONES.md` de COLONIAS registra que Paco, el 13/11, **rechazó** que la Simbiosis "agregue una tercera forma o agrande el área". La acción UNIR sí hace eso, así que debe ser una **acción distinta y explícita** (botón), no la reacción pasiva de Simbiosis, que sigue siendo intercambio de color sin crecer.
+
+### 3-bis. Qué hay en COLONIAS y qué conviene tomar (respuesta a D-09)
+
+Leí el repositorio (`README.md`, `RELACIONES.md`, `renderer.js`, `relations-renderer.js`, `verify-relations.cjs`, `index.html`). **No lo ejecuté.**
+- **Modos:** Elemento, Composición, Micro y **Relaciones** (`#relaciones`). Edición directa y numérica de elementos (`direct-edit.js`, `numeric-edit.js`), exportación PNG/receta JSON/paquete web con `mountColonias`.
+- **Catálogo de formas** del renderer: disco, anillo, cápsula, **"Dos colonias" (`pair`)**, banda, arco, fragmento, cotton, hairy, branching, fan, wrinkled, spotted, zoned, patchy, granular, rimmed, smoothcol.
+- **Relaciones** (`relations-renderer.js`): Simbiosis, Rechazo, Barrera y Neutro con parámetros (intensidad, ancho, blur, grano, irregularidad, **progreso "desarrollo del encuentro"**), receta v3 y pruebas (`verify-relations.cjs`). Es una versión **mucho más elaborada** que las reacciones de TU PLACA (`tu-placa-v12.js:101-121`: un círculo de gradiente y dos máscaras). Esto responde casi directo a D-10: la base del "efecto notorio" ya existe en tu herramienta.
+- **`studyLobes` ya existe en el renderer publicado** (`renderer.js`), mientras que `src/colonias-core.js` lo tiene como parche propio (`[parche Micromundos]`). Es probable que se pueda **reemplazar el core por el actual** y eliminar los parches. No lo comprobé: hay que comparar el resultado visual de las 146 muestras.
+
+**Qué implementar de COLONIAS (propuesta, para que decidas):**
+1. **Reacciones de TU PLACA** ← portar `relations-renderer.js` (con `progress` animado al aparecer). Reemplaza H-25. *Esfuerzo L.*
+2. **Composiciones sembrables** ← los presets de modo Composición (el generador ya es una copia de ese modo). *Ya cubierto en D-7.*
+3. **UNIR en 8/infinito** ← formas `pair`/`capsule` con su control de separación (D-10).
+4. **"Momento de diseñar tu propia colonia"** ← versión acotada del modo Elemento (E-3). Respuesta corta a tu pregunta: **sí sirve**, porque convierte a TU PLACA en algo creado por la persona y no sólo ensamblado; conviene hacerlo con pocos controles.
+5. **Sincronizar el core** (reemplazo de `colonias-core.js`) como tarea técnica previa (nuevo ítem **Q-9** abajo).
+
+Nuevos ítems de checklist:
+- [ ] **Q-9 · M** Comparar `colonias-core.js` con `renderer.js` de COLONIAS; si da igual o mejor, reemplazarlo y borrar los `[parche Micromundos]`. Validar con una captura de las 146 muestras antes/después. *dep:* ninguna.
+- [ ] **D-13 · L** Portar `relations-renderer.js` a TU PLACA (Simbiosis/Rechazo/Barrera/Neutro con `progress`), reemplazando `dibujarReacciones`. *dep:* Q-1, Q-9. Sustituye en la práctica el "rediseño" de D-9.
+- [ ] **F-4 · S** Verificar en la grabación con mouse: cursor visible, todos los textos nítidos (B-2), cartelitos legibles, nada depende de hover.
+
+---
+
+
 ## 1. Qué se hizo y qué NO se pudo comprobar
 
 ### Ejecutado (resultados reales)
@@ -193,9 +229,9 @@ Reglas a respetar (de `mensaje_para_codex.md`): no cambiar datos de `base/` sin 
 
 **Blur (D-01)**
 - [ ] **B-1 · S** Escribir un script de medición (el de esta auditoría, `src/` o `tools/`) que liste textos/controles con blur > 0 por pantalla y pase como test (objetivo: 0 textos de lectura/botón con blur). *dep:* ninguna.
-- [ ] **B-2 · M** Reemplazar los `filter:blur(...)` sueltos por 4 variables y poner en 0 el texto de lectura y de todo control interactivo (`plantilla.html:73,132,138`; `tu-placa-v12.css:6,21,58,62,64,82,97`; `tu-placa-biblioteca.css`). *dep:* B-1. *Decisión previa:* P-1.
+- [ ] **B-2 · M** *(decisión de Paco 17/11)* Quitar **el 100 % del blur de la tipografía** por ahora: todo texto, rótulo, botón y etiqueta pasa a `blur 0` (`plantilla.html:73,132,138,195,196,230`; `tu-placa-v12.css:6,21,22,58,62,64,82,97`; `tu-placa-biblioteca.css:3,13`; `vinculos.js:37,46,48` y `apertura` para el título animado). Dejar una sola variable `--blur-texto:0px` para poder volver a graduar después. El blur de colonias, fondos y vidrio de los carteles **no se toca**. *dep:* B-1.
 - [ ] **B-3 · S** Revisar el contraste con texto nítido sobre `mix-blend-mode:difference` (opacidades < .6) y ajustar. *dep:* B-2.
-- [ ] **B-4 · M** Probar en Safari/iPad y Firefox: colonias (`colonias-core.js:45`), vidrio de carteles y exportación del PNG. Si `ctx.filter` falla, implementar fallback. *dep:* ninguna (S si no falla).
+- [ ] **B-4 · S** *(baja prioridad: los docentes ven un video grabado por Paco)* Probar el blur de colonias/carteles en el navegador con el que se graba; Safari/iPad sólo si el plan táctil final lo usa (`colonias-core.js:45`).
 - [ ] **B-5 · S** Capturas "antes/después" de las 5 pantallas para mostrar a los docentes. *dep:* B-2.
 
 **Onboarding y cartelitos (D-02, D-03)**
@@ -203,7 +239,7 @@ Reglas a respetar (de `mensaje_para_codex.md`): no cambiar datos de `base/` sin 
 - [ ] **C-2 · S** Texto y diseño del onboarding con la escala tipográfica vigente (nítido, área táctil 48 px). *dep:* B-2.
 - [ ] **C-3 · M** Cartelitos de primera vez en PLACA (tocar muestra, arco de zoom, arrastrar/descartar la ficha), VÍNCULOS/MUESTRARIO y GLOSARIO (los círculos son tocables), que desaparecen tras el primer uso.
 - [ ] **C-4 · S** Cartelitos de primera vez en TU PLACA: "Arrastrá una forma a la placa", "Tocá una colonia para editarla", "Mantené y girá" (D-07). *dep:* D-6.
-- [ ] **C-5 · S** Unificar vocabulario táctil/mouse (decidir "tocá" vs "tocá o hacé clic") (P-5) y aplicarlo a todos los textos (`TOCÁ PARA COMENZAR`, "Arrastrá…", "Deslizá").
+- [ ] **C-5 · S** *(resuelto P-5)* Textos con verbos neutros que valgan para mouse y pantalla táctil ("Arrastrá", "Elegí", "Mantené y girá"; "Tocá" sólo donde no haya alternativa) y aplicarlos a `TOCÁ PARA COMENZAR`, "Arrastrá…", "Deslizá". En el video el cursor se ve: los cartelitos deben entenderse con mouse.
 - [ ] **C-6 · S** Añadir tests de flujo (`verificar-flujos.cjs`): el onboarding aparece la primera vez y no vuelve a aparecer.
 
 **TU PLACA (D-05 a D-11)**
@@ -216,24 +252,24 @@ Reglas a respetar (de `mensaje_para_codex.md`): no cambiar datos de `base/` sin 
 - [ ] **D-7 · L** Composiciones sembrables (D-06): fila "COMPOSICIONES" en la biblioteca con 4–6 presets que **suman** a la placa sin vaciarla; manejo como grupo (mover/borrar/escalar). Parametrizar `generarComposicionTuPlaca` con zona y semilla. *dep:* D-8.
 - [ ] **D-8 · M** Volver determinista el generador (H-19: `Math.random` → PRNG con semilla) + test unitario (misma semilla ⇒ misma salida, ≤ 120 elementos, todo dentro de la placa).
 - [ ] **D-9 · L** Rediseño visual de las reacciones (simbiosis, rechazo, barrera) con efectos notorios y entrada animada; sin superar el presupuesto de render (medir con 60 elementos). *dep:* H-22 (separar render de reacciones).
-- [ ] **D-10 · M** Botón `FORZAR SIMBIOSIS`: seleccionar dos colonias → crear colonia combinada (grupo `BL`) y reemplazarlas; con DESHACER. *dep:* D-9, P-7.
+- [ ] **D-10 · L** *(redefinido 17/11)* Acción **UNIR** (reemplaza a "forzar simbiosis"): al seleccionar dos colonias, un botón las une en **(a) una colonia más grande** (fusión orgánica) o **(b) una forma de 8 / infinito** (dos lóbulos con cuello). Reemplaza a las dos originales, con DESHACER. Probar primero con las formas `pair` y `capsule` del renderer de COLONIAS y, si no alcanzan, con fusión por umbral sobre los sprites. *dep:* D-9, P-7 (colores).
 - [ ] **D-11 · S** Retirar la pestaña MEZCLAS de la biblioteca (`biblioteca.js:6`) cuando D-10 funcione. *dep:* D-10.
 - [ ] **D-12 · S** Actualizar el recuerdo PNG (`pintarRecuerdo`, `v12.js:122-133`) para que exporte las nuevas reacciones y el anillo perimetral. *dep:* D-5, D-9.
 - [ ] **E-1 · M** Definir con Paco el catálogo final de formas y colores (lista cerrada) (D-11). *dep:* P-8.
 - [ ] **E-2 · M** Implementar el catálogo reducido y bajar los montajes de canvas de la biblioteca (hoy 176 estilos; se montan hasta 44 canvas por pestaña). Medir tiempo de apertura de TU PLACA antes/después. *dep:* E-1.
-- [ ] **E-3 · L** *(Opcional, sujeto a P-2)* Editor de colonia propia (D-09), con 4–6 controles del renderer y guardado en la biblioteca. *dep:* E-1, D-1…D-10.
+- [ ] **E-3 · L** *(ahora recomendado como versión acotada)* "Diseñá tu colonia": un momento previo a sembrar con 4–6 controles tomados del modo Elemento de COLONIAS (forma, paleta, borde irregular, halo, grano, semilla) y guardado en la biblioteca (D-09). *dep:* E-1, D-1…D-10.
 
 **Presentación / grabación (D-04)**
 - [ ] **F-1 · S** Guion de grabación (orden: TU PLACA primero; MUESTRAS/GLOSARIO en 20–30 s al final), con duración objetivo y pasos exactos.
-- [ ] **F-2 · S** *(Opcional)* Parámetro `#tuplaca`/`?inicio=tuplaca` que abre directo la pantalla TU PLACA saltando la portada, para grabar sin pasos intermedios. No existe hoy. *dep:* P-3.
+- [ ] **F-2 · S** ~~Parámetro `#tuplaca` para abrir directo~~ *Descartado:* ir primero a TU PLACA es sólo el orden del video (P-3 resuelto). Sólo se aplicaría si resulta cómodo grabar así; no es requisito.
 - [ ] **F-3 · S** Grabar una toma de prueba a 1920×1100 y revisar que se lean los textos (post B-2).
 
 ### 2. Errores críticos y altos
 - [ ] **A-1 · M** (H-02) Dejar **un solo build**: portar `build.ps1` a Python/Node y borrar el otro, o eliminar `build.py`; que falle si queda algún marcador `/*…*/` sin reemplazar. *dep:* ninguna. **Hacerlo primero.**
 - [ ] **A-2 · S** (H-03) Agregar `linkedom` a `devDependencies` y script `npm test` (validador + 2 verificadores). *dep:* A-1.
-- [ ] **A-3 · S** (H-06) Incluir Arimo 400/700 en local (`@font-face`) y probar offline.
+- [ ] **A-3 · S** (H-06) Incluir Arimo 400/700 en local (`@font-face`). Prioridad baja para la evaluación (el video se graba con internet), pero evita que la grabación cambie de tipografía si falla la red.
 - [ ] **A-4 · M** (H-05) Áreas táctiles ≥ 48 px en los 16 controles listados (H-05).
-- [ ] **A-5 · M** (H-11) Verificación en Safari/iPad del renderer y de la exportación (ver B-4).
+- [ ] **A-5 · S** (H-11) Sólo si el plan táctil final usa Safari/iPad; hoy no afecta a la evaluación (ver B-4).
 - [ ] **A-6 · S** (H-01) README mínimo que ya funcione (ver G-1). *dep:* A-1.
 
 ### 3. Funcionalidades / requisitos faltantes o incompletos
@@ -268,15 +304,15 @@ Reglas a respetar (de `mensaje_para_codex.md`): no cambiar datos de `base/` sin 
 
 ## 5. Preguntas abiertas
 
-1. **P-1 (D-01 "blur")**: ¿Qué blur ven mal los docentes? Mi interpretación: texto y controles borrosos (H-04), más cualquier fallo de render en su navegador (H-11). ¿Confirmás que el blur decorativo (colonias, fondos, vidrio de carteles) se mantiene?
-2. **P-2 (D-09)**: ¿La pregunta sobre "la herramienta generadora de gráfica" es para vos (ideas a implementar) o una consigna a responder? ¿Vale la pena un editor de colonia propia (E-3) o alcanza con composiciones (D-7)?
-3. **P-3 (D-04)**: "Ir a esa sección antes", ¿es sólo el orden de la grabación o también querés que la app arranque o enlace directo a TU PLACA?
+1. ~~**P-1 (blur)**~~ **Resuelta:** el problema es el blur demasiado fuerte en la tipografía; se quita el 100 % del blur tipográfico por ahora (B-2).
+2. ~~**P-2 (D-09)**~~ **Resuelta:** la "herramienta generadora de gráfica" es COLONIAS (`Pacosanx/colonias-espora`). Ver §3-bis.
+3. ~~**P-3 (D-04)**~~ **Resuelta:** ir primero a TU PLACA es sólo el orden del video.
 4. **P-4 (D-02)**: ¿Qué debe explicar el onboarding: sólo qué es el proyecto y las tres zonas, o también un mini recorrido interactivo? ¿Quién escribe el texto?
-5. **P-5 (D-03)**: ¿El público de la evaluación usa mouse o pantalla táctil? Define si los cartelitos dicen "tocá", "clic" o ambos.
+5. ~~**P-5 (D-03)**~~ **Resuelta:** los docentes no usan la herramienta; corrigen desde el video de Paco, grabado con mouse. El plan final es táctil.
 6. **P-6 (D-08)**: ¿Qué características globales de la composición debería controlar el anillo perimetral? (Propuesta: tamaño, opacidad, foco, rotación, paleta, densidad.)
-7. **P-7 (D-10)**: Al forzar la simbiosis, ¿la colonia combinada toma los colores de las dos colonias originales o una paleta fija "mixta"? ¿Se reemplazan las dos colonias o se agrega una tercera?
+7. **P-7 (D-10, ahora "UNIR")**: al unir dos colonias, ¿el resultado toma el color de la mayor, un degradado entre las dos o la paleta mixta del grupo (`BL`)? ¿Qué elegís por defecto entre "más grande" y "8/infinito", o el usuario elige?
 8. **P-8 (D-11)**: ¿Cuáles son las formas y los colores definitivos? ¿Hay un máximo (ej. 3–4 formas por grupo)? ¿Se mantiene "Registro digital" y "Montada" como formas de TU PLACA, o son exclusivas de MUESTRAS?
-9. **P-9**: ¿Qué navegador y dispositivo usarán los docentes (Chrome en escritorio, Safari/iPad)? Condiciona A-5.
+9. ~~**P-9**~~ **Resuelta en gran parte:** los docentes no abren la app. Queda saber con qué navegador grabás (para el blur y la tipografía).
 10. **P-10**: ¿Se permite tocar `base/` o los `src/assets` para limpiar duplicados (G-3), dado que `mensaje_para_codex.md` pide avisar a Paco antes?
 11. **P-11 (H-04)**: En Figma, ¿los textos de navegación llevan blur a propósito? Esta auditoría no pudo consultar el diseño original.
 
