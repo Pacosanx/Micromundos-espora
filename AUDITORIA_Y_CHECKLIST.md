@@ -35,6 +35,13 @@ El bloque `D` es el más grande; `B` y `C` son rápidos y los docentes los pusie
 
 **Conflicto nuevo a tener presente:** `RELACIONES.md` de COLONIAS registra que Paco, el 13/11, **rechazó** que la Simbiosis "agregue una tercera forma o agrande el área". La acción UNIR sí hace eso, así que debe ser una **acción distinta y explícita** (botón), no la reacción pasiva de Simbiosis, que sigue siendo intercambio de color sin crecer.
 
+**Respuestas del 17/11 (segunda tanda)**
+- **UNIR:** color **mixto**; cada unión puede tener una característica particular según el caso (a definir caso por caso).
+- **Anillo de la composición:** Foco ✔, Rotación del conjunto ✔, Paleta como **porcentajes** ✔, Variación global de formas y tamaños individuales ✔ (idea nueva de Paco); Tamaño ✘, Opacidad ✘; Densidad: a ver qué haría.
+- **Formas y colores:** sin lista definitiva; se derivan de COLONIAS (E-1).
+- **Video:** lo prepara Paco; no condiciona el plan.
+
+
 ### 3-bis. Qué hay en COLONIAS y qué conviene tomar (respuesta a D-09)
 
 Leí el repositorio (`README.md`, `RELACIONES.md`, `renderer.js`, `relations-renderer.js`, `verify-relations.cjs`, `index.html`). **No lo ejecuté.**
@@ -247,15 +254,15 @@ Reglas a respetar (de `mensaje_para_codex.md`): no cambiar datos de `base/` sin 
 - [ ] **D-2 · M** Placa protagonista: agrandar/centrar la placa, hacer visibles agar/borde (`tp-agar.svg`, `tp-borde.svg`), reducir el peso visual de la biblioteca (agruparla en un panel replegable). Validar con Figma `560:20265` / Paco.
 - [ ] **D-3 · S** Acceso directo a TU PLACA desde la portada y desde MUESTRAS (botón/llamado) (D-05, D-04).
 - [ ] **D-4 · S** Estado vacío más claro ("Arrastrá una forma acá") con ilustración de la zona de soltado.
-- [ ] **D-5 · L** Anillo/menú perimetral para parámetros de **toda** la composición (D-08), reutilizando `montarMenuTuPlaca` (parametrizar `obtener/cambiar`). *dep:* P-6 (qué parámetros), D-6.
+- [ ] **D-5 · L** *(definido 17/11)* Anillo alrededor de la placa con controles **de toda la composición**: **(1) Foco** (desenfoque global), **(2) Rotación** de todo el conjunto, **(3) Paleta**: cambia los **porcentajes** de verde/amarillo/rosa (la lógica ya existe en el generador: `tu-placa-generador.js`, `weights={green:33,yellow:33,rose:34}`, reparto por cuotas), **(4) Variación**: modifica de una vez formas y tamaños de **cada** colonia individualmente (con semilla, reversible). **Sin** Tamaño ni Opacidad globales. "Densidad" queda sin definir hasta ver qué haría (P-6). Reutilizar `montarMenuTuPlaca` parametrizado; todo con DESHACER. *dep:* D-6.
 - [ ] **D-6 · M** Mantener-y-rotar fluido (D-07): quitar `transition:none` en `.tp-menu-ajustando`, transiciones cortas de repliegue, valor en vivo, pista "mantené y girá"; test de que presionar + mover cambia el valor sin soltar. *dep:* ninguna.
 - [ ] **D-7 · L** Composiciones sembrables (D-06): fila "COMPOSICIONES" en la biblioteca con 4–6 presets que **suman** a la placa sin vaciarla; manejo como grupo (mover/borrar/escalar). Parametrizar `generarComposicionTuPlaca` con zona y semilla. *dep:* D-8.
 - [ ] **D-8 · M** Volver determinista el generador (H-19: `Math.random` → PRNG con semilla) + test unitario (misma semilla ⇒ misma salida, ≤ 120 elementos, todo dentro de la placa).
 - [ ] **D-9 · L** Rediseño visual de las reacciones (simbiosis, rechazo, barrera) con efectos notorios y entrada animada; sin superar el presupuesto de render (medir con 60 elementos). *dep:* H-22 (separar render de reacciones).
-- [ ] **D-10 · L** *(redefinido 17/11)* Acción **UNIR** (reemplaza a "forzar simbiosis"): al seleccionar dos colonias, un botón las une en **(a) una colonia más grande** (fusión orgánica) o **(b) una forma de 8 / infinito** (dos lóbulos con cuello). Reemplaza a las dos originales, con DESHACER. Probar primero con las formas `pair` y `capsule` del renderer de COLONIAS y, si no alcanzan, con fusión por umbral sobre los sprites. *dep:* D-9, P-7 (colores).
+- [ ] **D-10 · L** *(redefinido 17/11)* Acción **UNIR** (reemplaza a "forzar simbiosis"): al seleccionar dos colonias, un botón las une en **(a) una colonia más grande** o **(b) una forma de 8 / infinito**. **El color resultante es mixto** (mezcla de los colores de ambas). **Cada unión puede tener una característica propia** según el caso (grupos, tamaños, distancia); los casos concretos se definen caso por caso antes de implementar (P-7). Reemplaza a las dos originales, con DESHACER. Probar con `pair`/`capsule` de COLONIAS y, si no alcanza, fusión por umbral sobre los sprites. *dep:* D-13, P-7.
 - [ ] **D-11 · S** Retirar la pestaña MEZCLAS de la biblioteca (`biblioteca.js:6`) cuando D-10 funcione. *dep:* D-10.
 - [ ] **D-12 · S** Actualizar el recuerdo PNG (`pintarRecuerdo`, `v12.js:122-133`) para que exporte las nuevas reacciones y el anillo perimetral. *dep:* D-5, D-9.
-- [ ] **E-1 · M** Definir con Paco el catálogo final de formas y colores (lista cerrada) (D-11). *dep:* P-8.
+- [ ] **E-1 · M** *(definido 17/11)* No hay lista definitiva: **derivarla de COLONIAS**. Inventariar qué formas y paletas usa la herramienta original (hoy: 18 formas en el selector + las que sus composiciones usan más: `band`, `ring`, `arc`, `cotton`, `hairy`, `branching`, `fan`, `fragment`; 3 familias de color más la mezcla) y proponer a Paco una selección corta para aprobar. *dep:* ninguna.
 - [ ] **E-2 · M** Implementar el catálogo reducido y bajar los montajes de canvas de la biblioteca (hoy 176 estilos; se montan hasta 44 canvas por pestaña). Medir tiempo de apertura de TU PLACA antes/después. *dep:* E-1.
 - [ ] **E-3 · L** *(ahora recomendado como versión acotada)* "Diseñá tu colonia": un momento previo a sembrar con 4–6 controles tomados del modo Elemento de COLONIAS (forma, paleta, borde irregular, halo, grano, semilla) y guardado en la biblioteca (D-09). *dep:* E-1, D-1…D-10.
 
@@ -309,12 +316,12 @@ Reglas a respetar (de `mensaje_para_codex.md`): no cambiar datos de `base/` sin 
 3. ~~**P-3 (D-04)**~~ **Resuelta:** ir primero a TU PLACA es sólo el orden del video.
 4. **P-4 (D-02)**: ¿Qué debe explicar el onboarding: sólo qué es el proyecto y las tres zonas, o también un mini recorrido interactivo? ¿Quién escribe el texto?
 5. ~~**P-5 (D-03)**~~ **Resuelta:** los docentes no usan la herramienta; corrigen desde el video de Paco, grabado con mouse. El plan final es táctil.
-6. **P-6 (D-08)**: ¿Qué características globales de la composición debería controlar el anillo perimetral? (Propuesta: tamaño, opacidad, foco, rotación, paleta, densidad.)
-7. **P-7 (D-10, ahora "UNIR")**: al unir dos colonias, ¿el resultado toma el color de la mayor, un degradado entre las dos o la paleta mixta del grupo (`BL`)? ¿Qué elegís por defecto entre "más grande" y "8/infinito", o el usuario elige?
-8. **P-8 (D-11)**: ¿Cuáles son las formas y los colores definitivos? ¿Hay un máximo (ej. 3–4 formas por grupo)? ¿Se mantiene "Registro digital" y "Montada" como formas de TU PLACA, o son exclusivas de MUESTRAS?
-9. ~~**P-9**~~ **Resuelta en gran parte:** los docentes no abren la app. Queda saber con qué navegador grabás (para el blur y la tipografía).
+6. **P-6 (D-08)**: *Respondida en parte:* anillo con Foco, Rotación (del conjunto), Paleta (porcentajes) y Variación global; sin Tamaño ni Opacidad. Falta: ¿qué debería hacer "Densidad"? (Idea para decidir: cantidad de colonias pequeñas/satélites de la composición.)
+7. **P-7 (D-10, UNIR)**: *Respondida en parte:* color mixto; cada unión tendrá su característica según el caso. Falta definir los casos (ej.: dos del mismo grupo, bacteria + levadura, moho + bacteria, colonias de tamaños muy distintos) y qué forma toma cada uno (más grande u 8/infinito).
+8. ~~**P-8 (D-11)**~~ **Resuelta:** no hay lista definitiva; se define viendo qué usa COLONIAS (E-1).
+9. ~~**P-9**~~ **Cerrada:** del video se ocupa Paco; el navegador de grabación no importa para el plan.
 10. **P-10**: ¿Se permite tocar `base/` o los `src/assets` para limpiar duplicados (G-3), dado que `mensaje_para_codex.md` pide avisar a Paco antes?
-11. **P-11 (H-04)**: En Figma, ¿los textos de navegación llevan blur a propósito? Esta auditoría no pudo consultar el diseño original.
+11. ~~**P-11**~~ **Cerrada:** el blur tipográfico se quita por completo (B-2); ya no importa qué dice Figma al respecto.
 
 ---
 
