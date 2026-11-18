@@ -1,0 +1,39 @@
+/* ───────── Legibilidad: tipografía y controles nítidos (decisión del 17/11/2026) ─────────
+   Se quita el 100 % del desenfoque de textos y controles. NO se tocan: colonias y muestras (canvas e íconos),
+   fondos, elipses, el vidrio y la textura de los carteles, la regla de color de la cabecera, el logotipo de espora
+   ni los velos decorativos de TU PLACA.
+   Esta hoja se carga al final (build.ps1) y usa !important porque varias capas traen el desenfoque en línea
+   (diseños de Figma, vinculos.js y el desvanecido del listado en app.js). Para devolver un desenfoque, quitar su selector de acá. */
+
+/* Escenario: .3 px sobre todo el lienzo (incluye navegación, años y rótulos). */
+#stage{filter:none!important}
+
+/* Cabecera y navegación */
+#cabecera .fila,#cabecera #navegacionPrincipal button,.g-nav-copia,#seccion,#alternarListado,
+#titulo,.vista{filter:none!important}
+#buscador svg{filter:brightness(0)!important}
+
+/* MUESTRAS: guía, listado y estados inactivos (se conserva la opacidad) */
+#leyenda .rotulo,#leyenda .item span,#leyenda .tam span,#guiaBoton,#guiaResumen,.guia-uso{filter:none!important}
+#lista .fila,#lista .filete,#listaCab span{filter:none!important}
+
+/* Carteles (muestra, especie, glosario, célula): texto nítido; el vidrio sigue igual */
+:is(#ficha,.cartel-glosario,.cartel-especie,.cartel-celula) :is(.nom,.cod,.definicionGlosario,.masCartel){filter:none!important}
+
+/* Apertura: solo la invitación */
+.apertura-invitacion{filter:none!important}
+
+/* GLOSARIO y universos */
+.g-volver,.g-bajar,.g-colonia .g-rotulo,.g-chips i,.universo-titulo,#tuPlaca h1{filter:none!important}
+.detalle-composicion p,.detalle-composicion [aria-label="Continuar hacia abajo"],.ficha-aviso-desliza{filter:none!important}
+
+/* TU PLACA: rótulos, botones, pestañas, perilla e indicaciones */
+.tp-indicacion,.tp-check__caja,#tpBiblioteca .tp-biblioteca__top p,.tp-biblioteca__top h2,
+#tpBiblioteca .tp-biblioteca__mode,.tp-biblioteca__tab,
+#tpBiblioteca .tp-biblioteca__mode[aria-pressed="true"]::after,#tpBiblioteca .tp-biblioteca__tab[aria-selected="true"]::after,
+#tpRotulos button,#tpVacia,.tp-acciones button,.tp-guardar,.tp-generar,.tp-generar-ayuda,
+.tp-menu-boton span,.tp-menu-boton.tp-menu-secundario,.tp-menu-boton .tp-menu-superficie,
+#tpReacciones .tp-encuentros-titulo,.tp-encuentros-cabeza,.tp-encuentros-cabeza i,.tp-encuentros-celda svg,
+.tp-perilla-carril,.tp-perilla-lleno,.tp-perilla-titulo,.tp-estructuras svg,.tp-estructuras span,
+#tuPlaca .tp-editor-pestanas button,#tuPlaca .tp-editor-pestanas button[aria-selected="true"]::after,#tuPlaca .tp-editor-listo,
+#tuPlaca .tp-pie h1,.tp-pie button{filter:none!important}
