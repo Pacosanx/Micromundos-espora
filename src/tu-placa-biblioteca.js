@@ -3,7 +3,9 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
     { id:'B', nombre:'BACTERIAS', colores:['#ff4c52','#f58bc3','#fffbee'], seed:31 },
     { id:'L', nombre:'LEVADURAS', colores:['#ff9c20','#ffc21c','#fffbee'], seed:12 },
     { id:'M', nombre:'MOHOS', colores:['#27633f','#6a983a','#dce642'], seed:57 },
-    { id:'BL', nombre:'MEZCLAS', colores:['#f58bc3','#ffc21c','#fffbee'], seed:83 },
+    // 18/11/2026: MEZCLAS, «Con halo» y «Par» ya no se ofrecen en la biblioteca. Siguen definidas (oculta:true)
+    // para que las colonias de esos tipos que ya están en una placa guardada no se pierdan al cargarla.
+    { id:'BL', nombre:'MEZCLAS', colores:['#f58bc3','#ffc21c','#fffbee'], seed:83, oculta:true },
   ];
   const estados = [
     { id:'A', nombre:'Activa', style:{ shape:'disk', irregularity:2, asym:0 } },
@@ -12,10 +14,10 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
     { id:'R', nombre:'Registro digital', style:{ shape:'ring', ringWidth:24, irregularity:7 } },
     { id:'V', nombre:'Veladura', tamano:220, composicion:true, style:{shape:'disk',size:78,halo:12,core:0,blur:55,porosity:20,opacity:30} },
     { id:'F', nombre:'Filamentosa', tamano:140, composicion:true, style:{shape:'disk',size:78,filaments:70,irregularity:22,grain:36,porosity:48,halo:2,core:78,blur:14} },
-    { id:'H', nombre:'Con halo', tamano:110, composicion:true, style:{shape:'disk',size:78,halo:12,core:65,blur:20,porosity:12} },
+    { id:'H', nombre:'Con halo', tamano:110, composicion:true, style:{shape:'disk',size:78,halo:12,core:65,blur:20,porosity:12}, oculta:true },
     { id:'G', nombre:'Granulada', tamano:100, composicion:true, style:{shape:'disk',size:78,grain:40,porosity:60,irregularity:22,core:78,blur:12} },
     { id:'AF', nombre:'Anillo fino', tamano:120, composicion:true, style:{shape:'ring',size:78,gradient:'linear',ringWidth:5,core:0,halo:2,blur:10,opacity:48,porosity:12} },
-    { id:'P', nombre:'Par', tamano:34, composicion:true, style:{shape:'pair',size:68,gradient:'linear',separation:48,halo:2,blur:12,core:78,porosity:12} },
+    { id:'P', nombre:'Par', tamano:34, composicion:true, style:{shape:'pair',size:68,gradient:'linear',separation:48,halo:2,blur:12,core:78,porosity:12}, oculta:true },
     { id:'MI', nombre:'Microcolonia', tamano:12, composicion:true, style:{shape:'disk',size:68,halo:2,blur:12,core:78,grain:32,porosity:12} },
 
   ];
@@ -58,26 +60,27 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
   content.append(labels,viewport);
   host.append(top,modes,tabs,content);
 
+  const gruposVisibles=grupos.filter(g=>!g.oculta),estadosVisibles=estados.filter(e=>!e.oculta);
   let grupoActual='B', elegido=estilos[0], montajes=[], destruido=false;
   const limpiarMontajes=()=>{for(const m of montajes)m?.destroy?.();montajes=[]};
   function drawGroup(){
     limpiarMontajes();tabs.replaceChildren();labels.replaceChildren();track.replaceChildren();
-    for(const g of grupos){
+    for(const g of gruposVisibles){
     const tab=document.createElement('button');tab.type='button';tab.role='tab';tab.className='tp-biblioteca__tab';tab.textContent=g.nombre;
       tab.setAttribute('aria-selected',g.id===grupoActual?'true':'false');tab.tabIndex=g.id===grupoActual?0:-1;
       tab.addEventListener('click',()=>{grupoActual=g.id;drawGroup()});
       tab.addEventListener('keydown',ev=>{
-        const current=grupos.findIndex(x=>x.id===g.id);let next=null;
-        if(ev.key==='ArrowRight')next=(current+1)%grupos.length;
-        else if(ev.key==='ArrowLeft')next=(current+grupos.length-1)%grupos.length;
+        const current=gruposVisibles.findIndex(x=>x.id===g.id);let next=null;
+        if(ev.key==='ArrowRight')next=(current+1)%gruposVisibles.length;
+        else if(ev.key==='ArrowLeft')next=(current+gruposVisibles.length-1)%gruposVisibles.length;
         else if(ev.key==='Home')next=0;
-        else if(ev.key==='End')next=grupos.length-1;
-        if(next!==null){ev.preventDefault();grupoActual=grupos[next].id;drawGroup();tabs.querySelectorAll('[role="tab"]')[next]?.focus();}
+        else if(ev.key==='End')next=gruposVisibles.length-1;
+        if(next!==null){ev.preventDefault();grupoActual=gruposVisibles[next].id;drawGroup();tabs.querySelectorAll('[role="tab"]')[next]?.focus();}
       });tabs.appendChild(tab);
     }
     const scrolled=()=>{labels.style.transform=`translateY(${-viewport.scrollTop}px)`;host.style.setProperty('--tp-last-fade',String(Math.min(1,viewport.scrollTop/40)));};
     viewport.onscroll=scrolled;scrolled();
-    for(const estado of estados){
+    for(const estado of estadosVisibles){
       const label=document.createElement('div');label.className='tp-biblioteca__state';label.textContent=estado.nombre;labels.appendChild(label);
       for(const variante of variantes){
         const estilo=estilos.find(s=>s.g===grupoActual&&s.estado===estado.id&&s.variante===variante.id);

@@ -18,6 +18,18 @@ Sitio: https://pacosanx.github.io/Micromundos-espora/ · Repositorio: https://gi
 - [ ] Explicar cómo se leen las muestras mixtas en la guía de color. Revisar con Paco las paletas pendientes de bacteria + moho, levadura + moho y los tres grupos juntos.
 - [ ] Revisar PLACA, VÍNCULOS y MUESTRARIO con el listado abierto y cerrado. Comprobar que se entiendan la selección, los filtros y la vuelta desde una ficha o un entorno.
 
+## Pantallas de universo · «Dónde están»
+
+- [ ] **Flechas dentro del círculo y scroll sobre la imagen.** Mover las flechas ← → a los costados del círculo de la ilustración, como en el diseño de Paco, y que la persona pase a la ilustración siguiente haciendo scroll sobre la imagen. Probar con rueda del mouse, trackpad y deslizamiento táctil.
+- [ ] **Alturas fijas en los textos.** Medidos desde los títulos, los paquetes de texto de la izquierda y la derecha tienen que quedar siempre a la misma altura al pasar de una ilustración a otra: todos los títulos («Dónde están», «En el pan», «Al hornearlo», etc.) y «Ver muestras de …» no se mueven aunque cambie el largo de los párrafos.
+- [ ] En «Ver muestras de …», usar la flecha ↗ del diseño en lugar de la actual →.
+- [ ] Aplicarlo a los tres universos (bacterias, levaduras y mohos).
+
+## Ficha de muestra
+
+- [ ] **Corregir las tarjetas de «Muestras que comparten especies con esta»** (galería al pie de la ficha). Tipografía floja: revisar jerarquía entre el nombre, el código, GRUPO y COMPARTE, el especie en cursiva y «Ver ficha de muestra», con tamaños, pesos y espaciado coherentes con la escala del Atlas. Los contenedores todavía se marcan demasiado: suavizar más sus bordes y fondo para que se integren.
+- [ ] **Mejorar el gráfico de «Qué produce o transforma»** de la ficha.
+
 ## Legibilidad y contraste
 
 - [ ] Quitar el desenfoque de la tipografía y los controles en todo el Atlas, de acuerdo con lo definido el 17/11. Conservar el tratamiento visual de las colonias, los fondos y el vidrio de los carteles.
@@ -39,6 +51,10 @@ Sitio: https://pacosanx.github.io/Micromundos-espora/ · Repositorio: https://gi
 El muestrario de prueba permite comparar variantes. Queda pendiente elegir cuáles pasan a TU PLACA e integrarlas en su recorrido.
 
 - [ ] **Diseñar bien la interfaz de la pantalla TU PLACA.** El menú para seleccionar las muestras está muy flojo. Rediseñarlo con jerarquía, tamaños y estados claros (normal, sobre, elegida), y revisar cómo se ve la selección y cómo se pasa de elegir a sembrar. Probar con mouse y pantalla táctil a tamaño real.
+- [ ] **Diseñar la pantalla donde la persona pone su nombre para la placa.** Idea: que se lo dicte al micrófono. Los colores y gradientes aparecen siguiendo el flujo del sonido mientras habla; después carga un segundo y aparece el nombre escrito; la persona confirma con OK y pasa a la pantalla donde ve su recuerdo junto a las placas de otros usuarios. Definir: permiso de micrófono y qué pasa si lo niega o no hay micrófono; reconocimiento de voz (¿en el navegador, funciona sin conexión?); cómo corregir un nombre mal entendido (repetir o escribirlo); cómo se ve y se anima el estado de escucha; y dónde se guardan las placas de los otros usuarios y cómo se muestran en la pantalla final. Probar en el kiosco con ruido ambiente.
+  - Al ser un kiosco público: que no dependa de un teclado físico (teclado en pantalla o dictado), que funcione con gente de paso que no conoce el Atlas y que se pueda omitir el nombre.
+  - Privacidad: avisar que se usa el micrófono, no guardar el audio (solo el texto), decidir si el nombre se muestra a otros visitantes y si se filtran nombres inapropiados.
+  - Las placas de otros usuarios las comparten todos los visitantes: decidir cuántas se muestran, por cuánto tiempo y cómo se evita que se llene o se desordene.
 - [ ] Darle más protagonismo a TU PLACA. Revisar el título, la presencia del borde de la placa vacía, el peso de la biblioteca y la indicación de dónde soltar la primera colonia.
 - [ ] Afinar el menú contextual para ajustar desde el primer gesto. Al mantener apretado y girar, el valor y la colonia deben cambiar en vivo mientras los otros botones se repliegan con una animación breve. Probar con mouse y pantalla táctil.
 - [ ] Llevar a la biblioteca estructuras de COLONIAS como Banda, Retícula, Campo disperso y Campo radial. Elegir cuáles ofrecer y probar que cada una se pueda sembrar como conjunto en una placa que ya tiene colonias, mover, editar y deshacer.
@@ -51,6 +67,18 @@ El muestrario de prueba permite comparar variantes. Queda pendiente elegir cuál
 - [ ] Aclarar qué pasa al generar otra composición sobre una placa ya armada y cómo recuperar la anterior.
 - [ ] Verificar selección, movimiento, deshacer y recuperación tras recargar, incluidos los ajustes de toda la placa. Revisar que el PNG conserve la composición, el borde y las reacciones visibles al guardar.
 - [ ] Sustituir el texto provisional «Este espacio está en preparación» por una indicación útil si TU PLACA falla al cargar.
+
+## Uso en el kiosco del museo
+
+El diseño final se monta en una pantalla táctil de uso público, para visitantes que pasan. Esto condiciona varias de las tareas anteriores.
+
+- [ ] **Reinicio entre visitantes.** Volver a la portada tras un rato sin tocar (con aviso previo breve) y borrar lo que quedó a medio hacer: placa en curso, selección, fichas abiertas. Definir el tiempo de inactividad y qué se conserva (por ejemplo, las placas ya guardadas).
+- [ ] **Pantalla de reposo atractiva.** Que la portada invite a tocar y se entienda sin explicación ni instrucciones previas.
+- [ ] **Bloquear gestos y menús del navegador.** Pantalla completa, sin barra de direcciones, sin zoom por pellizco, sin selección de texto, sin menú contextual y sin salir por accidente.
+- [ ] **Áreas de toque y uso con muchos visitantes.** Botones grandes, tolerancia a toques erráticos o con varios dedos, y que ninguna acción importante requiera precisión fina.
+- [ ] **Funcionar sin conexión.** Incluir Arimo y todo lo necesario en el proyecto, y definir qué pasa si el reconocimiento de voz o el guardado dependen de internet.
+- [ ] **Estabilidad en jornadas largas.** Probar que no se degrade tras horas de uso (memoria, animaciones, placas acumuladas) y definir cómo se reinicia si falla.
+- [ ] Revisar con quien administra el museo: modelo de pantalla, sistema operativo, navegador disponible, micrófono, ruido de la sala y quién la enciende y apaga.
 
 ## Decisiones pendientes
 - [ ] Opacidad del menú de Tu Placa:

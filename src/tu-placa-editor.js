@@ -143,11 +143,12 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
 
   // Vista previa grande: el mismo sprite del motor que se dibuja en la placa, con menos resolución mientras se arrastra.
   function pintar(rapido){
-    const {rot,foco,opacidad,radio}=estado,L=400*R0/estilo.size;
+    const viejos=[...caja.querySelectorAll('canvas')],nuevo=document.createElement('canvas');
+    // Con una expansión grande el lienzo del motor crece (factor > 1): la caja crece igual para que la colonia no cambie de tamaño ni se corte.
+    const factor=MotorMuestrario.pintar(nuevo,{...estilo,opacity:100},rapido?160:340)||1;
+    const {rot,foco,opacidad,radio}=estado,L=400*R0/estilo.size*factor;
     caja.style.width=caja.style.height=L+'px';caja.style.left=caja.style.top=(C-L/2)+'px';caja.style.transform=`rotate(${rot}deg)`;
     caja.style.opacity=opacidad/100;caja.style.filter=`blur(${((100-foco)*.06*R0/Math.max(1,radio)).toFixed(2)}px)`;
-    const viejos=[...caja.querySelectorAll('canvas')],nuevo=document.createElement('canvas');
-    MotorMuestrario.pintar(nuevo,{...estilo,opacity:100},rapido?160:340);
     caja.appendChild(nuevo);for(const v of viejos)v.remove();
   }
   function pedirPintura(rapido){cancelAnimationFrame(pedido);pedido=requestAnimationFrame(()=>pintar(rapido));}

@@ -332,6 +332,62 @@ function joinedColonyGroups(colonies,strength,canJoin=()=>true,withinReach=colon
  return groups;
 }
 
+// [TU PLACA] Todo moho (editado, generado o de la biblioteca) se une con la forma combinada de la tarjeta
+// «Simbiosis · forma combinada». Su radio visible es el de dot(width/2).
+const formaCombinada=()=>true;
+// [TU PLACA] Lo que la forma combinada no dibuja se toma de la propia colonia:
+// - los filamentos quedan por fuera del cuerpo: la colonia se dibuja debajo (la expansión ya es parte del cuerpo);
+// - el hueco del aro y el recorte se recortan del cuerpo, solo en la parte que le toca a esa colonia.
+const asomaDelCuerpo=c=>(c.style.filaments??0)>0;
+const tieneHuecoORecorte=c=>(Number.isFinite(c.style.ringThickness)&&c.style.ringThickness<100)||(Number.isFinite(c.style.cutOpening)&&c.style.cutOpening<360);
+function recortarCuerpo(body,group){
+ const conHueco=group.filter(tieneHuecoORecorte);
+ if(!conHueco.length)return;
+ const W=body.canvas.width,H=body.canvas.height,ox=body.left,oy=body.top;
+ const ctx=body.canvas.getContext('2d',{willReadFrequently:true}),image=ctx.getImageData(0,0,W,H),d=image.data;
+ const datos=conHueco.map(c=>{
+  const s={...BASE,...c.style},r=radioVisible(c),unidad=c.width/2/200; // px de la escena por px del sprite (n=200)
+  return {c,s,r,contour:colonyContour(s),feather:Math.max(3,(s.blur||0)*200/760*1.8+1.5)*unidad,
+   rHole:Number.isFinite(s.ringThickness)&&s.ringThickness<100?r*(1-s.ringThickness/100):0,
+   hasCut:Number.isFinite(s.cutOpening)&&s.cutOpening<360,open:(s.cutOpening??360)*Math.PI/180,start:(-90+(s.cutAngle??0))*Math.PI/180,
+   rotation:((s.rotation??0)+(c.extra?.giro??0))*Math.PI/180};
+ });
+ for(let ly=0;ly<H;ly++)for(let lx=0;lx<W;lx++){
+  const i=(ly*W+lx)*4+3;if(!d[i])continue;
+  const x=lx+ox,y=ly+oy;
+  let nearest=Infinity;for(const c of group)nearest=Math.min(nearest,Math.hypot(x-c.x,y-c.y)/radioVisible(c));
+  let m=1;
+  for(const k of datos){
+   const dx=x-k.c.x,dy=y-k.c.y,dist=Math.hypot(dx,dy);
+   const propia=1-smooth((dist/k.r-nearest)/.36); // cuánto de este píxel pertenece a esta colonia
+   if(propia<=0)continue;
+   const th=Math.atan2(dy,dx)-k.rotation;let keep=1;
+   if(k.rHole)keep*=smooth((dist-k.rHole*k.contour(th))/k.feather+.5);
+   if(k.hasCut){
+    const wedge=(from,size)=>smooth(dist*Math.sin(Math.max(-Math.PI/2,Math.min(Math.PI/2,wrapPi(th-from))))/k.feather+.5)*smooth(dist*Math.sin(Math.max(-Math.PI/2,Math.min(Math.PI/2,wrapPi(from+size-th))))/k.feather+.5);
+    keep*=k.open<=Math.PI?wedge(k.start,k.open):1-wedge(k.start+k.open,2*Math.PI-k.open);
+   }
+   m=Math.min(m,1-propia*(1-keep));
+  }
+  d[i]*=m;
+ }
+ ctx.putImageData(image,0,0);
+}
+const radioVisible=colony=>colony.width/2*colony.style.size/200;
+// [TU PLACA] Contorno de la colonia en ángulos de la placa: incluye la rotación del estilo y el giro del menú.
+function contornoOrientado(colony){
+ const contour=colonyContour({...BASE,...colony.style}),giro=((colony.style.rotation??0)+(colony.extra?.giro??0))*Math.PI/180;
+ return theta=>contour(theta-giro);
+}
+// [TU PLACA] Cuánto avanza el borde de la colonia hacia la otra: el máximo del contorno en el arco que mira a la otra
+// colonia, proyectado sobre la línea entre centros (así cuentan las puntas de la expansión y de los lóbulos).
+function alcanceHacia(colony,angulo,radioOtra,distance){
+ const contour=contornoOrientado(colony),medio=Math.asin(Math.min(1,radioOtra/Math.max(distance,1)));let m=0;
+ for(let k=-8;k<=8;k++){const t=angulo+medio*k/8;m=Math.max(m,contour(t)*Math.cos(t-angulo));}
+ return radioVisible(colony)*m;
+}
+function alcanceMaximo(colony){const contour=colonyContour({...BASE,...colony.style});let m=1;for(let k=0;k<72;k++)m=Math.max(m,contour(k/72*Math.PI*2));return m}
+const alcanceSilueta=(colony,gap,feather)=>colony.renderRadius+Math.max(20,gap+feather*3+6,colony.radius*.57);
 function colonyCentersWithinReach(a,b,strength){
  const gap=Math.hypot(a.x-b.x,a.y-b.y)-a.radius-b.radius;
  return gap<=Math.min(a.radius,b.radius)*.57*strength;
@@ -344,12 +400,14 @@ function drawJoinedBody(group,strength,values) {
  const pigmentFalloff=.38;
  const blur=(values.blur??10)*REACTION_WIDTH/760;
  const margin=rounding*1.4+blur*3+8;
- const x0=Math.max(0,Math.floor(Math.min(...group.map(c=>c.x-c.radius))-margin));
- const x1=Math.min(RW,Math.ceil(Math.max(...group.map(c=>c.x+c.radius))+margin));
- const y0=Math.max(0,Math.floor(Math.min(...group.map(c=>c.y-c.radius))-margin));
- const y1=Math.min(RH,Math.ceil(Math.max(...group.map(c=>c.y+c.radius))+margin));
+ const extent=c=>c.radius*alcanceMaximo(c); // [TU PLACA] la expansión puede pasar el radio
+ const x0=Math.max(0,Math.floor(Math.min(...group.map(c=>c.x-extent(c)))-margin));
+ const x1=Math.min(RW,Math.ceil(Math.max(...group.map(c=>c.x+extent(c)))+margin));
+ const y0=Math.max(0,Math.floor(Math.min(...group.map(c=>c.y-extent(c)))-margin));
+ const y1=Math.min(RH,Math.ceil(Math.max(...group.map(c=>c.y+extent(c)))+margin));
+ // [TU PLACA] El contorno se orienta con la rotación de la colonia y su giro en la placa (la expansión apunta hacia donde se ve).
  const members=group.map(colony=>({
-  ...colony, contour:colonyContour({...BASE,...colony.style}),
+  ...colony, contour:contornoOrientado(colony),
   colors:[rgb(colony.style.c1),rgb(colony.style.c2),rgb(colony.style.c3)],
   distance:0, signed:0,
  }));
@@ -361,8 +419,9 @@ function drawJoinedBody(group,strength,values) {
   for(const member of members){
    const dx=x-member.x,dy=y-member.y;
    const distance=Math.hypot(dx,dy);
-   member.distance=distance/member.radius;
-   member.signed=distance-member.radius*member.contour(Math.atan2(dy,dx));
+   const alcance=member.contour(Math.atan2(dy,dx));
+   member.distance=distance/(member.radius*alcance); // [TU PLACA] los colores se estiran con la forma, como en la colonia
+   member.signed=distance-member.radius*alcance;
    minimum=Math.min(minimum,member.signed);
    nearestColor=Math.min(nearestColor,member.distance);
   }
@@ -505,11 +564,14 @@ function renderMixedMeetings(colonies,v){
  // [TU PLACA] La silueta (distancias píxel a píxel) solo se calcula para las colonias que tienen con quién encontrarse;
  // las demás se dibujan tal cual. Es el mismo descarte por distancia que hace el muestrario más abajo, hecho antes.
  const pairReach=(a,b,mode)=>({fusion:Math.min(a.radius,b.radius)*.57*strength,bridge:18,repel:gap+feather+5,barrier:gap+feather,crush:0})[mode];
- const candidates=new Set();
- for(const [i,a] of colonies.entries())for(const b of colonies.slice(i+1)){const mode=relation(a,b);if(mode&&Math.hypot(b.x-a.x,b.y-a.y)<=a.renderRadius+b.renderRadius+pairReach(a,b,mode)){candidates.add(a);candidates.add(b);}}
+ // [TU PLACA] La forma combinada de la tarjeta solo usa centros y radios: un moho que solo se une así no necesita silueta,
+ // y por eso se puede dibujar en vivo mientras se arrastra.
+ const candidates=new Set(),conSilueta=new Set();
+ for(const [i,a] of colonies.entries())for(const b of colonies.slice(i+1)){const mode=relation(a,b);if(mode&&Math.hypot(b.x-a.x,b.y-a.y)<=a.renderRadius+b.renderRadius+pairReach(a,b,mode)){candidates.add(a);candidates.add(b);if(!(mode==='fusion'&&formaCombinada(a)&&formaCombinada(b))){conSilueta.add(a);conSilueta.add(b);}}}
  const members=colonies.map(colony=>{
-  const reach=colony.renderRadius+Math.max(20,gap+feather*3+6,colony.radius*.57);
+  const reach=alcanceSilueta(colony,gap,feather);
   if(!candidates.has(colony))return {...colony,layer:null,neighbors:[],plain:true};
+  if(!conSilueta.has(colony))return {...colony,layer:null,neighbors:[]};
   // [TU PLACA] Con el tiempo del cuadro agotado, la silueta que falta queda para el cuadro siguiente.
   if(!surfaceReady(colony,reach)&&agotado()){pendiente=true;return {...colony,layer:null,neighbors:[],plain:true};}
   return {...colony,...meetingSurface(colony,reach),neighbors:[]};
@@ -518,6 +580,17 @@ function renderMixedMeetings(colonies,v){
  for(const [i,a] of members.entries())for(const b of members.slice(i+1)){
   const mode=relation(a,b);
   if(!mode||a.plain||b.plain)continue;
+  // [TU PLACA] Dos mohos sin editar se unen como en la tarjeta «Simbiosis · forma combinada» (renderContinuousUnion):
+  // con el radio de la colonia tal como se ve y la misma regla de cercanía (colonyCentersWithinReach).
+  if(mode==='fusion'&&formaCombinada(a)&&formaCombinada(b)){
+   // [TU PLACA] El radio se toma en la dirección de la otra colonia: la parte estirada también se encuentra.
+   const dx=b.x-a.x,dy=b.y-a.y,distance=Math.hypot(dx,dy)||1,angulo=Math.atan2(dy,dx);
+   const visibleA=alcanceHacia(a,angulo,radioVisible(b)*alcanceMaximo(b),distance),visibleB=alcanceHacia(b,angulo+Math.PI,radioVisible(a)*alcanceMaximo(a),distance);
+   if(!colonyCentersWithinReach({...a,radius:visibleA},{...b,radius:visibleB},strength))continue;
+   const ux=dx/distance,uy=dy/distance,contactGap=distance-visibleA-visibleB;
+   encuentros.push({a:a.entry,b:b.entry,mode,gap:contactGap,ux,uy});
+   fusions.push({a,b,distance,ux,uy,gap:contactGap});continue;
+  }
   const reach={
    fusion:Math.min(a.radius,b.radius)*.57*strength,
    bridge:18,repel:gap+feather+5,barrier:gap+feather,crush:0,
@@ -541,7 +614,7 @@ function renderMixedMeetings(colonies,v){
   pair.a===a&&pair.b===b||pair.a===b&&pair.b===a));
  const vecinos=colony=>colony.neighbors.map(n=>[n.other.sk,n.mode,n.overlap,n.ownReach]);
  for(const group of groups){
-  if(group.length===1&&group[0].plain){drawMeetingColony(ctx,group[0],group[0].style.blend,true);continue} // [TU PLACA]
+  if(group.length===1&&(group[0].plain||!group[0].layer)){drawMeetingColony(ctx,group[0],group[0].style.blend,true);continue} // [TU PLACA]
   if(group.length===1){
    // [TU PLACA] El frente de una colonia se guarda grabado: si ni ella ni sus vecinas cambiaron, se vuelve a pegar igual.
    const [colony]=group;
@@ -560,15 +633,18 @@ function renderMixedMeetings(colonies,v){
   const bodyKey=JSON.stringify([RW,strength,v.blur,v.grain,group.map(c=>c.sk)]);
   const clipKey=JSON.stringify([bodyKey,gap,feather,group.map(vecinos)]);
   const clipped=clipCache.get(clipKey);
-  if(clipped){ctx.drawImage(clipped.canvas,clipped.left,clipped.top);continue}
+  const debajo=group.filter(asomaDelCuerpo);
+  if(clipped){for(const colony of debajo)drawMeetingColony(ctx,colony,colony.style.blend);ctx.drawImage(clipped.canvas,clipped.left,clipped.top);continue}
   let fresh=bodyCache.get(bodyKey);
-  // Mientras se arrastra, un grupo grande que cambió se muestra suelto y se funde al soltar (fundirlo tarda más de un cuadro).
-  const pesado=arrastrando&&group.reduce((sum,c)=>sum+c.layer.width*c.layer.height,0)>150000;
-  if(agotado()||pesado){pendiente=pendiente||!pesado;for(const colony of group)drawMeetingColony(ctx,colony,colony.style.blend,true);continue}
+  // Mientras se arrastra, el grupo grande que contiene la colonia arrastrada se muestra suelto y se funde al soltar
+  // (fundirlo tarda más de un cuadro). Los demás grupos siguen fundidos.
+  if(agotado()){pendiente=true;for(const colony of group)drawMeetingColony(ctx,colony,colony.style.blend,true);continue}
   if(!fresh){
-   fresh=group.some(colony=>colony.parameters||colony.sourceStyle)
-    ? fuseStyledColonies(group,strength,fusions.filter(({a,b})=>group.includes(a)&&group.includes(b)))
-    : drawJoinedBody(group,strength,v);
+   // [TU PLACA] La forma combinada se arma con el radio visible y un blur proporcional al tamaño de las colonias
+   // (en la tarjeta, cada colonia se dibuja con dot(REACTION_WIDTH); acá con dot(width/2)).
+   const anchoMedio=group.reduce((sum,c)=>sum+c.width/2,0)/group.length;
+   fresh=drawJoinedBody(group.map(c=>({...c,radius:radioVisible(c)})),strength,{...v,blur:v.blur*anchoMedio/REACTION_WIDTH});
+   recortarCuerpo(fresh,group);
    bodyCache.set(bodyKey,fresh);if(bodyCache.size>60)bodyCache.delete(bodyCache.keys().next().value);
   }
   hechos++;
@@ -576,6 +652,7 @@ function renderMixedMeetings(colonies,v){
   const body={canvas:copy,left:fresh.left,top:fresh.top};
   clipMixedUnion(body,group,strength,gap,feather);
   clipCache.set(clipKey,body);if(clipCache.size>60)clipCache.delete(clipCache.keys().next().value);
+  for(const colony of debajo)drawMeetingColony(ctx,colony,colony.style.blend);
   ctx.drawImage(body.canvas,body.left,body.top); // [TU PLACA] cuerpo en lienzo local
  }
  if(pigments.length)applyMeetingPigments(ctx,pigments,v);
@@ -708,11 +785,19 @@ const MANCHAS={rosa:'#c93665',amarillo:'#ad6b0d',verde:'#16462e'}; // placa-encu
 const spriteCache=new Map();
 let pixelesPorUnidad=1;
 // muestrario.js sprite(): mismo proceso; [TU PLACA] n variable (en el muestrario siempre 200) y softCut escalado a n.
-function sprite(style,n=200){const clean={...BASE,...style,opacity:100,transparent:true,blend:'source-over'};clean.blur=Math.max(MIN_COLONY_BLUR,clean.blur??0);const key=n+JSON.stringify(clean);if(spriteCache.has(key))return spriteCache.get(key);hechos++;const c=document.createElement('canvas');state=clean;render(c,n,n/2);const layer=c.getContext('2d',{willReadFrequently:true}),center=n;softCut(layer,{...clean,size:clean.size*n/200,blur:clean.blur*n/200},center);spriteCache.set(key,c);if(spriteCache.size>160)spriteCache.delete(spriteCache.keys().next().value);return c}
+function sprite(style,n=200){const clean={...BASE,...style,opacity:100,transparent:true,blend:'source-over'};clean.blur=Math.max(MIN_COLONY_BLUR,clean.blur??0);const key=n+JSON.stringify(clean);if(spriteCache.has(key))return spriteCache.get(key);hechos++;const c=document.createElement('canvas');state=clean;const relleno=margenSprite(clean,n);render(c,n,relleno);c.factor=(n+relleno*2)/(n*2);const layer=c.getContext('2d',{willReadFrequently:true}),center=n/2+relleno;softCut(layer,{...clean,size:clean.size*n/200,blur:clean.blur*n/200},center);spriteCache.set(key,c);if(spriteCache.size>160)spriteCache.delete(spriteCache.keys().next().value);return c}
+// [TU PLACA] En el muestrario el margen es siempre n/2; con una expansión grande la colonia se salía del lienzo y quedaba cortada.
+// El margen crece con el alcance de la forma; dot() y pintar() dibujan el lienzo más grande a la misma escala (c.factor).
+function margenSprite(s,n){
+ const reach=s.shape==='fan'?1+(s.detail??70)/100*.65:['cotton','hairy','branching'].includes(s.shape)?1.7:1;
+ const contour=colonyContour(s);let maximo=1;for(let k=0;k<72;k++)maximo=Math.max(maximo,contour(k/72*Math.PI*2));
+ const mitad=n/2*(s.size??100)/100*Math.max(reach,maximo)*1.04+n*((s.halo??0)/100*.5+Math.max(s.blur??0,s.edgeBlur??0)/760*3)+6;
+ return Math.max(n/2,Math.ceil(mitad-n/2));
+}
 function spriteListo(style,n){const clean={...BASE,...style,opacity:100,transparent:true,blend:'source-over'};clean.blur=Math.max(MIN_COLONY_BLUR,clean.blur??0);return spriteCache.has(n+JSON.stringify(clean))}
 const resolucion=w=>{const necesario=w*pixelesPorUnidad;return necesario<=90?90:necesario<=140?140:necesario<=200?200:necesario<=280?280:360;};
 // muestrario.js dot(): [TU PLACA] sin el editor de muestras (placeSampleColony) y con la resolución elegida.
-function dot(ctx,x,y,w,style,blend='source-over'){const c=sprite(style,resolucion(w));ctx.save();ctx.globalCompositeOperation=blend;ctx.globalAlpha=(style.opacity??100)/100;ctx.drawImage(c,x-w,y-w,w*2,w*2);ctx.restore()}
+function dot(ctx,x,y,w,style,blend='source-over'){const c=sprite(style,resolucion(w)),f=c.factor??1;ctx.save();ctx.globalCompositeOperation=blend;ctx.globalAlpha=(style.opacity??100)/100;ctx.drawImage(c,x-w*f,y-w*f,w*2*f,w*2*f);ctx.restore()}
 // placa-encuentros.js drawMeetingColony(): [TU PLACA] la colonia se gira y se desenfoca con el menú contextual.
 function drawMeetingColony(ctx,colony,blend='source-over',puedeEsperar=false){
  const {x,y,width,style,extra}=colony;
@@ -740,7 +825,7 @@ function estiloColonia(fuente,ajustes={},familia='rosa'){
 }
 // placa-encuentros.js paintMeetingPlate(): radio y alcance de cada colonia.
 // parameters = lo editado en TRANSFORMAR; sourceStyle = colonia de una composición generada. Sin ninguno de los dos,
-// dos mohos se funden en una forma combinada (drawJoinedBody); con alguno, se prolonga su material (fuseStyledColonies).
+// [TU PLACA] todos los mohos se funden con la forma combinada (drawJoinedBody); fuseStyledColonies ya no se usa.
 function miembro({id,type,x,y,width,style,giro=0,desenfoque=0,entry,parameters,sourceStyle}){
  const radius=width*style.size/200;
  const shapeReach=style.shape==='pair'?1.55:1;
@@ -750,26 +835,29 @@ function miembro({id,type,x,y,width,style,giro=0,desenfoque=0,entry,parameters,s
 let encuentros=[];
 const bodyCache=new Map(),clipCache=new Map(),frontCache=new Map(),contactCache=new Map();let ultimaEscena=null;
 // Tiempo por cuadro: lo que no entra se calcula en el cuadro siguiente (la placa no se congela con composiciones densas).
-let presupuesto=Infinity,inicio=0,pendiente=false,hechos=0,arrastrando=false;const agotado=()=>hechos>0&&performance.now()-inicio>presupuesto; // al menos una tarea nueva por cuadro
+let presupuesto=Infinity,inicio=0,pendiente=false,hechos=0,arrastrando=new Set();const agotado=()=>hechos>0&&performance.now()-inicio>presupuesto; // al menos una tarea nueva por cuadro
 return {
  BASE,FAMILIES,TODOS_LOS_PARAMETROS,meetingRules,meetingTypePair,estiloColonia,miembro,
  // Dibuja la placa entera con sus encuentros. valores = {strength,gapWidth,blur,contactBlur,grain} de la Placa de encuentros.
- escena(ancho,alto,colonias,valores,escalaPantalla=1,tiempo=Infinity,moviendo=false){
+ // moviendo = las colonias (entry) que se están arrastrando en este momento.
+ escena(ancho,alto,colonias,valores,escalaPantalla=1,tiempo=Infinity,moviendo=[]){
   // Si nada cambió desde el último dibujo (abrir un menú, tocar la leyenda), se devuelve el mismo.
   for(const c of colonias)c.sk=JSON.stringify([c.id,c.type,c.x,c.y,c.width,c.style,c.extra,c.parameters,!!c.sourceStyle]);
   const clave=JSON.stringify([ancho,alto,escalaPantalla,valores,colonias.map(c=>c.sk)]);
   if(ultimaEscena?.clave===clave)return ultimaEscena.resultado;
   RW=ancho;RH=alto;pixelesPorUnidad=escalaPantalla;encuentros=[];
-  presupuesto=tiempo;inicio=performance.now();pendiente=false;hechos=0;arrastrando=moviendo;
+  presupuesto=tiempo;inicio=performance.now();pendiente=false;hechos=0;arrastrando=new Set(moviendo);
   const imagen=renderMixedMeetings(colonias.filter(colony=>colony.style.opacity>0),valores);
   const resultado={imagen,encuentros,pendiente};
-  ultimaEscena=pendiente||moviendo?null:{clave,resultado};
+  ultimaEscena=pendiente||arrastrando.size?null:{clave,resultado};
   return resultado;
  },
  // Una sola colonia, grande (vista previa del editor y miniaturas de la biblioteca).
+ // Devuelve cuánto más grande quedó el lienzo (1 si la colonia entra en el tamaño pedido).
  pintar(canvas,style,n,relleno=n/2){
-  const fuente=sprite(style,n),lado=n+relleno*2;canvas.width=canvas.height=lado;
-  const c=canvas.getContext('2d');c.clearRect(0,0,lado,lado);c.drawImage(fuente,relleno-n/2,relleno-n/2);
+  const fuente=sprite(style,n),pedido=n+relleno*2,extra=Math.max(0,(fuente.width-n*2)/2),lado=pedido+extra*2;canvas.width=canvas.height=lado;
+  const c=canvas.getContext('2d');c.clearRect(0,0,lado,lado);c.drawImage(fuente,(lado-fuente.width)/2,(lado-fuente.width)/2);
+  return lado/pedido;
  },
 };
 })();

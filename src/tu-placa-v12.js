@@ -35,7 +35,7 @@ function prepararTuPlaca(){
   function restaurar(texto){const s=JSON.parse(texto);items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);intensidad=Number.isFinite(s.intensidad)?s.intensidad:85;estructura=s.estructura||estructura;seleccionado=null;seleccion=[];cerrarMenus();dibujar();actualizar();guardar();}
   function deshacer(){if(historico.length){futuro.push(snapshot());restaurar(historico.pop());}}
   function rehacer(){if(futuro.length){historico.push(snapshot());restaurar(futuro.pop());}}
-  function crear(e,x,y,tamano=e.tamano,parent=null){if(items.length>=120)return null;const it={id:++secuencia,modelo:e.id,x,y,tamano,escala:100,rot:0,foco:100,opacidad:100,seed:e.style.seed%1000,parent,manual:false,org:0,sinReacciones:!!e.composicion};items.push(it);return it;}
+  function crear(e,x,y,tamano=e.tamano,parent=null){if(items.length>=120)return null;const it={id:++secuencia,modelo:e.id,x,y,tamano,escala:100,rot:0,foco:100,opacidad:100,seed:e.style.seed%1000,parent,manual:false,org:0,sinReacciones:!!e.composicion&&e.estado!=='AF'};items.push(it);return it;}
   function quitar(it){if(!it)return;const ids=new Set([it.id]);for(const a of items)if(ids.has(a.parent))ids.add(a.id);for(let i=items.length-1;i>=0;i--)if(ids.has(items[i].id))items.splice(i,1);if(ids.has(seleccionado?.id))seleccionado=null;seleccion=seleccion.filter(s=>!ids.has(s.id));cerrarMenus();dibujar();}
   const hijos=it=>items.filter(i=>i.parent===it.id);
   function sincronizarHijos(it){const hs=hijos(it),t=(it.org||0)/100,s=it.escala/100;hs.forEach((h,i)=>{
@@ -125,7 +125,8 @@ function prepararTuPlaca(){
     if(toque){const p=toque.inicio;toque=null;if(!cancelado){iniciarCambio();sembrar(p);terminarCambio();}return;}
     if(lazo){if(cancelado){lazo=null;board.classList.remove('tp-lazando');$('tpTrazo').querySelector('path').setAttribute('d','');}else cerrarLazo();terminarCambio();return;}
     if(arrastre){const a=arrastre;arrastre=null;$('tpAvisoQuitar').hidden=true;if(cancelado){for(const o of a.origen){o.g.x=o.x;o.g.y=o.y;}}else if(!a.movido)abrirMenu(a.it);else if(a.grupo.length===1&&!dentro(a.it))quitar(a.it);else if(a.grupo.length>1){for(const g of a.grupo)if(!dentro(g)){const d=Math.hypot(g.x-392,g.y-392);g.x=392+(g.x-392)*370/d;g.y=392+(g.y-392)*370/d;}}dibujar();terminarCambio();}
-    if(siembra){siembra.fantasma?.remove();if((cancelado||!dentro(punto(ev)))){for(const it of siembra.nuevos||[]){const idx=items.indexOf(it);if(idx>=0)items.splice(idx,1);}dibujar();}siembra=null;$('tpTrazo').querySelector('path').setAttribute('d','');terminarCambio();}
+    // Al soltar siempre se vuelve a dibujar: el último cuadro del arrastre muestra suelto el grupo que se estaba moviendo.
+    if(siembra){siembra.fantasma?.remove();if((cancelado||!dentro(punto(ev)))){for(const it of siembra.nuevos||[]){const idx=items.indexOf(it);if(idx>=0)items.splice(idx,1);}}siembra=null;dibujar();$('tpTrazo').querySelector('path').setAttribute('d','');terminarCambio();}
   }
   pagina.addEventListener('pointerup',ev=>soltar(ev));pagina.addEventListener('pointercancel',ev=>soltar(ev,true));
   pagina.addEventListener('pointerdown',ev=>{if(!ev.target.closest('.tp-colonia,.tp-menu,.tp-editor,.tp-estructuras,#tpGenerar'))cerrarMenus();});
@@ -188,7 +189,19 @@ function prepararTuPlaca(){
     comprimida:{nombre:'Rechazo',detalle:'colonia comprimida',pareja:'Bacteria + bacteria',texto:'En esta representación, dos colonias de bacterias sólo se deforman cuando se empujan: se aplastan contra la cara de encuentro.'},
     ninguna:{nombre:'Sin reacción',detalle:'',pareja:'Levadura + levadura',texto:'En esta representación, dos levaduras pueden tocarse sin cambiar su forma.'},
   };
-  const tipoDe=it=>it.sinReacciones?null:TIPOS[modelo(it).g]||null;
+  // Qué colonias reaccionan (Paco, 18/11/2026):
+  // - de las formas de composición de la biblioteca, solo «Anillo fino»; Veladura, Filamentosa, Granulada y Microcolonia no
+  //   (también «Con halo» y «Par», que ya no se ofrecen). Se decide por el tipo, no por la marca guardada, para que las
+  //   placas guardadas antes del cambio también lo sigan;
+  // - las piezas de GENERAR siguen su propia regla (agregarGenerada);
+  // - ninguna colonia reacciona si es muy chica o muy transparente, contando el tamaño y la opacidad del menú.
+  const SIN_REACCION=new Set(['V','F','G','MI','H','P']),RADIO_MINIMO=12,OPACIDAD_MINIMA=40;
+  const reacciona=it=>{
+    if(it.estilo?it.sinReacciones:SIN_REACCION.has(modelo(it)?.estado))return false;
+    const opacidad=(estiloBase(it).opacity??100)*(it.opacidad??100)/100;
+    return opacidad>=OPACIDAD_MINIMA&&radioDibujo(it)>=RADIO_MINIMO;
+  };
+  const tipoDe=it=>reacciona(it)?TIPOS[modelo(it).g]||null:null;
   const radioDibujo=it=>it.tamano*it.escala/200*(estiloBase(it).size??100)/100;
   let popup=null,cancelarPopup=()=>{},relaciones=[],escalaEscena=1;
   function cerrarReaccion(){cancelarPopup();cancelarPopup=()=>{};popup?.remove();popup=null;}
@@ -207,7 +220,7 @@ function prepararTuPlaca(){
     const colonias=items.map(it=>MotorMuestrario.miembro({id:it.id,type:tipoDe(it),x:it.x*K,y:it.y*K,width:2*it.tamano*it.escala/100*K,style:estiloItem(it),giro:it.rot,desenfoque:(100-it.foco)*.06*K,entry:it,
       parameters:it.ajustes&&Object.keys(it.ajustes).length?it.ajustes:undefined,sourceStyle:it.estilo?true:undefined}));
     // Hasta 40 ms por cuadro: si una composición densa no entra, lo que falta aparece en los cuadros siguientes.
-    const {imagen,encuentros,pendiente}=MotorMuestrario.escena(lado,lado,colonias,{strength:liviano?0:intensidad,gapWidth:7*K,blur:10,contactBlur:3,grain:24},pantalla/K,40,!!arrastre?.movido||!!siembra?.nuevos?.length);
+    const {imagen,encuentros,pendiente}=MotorMuestrario.escena(lado,lado,colonias,{strength:liviano?0:intensidad,gapWidth:7*K,blur:10,contactBlur:3,grain:24},pantalla/K,40,arrastre?.movido?arrastre.grupo:siembra?.nuevos||[]);
     if(pendiente)requestAnimationFrame(()=>solicitarDibujo());
     if(escenaCv.width!==lado)escenaCv.width=escenaCv.height=lado;
     const c=escenaCv.getContext('2d');c.clearRect(0,0,lado,lado);c.save();c.beginPath();c.arc(lado/2,lado/2,392*K,0,Math.PI*2);c.clip();c.drawImage(imagen,0,0);c.restore();
