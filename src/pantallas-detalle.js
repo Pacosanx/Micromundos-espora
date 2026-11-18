@@ -495,7 +495,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       indice=(i+filas.length)%filas.length;
       limpiarLugar();limpiarLugar=()=>{};
       const entorno=entornos[indice],nombre=entorno.nombre;
-      if(enlace)enlace.textContent='VER MUESTRAS DE '+nombre.toUpperCase()+' →';
+      if(enlace)enlace.textContent='VER MUESTRAS DE '+nombre.toUpperCase()+' ↗';
       for(const [n,fila]of filas.entries()){fila.style.opacity=n===indice?'1':'.45';fila.setAttribute('aria-pressed',String(n===indice));}
       if(contador)contador.textContent=String(indice+1).padStart(2,'0')+' / '+String(filas.length).padStart(2,'0');
       marco.replaceChildren();
@@ -511,15 +511,56 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       if(!movimientoReducido())marco.animate([{opacity:0},{opacity:1}],{duration:350,easing:'ease-out'});
     }
     filas.forEach((fila,i)=>interactivo(fila,()=>cambiar(i),'Explorar '+texto(fila.querySelectorAll('p')[1])));
+    // Las flechas van a los costados, dentro del círculo de la ilustración (diseño de Paco), centradas en su alto.
+    const arriba=parseFloat(marco.style.top),alto=parseFloat(marco.style.height)||parseFloat(marco.style.width);
     for(const [nombre,delta]of [['anterior',-1],['siguiente',1]]){
       const flecha=raiz.querySelector(`[data-name="${nombre}"]`);if(!flecha)continue;
       const dibujo=document.createElement('div');
       Object.assign(dibujo.style,{position:'absolute',left:'12px',top:'22px',width:flecha.style.width,height:flecha.style.height});
       dibujo.append(...flecha.childNodes);flecha.appendChild(dibujo);
       Object.assign(flecha.style,{width:'48px',height:'44px',translate:'-12px -22px'});
+      if(Number.isFinite(arriba)&&Number.isFinite(alto)&&marco.style.left){
+        raiz.appendChild(flecha);flecha.dataset.anclaCentro='1';flecha.classList.add('entorno-flecha');
+        Object.assign(flecha.style,{top:(arriba+alto/2)+'px',left:delta<0?`calc(${marco.style.left} + 84px)`:`calc(${marco.style.left} + ${alto-84-24}px)`});
+      }
       interactivo(flecha,()=>cambiar(indice+delta),'Lugar '+nombre);
     }
+    // Alturas fijas: cada bloque de la derecha reserva el alto de su texto más largo entre todos los lugares,
+    // así los títulos y «Ver muestras de …» no se mueven al cambiar de ilustración.
+    const fijarAlturas=()=>{
+      for(const [i,bloque]of bloques.entries()){
+        const textos=bloque.querySelectorAll('p');if(!textos[1])continue;
+        const antes=[textos[0].textContent,textos[1].textContent];let maximo=0;
+        bloque.style.height='';
+        for(const e of entornos){textos[0].textContent=e['titulo'+(i+1)];textos[1].textContent=e['parrafo'+(i+1)];maximo=Math.max(maximo,bloque.offsetHeight);}
+        [textos[0].textContent,textos[1].textContent]=antes;
+        if(maximo){bloque.style.height=maximo+'px';bloque.style.flexShrink='0';}
+      }
+    };
+    // Rueda del mouse o trackpad sobre la imagen: pasa al lugar siguiente o anterior.
+    // En el primero y el último lugar la rueda vuelve a mover la página, para no quedar atrapada en la ilustración.
+    let acumulado=0,esperaHasta=0;
+    marco.addEventListener('wheel',ev=>{
+      const d=Math.abs(ev.deltaX)>Math.abs(ev.deltaY)?ev.deltaX:ev.deltaY,dir=Math.sign(d);if(!dir)return;
+      if((dir>0&&indice===filas.length-1)||(dir<0&&indice===0)){acumulado=0;return;}
+      ev.preventDefault();
+      const ahora=performance.now();if(ahora<esperaHasta)return;
+      if(Math.sign(acumulado)!==dir)acumulado=0;
+      acumulado+=ev.deltaMode===1?d*16:d;
+      if(Math.abs(acumulado)>=50){cambiar(indice+dir);acumulado=0;esperaHasta=ahora+450;}
+    },{passive:false});
+    // Deslizamiento táctil horizontal sobre la imagen; el vertical sigue desplazando la página.
+    let toque=null;marco.style.touchAction='pan-y';
+    marco.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='mouse')toque={x:ev.clientX,y:ev.clientY,id:ev.pointerId};});
+    marco.addEventListener('pointerup',ev=>{
+      if(!toque||toque.id!==ev.pointerId)return;
+      const dx=ev.clientX-toque.x,dy=ev.clientY-toque.y;toque=null;
+      if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3)cambiar(indice+(dx<0?1:-1));
+    });
+    marco.addEventListener('pointercancel',()=>{toque=null;});
+    marco.classList.add('entorno-desliza');
     cambiar(0);
+    fijarAlturas();document.fonts?.ready.then(()=>{if(marco.isConnected)fijarAlturas();});
   }
   // La ficha de muestra enlaza al glosario las palabras que ya usa (sin cambiar su texto): primera aparición de cada concepto, en frases de lectura.
   function enlazarConceptosFicha(raiz){
