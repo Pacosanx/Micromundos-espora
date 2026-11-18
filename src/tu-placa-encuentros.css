@@ -1,0 +1,87 @@
+/* 18/11/2026 · Placa de encuentros como motor de TU PLACA. Se carga después de tu-placa-v12.css. */
+
+/* Leyenda fija de encuentros (reemplaza al checkbox "Mostrar reacciones"). */
+.tp-indicacion{pointer-events:none}
+#tpReacciones{width:282px;pointer-events:auto}
+#tpReacciones .tp-encuentros-titulo{margin:0 0 8px;font-size:var(--t-etiqueta);opacity:.7;filter:blur(.4px)}
+.tp-encuentros{position:static;display:grid;grid-template-columns:62px repeat(3,72px);grid-auto-rows:auto;gap:0;align-items:center;margin-bottom:8px}
+.tp-encuentros-cabeza{display:flex;align-items:center;gap:4px;font:400 11px/13px Arimo,Arial,sans-serif;letter-spacing:.02em;opacity:.75;filter:blur(.3px);justify-content:center}
+.tp-encuentros-cabeza.tp-encuentros-fila{justify-content:flex-start}
+.tp-encuentros-cabeza i{flex:none;width:8px;height:8px;border-radius:50%;filter:blur(.6px)}
+#tuPlaca .tp-encuentros-celda{all:unset;display:grid;justify-items:center;gap:1px;min-height:36px;align-content:center;cursor:pointer;border-radius:10px;transition:background .2s}
+.tp-encuentros-celda svg{width:36px;height:24px;filter:blur(.5px)}
+.tp-encuentros-celda span{font:700 10px/12px Arimo,Arial,sans-serif;letter-spacing:.03em;opacity:.7}
+#tuPlaca .tp-encuentros-celda:focus-visible,#tuPlaca .tp-encuentros-celda:active{background:#ed74a018}
+
+/* La placa se dibuja entera en un lienzo (motor del muestrario); los botones de colonia quedan encima, transparentes, para tocar y arrastrar. */
+.tp-escena{position:absolute;left:0;top:0;width:784px;height:784px;pointer-events:none}
+#tpColonias .tp-colonia.tp-seleccionada::before{content:'';position:absolute;inset:20%;border-radius:50%;border:1.5px dashed #b5599f;filter:blur(.3px);pointer-events:none}
+#tpBoard.tp-lazando{cursor:crosshair}
+#tpBoard.tp-lazando #tpTrazo path{stroke:#0d0f1799;stroke-dasharray:2 6;fill:#ed74a00d}
+
+/* Perilla de reacciones en el borde de la placa. */
+.tp-perilla{position:absolute;left:0;top:0;overflow:visible;pointer-events:none;z-index:6}
+.tp-perilla-carril{fill:none;stroke:#0d0f1766;stroke-width:1.5;stroke-dasharray:1 7;stroke-linecap:round;filter:blur(.3px)}
+.tp-perilla-lleno{fill:none;stroke:#b5599f;stroke-width:3;stroke-linecap:round;filter:blur(.5px)}
+.tp-perilla-toque{fill:none;stroke:transparent;stroke-width:44;pointer-events:stroke;cursor:pointer}
+.tp-perilla g.tp-perilla-control{pointer-events:auto;cursor:grab;outline:0}
+.tp-perilla-zona{fill:transparent}
+.tp-perilla-perilla{fill:#fffffff0;stroke:#212121;stroke-width:1.4;filter:drop-shadow(0 1px 3px #0003)}
+.tp-perilla g:focus-visible .tp-perilla-perilla{stroke:#ed74a0;stroke-width:2.5}
+.tp-perilla-titulo{font:700 var(--t-etiqueta) Arimo,Arial,sans-serif;fill:#0d0f17;filter:blur(.4px)}
+.tp-perilla-valor{font:400 var(--t-etiqueta) Arimo,Arial,sans-serif;fill:#0d0f17;opacity:.7}
+
+/* GENERAR: tocar / mantener apretado (abanico de estructuras). */
+.tp-generar-ayuda{position:absolute;left:40px;top:978px;margin:0;font:400 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;opacity:.5;filter:blur(.4px);pointer-events:none}
+.tp-estructuras{position:absolute;left:24px;top:832px;width:480px;height:110px;z-index:12}
+.tp-estructuras::before{content:"";position:absolute;left:-18px;top:-44px;width:490px;height:150px;border-radius:40px;background:#f2f0e8e8;filter:blur(6px);pointer-events:none}
+.tp-estructuras[hidden]{display:none}
+#tuPlaca .tp-estructuras button{all:unset;position:absolute;width:84px;display:grid;justify-items:center;gap:6px;cursor:pointer;animation:tp-abanico .35s cubic-bezier(.3,.9,.3,1) both}
+.tp-estructuras button:nth-child(2){animation-delay:.03s}.tp-estructuras button:nth-child(3){animation-delay:.06s}.tp-estructuras button:nth-child(4){animation-delay:.09s}.tp-estructuras button:nth-child(5){animation-delay:.12s}
+.tp-estructuras svg{width:56px;height:56px;border-radius:50%;background:#ffffffcc;box-shadow:0 0 0 1px #212121e6;fill:#212121;filter:blur(.4px)}
+.tp-estructuras button[aria-checked="true"] svg{box-shadow:0 0 0 2.5px #212121;background:#fff}
+.tp-estructuras span{font:700 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;text-transform:uppercase;text-align:center;filter:blur(.3px)}
+.tp-estructuras button:focus-visible svg{box-shadow:0 0 0 2.5px #ed74a0}
+@keyframes tp-abanico{from{opacity:0;transform:translateY(24px) scale(.6)}to{opacity:1;transform:none}}
+
+/* Nivel 2 · Transformar: la colonia se agranda en el centro y se edita con tiradores. */
+.tp-editor{position:absolute;left:0;top:0;width:784px;height:784px;z-index:9;touch-action:none}
+.tp-editor[hidden]{display:none}
+.tp-editor-velo{position:absolute;left:2px;top:2px;width:780px;height:780px;border-radius:50%;background:#f2f0e8cc;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:tp-aparecer .3s ease both}
+.tp-editor-colonia{position:absolute;pointer-events:none;animation:tp-crecer .4s cubic-bezier(.3,.9,.3,1) both}
+.tp-editor-colonia canvas{position:absolute;left:0;top:0;width:100%!important;height:100%!important}
+.tp-editor-guias{position:absolute;left:0;top:0;width:784px;height:784px;overflow:visible;pointer-events:none;animation:tp-aparecer .4s .1s ease both}
+.tp-editor-carril{fill:none;stroke:#0d0f1777;stroke-width:1.4;stroke-dasharray:1 6;stroke-linecap:round}
+.tp-editor-lleno{fill:none;stroke:#0d0f17cc;stroke-width:1.6;stroke-linecap:round}
+.tp-editor-muesca{stroke:#0d0f1788;stroke-width:1.2}
+.tp-editor-carril-toque{fill:none;stroke:transparent;stroke-width:40;pointer-events:stroke;cursor:pointer}
+.tp-editor-tirador{pointer-events:auto;cursor:grab}
+.tp-editor-toque{fill:transparent}
+.tp-editor-perilla{fill:#fffffff0;stroke:#212121;stroke-width:1.4;filter:drop-shadow(0 1px 3px #0003)}
+.tp-editor-tirador-activo .tp-editor-perilla{fill:#212121}
+.tp-editor-borde-interior{fill:none;stroke:#0d0f1799;stroke-width:1.2;stroke-dasharray:3 4}
+.tp-editor-etiqueta{font:700 var(--t-micro) Arimo,Arial,sans-serif;letter-spacing:.03em;fill:#0d0f17;paint-order:stroke;stroke:#f2f0e8;stroke-width:4px;stroke-linejoin:round}
+.tp-editor-valor{font:400 var(--t-etiqueta) Arimo,Arial,sans-serif;fill:#0d0f17;paint-order:stroke;stroke:#f2f0e8;stroke-width:4px;stroke-linejoin:round}
+.tp-editor-pestanas,.tp-editor-opciones{position:absolute;left:0;top:0;width:784px;height:784px;pointer-events:none}
+#tuPlaca .tp-editor-pestanas button{all:unset;position:absolute;translate:-50% -50%;pointer-events:auto;cursor:pointer;padding:10px 6px;white-space:nowrap;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.5;filter:blur(.6px);transition:opacity .2s,filter .2s}
+#tuPlaca .tp-editor-pestanas button[aria-selected="true"]{opacity:1;filter:blur(.3px);font-weight:700}
+#tuPlaca .tp-editor-pestanas button[aria-selected="true"]::after{content:'';position:absolute;left:6px;right:6px;bottom:4px;height:2px;background:linear-gradient(90deg,#b5599f,#c9a6bd,#7fb7ab);filter:blur(.5px)}
+#tuPlaca .tp-editor-listo{all:unset;position:absolute;left:392px;top:744px;translate:-50% -50%;padding:12px 18px;cursor:pointer;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;filter:blur(.5px)}
+#tuPlaca .tp-editor-listo:focus-visible,#tuPlaca .tp-editor-pestanas button:focus-visible{background:#ed74a018;border-radius:10px}
+#tuPlaca .tp-editor-miniatura{all:unset;position:absolute;translate:-50% -50%;display:grid;justify-items:center;gap:3px;pointer-events:auto;cursor:pointer}
+.tp-editor-miniatura i{width:36px;height:36px;border-radius:50%;box-shadow:0 0 0 1px #21212199;filter:blur(.6px)}
+.tp-editor-miniatura[aria-pressed="true"] i{box-shadow:0 0 0 2.5px #212121}
+.tp-editor-miniatura span{font:700 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;text-transform:uppercase}
+@keyframes tp-aparecer{from{opacity:0}to{opacity:1}}
+@keyframes tp-crecer{from{opacity:0;transform:scale(.5)}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.tp-editor-velo,.tp-editor-colonia,.tp-editor-guias,.tp-estructuras button{animation:none}}
+
+/* TRANSFORMAR en el aro: relleno, con la flecha de abrir. Es el único botón que no se gira: abre el editor. */
+.tp-menu-boton[data-accion="transformar"] .tp-menu-superficie{display:none}
+.tp-menu-boton[data-accion="transformar"]::before{content:'';position:absolute;inset:0;border-radius:50%;background:#212121;filter:blur(.6px);box-shadow:0 2px 6px #0003}
+.tp-menu-boton[data-accion="transformar"] .tp-menu-icono{filter:invert(1)}
+.tp-menu-boton[data-accion="transformar"]::after{content:'↗';position:absolute;right:-6px;top:-6px;width:20px;height:20px;border-radius:50%;background:#f2f0e8;box-shadow:0 0 0 1.2px #212121;font:700 12px/20px Arimo,Arial,sans-serif;text-align:center;color:#212121}
+.tp-menu-boton[data-accion="transformar"] span{opacity:1}
+
+/* La zona táctil de cada colonia es su círculo (la colonia ocupa el 60 % de su caja): el resto de la caja deja pasar el lazo y la siembra. */
+#tpColonias .tp-colonia{clip-path:circle(31% at 50% 50%)}

@@ -151,7 +151,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     actual=null;marco.hidden=true;marco.inert=true;cancelAnimationFrame(animacion);
     pantalla.classList.remove('en-detalle','en-universo','entrando-universo');
     $('glosario').inert=!pantalla.classList.contains('en-glosario');
-    for(const nombre of ['centro','derecha','leyenda','izqAbajo'])$(nombre).inert=pantalla.classList.contains('en-glosario')||pantalla.classList.contains('en-tuplaca');
+    for(const nombre of ['centro','derecha','leyenda','izqAbajo'])$(nombre).inert=pantalla.classList.contains('en-glosario')||pantalla.classList.contains('en-tuplaca')||pantalla.classList.contains('en-quees');
   }
   function abrir(id,desde){
     const fichaAnterior=actual==='ficha'?muestraFicha:null,regresoAnterior=retorno;
@@ -229,7 +229,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   function salir(nueva,ejecutar){
     if(!grupos[actual]||movimientoReducido())return false;
     const anterior=congelarObjetivo();ejecutar();
-    let destino=nueva==='glosario'?$('glosario'):nueva==='tuplaca'?$('tuPlaca'):null,restaurar=()=>{};
+    let destino=nueva==='glosario'?$('glosario'):nueva==='tuplaca'?$('tuPlaca'):nueva==='quees'?$('queEs'):null,restaurar=()=>{};
     if(!destino){
       const envoltura=document.createElement('div');envoltura.className='objetivo-destino';
       const nodos=['centro','derecha','leyenda','izqAbajo'].map(nombre=>$(nombre));

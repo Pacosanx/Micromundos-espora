@@ -48,17 +48,8 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
   const subtitle = document.createElement('p'); subtitle.textContent='Arrastrá una forma al interior de la placa.';
   top.append(heading,subtitle);
   const modes = document.createElement('div'); modes.className='tp-biblioteca__modes';
-  const modeLabel = document.createElement('span'); modeLabel.className='tp-biblioteca__mode-label'; modeLabel.textContent='SEMBRAR'; modes.appendChild(modeLabel);
-  let modoActual='estria';
-  const modos=[['estria','En estría','tp-siembra-estria.svg'],['una','Una','tp-siembra-una.svg'],['grupo','En grupo','tp-siembra-grupo.svg']];
-  const modeButtons=new Map();
-  for(const [id,label,icon] of modos){
-    const button=document.createElement('button');button.type='button';button.className='tp-biblioteca__mode';button.setAttribute('aria-pressed',id==='estria'?'true':'false');
-    const img=document.createElement('img');img.src=`src/assets/tu-placa/${icon}`;img.alt='';
-    const text=document.createElement('span');text.textContent=label;button.append(img,text);
-    button.addEventListener('click',()=>{modoActual=id;for(const [key,b]of modeButtons)b.setAttribute('aria-pressed',key===id?'true':'false');alModo(id)});
-    modeButtons.set(id,button);modes.appendChild(button);
-  }
+  // 18/11/2026: sin modos de siembra (se quitaron «En estría» y «En grupo»): tocar la placa siembra una, arrastrar elige varias.
+  const modeLabel = document.createElement('span'); modeLabel.className='tp-biblioteca__mode-label'; modeLabel.textContent='TOCÁ LA PLACA PARA SEMBRAR · ARRASTRÁ PARA ELEGIR VARIAS'; modes.appendChild(modeLabel);
   const tabs=document.createElement('div');tabs.className='tp-biblioteca__tabs';tabs.setAttribute('role','tablist');
   const content=document.createElement('div');content.className='tp-biblioteca__content';
   const labels=document.createElement('div');labels.className='tp-biblioteca__labels';
@@ -100,11 +91,12 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
         button.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();seleccionar(true)}});
         track.appendChild(button);
         const diametroPreview=estado.id==='MI'?22:estado.id==='P'?46:84;
-        montajes.push(mountColonias(canvas,{recipe:pieza({...estilo.style,size:100},.84),maxResolution:150}));
+        // Misma colonia que se siembra: el motor del muestrario (tu-placa-motor.js), con la colonia al 84 % del lienzo.
+        MotorMuestrario.pintar(canvas,MotorMuestrario.estiloColonia({...estilo.style,size:100},{},{B:'rosa',L:'amarillo',M:'verde'}[estilo.g]||'rosa'),126,12);
         canvas.style.width=canvas.style.height=(diametroPreview/.84)+'px';
       }
     }
   }
   drawGroup();
-  return { estilos, seleccionado:()=>elegido, modo:()=>modoActual, destroy(){if(destruido)return;destruido=true;limpiarMontajes();host.replaceChildren();host.classList.remove('tp-biblioteca')} };
+  return { estilos, seleccionado:()=>elegido, modo:()=>'una', destroy(){if(destruido)return;destruido=true;limpiarMontajes();host.replaceChildren();host.classList.remove('tp-biblioteca')} };
 }

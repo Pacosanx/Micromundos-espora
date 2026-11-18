@@ -1,141 +1,274 @@
 // Composición pública 1:1: independiente del archivo de muestras y sus semillas.
+// 18/11/2026: la lógica de la Placa de encuentros del muestrario pasa a ser el motor de TU PLACA.
+//   Fijo: biblioteca (tipo), perilla de reacciones en el borde de la placa, leyenda de encuentros, GENERAR (tocar / mantener).
+//   Contextual 1: tocar una colonia (Tamaño, Girar, Foco, Opacidad, Multiplicar, Variación y TRANSFORMAR, marcado).
+//   Contextual 2: Transformar (tu-placa-editor.js).
+//   Sin menú: tocar el fondo = sembrar; arrastrar por el fondo = lazo; acercar colonias = encuentro; sacarlas = quitar.
+// Dibujo y encuentros: MotorMuestrario (tu-placa-motor.js), el mismo código del muestrario.
 function prepararTuPlaca(){
   const pagina=$('tuPlaca'),ruta='src/assets/tu-placa/',clave='micromundos-tuplaca-v2',ns='http://www.w3.org/2000/svg';
-  pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones"><label class="tp-check"><input id="tpEncuentros" type="checkbox" checked><span class="tp-check__caja" aria-hidden="true"></span><span>Mostrar reacciones</span></label><p>Una interpretación gráfica de cómo conviven las colonias.</p></div></div><aside id="tpBiblioteca"></aside>
-    <div id="tpBoard" class="tp-board" aria-label="Tu placa. Tocar o deslizar para sembrar" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><p id="tpVacia">ELEGÍ UNA FORMA\nY SEMBRALA EN LA PLACA</p><div id="tpMenu"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
-    <button id="tpGenerar" class="tp-generar" type="button">GENERAR COMPOSICIÓN ↻</button><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA →</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
-    <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a></div></div></div><div class="tp-sprites" aria-hidden="true"></div>`;
-  const board=$('tpBoard'),capa=$('tpColonias'),items=[],elementos=new Map(),sprites=new Map(),historico=[],futuro=[];
-  let secuencia=0,seleccionado=null,arrastre=null,siembra=null,antes=null,frame=0,pedido=false;
+  pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones"><p class="tp-encuentros-titulo">ENCUENTROS</p><div id="tpLeyenda" class="tp-encuentros" role="group" aria-label="Reacción según el tipo de colonia"></div><p>Una interpretación gráfica. Acercá dos colonias para que se encuentren.</p></div></div><aside id="tpBiblioteca"></aside>
+    <div id="tpBoard" class="tp-board" aria-label="Tu placa. Tocar para sembrar; arrastrar para elegir varias" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><canvas id="tpEscena" class="tp-escena" aria-hidden="true"></canvas><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><svg id="tpPerilla" class="tp-perilla" width="784" height="784" viewBox="0 0 784 784"></svg><p id="tpVacia">ELEGÍ UNA FORMA\nY SEMBRALA EN LA PLACA</p><div id="tpMenu"></div><div id="tpEditor"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
+    <button id="tpGenerar" class="tp-generar" type="button" aria-haspopup="true">GENERAR COMPOSICIÓN ↻</button><p class="tp-generar-ayuda" id="tpGenerarAyuda">MANTENÉ APRETADO PARA ELEGIR LA ESTRUCTURA</p><div id="tpEstructuras" class="tp-estructuras" hidden role="menu" aria-label="Estructuras de composición"></div><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA →</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
+    <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a></div></div></div>`;
+  const board=$('tpBoard'),capa=$('tpColonias'),items=[],elementos=new Map(),historico=[],futuro=[];
+  let secuencia=0,seleccionado=null,seleccion=[],arrastre=null,siembra=null,lazo=null,antes=null,frame=0,pedido=false,intensidad=85,estructura='propuesta';
   const punto=ev=>{const r=board.getBoundingClientRect();return{x:(ev.clientX-r.left)*784/r.width,y:(ev.clientY-r.top)*784/r.height};};
   const dentro=p=>Math.hypot(p.x-392,p.y-392)<386;
   const hash=n=>{let x=Math.imul(n^0x45d9f3b,0x45d9f3b);x=Math.imul(x^(x>>>16),0x45d9f3b);return ((x^(x>>>16))>>>0)/4294967296;};
-  const biblioteca=montarBibliotecaTuPlaca($('tpBiblioteca'),{alPresionar:iniciarBiblioteca,alElegir:(e,teclado)=>{if(teclado){iniciarCambio();sembrar({x:392,y:392},e,true);terminarCambio();}},alModo:()=>menu.cerrar()});
+  const biblioteca=montarBibliotecaTuPlaca($('tpBiblioteca'),{alPresionar:iniciarBiblioteca,alElegir:(e,teclado)=>{if(teclado){iniciarCambio();sembrar({x:392,y:392},e,true);terminarCambio();}},alModo:()=>cerrarMenus()});
   const modelos=new Map(biblioteca.estilos.map(e=>[e.id,e])),modelo=it=>it.estilo?{id:it.modelo,g:it.grupo||'B',codigo:'Composición',style:it.estilo}:modelos.get(it.modelo);
+  const estiloBase=it=>({...modelo(it).style,seed:it.seed});
+  const FAMILIA={B:'rosa',L:'amarillo',M:'verde',BL:'rosa'},familiaDe=it=>FAMILIA[modelo(it).g]||'rosa';
+  // Ajustes del primer editor (18/11, con el motor viejo) → parámetros del motor del muestrario.
+  function migrarAjustes(a){if(!a||!['expansion','expansionDir','arc','ringWidth'].some(k=>k in a))return a;const m={};
+    for(const [k,v] of Object.entries(a)){if(k==='expansion')m.detail=Math.round(v*2.2);else if(k==='expansionDir')m.rotation=v;else if(k==='arc')m.cutOpening=v;else if(k==='ringWidth')m.ringThickness=v;else m[k]=v;}return m;}
+  // Estilo con el que el motor dibuja la colonia: biblioteca o composición + lo editado en TRANSFORMAR + la opacidad del menú.
+  const estiloItem=it=>{const s=MotorMuestrario.estiloColonia(estiloBase(it),it.ajustes||{},familiaDe(it));s.opacity=(s.opacity??100)*(it.opacidad??100)/100;return s;};
   const estiloAro={...piezas.find(p=>p.tipo==='placa').it.style};
   const aroCanvas=$('tpAroPlaca'),ladoAro=784/(estiloAro.size/100)/WF;aroCanvas.style.width=aroCanvas.style.height=ladoAro+'px';aroCanvas.style.left=aroCanvas.style.top=(784-ladoAro)/2+'px';
   mountColonias(aroCanvas,{recipe:pieza(estiloAro),maxResolution:1100});aroCanvas.style.width=aroCanvas.style.height=ladoAro+'px';
-  const snapshot=()=>JSON.stringify({items,contador:secuencia,reacciones:$('tpEncuentros').checked});
+  const snapshot=()=>JSON.stringify({items,contador:secuencia,intensidad,estructura});
   function guardar(){try{localStorage.setItem(clave,snapshot());}catch{}}
   function iniciarCambio(){if(antes===null)antes=snapshot();}
   function terminarCambio(){if(antes!==null&&antes!==snapshot()){historico.push(antes);if(historico.length>60)historico.shift();futuro.length=0;}antes=null;actualizar();guardar();}
-  function restaurar(texto){const s=JSON.parse(texto);items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);$('tpEncuentros').checked=s.reacciones!==false;seleccionado=null;menu.cerrar();dibujar();actualizar();guardar();}
+  function restaurar(texto){const s=JSON.parse(texto);items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);intensidad=Number.isFinite(s.intensidad)?s.intensidad:85;estructura=s.estructura||estructura;seleccionado=null;seleccion=[];cerrarMenus();dibujar();actualizar();guardar();}
   function deshacer(){if(historico.length){futuro.push(snapshot());restaurar(historico.pop());}}
   function rehacer(){if(futuro.length){historico.push(snapshot());restaurar(futuro.pop());}}
   function crear(e,x,y,tamano=e.tamano,parent=null){if(items.length>=120)return null;const it={id:++secuencia,modelo:e.id,x,y,tamano,escala:100,rot:0,foco:100,opacidad:100,seed:e.style.seed%1000,parent,manual:false,org:0,sinReacciones:!!e.composicion};items.push(it);return it;}
-  function quitar(it){if(!it)return;const ids=new Set([it.id]);for(const a of items)if(ids.has(a.parent))ids.add(a.id);for(let i=items.length-1;i>=0;i--)if(ids.has(items[i].id))items.splice(i,1);if(ids.has(seleccionado?.id))seleccionado=null;menu.cerrar();dibujar();}
+  function quitar(it){if(!it)return;const ids=new Set([it.id]);for(const a of items)if(ids.has(a.parent))ids.add(a.id);for(let i=items.length-1;i>=0;i--)if(ids.has(items[i].id))items.splice(i,1);if(ids.has(seleccionado?.id))seleccionado=null;seleccion=seleccion.filter(s=>!ids.has(s.id));cerrarMenus();dibujar();}
   const hijos=it=>items.filter(i=>i.parent===it.id);
   function sincronizarHijos(it){const hs=hijos(it),t=(it.org||0)/100,s=it.escala/100;hs.forEach((h,i)=>{
     const ang=hash(h.id*17)*Math.PI*2,dist=(70+hash(h.id*23)*150)*s;let n=i,k=0;const caps=[8,14,20],radios=[95,165,235];while(n>=caps[k]&&k<2){n-=caps[k++];}const oa=2*Math.PI*n/caps[k]+(k%2?Math.PI/caps[k]:0)-Math.PI/2;
-    h.seed=it.seed;h.foco=it.foco;h.opacidad=it.opacidad??100;h.rot=it.rot+(hash(h.id*13)-.5)*160*(1-t);h.escala=it.escala*((.5+hash(h.id*37)*.4)*.9*(1-t)+.6*t);
+    h.seed=it.seed;h.foco=it.foco;h.opacidad=it.opacidad??100;h.ajustes=it.ajustes?{...it.ajustes}:undefined;h.rot=it.rot+(hash(h.id*13)-.5)*160*(1-t);h.escala=it.escala*((.5+hash(h.id*37)*.4)*.9*(1-t)+.6*t);
     if(!h.manual){h.x=it.x+Math.cos(ang)*dist*(1-t)+Math.cos(oa)*radios[k]*s*t;h.y=it.y+Math.sin(ang)*dist*(1-t)+Math.sin(oa)*radios[k]*s*t;const d=Math.hypot(h.x-392,h.y-392);if(d>340){h.x=392+(h.x-392)*340/d;h.y=392+(h.y-392)*340/d;}}
   });}
+
+  // Selección: una colonia (tocar) o varias (lazo). El menú y el editor actúan sobre todas.
+  const elegidas=()=>seleccion.length?seleccion.filter(s=>items.includes(s)):seleccionado?[seleccionado]:[];
+  function centro(){const g=elegidas();if(!g.length)return null;return {x:g.reduce((n,i)=>n+i.x,0)/g.length,y:g.reduce((n,i)=>n+i.y,0)/g.length};}
+  function cerrarMenus(){menu.cerrar();editor?.cerrar();cerrarEstructuras();}
   const menu=montarMenuTuPlaca($('tpMenu'),{obtener:()=>seleccionado?{...seleccionado,duplicados:hijos(seleccionado).length}:null,empezar:iniciarCambio,terminar:terminarCambio,
-    quitar:()=>{iniciarCambio();quitar(seleccionado);terminarCambio();},cambiar:(k,v)=>{
-      const it=seleccionado;if(!it)return;
-      if(k==='duplicar'){let hs=hijos(it);while(hs.length<v&&items.length<120){const h=crear(modelo(it),it.x,it.y,it.tamano,it.id);if(!h)break;if(it.estilo){h.estilo={...it.estilo};h.grupo=it.grupo;}hs.push(h);}while(hs.length>v){const h=hs.pop();items.splice(items.indexOf(h),1);}}
-      else if(k==='opacidad'){it.opacidad=v;}
-      else it[k==='tamano'?'escala':k==='girar'?'rot':k==='variacion'?'seed':'foco']=v;
-      sincronizarHijos(it);solicitarDibujo();menu.actualizar();
+    quitar:()=>{iniciarCambio();quitar(seleccionado);terminarCambio();},
+    variar:()=>{for(const it of elegidas()){it.seed=Math.floor(Math.random()*1000);sincronizarHijos(it);}dibujar();},
+    transformar:()=>{if(!seleccionado)return;menu.cerrar();editor.abrir();},
+    cambiar:(k,v)=>{
+      for(const it of elegidas()){
+        if(k==='duplicar'){let hs=hijos(it);while(hs.length<v&&items.length<120){const h=crear(modelo(it),it.x,it.y,it.tamano,it.id);if(!h)break;if(it.estilo){h.estilo={...it.estilo};h.grupo=it.grupo;}h.sinReacciones=it.sinReacciones;hs.push(h);}while(hs.length>v){const h=hs.pop();items.splice(items.indexOf(h),1);}}
+        else it[k==='tamano'?'escala':k==='girar'?'rot':k==='opacidad'?'opacidad':'foco']=v;
+        sincronizarHijos(it);
+      }
+      solicitarDibujo();menu.actualizar();
     }});
-  // La resolución del sprite sigue el tamaño con el que se muestra (antes fijo en 280 px: los elementos grandes se estiraban hasta 2,6 veces).
-  function sprite(it){const m=modelo(it),esc=pagina.getBoundingClientRect().width/pagina.offsetWidth||1,dpr=Math.max(1,devicePixelRatio||1);
-    if(!it.resB){const necesario=it.tamano*it.escala/100/WF*esc*dpr;it.resB=necesario<=280?280:necesario<=420?420:necesario<=560?560:720;}
-    const res=it.resB,key=m.id+'-'+it.seed+'-'+res;if(sprites.has(key))return sprites.get(key).canvas;
-    const canvas=document.createElement('canvas'),caja=document.createElement('div');caja.style.width=(res/(esc*dpr))+'px';caja.appendChild(canvas);pagina.querySelector('.tp-sprites').appendChild(caja);
-    const obra=mountColonias(canvas,{recipe:pieza({...m.style,seed:it.seed}),maxResolution:res});sprites.set(key,{canvas,obra});
-    if(sprites.size>90){const [vieja,s]=sprites.entries().next().value;s.obra.destroy();s.canvas.parentElement.remove();sprites.delete(vieja);}return canvas;
-  }
+  const editor=montarEditorTuPlaca($('tpEditor'),{
+    base:()=>({fuente:estiloBase(seleccionado),ajustes:migrarAjustes(seleccionado.ajustes),familia:familiaDe(seleccionado),rot:seleccionado.rot,foco:seleccionado.foco,opacidad:seleccionado.opacidad??100,radio:radioDibujo(seleccionado)}),
+    cambiar:parcial=>{for(const it of elegidas()){it.ajustes={...migrarAjustes(it.ajustes),...parcial};sincronizarHijos(it);}},
+    empezar:iniciarCambio,terminar:()=>{dibujar();terminarCambio();},
+    alCerrar:()=>{if(seleccionado&&items.includes(seleccionado)){const c=centro();menu.abrir(c.x,c.y);}dibujar();},
+  });
+
   function dibujar(){
     for(const [id,el]of elementos)if(!items.some(i=>i.id===id)){el.remove();elementos.delete(id);}
+    const varias=elegidas().length>1;
     for(const it of items){let el=elementos.get(it.id);
-      if(!el){el=document.createElement('button');el.type='button';el.className='tp-colonia';el.dataset.colonia=String(it.id);el.innerHTML='<canvas></canvas>';capa.appendChild(el);elementos.set(it.id,el);const id=it.id;el.addEventListener('pointerdown',ev=>{const actual=items.find(i=>i.id===id);if(actual)iniciarArrastre(ev,actual);});el.addEventListener('keydown',ev=>{const actual=items.find(i=>i.id===id);if(actual)tecladoColonia(ev,actual);});}
+      if(!el){el=document.createElement('button');el.type='button';el.className='tp-colonia';el.dataset.colonia=String(it.id);capa.appendChild(el);elementos.set(it.id,el);const id=it.id;el.addEventListener('pointerdown',ev=>{const actual=items.find(i=>i.id===id);if(actual)iniciarArrastre(ev,actual);});el.addEventListener('keydown',ev=>{const actual=items.find(i=>i.id===id);if(actual)tecladoColonia(ev,actual);});}
       const lado=it.tamano*it.escala/100/WF,primera=!el.dataset.pintado;el.style.width=el.style.height=lado+'px';el.style.transform=`translate(${it.x-lado/2}px,${it.y-lado/2}px) rotate(${it.rot}deg)`;
       if(primera&&it.parent&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const padre=items.find(p=>p.id===it.parent);if(padre)el.animate([{transform:`translate(${padre.x-lado/2}px,${padre.y-lado/2}px) rotate(${it.rot}deg) scale(.1)`,opacity:0},{transform:el.style.transform,opacity:1}],{duration:450,easing:'cubic-bezier(.3,.9,.3,1)'});}el.dataset.pintado='1';
-      el.style.opacity=(it.opacidad??100)/100;el.style.filter=`blur(${.4+(100-it.foco)*.06}px)`;el.classList.toggle('tp-arrastrando',arrastre?.it===it);el.classList.toggle('tp-colonia-fuera',arrastre?.it===it&&!dentro(it));
+      el.classList.toggle('tp-arrastrando',arrastre?.it===it||!!arrastre?.grupo?.includes(it));el.classList.toggle('tp-colonia-fuera',arrastre?.it===it&&!dentro(it));
+      el.classList.toggle('tp-seleccionada',varias&&seleccion.includes(it));
       el.setAttribute('aria-label',GRUPO_NOMBRE[modelo(it).g]+', '+modelo(it).codigo+'. Tocar para editar; arrastrar para mover.');el.setAttribute('aria-expanded',String(seleccionado===it&&!$('tpMenu').hidden));
-      const key=it.modelo+'-'+it.seed;if(el.dataset.textura!==key){const fuente=sprite(it),cv=el.querySelector('canvas');cv.width=fuente.width;cv.height=fuente.height;cv.getContext('2d').drawImage(fuente,0,0);el.dataset.textura=key;}
-      el.querySelector('canvas').style.maskImage=el.querySelector('canvas').style.webkitMaskImage='none';
     }
-    dibujarReacciones();if(seleccionado)menu.situar(seleccionado.x,seleccionado.y);pedido=false;
+    pintarEscena();dibujarReacciones();dibujarPerilla();if(seleccionado&&!$('tpMenu').hidden){const c=centro();if(c)menu.situar(c.x,c.y);}pedido=false;
   }
   function solicitarDibujo(){if(!pedido){pedido=true;frame=requestAnimationFrame(dibujar);}}
   function actualizar(){const n=items.length;$('tpCuenta').textContent=n+(n===1?' colonia':' colonias');$('tpVacia').hidden=!!n;$('tpRecuerdo').disabled=!n;$('tpDeshacer').disabled=!historico.length;$('tpRehacer').disabled=!futuro.length;$('tpReiniciar').disabled=!n;}
-  function abrirMenu(it){if(seleccionado===it&&!$('tpMenu').hidden){menu.cerrar();return;}seleccionado=it;menu.abrir(it.x,it.y);dibujar();}
-  function iniciarArrastre(ev,it){if(ev.button>0)return;ev.preventDefault();ev.stopPropagation();iniciarCambio();const p=punto(ev);arrastre={it,inicio:p,x:it.x,y:it.y,movido:false};elementos.get(it.id).setPointerCapture?.(ev.pointerId);}
+  function abrirMenu(it){
+    const enGrupo=seleccion.length>1&&seleccion.includes(it);
+    if(seleccionado===it&&!$('tpMenu').hidden){menu.cerrar();if(!enGrupo)seleccion=[];dibujar();return;}
+    if(!enGrupo)seleccion=[it];seleccionado=it;const c=centro();menu.abrir(c.x,c.y);dibujar();
+  }
+  function iniciarArrastre(ev,it){if(ev.button>0)return;ev.preventDefault();ev.stopPropagation();editor.cerrar();cerrarEstructuras();iniciarCambio();const p=punto(ev),grupo=seleccion.length>1&&seleccion.includes(it)?seleccion.filter(s=>items.includes(s)):[it];
+    arrastre={it,grupo,inicio:p,origen:grupo.map(g=>({g,x:g.x,y:g.y})),movido:false};elementos.get(it.id).setPointerCapture?.(ev.pointerId);}
   function tecladoColonia(ev,it){if(['Enter',' '].includes(ev.key)){ev.preventDefault();abrirMenu(it);return;}if(['Delete','Backspace'].includes(ev.key)){ev.preventDefault();iniciarCambio();quitar(it);terminarCambio();return;}
     const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[ev.key];if(d){ev.preventDefault();iniciarCambio();it.x+=d[0]*(ev.shiftKey?12:4);it.y+=d[1]*(ev.shiftKey?12:4);if(it.parent)it.manual=true;sincronizarHijos(it);dibujar();terminarCambio();}}
   function sembrar(p,e=biblioteca.seleccionado(),teclado=false){if(!dentro(p))return null;const nuevo=crear(e,p.x,p.y);if(!nuevo)return null;
-    if(biblioteca.modo()==='grupo')for(let i=0;i<6;i++){const a=i*Math.PI/3,r=22+hash(nuevo.id+i)*36,q={x:p.x+Math.cos(a)*r,y:p.y+Math.sin(a)*r};if(dentro(q))crear(e,q.x,q.y,e.tamano*(.4+hash(nuevo.id+i*9)*.3));}
     dibujar();actualizar();if(teclado)elementos.get(nuevo.id)?.focus({preventScroll:true});return nuevo;
   }
-  function iniciarBiblioteca(ev,e){if(ev.button>0)return;ev.preventDefault();menu.cerrar();siembra={origen:'biblioteca',estilo:e,inicio:{x:ev.clientX,y:ev.clientY},puntos:[],ultimo:null,recorrido:0};const cv=document.createElement('canvas'),origen=ev.currentTarget.querySelector('canvas');cv.width=origen.width;cv.height=origen.height;cv.getContext('2d').drawImage(origen,0,0);cv.className='tp-arrastre-biblioteca';cv.style.width=cv.style.height=e.tamano/WF+'px';pagina.appendChild(cv);siembra.fantasma=cv;moverFantasma(ev);ev.currentTarget.setPointerCapture?.(ev.pointerId);}
+  function iniciarBiblioteca(ev,e){if(ev.button>0)return;ev.preventDefault();cerrarMenus();siembra={origen:'biblioteca',estilo:e,inicio:{x:ev.clientX,y:ev.clientY},puntos:[],ultimo:null,recorrido:0};const cv=document.createElement('canvas'),origen=ev.currentTarget.querySelector('canvas');cv.width=origen.width;cv.height=origen.height;cv.getContext('2d').drawImage(origen,0,0);cv.className='tp-arrastre-biblioteca';cv.style.width=cv.style.height=e.tamano/WF+'px';pagina.appendChild(cv);siembra.fantasma=cv;moverFantasma(ev);ev.currentTarget.setPointerCapture?.(ev.pointerId);}
   function moverFantasma(ev){const f=siembra?.fantasma;if(!f)return;const r=pagina.getBoundingClientRect(),escala=r.width/pagina.offsetWidth;f.style.left=(ev.clientX-r.left)/escala+'px';f.style.top=(ev.clientY-r.top)/escala+'px';f.hidden=dentro(punto(ev));}
-  board.addEventListener('pointerdown',ev=>{if(ev.target.closest('button,.tp-menu')||ev.button>0)return;ev.preventDefault();menu.cerrar();const p=punto(ev);if(!dentro(p))return;iniciarCambio();siembra={origen:'placa',estilo:biblioteca.seleccionado(),inicio:{x:ev.clientX,y:ev.clientY},puntos:[],ultimo:p,recorrido:0};board.setPointerCapture?.(ev.pointerId);sembrar(p);siembra.puntos.push(p);});
+
+  // Fondo de la placa: tocar siembra una colonia al soltar; arrastrar dibuja un lazo que elige varias.
+  let toque=null;
+  function iniciarLazo(p){lazo={puntos:[toque.inicio,p]};toque=null;seleccion=[];seleccionado=null;board.classList.add('tp-lazando');dibujar();}
+  function dentroDelLazo(p,poli){let adentro=false;for(let i=0,j=poli.length-1;i<poli.length;j=i++){const a=poli[i],b=poli[j];if((a.y>p.y)!==(b.y>p.y)&&p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x)adentro=!adentro;}return adentro;}
+  function cerrarLazo(){
+    const poli=lazo.puntos;lazo=null;board.classList.remove('tp-lazando');$('tpTrazo').querySelector('path').setAttribute('d','');
+    const tomadas=poli.length>2?items.filter(it=>dentroDelLazo(it,poli)):[];
+    if(tomadas.length){seleccion=tomadas;seleccionado=tomadas[0];const c=centro();menu.abrir(c.x,c.y);}
+    dibujar();
+  }
+  board.addEventListener('pointerdown',ev=>{if(ev.target.closest('button,.tp-menu,.tp-editor,.tp-perilla-control')||ev.button>0)return;ev.preventDefault();cerrarMenus();seleccion=[];seleccionado=null;const p=punto(ev);if(!dentro(p)){dibujar();return;}
+    toque={inicio:p,cliente:{x:ev.clientX,y:ev.clientY}};board.setPointerCapture?.(ev.pointerId);dibujar();});
   board.addEventListener('keydown',ev=>{if(ev.target===board&&['Enter',' '].includes(ev.key)){ev.preventDefault();iniciarCambio();sembrar({x:392,y:392},biblioteca.seleccionado(),true);terminarCambio();}});
   pagina.addEventListener('pointermove',ev=>{
-    if(arrastre){const p=punto(ev),a=arrastre;if(!a.movido&&Math.hypot(p.x-a.inicio.x,p.y-a.inicio.y)<6)return;a.movido=true;menu.cerrar();a.it.x=a.x+p.x-a.inicio.x;a.it.y=a.y+p.y-a.inicio.y;if(a.it.parent)a.it.manual=true;sincronizarHijos(a.it);$('tpAvisoQuitar').hidden=dentro(a.it);solicitarDibujo();return;}
-    if(!siembra)return;moverFantasma(ev);const p=punto(ev);if(!dentro(p))return;if(siembra.origen==='biblioteca'&&Math.hypot(ev.clientX-siembra.inicio.x,ev.clientY-siembra.inicio.y)<8)return;
+    if(toque){if(Math.hypot(ev.clientX-toque.cliente.x,ev.clientY-toque.cliente.y)>8)iniciarLazo(punto(ev));else return;}
+    if(lazo){const p=punto(ev),u=lazo.puntos[lazo.puntos.length-1];if(Math.hypot(p.x-u.x,p.y-u.y)>4){lazo.puntos.push(p);$('tpTrazo').querySelector('path').setAttribute('d',lazo.puntos.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+','+q.y.toFixed(1)).join('')+'Z');}return;}
+    if(arrastre){const p=punto(ev),a=arrastre;if(!a.movido&&Math.hypot(p.x-a.inicio.x,p.y-a.inicio.y)<6)return;a.movido=true;menu.cerrar();
+      for(const o of a.origen){o.g.x=o.x+p.x-a.inicio.x;o.g.y=o.y+p.y-a.inicio.y;if(o.g.parent)o.g.manual=true;sincronizarHijos(o.g);}
+      $('tpAvisoQuitar').hidden=a.grupo.length>1||dentro(a.it);solicitarDibujo();return;}
+    if(!siembra)return;moverFantasma(ev);
+    const p=punto(ev);if(!dentro(p))return;if(siembra.origen==='biblioteca'&&Math.hypot(ev.clientX-siembra.inicio.x,ev.clientY-siembra.inicio.y)<8)return;
     if(siembra.ultimo===null){iniciarCambio();const cantidad=items.length;sembrar(p,siembra.estilo);siembra.nuevos=items.slice(cantidad);siembra.ultimo=p;siembra.puntos.push(p);}
-    if(siembra.origen==='biblioteca'||biblioteca.modo()!=='estria'){
-      if(siembra.origen==='biblioteca'){for(const it of siembra.nuevos||[]){it.x+=p.x-siembra.ultimo.x;it.y+=p.y-siembra.ultimo.y;}siembra.ultimo=p;solicitarDibujo();}return;
-    }
-    const d=Math.hypot(p.x-siembra.ultimo.x,p.y-siembra.ultimo.y),paso=9+24*Math.exp(-siembra.recorrido/100);if(d<paso)return;
-    siembra.recorrido+=d;crear(siembra.estilo,p.x,p.y,Math.max(4,siembra.estilo.tamano*.42*Math.exp(-siembra.recorrido/130)));siembra.ultimo=p;siembra.puntos.push(p);$('tpTrazo').querySelector('path').setAttribute('d',siembra.puntos.map((q,i)=>(i?'L':'M')+q.x+','+q.y).join(''));solicitarDibujo();
+    for(const it of siembra.nuevos||[]){it.x+=p.x-siembra.ultimo.x;it.y+=p.y-siembra.ultimo.y;}siembra.ultimo=p;solicitarDibujo();
   });
-  function soltar(ev,cancelado=false){if(arrastre){const a=arrastre;arrastre=null;$('tpAvisoQuitar').hidden=true;if(cancelado){a.it.x=a.x;a.it.y=a.y;}else if(!a.movido)abrirMenu(a.it);else if(!dentro(a.it))quitar(a.it);dibujar();terminarCambio();}if(siembra){siembra.fantasma?.remove();if(siembra.origen==='biblioteca'&&(cancelado||!dentro(punto(ev)))){for(const it of siembra.nuevos||[]){const idx=items.indexOf(it);if(idx>=0)items.splice(idx,1);}dibujar();}siembra=null;$('tpTrazo').querySelector('path').setAttribute('d','');terminarCambio();}}
-  pagina.addEventListener('pointerup',ev=>soltar(ev));pagina.addEventListener('pointercancel',ev=>soltar(ev,true));pagina.addEventListener('pointerdown',ev=>{if(!ev.target.closest('.tp-colonia,.tp-menu'))menu.cerrar();});
-  pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'){menu.cerrar();cerrarReaccion();}if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='z'){ev.preventDefault();ev.shiftKey?rehacer():deshacer();}});
-  $('tpGenerar').addEventListener('click',()=>{iniciarCambio();menu.cerrar();cerrarReaccion();items.length=0;seleccionado=null;const composicion=generarComposicionTuPlaca(),dimension=784/composicion.diametroAro;
-    for(const [n,e]of composicion.entries()){const grupo={green:'M',yellow:'L',rose:'B'}[e.familia]||'B',it=crear(modelos.get(grupo+'-A-01'),392+(e.x-.5)*dimension,392+(e.y-.5)*dimension,e.w*dimension);if(it){it.modelo='generada-'+it.id;it.estilo={...e.style};it.grupo=grupo;it.seed=e.style.seed;it.foco=100;it.sinReacciones=true;}}
-    dibujar();terminarCambio();});
-  $('tpDeshacer').addEventListener('click',deshacer);$('tpRehacer').addEventListener('click',rehacer);$('tpReiniciar').addEventListener('click',()=>{iniciarCambio();items.length=0;seleccionado=null;menu.cerrar();cerrarReaccion();dibujar();terminarCambio();});$('tpEncuentros').addEventListener('change',()=>{menu.cerrar();cerrarReaccion();dibujar();actualizar();guardar();});
-  const textosReacciones={Simbiosis:['Bacteria + levadura','Bacterias lácticas y levaduras viven juntas, cada una aprovecha un alimento distinto y, entre las dos, fermentan la masa madre.'],Rechazo:['Moho + bacteria','En esta representación, el moho deja una zona libre a su alrededor y la bacteria queda recortada.'],Barrera:['Moho + otro moho','En esta representación, las colonias conservan una franja libre donde se encuentran.']};
-  let popup=null,cancelarPopup=()=>{},relacionesVisibles=[];
+  function soltar(ev,cancelado=false){
+    if(toque){const p=toque.inicio;toque=null;if(!cancelado){iniciarCambio();sembrar(p);terminarCambio();}return;}
+    if(lazo){if(cancelado){lazo=null;board.classList.remove('tp-lazando');$('tpTrazo').querySelector('path').setAttribute('d','');}else cerrarLazo();terminarCambio();return;}
+    if(arrastre){const a=arrastre;arrastre=null;$('tpAvisoQuitar').hidden=true;if(cancelado){for(const o of a.origen){o.g.x=o.x;o.g.y=o.y;}}else if(!a.movido)abrirMenu(a.it);else if(a.grupo.length===1&&!dentro(a.it))quitar(a.it);else if(a.grupo.length>1){for(const g of a.grupo)if(!dentro(g)){const d=Math.hypot(g.x-392,g.y-392);g.x=392+(g.x-392)*370/d;g.y=392+(g.y-392)*370/d;}}dibujar();terminarCambio();}
+    if(siembra){siembra.fantasma?.remove();if((cancelado||!dentro(punto(ev)))){for(const it of siembra.nuevos||[]){const idx=items.indexOf(it);if(idx>=0)items.splice(idx,1);}dibujar();}siembra=null;$('tpTrazo').querySelector('path').setAttribute('d','');terminarCambio();}
+  }
+  pagina.addEventListener('pointerup',ev=>soltar(ev));pagina.addEventListener('pointercancel',ev=>soltar(ev,true));
+  pagina.addEventListener('pointerdown',ev=>{if(!ev.target.closest('.tp-colonia,.tp-menu,.tp-editor,.tp-estructuras,#tpGenerar'))cerrarMenus();});
+  pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'){cerrarMenus();cerrarReaccion();}if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='z'){ev.preventDefault();ev.shiftKey?rehacer():deshacer();}});
+
+  // GENERAR: tocar = otra semilla de la estructura actual; mantener = abanico de estructuras.
+  const ESTRUCTURAS=[['propuesta','Placa propuesta'],['band','Banda'],['grid','Retícula'],['field','Campo disperso'],['radial','Campo radial']];
+  const iconoEstructura={
+    propuesta:'<circle cx="21" cy="24" r="9"/><circle cx="33" cy="19" r="6"/><circle cx="31" cy="33" r="5"/><circle cx="17" cy="36" r="2.5"/><circle cx="40" cy="28" r="2"/><circle cx="25" cy="12" r="2"/>',
+    band:'<circle cx="12" cy="36" r="3"/><circle cx="19" cy="31" r="4.5"/><circle cx="27" cy="25" r="6"/><circle cx="35" cy="18" r="4"/><circle cx="41" cy="13" r="2.5"/>',
+    grid:'<circle cx="15" cy="15" r="3.5"/><circle cx="26" cy="15" r="2"/><circle cx="37" cy="15" r="3.5"/><circle cx="15" cy="26" r="2"/><circle cx="26" cy="26" r="5"/><circle cx="37" cy="26" r="2"/><circle cx="15" cy="37" r="3.5"/><circle cx="26" cy="37" r="2"/><circle cx="37" cy="37" r="3.5"/>',
+    field:'<circle cx="14" cy="16" r="4"/><circle cx="34" cy="13" r="2.5"/><circle cx="39" cy="30" r="5"/><circle cx="22" cy="34" r="3"/><circle cx="27" cy="22" r="2"/><circle cx="12" cy="38" r="2"/>',
+    radial:'<circle cx="26" cy="26" r="5"/><circle cx="26" cy="11" r="2.5"/><circle cx="39" cy="19" r="2.5"/><circle cx="39" cy="34" r="2.5"/><circle cx="26" cy="41" r="2.5"/><circle cx="13" cy="34" r="2.5"/><circle cx="13" cy="19" r="2.5"/>',
+  };
+  const abanico=$('tpEstructuras');
+  ESTRUCTURAS.forEach(([id,nombre],i)=>{const b=document.createElement('button');b.type='button';b.role='menuitemradio';b.dataset.estructura=id;b.style.left=(i*96)+'px';b.style.top=(-Math.sin(i/(ESTRUCTURAS.length-1)*Math.PI)*26)+'px';
+    b.innerHTML=`<svg viewBox="0 0 52 52" aria-hidden="true">${iconoEstructura[id]}</svg><span>${nombre}</span>`;b.addEventListener('click',ev=>{ev.stopPropagation();estructura=id;cerrarEstructuras();generar();});abanico.appendChild(b);});
+  function abrirEstructuras(){menu.cerrar();editor.cerrar();abanico.hidden=false;for(const b of abanico.children)b.setAttribute('aria-checked',String(b.dataset.estructura===estructura));abanico.querySelector('[aria-checked="true"]')?.focus({preventScroll:true});$('tpGenerar').setAttribute('aria-expanded','true');}
+  function cerrarEstructuras(){if(abanico.hidden)return;abanico.hidden=true;$('tpGenerar').setAttribute('aria-expanded','false');}
+  function generar(){
+    iniciarCambio();cerrarMenus();cerrarReaccion();items.length=0;seleccionado=null;seleccion=[];
+    if(estructura==='propuesta'){
+      const composicion=generarComposicionTuPlaca(),dimension=784/composicion.diametroAro;
+      for(const e of composicion)agregarGenerada(e.style,392+(e.x-.5)*dimension,392+(e.y-.5)*dimension,e.w*dimension,{green:'M',yellow:'L',rose:'B'}[e.familia]);
+    }else{
+      const semilla=Math.floor(Math.random()*1000);let a=semilla*7919+1;const azar=()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return ((t^(t>>>14))>>>0)/4294967296;};
+      const escena=composicionColonias.generar({structure:estructura,seed:semilla,density:35,weights:{green:33,yellow:33,rose:34},random:azar});
+      let alcance=.5;for(const it of escena.extentItems){const m=it.w*(.5+composicionColonias.texturePaddingFraction(it));alcance=Math.max(alcance,Math.hypot(Math.abs(it.x-.5)+m,Math.abs(it.y-.5)+m));}
+      const ancho=estructura==='grid'?596:366/alcance,giro=azar()*Math.PI*2,sen=Math.sin(giro),cos=Math.cos(giro);
+      for(const it of escena.items){if(it.type!=='shape')continue;const x=(it.x-.5)*ancho,y=(it.y-.5)*ancho;agregarGenerada(it.style,392+x*cos-y*sen,392+x*sen+y*cos,it.w*ancho,null,giro*180/Math.PI);}
+    }
+    dibujar();terminarCambio();
+  }
+  function agregarGenerada(estilo,x,y,ancho,grupoFamilia,giro=0){
+    const grupo=grupoFamilia||{'#27633f':'M','#ff4c52':'B','#ff9c20':'L'}[estilo.c1];
+    const it=crear(modelos.get((grupo||'B')+'-A-01'),x,y,ancho);if(!it)return;
+    it.modelo='generada-'+it.id;it.estilo={...estilo};it.grupo=grupo||'BL';it.seed=estilo.seed%1000;it.foco=100;it.rot=Math.round(giro);
+    // Los cuerpos de fondo (veladuras, aros, bandas) no reaccionan: son el campo de la composición, no colonias.
+    it.sinReacciones=!grupo||['ring','arc','band','pair'].includes(estilo.shape)||estilo.opacity<50||estilo.blur>=30;
+  }
+  {const b=$('tpGenerar');let reloj=0,largo=false;
+    b.addEventListener('pointerdown',ev=>{if(ev.button>0)return;largo=false;clearTimeout(reloj);reloj=setTimeout(()=>{largo=true;abrirEstructuras();},450);});
+    const cortar=()=>{clearTimeout(reloj);};b.addEventListener('pointerleave',cortar);b.addEventListener('pointercancel',cortar);
+    b.addEventListener('pointerup',ev=>{clearTimeout(reloj);if(!largo&&abanico.hidden)generar();});
+    b.addEventListener('keydown',ev=>{if(['Enter',' '].includes(ev.key)){ev.preventDefault();generar();}if(ev.key==='ArrowUp'||ev.key==='ContextMenu'){ev.preventDefault();abrirEstructuras();}});
+    b.addEventListener('contextmenu',ev=>ev.preventDefault());
+    abanico.addEventListener('keydown',ev=>{if(ev.key==='Escape'){cerrarEstructuras();b.focus();}});}
+  $('tpDeshacer').addEventListener('click',deshacer);$('tpRehacer').addEventListener('click',rehacer);$('tpReiniciar').addEventListener('click',()=>{iniciarCambio();items.length=0;seleccionado=null;seleccion=[];cerrarMenus();cerrarReaccion();dibujar();terminarCambio();});
+
+  // Encuentros: reglas y dibujo del motor de la Placa de encuentros del muestrario (MotorMuestrario.escena).
+  const TIPOS={M:'moho',B:'bacteria',L:'levadura'},ORDEN=['moho','bacteria','levadura'],COLOR_TIPO={moho:'#27633f',bacteria:'#ff4c52',levadura:'#ff9c20'};
+  const par=MotorMuestrario.meetingTypePair;
+  const MODO={fusion:'fusion',barrier:'barrera',repel:'separacion',bridge:'intercambio',crush:'comprimida'};
+  const REGLAS=Object.fromEntries(Object.entries(MotorMuestrario.meetingRules).map(([k,m])=>[k,MODO[m]||'ninguna']));
+  const REACCIONES={
+    fusion:{nombre:'Simbiosis',detalle:'forma combinada',pareja:'Moho + moho',texto:'En esta representación, dos mohos que se tocan forman un solo cuerpo: sus bordes se funden en una transición amplia entre los dos núcleos.'},
+    barrera:{nombre:'Barrera',detalle:'frente compartido',pareja:'Moho + bacteria',texto:'En esta representación, los dos frentes de crecimiento se frenan donde se encuentran. La frontera queda más cerca de la colonia más chica.'},
+    separacion:{nombre:'Rechazo',detalle:'separación suave',pareja:'Moho + levadura',texto:'En esta representación, el moho interrumpe su borde antes de llegar a la levadura y deja una franja libre alrededor.'},
+    intercambio:{nombre:'Simbiosis',detalle:'intercambio',pareja:'Bacteria + levadura',texto:'Bacterias lácticas y levaduras viven juntas, cada una aprovecha un alimento distinto y, entre las dos, fermentan la masa madre. En la placa, fragmentos de color pasan de una colonia a la otra.'},
+    comprimida:{nombre:'Rechazo',detalle:'colonia comprimida',pareja:'Bacteria + bacteria',texto:'En esta representación, dos colonias de bacterias sólo se deforman cuando se empujan: se aplastan contra la cara de encuentro.'},
+    ninguna:{nombre:'Sin reacción',detalle:'',pareja:'Levadura + levadura',texto:'En esta representación, dos levaduras pueden tocarse sin cambiar su forma.'},
+  };
+  const tipoDe=it=>it.sinReacciones?null:TIPOS[modelo(it).g]||null;
+  const radioDibujo=it=>it.tamano*it.escala/200*(estiloBase(it).size??100)/100;
+  let popup=null,cancelarPopup=()=>{},relaciones=[],escalaEscena=1;
   function cerrarReaccion(){cancelarPopup();cancelarPopup=()=>{};popup?.remove();popup=null;}
-  function abrirReaccion(tipo){cerrarReaccion();const datos=textosReacciones[tipo];
-    popup=$('plantillaCartelGlosario').content.firstElementChild.cloneNode(true);popup.classList.remove('cartel-glosario');popup.classList.add('cartel-especie','cartel-reaccion');popup.style.width='402px';popup.querySelector('.nom').textContent=tipo;popup.querySelector('.nom').style.textTransform='none';popup.querySelector('.cod').textContent='';popup.querySelector('.definicionGlosario').textContent=datos[1];popup.querySelector('.masCartel')?.remove();popup.querySelector('.detalleCartel')?.remove();
-    const p=document.createElement('p');p.className='tp-reaccion-combinacion';p.textContent=datos[0];popup.querySelector('.co').appendChild(p);$('anclaCarteles').appendChild(popup);universoCartel(popup,'B');ubicarCartelFlotante(popup);
+  function abrirReaccion(modo){cerrarReaccion();const datos=REACCIONES[modo];
+    popup=$('plantillaCartelGlosario').content.firstElementChild.cloneNode(true);popup.classList.remove('cartel-glosario');popup.classList.add('cartel-especie','cartel-reaccion');popup.style.width='402px';popup.querySelector('.nom').textContent=datos.nombre;popup.querySelector('.nom').style.textTransform='none';popup.querySelector('.cod').textContent='';popup.querySelector('.definicionGlosario').textContent=datos.texto;popup.querySelector('.masCartel')?.remove();popup.querySelector('.detalleCartel')?.remove();
+    const p=document.createElement('p');p.className='tp-reaccion-combinacion';p.textContent=datos.pareja+(datos.detalle?' · '+datos.detalle:'');popup.querySelector('.co').appendChild(p);$('anclaCarteles').appendChild(popup);universoCartel(popup,'B');ubicarCartelFlotante(popup);
     const el=popup;cancelarPopup=activarArrastreCartel(el,p=>{el.style.transform=`translate(${p.x}px,${p.y}px)`;},cerrarReaccion);requestAnimationFrame(()=>el.isConnected&&el.classList.add('vis'));
   }
+  // La placa entera se dibuja en un solo lienzo: cada colonia es un sprite del motor y los encuentros operan sobre sus píxeles.
+  // Mientras se arrastra un grupo grande se dibuja sin encuentros y se calculan al soltar.
+  const escenaCv=$('tpEscena');
+  function pintarEscena(){
+    const esc=pagina.getBoundingClientRect().width/pagina.offsetWidth||1,pantalla=esc*Math.max(1,devicePixelRatio||1),K=Math.min(1.5,Math.max(1,pantalla)),lado=Math.round(784*K);
+    escalaEscena=K;
+    const liviano=!!arrastre?.movido&&arrastre.grupo.length>3;
+    const colonias=items.map(it=>MotorMuestrario.miembro({id:it.id,type:tipoDe(it),x:it.x*K,y:it.y*K,width:2*it.tamano*it.escala/100*K,style:estiloItem(it),giro:it.rot,desenfoque:(100-it.foco)*.06*K,entry:it,
+      parameters:it.ajustes&&Object.keys(it.ajustes).length?it.ajustes:undefined,sourceStyle:it.estilo?true:undefined}));
+    // Hasta 40 ms por cuadro: si una composición densa no entra, lo que falta aparece en los cuadros siguientes.
+    const {imagen,encuentros,pendiente}=MotorMuestrario.escena(lado,lado,colonias,{strength:liviano?0:intensidad,gapWidth:7*K,blur:10,contactBlur:3,grain:24},pantalla/K,40,!!arrastre?.movido||!!siembra?.nuevos?.length);
+    if(pendiente)requestAnimationFrame(()=>solicitarDibujo());
+    if(escenaCv.width!==lado)escenaCv.width=escenaCv.height=lado;
+    const c=escenaCv.getContext('2d');c.clearRect(0,0,lado,lado);c.save();c.beginPath();c.arc(lado/2,lado/2,392*K,0,Math.PI*2);c.clip();c.drawImage(imagen,0,0);c.restore();
+    relaciones=liviano?relaciones:encuentros.map(e=>{const ra=radioDibujo(e.a),rb=radioDibujo(e.b),d=Math.hypot(e.b.x-e.a.x,e.b.y-e.a.y),hueco=d-ra-rb;
+      return {a:e.a,b:e.b,modo:MODO[e.mode],ra,rb,cx:e.a.x+e.ux*(ra+Math.max(hueco,-Math.min(ra,rb))/2),cy:e.a.y+e.uy*(ra+Math.max(hueco,-Math.min(ra,rb))/2)};});
+  }
   function dibujarReacciones(){
-    const svg=$('tpLineas'),rotulos=$('tpRotulos');svg.replaceChildren();rotulos.replaceChildren();relacionesVisibles=[];if(!$('tpEncuentros').checked)return;
-    const vistos=new Set();let numero=0;
-    for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){
-      const a=items[i],b=items[j];if(a.sinReacciones||b.sinReacciones)continue;const ga=modelo(a).g,gb=modelo(b).g,ra=a.tamano*a.escala/200,rb=b.tamano*b.escala/200,dist=Math.hypot(a.x-b.x,a.y-b.y);if(dist>ra+rb+14||dist<2)continue;
-      const tipo=(ga==='B'&&gb==='L'||ga==='L'&&gb==='B')?'Simbiosis':(ga==='M'&&gb==='B'||ga==='B'&&gb==='M')?'Rechazo':ga==='M'&&gb==='M'?'Barrera':null;if(!tipo)continue;
-      const cx=(a.x+b.x)/2,cy=(a.y+b.y)/2,r=Math.max(ra,rb)+35;relacionesVisibles.push({a,b,tipo,cx,cy,r,dist});
-      if(tipo==='Simbiosis'){
-        const defs=document.createElementNS(ns,'defs'),g=document.createElementNS(ns,'radialGradient');g.id='tp-simbiosis-'+numero;for(const [offset,color,opacity]of [[0,'#ffc21c',.55],[1,'#f58bc3',0]]){const s=document.createElementNS(ns,'stop');s.setAttribute('offset',offset);s.setAttribute('stop-color',color);s.setAttribute('stop-opacity',opacity);g.appendChild(s);}defs.appendChild(g);svg.appendChild(defs);const c=document.createElementNS(ns,'circle');for(const [k,v]of Object.entries({cx,cy,r:r*.65,fill:'url(#'+g.id+')'}))c.setAttribute(k,v);svg.appendChild(c);
-      }else if(tipo==='Rechazo'){
-        const bacteria=ga==='B'?a:b,moho=ga==='M'?a:b,el=elementos.get(bacteria.id),lado=bacteria.tamano*bacteria.escala/100/WF,mr=moho.tamano*moho.escala/200;
-        const ang=-bacteria.rot*Math.PI/180,dx=moho.x-bacteria.x,dy=moho.y-bacteria.y;
-        const mask=`radial-gradient(circle at ${lado/2+dx*Math.cos(ang)-dy*Math.sin(ang)}px ${lado/2+dx*Math.sin(ang)+dy*Math.cos(ang)}px,transparent ${mr*.9}px,#000 ${mr+7}px)`;el.querySelector('canvas').style.maskImage=el.querySelector('canvas').style.webkitMaskImage=mask;
-      }else{
-        const ang=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI;
-        for(const [it,inverso]of [[a,false],[b,true]]){const el=elementos.get(it.id),lado=it.tamano*it.escala/100/WF,limite=lado/2+dist/2-4,mask=`linear-gradient(${ang+(inverso?270:90)-it.rot}deg,#000 ${limite-2}px,transparent ${limite+2}px)`;el.querySelector('canvas').style.maskImage=el.querySelector('canvas').style.webkitMaskImage=mask;}
-      }
-      if(numero++>=10||vistos.has(tipo))continue;vistos.add(tipo);const ring=document.createElementNS(ns,'circle');for(const [k,v]of Object.entries({cx,cy,r,class:'tp-reaccion-aro'}))ring.setAttribute(k,v);svg.appendChild(ring);
-      const bton=document.createElement('button');bton.type='button';bton.textContent=tipo.toUpperCase();bton.style.left=clamp(cx-r,12,620)+'px';bton.style.top=clamp(cy-r*.65,12,740)+'px';bton.setAttribute('aria-label','Acerca de '+tipo);bton.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(tipo);});rotulos.appendChild(bton);
+    const svg=$('tpLineas'),rotulos=$('tpRotulos');svg.replaceChildren();rotulos.replaceChildren();
+    const vistos=new Set(),lugares=[];
+    for(const r of relaciones){
+      // Un rótulo por tipo de reacción, y nunca encimado con otro.
+      if(!r.modo||vistos.has(r.modo)||lugares.some(p=>Math.hypot(p.x-r.cx,p.y-r.cy)<90))continue;vistos.add(r.modo);lugares.push({x:r.cx,y:r.cy});const radioAro=Math.max(r.ra,r.rb)+35;
+      const ring=document.createElementNS(ns,'circle');for(const [k,v]of Object.entries({cx:r.cx,cy:r.cy,r:radioAro,class:'tp-reaccion-aro'}))ring.setAttribute(k,v);svg.appendChild(ring);
+      const bton=document.createElement('button');bton.type='button';bton.textContent=REACCIONES[r.modo].nombre.toUpperCase();bton.style.left=clamp(r.cx-radioAro,12,620)+'px';bton.style.top=clamp(r.cy-radioAro*.65,12,740)+'px';bton.setAttribute('aria-label','Acerca de '+REACCIONES[r.modo].nombre+', '+REACCIONES[r.modo].detalle);bton.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(r.modo);});rotulos.appendChild(bton);
     }
   }
+
+  // Leyenda fija: qué pasa cuando se encuentran dos tipos. Cada celda abre su explicación.
+  {const glifos={
+      fusion:(a,b)=>`<circle cx="9" cy="10" r="6" fill="${a}"/><circle cx="21" cy="10" r="6" fill="${b}"/><rect x="9" y="6.5" width="12" height="7" fill="${a}"/>`,
+      barrera:(a,b)=>`<circle cx="9" cy="10" r="6" fill="${a}"/><circle cx="21" cy="10" r="6" fill="${b}"/><rect x="13.6" y="2" width="2.8" height="16" fill="#f2f0e8"/>`,
+      separacion:(a,b)=>`<circle cx="9" cy="10" r="6.5" fill="${a}"/><circle cx="20" cy="10" r="8" fill="#f2f0e8"/><circle cx="21" cy="10" r="5" fill="${b}"/>`,
+      intercambio:(a,b)=>`<circle cx="9" cy="10" r="6" fill="${a}"/><circle cx="21" cy="10" r="6" fill="${b}"/><circle cx="12.5" cy="8" r="1.2" fill="${b}"/><circle cx="11.6" cy="12.4" r="1" fill="${b}"/><circle cx="17.6" cy="9" r="1.2" fill="${a}"/><circle cx="18.4" cy="13" r="1" fill="${a}"/>`,
+      comprimida:(a,b)=>`<circle cx="10" cy="10" r="6" fill="${a}"/><circle cx="20" cy="10" r="6" fill="${b}"/><rect x="14.4" y="2" width="1.2" height="16" fill="#f2f0e8"/>`,
+      ninguna:(a,b)=>`<circle cx="7" cy="10" r="5" fill="${a}" opacity=".75"/><circle cx="23" cy="10" r="5" fill="${b}" opacity=".75"/>`,
+    },nombre={moho:'MOHO',bacteria:'BACTERIA',levadura:'LEVADURA'},caja=$('tpLeyenda');
+    caja.appendChild(document.createElement('span'));
+    for(const t of ORDEN){const h=document.createElement('span');h.className='tp-encuentros-cabeza';h.innerHTML=`<i style="background:${COLOR_TIPO[t]}"></i>${nombre[t]}`;caja.appendChild(h);}
+    ORDEN.forEach((fila,i)=>{const h=document.createElement('span');h.className='tp-encuentros-cabeza tp-encuentros-fila';h.innerHTML=`<i style="background:${COLOR_TIPO[fila]}"></i>${nombre[fila]}`;caja.appendChild(h);
+      ORDEN.forEach((col,j)=>{if(j<i){caja.appendChild(document.createElement('span'));return;}const modo=REGLAS[par(fila,col)],b=document.createElement('button');b.type='button';b.className='tp-encuentros-celda';b.setAttribute('aria-label',REACCIONES[modo].pareja+': '+REACCIONES[modo].nombre+(REACCIONES[modo].detalle?', '+REACCIONES[modo].detalle:''));
+        b.innerHTML=`<svg viewBox="0 0 30 20" aria-hidden="true">${glifos[modo](COLOR_TIPO[fila],COLOR_TIPO[col])}</svg><span>${REACCIONES[modo].nombre.toUpperCase()}</span>`;b.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(modo);});caja.appendChild(b);});});}
+
+  // Perilla de reacciones sobre el borde de la placa: 0 = sin reacciones (reemplaza a "Mostrar reacciones").
+  const perilla=$('tpPerilla'),P={a0:8,a1:68,r:414};let girandoPerilla=null;
+  const enPerilla=t=>P.a1-(P.a1-P.a0)*t,pp=(a,r=P.r)=>[392+Math.cos(a*Math.PI/180)*r,392+Math.sin(a*Math.PI/180)*r];
+  const arcoPerilla=(a0,a1)=>{const [x0,y0]=pp(a0),[x1,y1]=pp(a1);return `M${x0},${y0}A${P.r},${P.r} 0 0 ${a1>a0?1:0} ${x1},${y1}`;};
+  function dibujarPerilla(){
+    const t=intensidad/100,a=enPerilla(t),[x,y]=pp(a),[lx,ly]=pp(P.a0-6,P.r+14);
+    perilla.innerHTML=`<path class="tp-perilla-carril" d="${arcoPerilla(P.a0,P.a1)}"/>${t>0?`<path class="tp-perilla-lleno" d="${arcoPerilla(P.a1,a)}"/>`:''}
+      <path class="tp-perilla-control tp-perilla-toque" d="${arcoPerilla(P.a0,P.a1)}"/>
+      <g class="tp-perilla-control" role="slider" tabindex="0" aria-label="Intensidad de las reacciones" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${intensidad}" aria-valuetext="${intensidad?intensidad+' %':'Sin reacciones'}"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="11" class="tp-perilla-perilla"/></g>
+      <text x="${lx}" y="${ly}" class="tp-perilla-titulo">REACCIONES</text><text x="${lx}" y="${ly+19}" class="tp-perilla-valor">${intensidad?intensidad+' %':'APAGADAS'}</text>`;
+    if(girandoPerilla!==null)perilla.querySelector('g')?.focus?.({preventScroll:true});
+  }
+  function ponerIntensidad(ev){const p=punto(ev),a=Math.atan2(p.y-392,p.x-392)*180/Math.PI;intensidad=Math.round(Math.max(0,Math.min(1,(P.a1-a)/(P.a1-P.a0)))*20)*5;solicitarDibujo();}
+  perilla.addEventListener('pointerdown',ev=>{if(!ev.target.closest('.tp-perilla-control'))return;ev.preventDefault();ev.stopPropagation();cerrarMenus();cerrarReaccion();iniciarCambio();girandoPerilla=ev.pointerId;perilla.setPointerCapture?.(ev.pointerId);ponerIntensidad(ev);});
+  perilla.addEventListener('pointermove',ev=>{if(girandoPerilla!==null)ponerIntensidad(ev);});
+  const soltarPerilla=()=>{if(girandoPerilla===null)return;girandoPerilla=null;dibujar();terminarCambio();};perilla.addEventListener('pointerup',soltarPerilla);perilla.addEventListener('pointercancel',soltarPerilla);
+  perilla.addEventListener('keydown',ev=>{const d={ArrowUp:5,ArrowRight:5,ArrowDown:-5,ArrowLeft:-5}[ev.key];if(d===undefined&&!['Home','End'].includes(ev.key))return;ev.preventDefault();iniciarCambio();intensidad=ev.key==='Home'?0:ev.key==='End'?100:Math.max(0,Math.min(100,intensidad+d));dibujar();terminarCambio();perilla.querySelector('g')?.focus({preventScroll:true});});
+
   function pintarRecuerdo(){
     dibujar();const cv=document.createElement('canvas');cv.width=cv.height=1600;const c=cv.getContext('2d');c.fillStyle='#f2f0e8';c.fillRect(0,0,1600,1600);c.save();c.scale(1600/860,1600/860);c.translate(38,20);c.drawImage(aroCanvas,(784-ladoAro)/2,(784-ladoAro)/2,ladoAro,ladoAro);c.save();c.beginPath();c.arc(392,392,392,0,Math.PI*2);c.clip();
-    for(const it of items){const lado=it.tamano*it.escala/100/WF;c.save();
-      for(const rel of relacionesVisibles){const otro=rel.a===it?rel.b:rel.b===it?rel.a:null;if(!otro)continue;
-        if(rel.tipo==='Rechazo'&&modelo(it).g==='B'){const r=otro.tamano*otro.escala/200;c.beginPath();c.rect(-1000,-1000,3000,3000);c.arc(otro.x,otro.y,r,0,Math.PI*2,true);c.clip('evenodd');}
-        if(rel.tipo==='Barrera'){const nx=(otro.x-it.x)/rel.dist,ny=(otro.y-it.y)/rel.dist,mx=(it.x+otro.x)/2-nx*4,my=(it.y+otro.y)/2-ny*4,t=2000;c.beginPath();c.moveTo(mx-ny*t,my+nx*t);c.lineTo(mx+ny*t,my-nx*t);c.lineTo(mx+ny*t-nx*t,my-nx*t-ny*t);c.lineTo(mx-ny*t-nx*t,my+nx*t-ny*t);c.closePath();c.clip();}
-      }
-      c.translate(it.x,it.y);c.rotate(it.rot*Math.PI/180);c.globalAlpha=(it.opacidad??100)/100;c.filter=`blur(${.4+(100-it.foco)*.06}px)`;c.drawImage(sprite(it),-lado/2,-lado/2,lado,lado);c.restore();
-    }
-    for(const rel of relacionesVisibles)if(rel.tipo==='Simbiosis'){const g=c.createRadialGradient(rel.cx,rel.cy,0,rel.cx,rel.cy,rel.r*.65);g.addColorStop(0,'#ffc21c88');g.addColorStop(1,'#f58bc300');c.fillStyle=g;c.beginPath();c.arc(rel.cx,rel.cy,rel.r*.65,0,Math.PI*2);c.fill();}
+    c.drawImage(escenaCv,0,0,784,784);
     c.restore();c.restore();c.fillStyle='#26312d';c.font='26px Arimo,Arial,sans-serif';c.fillText('MICROMUNDOS · TU PLACA',70,1550);return cv.toDataURL('image/png');
   }
-  $('tpRecuerdo').addEventListener('click',()=>{menu.cerrar();cerrarReaccion();const url=pintarRecuerdo();$('tpImagenRecuerdo').src=url;$('tpGuardar').href=url;$('tpVistaRecuerdo').hidden=false;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar')])el.inert=true;$('tpVolver').focus();});
-  function cerrarRecuerdo(){$('tpVistaRecuerdo').hidden=true;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo')])el.inert=false;$('tpRecuerdo').focus();}
+  $('tpRecuerdo').addEventListener('click',()=>{cerrarMenus();cerrarReaccion();const url=pintarRecuerdo();$('tpImagenRecuerdo').src=url;$('tpGuardar').href=url;$('tpVistaRecuerdo').hidden=false;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=true;$('tpVolver').focus();});
+  function cerrarRecuerdo(){$('tpVistaRecuerdo').hidden=true;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=false;$('tpRecuerdo').focus();}
   $('tpVolver').addEventListener('click',cerrarRecuerdo);pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('tpVistaRecuerdo').hidden)cerrarRecuerdo();});
-  document.addEventListener('cerrar-tuplaca',()=>{menu.cerrar();cerrarReaccion();if(!$('tpVistaRecuerdo').hidden)cerrarRecuerdo();});
-  try{const guardado=JSON.parse(localStorage.getItem(clave)||'null');if(guardado&&Array.isArray(guardado.items)){for(const it of guardado.items.slice(0,120))if((modelos.has(it.modelo)||it.estilo)&&[it.x,it.y,it.tamano,it.escala,it.rot,it.foco,it.seed].every(Number.isFinite))items.push(it);secuencia=Math.max(guardado.contador||0,...items.map(i=>i.id));$('tpEncuentros').checked=guardado.reacciones!==false;}
+  document.addEventListener('cerrar-tuplaca',()=>{cerrarMenus();cerrarReaccion();if(!$('tpVistaRecuerdo').hidden)cerrarRecuerdo();});
+  try{const guardado=JSON.parse(localStorage.getItem(clave)||'null');if(guardado&&Array.isArray(guardado.items)){for(const it of guardado.items.slice(0,120))if((modelos.has(it.modelo)||it.estilo)&&[it.x,it.y,it.tamano,it.escala,it.rot,it.foco,it.seed].every(Number.isFinite))items.push(it);secuencia=Math.max(guardado.contador||0,...items.map(i=>i.id));
+      intensidad=Number.isFinite(guardado.intensidad)?guardado.intensidad:guardado.reacciones===false?0:85;if(ESTRUCTURAS.some(([id])=>id===guardado.estructura))estructura=guardado.estructura;}
     else{const viejo=JSON.parse(localStorage.getItem('micromundos-tuplaca-v1')||'[]');if(Array.isArray(viejo))for(const it of viejo.slice(0,60)){const grupo=['B','L','M'][Math.floor(it.estilo/4)],estado=it.estilo%4===3?'R':it.estilo%4===2?'C':'A',m=modelos.get(grupo+'-'+estado+'-01');if(m&&[it.x,it.y,it.tamano].every(Number.isFinite))crear(m,it.x*784/720,it.y*784/720,it.tamano);}}
   }catch{}
   dibujar();actualizar();guardar();

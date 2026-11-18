@@ -6,8 +6,8 @@ function muestrasDeTermino(termino, catalogo=muestras, relaciones=VINCULOS_GLOSA
 }
 function prepararNavegacionPrincipal(cambiar){
   const contenedor=$('navegacionPrincipal');
-  const botones={muestras:$('navMuestras'),glosario:$('navGlosario'),tuplaca:$('navTuPlaca')};
-  let orden=['muestras','glosario','tuplaca'],animaciones=[],copias=[];
+  const botones={muestras:$('navMuestras'),glosario:$('navGlosario'),tuplaca:$('navTuPlaca'),quees:$('navQueEs')};
+  let orden=['muestras','glosario','tuplaca','quees'],animaciones=[],copias=[];
   const medidor=document.createElement('canvas').getContext('2d');
   function mover(activa,animar=true){
     const antes={};
@@ -19,7 +19,9 @@ function prepararNavegacionPrincipal(cambiar){
     medidor.font='700 17px Arimo,Arial,sans-serif';
     const ancho=contenedor.clientWidth;
     const medir=id=>medidor.measureText(botones[id].textContent).width;
-    const posiciones=[0,ancho-medir(orden[2])-61-medir(orden[1]),ancho-medir(orden[2])];
+    // La sección activa va a la izquierda; las demás quedan alineadas a la derecha, separadas 61 px.
+    const posiciones=[0];
+    for(let i=orden.length-1,x=ancho;i>0;i--){x-=medir(orden[i]);posiciones[i]=x;x-=61;}
     orden.forEach((id,i)=>{
       const el=botones[id],fin={left:posiciones[i]+'px',opacity:1};
       Object.assign(el.style,fin);el.setAttribute('aria-current',i===0?'page':'false');
@@ -137,18 +139,19 @@ function prepararGlosario(){
     if(nueva===seccion)return;
     const anterior=seccion;seccion=nueva;seleccionar(null);
     menu(nueva);
-    const glosario=nueva==='glosario',propia=nueva==='tuplaca';
+    const glosario=nueva==='glosario',propia=nueva==='tuplaca',quees=nueva==='quees';
     clearTimeout(seccionTimer);pantalla.classList.add('transicion-seccion');
-    if(glosario)pagina.hidden=false;if(propia)$('tuPlaca').hidden=false;
+    if(glosario)pagina.hidden=false;if(propia)$('tuPlaca').hidden=false;if(quees)$('queEs').hidden=false;
     pantalla.classList.toggle('en-glosario',glosario);
     pantalla.classList.toggle('en-tuplaca',propia);
+    pantalla.classList.toggle('en-quees',quees);
     document.body.classList.toggle('seccion-glosario',glosario);
     for(const {agua}of carteles.values())agua.detener();
     actualizarScroll();
-    pagina.inert=!glosario;$('tuPlaca').inert=!propia;
+    pagina.inert=!glosario;$('tuPlaca').inert=!propia;$('queEs').inert=!quees;
     for(const id of ['centro','derecha','leyenda','izqAbajo'])$(id).inert=nueva!=='muestras';
-    $('seccion').innerHTML=glosario?'<span>[03.0]</span>ÍNDICE DEL GLOSARIO':propia?'<span>[04.1]</span>COMPONER':'<span>[01.0]</span>';
-    const grupos={muestras:['centro','derecha','leyenda','izqAbajo'],glosario:['glosario'],tuplaca:['tuPlaca']};
+    $('seccion').innerHTML=glosario?'<span>[03.0]</span>ÍNDICE DEL GLOSARIO':propia?'<span>[04.1]</span>COMPONER':quees?'<span>[00.1]</span>PRESENTACIÓN':'<span>[01.0]</span>';
+    const grupos={muestras:['centro','derecha','leyenda','izqAbajo'],glosario:['glosario'],tuplaca:['tuPlaca'],quees:['queEs']};
     if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
       for(const id of grupos[anterior])$(id).animate([{translate:'0 0',opacity:1},{translate:'-140px 0',opacity:0}],{duration:420,easing:'ease-in-out'});
       for(const id of grupos[nueva])$(id).animate([{translate:'180px 0',opacity:0},{translate:'0 0',opacity:1}],{duration:420,easing:'ease-out'});
@@ -156,9 +159,11 @@ function prepararGlosario(){
     seccionTimer=setTimeout(()=>{
       if(seccion!=='glosario')pagina.hidden=true;
       if(seccion!=='tuplaca')$('tuPlaca').hidden=true;
+      if(seccion!=='quees')$('queEs').hidden=true;
       pantalla.classList.remove('transicion-seccion');
     },450);
   }
+  document.querySelectorAll('[data-ir-seccion]').forEach(b=>b.addEventListener('click',()=>cambiarSeccion(b.dataset.irSeccion)));
   $('glosarioVolver').addEventListener('click',()=>cambiarSeccion('muestras'));
   $('glosarioBajar').addEventListener('click',()=>scroll.scrollTo({top:$('glosarioIndice').offsetTop-96-200,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
   document.querySelectorAll('[data-glosario-grupo]').forEach(b=>{
