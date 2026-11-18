@@ -87,8 +87,23 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #buscador input::placeholder{color:#fff;opacity:1}
 
 /* leyenda */
-#leyenda{left:39px;top:284px;width:281px;display:flex;flex-direction:column;gap:32px}
-.bloque{display:flex;flex-direction:column;gap:24px}
+#leyenda{left:39px;top:284px;width:281px;display:flex;flex-direction:column;gap:28px}
+/* Guía «Cómo leer la placa»: título (botón 17 bold) > rótulos (etiqueta) > ejemplos (cuerpo) > indicación de uso (etiqueta tenue). */
+#guiaBoton{all:unset;box-sizing:border-box;display:flex;align-items:baseline;justify-content:space-between;gap:12px;width:100%;min-height:48px;padding:12px 0;margin:-12px 0;cursor:pointer;color:#fff;mix-blend-mode:difference}
+#guiaBoton .guia-titulo{white-space:nowrap;font-weight:700;font-size:var(--t-boton);line-height:var(--l-boton)}
+#guiaBoton .guia-accion{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);letter-spacing:.08em;text-transform:uppercase;opacity:.7;white-space:nowrap}
+#guiaBoton .guia-accion::after{content:'↑';display:inline-block;margin-left:6px;transition:rotate .3s}
+#leyenda.cerrada #guiaBoton .guia-accion::after{rotate:180deg}
+#guiaBoton:hover .guia-accion,#guiaBoton:focus-visible .guia-accion{opacity:1}
+#guiaBoton:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+#guiaResumen{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#fff;mix-blend-mode:difference;opacity:.7;margin-top:-16px}
+#guiaResumen[hidden]{display:none}
+#guiaCuerpo{display:flex;flex-direction:column;gap:28px;transition:opacity .3s,translate .3s,visibility 0s}
+#leyenda.cerrada #guiaCuerpo{opacity:0;translate:0 -8px;visibility:hidden;pointer-events:none;transition:opacity .25s,translate .25s,visibility 0s .25s}
+.guia-uso{margin:-8px 0 0;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#fff;mix-blend-mode:difference;opacity:.6}
+.bloque{display:flex;flex-direction:column;gap:16px}
+.rotulo{letter-spacing:.08em}
+@media(prefers-reduced-motion:reduce){#guiaCuerpo,#leyenda.cerrada #guiaCuerpo,#guiaBoton .guia-accion::after{transition:none}}
 .rotulo{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#fff;mix-blend-mode:difference;opacity:.7;filter:blur(.5px)}
 .items{display:flex;flex-direction:column;gap:12px}
 .item{display:flex;align-items:center;height:40px;cursor:pointer}
@@ -410,6 +425,9 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 
   <!-- leyenda -->
   <div id="leyenda" class="abs" data-ui>
+    <button id="guiaBoton" type="button" aria-expanded="true" aria-controls="guiaCuerpo"><span class="guia-titulo">Cómo leer la placa</span><span class="guia-accion">Cerrar guía</span></button>
+    <div id="guiaResumen" aria-live="polite" hidden></div>
+    <div id="guiaCuerpo">
     <div class="bloque" id="bGrupo">
       <div class="rotulo">COLOR</div>
       <div class="items">
@@ -430,6 +448,8 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
     <div class="bloque">
       <div class="rotulo">TAMAÑO</div>
       <div class="tam"><div class="circs"><i style="width:10px;height:10px;left:0;top:8px"></i><i style="width:26px;height:26px;left:24px;top:0"></i></div><span>1 a 300+ colonias</span></div>
+    </div>
+    <p class="guia-uso" id="guiaUso">Tocá un color o una forma para ver solo esas muestras.</p>
     </div>
   </div>
 

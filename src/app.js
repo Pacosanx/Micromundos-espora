@@ -534,9 +534,26 @@ function aplicarFiltros(){
   $('bEstado').classList.toggle('filtrando', !!filtroE);
   document.querySelectorAll('.item.grupo').forEach(i => i.classList.toggle('activo', i.dataset.g === filtroG));
   document.querySelectorAll('.item.estado').forEach(i => i.classList.toggle('activo', i.dataset.e === filtroE));
+  actualizarGuia();
   desenfocarLista();
   dibujarVinculos();
 }
+// Guía «Cómo leer la placa»: se abre y se cierra sin tocar los filtros. Cerrada, resume qué filtro sigue activo.
+function actualizarGuia(){
+  const nombres = [...document.querySelectorAll('#leyenda .item.activo span')].map(s => s.textContent);
+  $('guiaUso').textContent = nombres.length ? 'Tocá de nuevo el mismo ejemplo para volver a ver todas las muestras.' : 'Tocá un color o una forma para ver solo esas muestras.';
+  const cerrada = $('leyenda').classList.contains('cerrada');
+  $('guiaResumen').textContent = nombres.length ? 'Filtrando: ' + nombres.join(' · ') : '';
+  $('guiaResumen').hidden = !(cerrada && nombres.length);
+}
+function abrirGuia(abre){
+  $('leyenda').classList.toggle('cerrada', !abre);
+  $('guiaBoton').setAttribute('aria-expanded', String(abre));
+  $('guiaBoton').querySelector('.guia-accion').textContent = abre ? 'Cerrar guía' : 'Ver guía';
+  $('guiaCuerpo').inert = !abre;
+  actualizarGuia();
+}
+$('guiaBoton').addEventListener('click', ev => { ev.stopPropagation(); abrirGuia($('leyenda').classList.contains('cerrada')); });
 document.querySelectorAll('.item.grupo').forEach(i => i.addEventListener('click', ev => { ev.stopPropagation(); filtroG = filtroG === i.dataset.g ? null : i.dataset.g; aplicarFiltros(); }));
 document.querySelectorAll('.item.estado').forEach(i => i.addEventListener('click', ev => { ev.stopPropagation(); filtroE = filtroE === i.dataset.e ? null : i.dataset.e; aplicarFiltros(); }));
 $('q').addEventListener('input', e => { busqueda = quitarTildes(e.target.value.trim()); filtroCodigos = null; aplicarFiltros(); });
