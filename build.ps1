@@ -79,6 +79,9 @@ foreach($marca in $recursos.Keys){
   # La ruta funciona tanto junto a src/ en el prototipo como desde dist/index.html.
   $t = $t.Replace($marca, ('src/assets/' + $recurso[0]))
 }
+# Modo kiosco (solo con ?kiosco en la dirección): reinicio por inactividad y bloqueo de gestos. Ver src/kiosco.js.
+$finCuerpo = $t.LastIndexOf('</body>')
+$t = $t.Substring(0, $finCuerpo) + '<script>' + (Leer 'kiosco.js') + '</script>' + [Environment]::NewLine + $t.Substring($finCuerpo)
 # La máscara conserva su alfa original y evita el bloqueo CORS de máscaras en file://.
 $mascaraCampo = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $src 'assets/detalles/mascara-campo-suave.png')))
 $t = $t.Replace('__MASCARA_CAMPO_SUAVE__', ('data:image/png;base64,' + $mascaraCampo))
