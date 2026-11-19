@@ -2,9 +2,9 @@
 // Nivel 1 del menú contextual (18/11/2026): cómo está la colonia en la placa.
 // Tamaño, Girar, Foco, Opacidad y Multiplicar se ajustan girando sobre el aro; Variación se toca (tira el dado).
 // TRANSFORMAR (cómo es la colonia) abre el nivel 2: va relleno y con la flecha de abrir para que se lea distinto.
-function montarMenuTuPlaca(host,{obtener,cambiar,quitar,empezar,terminar,variar=()=>{},transformar=()=>{}}){
-  const nombres={transformar:'Transformar',variacion:'Variación',duplicar:'Multiplicar',tamano:'Tamaño',girar:'Girar',foco:'Foco',opacidad:'Opacidad'};
-  const orden=Object.keys(nombres),n=orden.length,angulos=Object.fromEntries(orden.map((k,i)=>[k,90+i*360/n]));
+function montarMenuTuPlaca(host,{obtener,cambiar,quitar,empezar,terminar,variar=()=>{},transformar=()=>{},acciones=null,nombresPropios={},ayudas={}}){
+  const nombres={transformar:'Transformar',variacion:'Variación',duplicar:'Multiplicar',tamano:'Tamaño',girar:'Girar',foco:'Foco',opacidad:'Opacidad',...nombresPropios};
+  const orden=acciones||Object.keys(nombres),n=orden.length,angulos=Object.fromEntries(orden.map((k,i)=>[k,90+i*360/n]));
   const deToque=new Set(['transformar','variacion']);
   const R=94,ruta='src/assets/tu-placa/';let activo=null,geometria=null,arrastre=null;
   host.className='tp-menu';host.hidden=true;
@@ -22,7 +22,7 @@ function montarMenuTuPlaca(host,{obtener,cambiar,quitar,empezar,terminar,variar=
   for(const k of orden){
     const b=document.createElement('button');b.type='button';b.dataset.accion=k;b.className='tp-menu-boton';
     b.innerHTML=`<img class="tp-menu-superficie" alt="" src="${ruta}tp-boton${k==='tamano'?'-tamano':k==='duplicar'?'-duplicar':''}.svg"><img class="tp-menu-icono" alt="" src="${ruta}${icono(k)}"><span>${nombres[k]}</span><output hidden></output>`;
-    b.setAttribute('aria-label',k==='variacion'?'Variación: tocar para otra versión':k==='transformar'?'Transformar: abre el editor de forma, borde, color y materia':nombres[k]);host.appendChild(b);botones.set(k,b);
+    b.setAttribute('aria-label',ayudas[k]||(k==='variacion'?'Variación: tocar para otra versión':k==='transformar'?'Transformar: abre el editor de forma, borde, color y materia':nombres[k]));host.appendChild(b);botones.set(k,b);
     b.addEventListener('pointerdown',ev=>{ev.stopPropagation();if(b.disabled)return;
       if(deToque.has(k)){ev.preventDefault();if(activo){activo=null;dibujar();}tocar(k);return;}
       const nuevo=activo!==k;if(nuevo)activar(k);iniciar(ev,false);arrastre.recienActivado=nuevo;});
