@@ -26,6 +26,9 @@ $terminosGlosario = @(Import-Csv -LiteralPath (Join-Path $base 'base/glosario.cs
 $vinculosGlosario = @(Import-Csv -LiteralPath (Join-Path $base 'base/glosario_muestras.csv') -Delimiter ';' -Encoding UTF8)
 $t = $t.Replace('/*GLOSARIO*/', ('const TERMINOS_GLOSARIO = ' + (ConvertTo-Json -InputObject $terminosGlosario -Depth 5 -Compress) + ';const VINCULOS_GLOSARIO = ' + (ConvertTo-Json -InputObject $vinculosGlosario -Depth 5 -Compress) + ';' + [Environment]::NewLine + (Leer 'glosario.js')))
 $t = $t.Replace('/*APERTURA*/', ('const RECETA_APERTURA = ' + (Leer 'apertura-palabra.json') + ';const RECETA_FONDO_APERTURA = ' + (Leer 'apertura-fondo.json') + ';' + [Environment]::NewLine + (Leer 'apertura.js')))
+# Propuesta de TU PLACA: dónde soltar y estados de la biblioteca (src/tu-placa-propuesta.js y .css).
+$finTpPropuesta = $t.LastIndexOf('</body>')
+$t = $t.Substring(0, $finTpPropuesta) + '<style id="tpPropuestaEstilos">' + (Leer 'tu-placa-propuesta.css') + '</style><script id="tpPropuestaScript">' + (Leer 'tu-placa-propuesta.js') + '</script>' + [Environment]::NewLine + $t.Substring($finTpPropuesta)
 $t = $t.Replace('/*LISTADO*/', (Leer 'listado.js'))
 $t = $t.Replace('/*MUESTRARIO*/', ('const GUIA_MUESTRARIO = ' + (Leer 'muestrario.json') + ';' + [Environment]::NewLine + (Leer 'muestrario.js')))
 # Modo dedo (solo con ?dedo): el mouse se comporta como un dedo. Ver src/dedo.js.

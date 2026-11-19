@@ -47,11 +47,11 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
   host.classList.add('tp-biblioteca');
   const top = document.createElement('div'); top.className='tp-biblioteca__top';
   const heading = document.createElement('h2'); heading.textContent='BIBLIOTECA DE COLONIAS';
-  const subtitle = document.createElement('p'); subtitle.textContent='Arrastrá una forma al interior de la placa.';
+  const subtitle = document.createElement('p'); subtitle.textContent='Arrastrá una colonia al interior de la placa.';
   top.append(heading,subtitle);
   const modes = document.createElement('div'); modes.className='tp-biblioteca__modes';
   // 18/11/2026: sin modos de siembra (se quitaron «En estría» y «En grupo»): tocar la placa siembra una, arrastrar elige varias.
-  const modeLabel = document.createElement('span'); modeLabel.className='tp-biblioteca__mode-label'; modeLabel.textContent='TOCÁ LA PLACA PARA SEMBRAR · ARRASTRÁ PARA ELEGIR VARIAS'; modes.appendChild(modeLabel);
+  const modeLabel = document.createElement('span'); modeLabel.className='tp-biblioteca__mode-label'; modeLabel.textContent='ARRASTRÁ SOBRE LA PLACA PARA ELEGIR VARIAS'; modes.appendChild(modeLabel);
   const tabs=document.createElement('div');tabs.className='tp-biblioteca__tabs';tabs.setAttribute('role','tablist');
   const content=document.createElement('div');content.className='tp-biblioteca__content';
   const labels=document.createElement('div');labels.className='tp-biblioteca__labels';
@@ -87,8 +87,8 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
         const button=document.createElement('button');button.type='button';button.className='tp-paleta-colonia';button.dataset.styleId=estilo.id;button.dataset.codigo=estilo.codigo;
         button.setAttribute('aria-label',`${estilo.g} · ${estado.nombre} · ${variante.nombre} · ${estilo.codigo}`);
         const canvas=document.createElement('canvas');canvas.width=canvas.height=100;canvas.setAttribute('aria-hidden','true');button.appendChild(canvas);
-        button.setAttribute('aria-pressed',estilo.id===elegido.id?'true':'false');
-        const seleccionar=(teclado,notificar=true)=>{elegido=estilo;track.querySelectorAll('.tp-paleta-colonia').forEach(b=>b.setAttribute('aria-pressed',b.dataset.styleId===estilo.id?'true':'false'));if(notificar)alElegir(estilo,teclado)};
+        // Ya no queda una forma «elegida» a la vista: se siembra arrastrando. «elegido» solo sirve para Enter con teclado.
+        const seleccionar=(teclado,notificar=true)=>{elegido=estilo;if(notificar)alElegir(estilo,teclado)};
         button.addEventListener('pointerdown',ev=>{seleccionar(false,false);alPresionar(ev,estilo)});
         button.addEventListener('click',()=>seleccionar(false));
         button.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();seleccionar(true)}});
