@@ -52,3 +52,5 @@
 .ficha-galeria__grupo .coloresCartel { height: auto; }
 .ficha-galeria__cta { display: inline-flex; align-items: center; gap: 12px; }
 .ficha-galeria__cta img { flex: none; transform: rotate(-45deg); filter: brightness(0); opacity: .92; }
+/* Placa figurativa en proceso (19/11/2026): el lugar queda marcado hasta tener la imagen de cada muestra. */
+.ficha-galeria__en-proceso { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; width:300px; height:300px; border-radius:50%; border:1px dashed rgb(13 15 23 / 30%); color:#0d0f17; font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif; letter-spacing:.08em; opacity:.7; }
