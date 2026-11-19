@@ -211,12 +211,13 @@ function prepararTuPlaca(){
   const par=MotorMuestrario.meetingTypePair;
   const MODO={fusion:'fusion',barrier:'barrera',repel:'separacion',bridge:'intercambio',crush:'comprimida'};
   const REGLAS=Object.fromEntries(Object.entries(MotorMuestrario.meetingRules).map(([k,m])=>[k,MODO[m]||'ninguna']));
+  // 19/11/2026: ningún término se repite (antes había dos Simbiosis y dos Rechazo): moho + moho es Fusión y bacteria + bacteria, Compresión.
   const REACCIONES={
-    fusion:{nombre:'Simbiosis',detalle:'forma combinada',pareja:'Moho + moho',texto:'En esta representación, dos mohos que se tocan forman un solo cuerpo: sus bordes se funden en una transición amplia entre los dos núcleos.'},
+    fusion:{nombre:'Fusión',detalle:'forma combinada',pareja:'Moho + moho',texto:'En esta representación, dos mohos que se tocan forman un solo cuerpo: sus bordes se funden en una transición amplia entre los dos núcleos.'},
     barrera:{nombre:'Barrera',detalle:'frente compartido',pareja:'Moho + bacteria',texto:'En esta representación, los dos frentes de crecimiento se frenan donde se encuentran. La frontera queda más cerca de la colonia más chica.'},
     separacion:{nombre:'Rechazo',detalle:'separación suave',pareja:'Moho + levadura',texto:'En esta representación, el moho interrumpe su borde antes de llegar a la levadura y deja una franja libre alrededor.'},
     intercambio:{nombre:'Simbiosis',detalle:'intercambio',pareja:'Bacteria + levadura',texto:'Bacterias lácticas y levaduras viven juntas, cada una aprovecha un alimento distinto y, entre las dos, fermentan la masa madre. En la placa, fragmentos de color pasan de una colonia a la otra.'},
-    comprimida:{nombre:'Rechazo',detalle:'colonia comprimida',pareja:'Bacteria + bacteria',texto:'En esta representación, dos colonias de bacterias sólo se deforman cuando se empujan: se aplastan contra la cara de encuentro.'},
+    comprimida:{nombre:'Compresión',detalle:'colonia comprimida',pareja:'Bacteria + bacteria',texto:'En esta representación, dos colonias de bacterias sólo se deforman cuando se empujan: se aplastan contra la cara de encuentro.'},
     ninguna:{nombre:'Sin reacción',detalle:'',pareja:'Levadura + levadura',texto:'En esta representación, dos levaduras pueden tocarse sin cambiar su forma.'},
   };
   // Qué colonias reaccionan (Paco, 18/11/2026):
