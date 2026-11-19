@@ -165,9 +165,9 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     pantalla.classList.add('en-detalle');pantalla.classList.toggle('en-universo',id!=='ficha');
     $('glosario').inert=true;
     for(const nombre of ['centro','derecha','leyenda','izqAbajo'])$(nombre).inert=true;
-    const fichaArchivo=id==='ficha'&&!esFichaPreparada(muestraFicha);
+    const fichaArchivo=id==='ficha'&&!tieneFicha(muestraFicha);
     lienzo.innerHTML=fichaArchivo?htmlFichaArchivo(muestraFicha):DISENOS_DETALLE[claves[id]].html;
-    lienzo.style.height=fichaArchivo?(fichaSimulada(muestraFicha)?'2640px':'1900px'):id==='ficha'?(DISENOS_DETALLE.ficha.height||4400)+'px':'5500px';
+    lienzo.style.height=fichaArchivo?'1900px':id==='ficha'?(DISENOS_DETALLE.ficha.height||4400)+'px':'5500px';
     const raiz=lienzo.firstElementChild;
     Object.assign(raiz.style,{width:'100%',height:lienzo.style.height,filter:'none',borderRadius:'0',overflow:'clip'});
     raiz.classList.add('detalle-composicion');
@@ -546,8 +546,8 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   function semillaNombre(s){return [...s].reduce((a,c)=>a+c.charCodeAt(0),1);}
   function prepararFicha(raiz){
     const muestra=muestraFicha;if(!muestra)return;
-    if(!esFichaPreparada(muestra)){
-      const cv=raiz.querySelector('.ficha-archivo-dibujo');if(fichaSimulada(muestra)&&typeof placaFigurativa==='function'&&cv.getContext('2d'))placaFigurativa(cv,muestra,800);else{cv.width=cv.height=800;cv.getContext('2d').drawImage(muestra.el.querySelector('canvas'),0,0,800,800);}
+    if(!tieneFicha(muestra)){
+      const cv=raiz.querySelector('.ficha-archivo-dibujo');cv.width=cv.height=800;cv.getContext('2d').drawImage(muestra.el.querySelector('canvas'),0,0,800,800);
       for(const b of raiz.querySelectorAll('[data-especie]'))interactivo(b,ev=>cartelEspecie(b.dataset.especie,'',muestra.grupo.includes('B')?'B':muestra.grupo,null,ev),b.dataset.especie);
       return;
     }
@@ -555,8 +555,9 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     raiz.classList.add('detalle-ficha-nueva');
     const nodo=id=>raiz.querySelector('[data-node-id="'+id+'"]');
     const cambiar=(id,t)=>{const e=nodo(id);if(e)e.textContent=t;};
+    const simulada=fichaSimulada(muestra);if(simulada)adaptarFichaSimulada(raiz,muestra,simulada,nodo,cambiar);
     cambiar('500:7170',muestra.codigo);cambiar('500:7179',muestra.colonias+' aprox.');cambiar('500:7182',String(muestra.vinculosDatos.especies.length));
-    cambiar('500:7160','Tocá una colonia para ver sus células. Mantené el dedo para usar el microscopio.');
+    cambiar('500:7160',simulada?'El microscopio de esta muestra está en proceso.':'Tocá una colonia para ver sus células. Mantené el dedo para usar el microscopio.');
     cambiar('500:7191',fechaTexto(muestra));cambiar('500:7173',GRUPO_NOMBRE[muestra.grupo]);cambiar('500:7176',ESTADO_NOMBRE[muestra.estado]);
     nodo('500:7158').style.mixBlendMode='normal';nodo('500:7158').style.color='#0d0f17';nodo('500:7158').parentElement.style.mixBlendMode='normal';
     const aviso=nodo('500:7158').parentElement;aviso.classList.add('ficha-aviso-desliza');
@@ -570,11 +571,12 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       if(indice<0)return;const especies=muestra.vinculosDatos.especies;if(especies.length)cartelComposicion(muestra,ev,especies[indice%especies.length]);
     };
     const placa=nodo('500:7152');placa.classList.add('ficha-placa');
-    prepararLupa(raiz,ev=>compuesto(nodo('500:7153').querySelector('img'),ev,'placa'));
+    // En las simuladas, la placa, las colonias y el microscopio están en proceso (son imágenes del yogur): sin lupa ni toques.
+    if(!simulada){prepararLupa(raiz,ev=>compuesto(nodo('500:7153').querySelector('img'),ev,'placa'));
     const colonias=nodo('500:7198');colonias.classList.add('ficha-colonias');
-    interactivo(colonias,ev=>compuesto(colonias.querySelector('img'),ev,'especies'),'Tocar cada colonia para ver las células de su especie');
+    interactivo(colonias,ev=>compuesto(colonias.querySelector('img'),ev,'especies'),'Tocar cada colonia para ver las células de su especie');}
     for(const nombre of muestra.vinculosDatos.especies){
-      const p=[...raiz.querySelectorAll('p')].find(p=>texto(p)===nombre);
+      const p=[...raiz.querySelectorAll('p')].find(p=>texto(p)===nombre);if(!p)continue;
       interactivo(p,ev=>cartelEspecie(nombre,'','B',imagenCelulaEspecie(nombre),ev),nombre);
     }
     const mascara=nodo('500:7046');mascara.style.maskImage=mascara.style.webkitMaskImage='var(--mascara-ficha-transformacion)';
@@ -599,16 +601,32 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       <div class="ficha-archivo-indicacion"><p>[02.1] FICHA DE MUESTRA</p><button type="button"><p>VOLVER</p></button></div>
       <canvas class="ficha-archivo-dibujo" role="img" aria-label="${esc(s.origen)}"></canvas>
       <h1>${esc(s.origen)}</h1><dl class="ficha-archivo-datos">${dato('CÓDIGO',s.codigo)+dato('GRUPO',GRUPO_NOMBRE[s.grupo])+dato('ESTADO',ESTADO_NOMBRE[s.estado])+dato('RECOLECCIÓN',fechaTexto(s))+dato('COLONIAS',s.colonias)}</dl>
-      ${fichaSimulada(s)?htmlFichaSimulada(s,fichaSimulada(s)):`<section class="ficha-archivo-especies"><h2>ESPECIES EN LA MUESTRA</h2>${s.vinculosDatos.especies.map(nombre=>`<button type="button" data-especie="${esc(nombre)}">${esc(nombre)}</button>`).join('')}</section>`}</div>`;
+      <section class="ficha-archivo-especies"><h2>ESPECIES EN LA MUESTRA</h2>${s.vinculosDatos.especies.map(nombre=>`<button type="button" data-especie="${esc(nombre)}">${esc(nombre)}</button>`).join('')}</section></div>`;
   }
-  // Ficha simulada: misma estructura que la de archivo, con la descripción de fichas.csv, el contexto,
-  // cada especie con su definición y «qué produce o transforma» (especies.csv) y la fuente. Nada escrito a mano.
-  function htmlFichaSimulada(s,f){
-    const especie=nombre=>{const e=CATALOGO_ESPECIES[nombre]||{};return `<article class="ficha-sim-especie"><button type="button" data-especie="${esc(nombre)}">${esc(nombre)}</button>${e.definicion?`<p>${esc(e.definicion)}</p>`:''}${e.que_produce_o_transforma?`<dl><dt>QUÉ PRODUCE O TRANSFORMA</dt><dd>${esc(e.que_produce_o_transforma)}</dd></dl>`:''}</article>`;};
-    let fuente='';try{fuente=new URL(f.fuente_especies).hostname.replace(/^www\./,'');}catch{}
-    return `<section class="ficha-sim-que"><h2>QUÉ ES</h2><p>${esc(f.descripcion)}</p><dl><dt>CONTEXTO</dt><dd>${esc(f.contexto)}</dd></dl></section>
-      <section class="ficha-archivo-especies ficha-sim-especies"><h2>ESPECIES EN LA MUESTRA</h2>${s.vinculosDatos.especies.map(especie).join('')}</section>
-      <p class="ficha-sim-nota">Ficha simulada con los datos de la base (borrador). Placa figurativa: interpretación gráfica.${fuente?` Fuente de las especies: ${esc(fuente)}.`:''}</p>`;
+  // Ficha simulada (19/11/2026): exactamente la pantalla del yogur, con el mismo fondo. Se cambia lo que la base tiene para
+  // la muestra (título, código, grupo, estado, colonias, especies, fecha, contexto, «Qué es», especies con su definición) y todo
+  // lo que no tenemos queda marcado EN PROCESO: dónde se tomó, la curiosidad, el esquema de «Qué produce o transforma» y
+  // «Se ayudan», la placa figurativa, la imagen de colonias y el microscopio.
+  function adaptarFichaSimulada(raiz,muestra,f,nodo,cambiar){
+    const enProceso=(id,t='En proceso')=>{const e=nodo(id);if(!e)return;e.textContent=t;e.classList.add('ficha-en-proceso');};
+    const imagenEnProceso=(id,rotulo)=>{const e=nodo(id);if(!e)return;const caja=document.createElement('div');caja.className='ficha-imagen-en-proceso';caja.innerHTML=`<span>${esc(rotulo)}</span><span>EN PROCESO</span>`;
+      for(const img of e.querySelectorAll('img'))img.style.visibility='hidden';e.appendChild(caja);};
+    const especies=muestra.vinculosDatos.especies,corto=n=>{const [g,...r]=n.split(' ');return r.length?g[0]+'. '+r[0]:n;};
+    cambiar('500:7156',f.titulo||muestra.origen);
+    cambiar('500:7185',f.contexto||'');cambiar('500:7188',f.descripcion||'');
+    enProceso('500:7194');enProceso('500:7088');
+    // Esquema: sin datos verificados todavía.
+    for(const id of ['500:7053','500:7058','500:7063'])enProceso(id);
+    cambiar('500:7064',especies[0]?corto(especies[0]):'');cambiar('500:7065',especies[1]?corto(especies[1]):'');
+    if(!especies[1])nodo('500:7065')?.style.setProperty('visibility','hidden');
+    enProceso('500:7077','En proceso: cómo se relacionan las especies de esta muestra.');
+    // Especies: nombre, grupo y la definición de la primera (especies.csv).
+    const grupoDe=n=>({B:'Bacteria',L:'Levadura',M:'Moho'}[GRUPOS_ESPECIES[n]]||'');
+    [['500:7214','500:7215'],['500:7222','500:7223']].forEach(([n,g],i)=>{const e=especies[i];if(e){cambiar(n,e);cambiar(g,grupoDe(e));}else{for(const id of [n,g])nodo(id)?.style.setProperty('visibility','hidden');}});
+    cambiar('500:7239',CATALOGO_ESPECIES[especies[0]]?.definicion||'En proceso');
+    imagenEnProceso('500:7153','PLACA FIGURATIVA');imagenEnProceso('500:7198','COLONIAS');
+    cambiar('500:7160','El microscopio de esta muestra está en proceso.');
+    raiz.classList.add('ficha-simulada');
   }
   function prepararPieFicha(contenedor){
     contenedor.classList.add('ficha-pie-vivo');contenedor.setAttribute('aria-hidden','true');
