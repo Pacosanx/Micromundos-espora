@@ -170,3 +170,8 @@
 .entorno-enlace img{flex:none;transform:rotate(-45deg)}
 .entorno-desliza{cursor:grab;-webkit-user-select:none;user-select:none}
 .entorno-desliza img{-webkit-user-drag:none;pointer-events:none}
+.detalle-especie-figura .celula-especie{display:block;width:100%;height:100%;object-fit:contain}
+/* Microscopio de las fichas simuladas (19/11/2026, SIMULADO): la imagen es de bacterias (rosa); en levaduras y mohos se corre el tono. */
+.ficha-tinta-L .lupa-superficie{filter:hue-rotate(75deg) saturate(1.15)}
+.ficha-tinta-M .lupa-superficie{filter:hue-rotate(120deg) saturate(.8)}
+

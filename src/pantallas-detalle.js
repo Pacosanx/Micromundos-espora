@@ -133,6 +133,37 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   const marco=document.createElement('section');marco.id='pantallasDetalle';marco.hidden=true;marco.inert=true;marco.dataset.ui='';
   marco.innerHTML='<div id="detalleScroll"><div id="detalleLienzo"></div></div>';
   pantalla.appendChild(marco);
+  // Lo que queda fijo sobre el desenfoque de la barra (19/11/2026, Paco): VOLVER y el rótulo de la sección actual.
+  const fijos=document.createElement('div');fijos.id='detalleFijos';pantalla.appendChild(fijos);
+  let rotulosFijos=[];
+  const copiaFija=(original,datos={})=>{
+    const r=original.getBoundingClientRect(),caja=pantalla.getBoundingClientRect(),css=getComputedStyle(original),copia=original.cloneNode(true);
+    copia.removeAttribute('data-node-id');for(const el of copia.querySelectorAll('[data-node-id]'))el.removeAttribute('data-node-id');
+    Object.assign(copia.style,{position:'absolute',left:((r.left-caja.left)/escala)+'px',top:((r.top-caja.top)/escala)+'px',width:(r.width/escala)+'px',height:(r.height/escala)+'px',margin:'0',right:'auto',bottom:'auto',transform:'none',translate:'none',
+      color:css.color,fontFamily:css.fontFamily,fontSize:css.fontSize,fontWeight:css.fontWeight,letterSpacing:css.letterSpacing,textTransform:css.textTransform,lineHeight:css.lineHeight,mixBlendMode:css.mixBlendMode,opacity:css.opacity,filter:'none'});
+    // Fuera de la ficha, los estilos que dependen del contexto (color de la tinta y mezcla «difference») se pierden y VOLVER
+    // quedaba en blanco (19/11/2026): se copian de cada elemento original.
+    const originales=[...original.querySelectorAll('*')],copias=[...copia.querySelectorAll('*')];
+    originales.forEach((o,i)=>{const c=copias[i];if(!c)return;const s=getComputedStyle(o);c.style.color=s.color;c.style.mixBlendMode=s.mixBlendMode;});
+    for(const [k,v] of Object.entries(datos))copia.dataset[k]=v;fijos.appendChild(copia);return copia;};
+  function prepararFijos(raiz,volver){
+    fijos.replaceChildren();rotulosFijos=[];
+    if(volver){const copia=copiaFija(volver,{fijoVolver:''});copia.removeAttribute('aria-hidden');copia.addEventListener('click',ev=>{ev.stopPropagation();volver.click();});
+      copia.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();volver.click();}});volver.style.visibility='hidden';volver.tabIndex=-1;}
+    // Rótulos «[03.1] …»: cada uno se fija a la altura del primero hasta que el siguiente lo alcanza y lo reemplaza.
+    const rotulos=[...raiz.querySelectorAll('p')].filter(p=>/^\[\d\d\.\d\]/.test(texto(p))).sort((a,b)=>a.getBoundingClientRect().top-b.getBoundingClientRect().top); // por altura: en la ficha el orden del documento no es el visual
+    const linea=rotulos[0]?.getBoundingClientRect().top;
+    for(const el of rotulos){const copia=copiaFija(el,{fijoRotulo:''});copia.setAttribute('aria-hidden','true');copia.hidden=true;
+      const caja=pantalla.getBoundingClientRect();copia.style.top=((linea-caja.top)/escala)+'px';rotulosFijos.push({el,copia,linea,clave:texto(el)});}
+  }
+  function actualizarFijos(){
+    if(!rotulosFijos.length)return;const linea=rotulosFijos[0].linea+2;let activo=-1;
+    // Si la ficha reemplazó el rótulo después de fijarlo (queda suelto, con altura 0), se lo vuelve a buscar por su texto.
+    for(const r of rotulosFijos)if(!r.el.isConnected)r.el=[...lienzo.querySelectorAll('p')].find(p=>texto(p)===r.clave)||r.el;
+    const arriba=rotulosFijos.map(({el},i)=>{const si=el.isConnected&&el.getBoundingClientRect().top<=linea;if(si)activo=i;return si;});
+    // El texto se toma del original al activarse: la ficha reescribe sus rótulos después de abrirse.
+    rotulosFijos.forEach(({el,copia},i)=>{el.style.visibility=arriba[i]?'hidden':'';if(i===activo&&copia.innerHTML!==el.innerHTML)copia.innerHTML=el.innerHTML;copia.hidden=i!==activo;});
+  }
   const scroll=marco.firstElementChild,lienzo=scroll.firstElementChild,carteles=new Map(),limpiezasVista=new Set();
   let actual=null,retorno='glosario',animacion=0,limpiarLupa=()=>{},limpiarObjetivo=()=>{},muestraFicha=null;
   const esc=escaparCartel;
@@ -148,7 +179,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     limpiarLupa();limpiarLupa=()=>{};
     for(const {el,cancelar,agua,limpiarGrafico}of carteles.values()){cancelar();agua.detener();limpiarGrafico();el.remove();}carteles.clear();
     for(const limpiar of limpiezasVista)limpiar();limpiezasVista.clear();
-    actual=null;marco.hidden=true;marco.inert=true;cancelAnimationFrame(animacion);
+    actual=null;marco.hidden=true;marco.inert=true;cancelAnimationFrame(animacion);fijos.replaceChildren();rotulosFijos=[];
     pantalla.classList.remove('en-detalle','en-universo','entrando-universo');
     $('glosario').inert=!pantalla.classList.contains('en-glosario');
     for(const nombre of ['centro','derecha','leyenda','izqAbajo'])$(nombre).inert=pantalla.classList.contains('en-glosario')||pantalla.classList.contains('en-tuplaca')||pantalla.classList.contains('en-quees');
@@ -185,9 +216,10 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     prepararReferenciasGlosario(raiz,abrirTermino);
     if(id==='ficha'&&!fichaArchivo)enlazarConceptosFicha(raiz);
     adaptarMargenesDetalle(raiz);
+    if(id!=='ficha'&&desliza?.parentElement)desliza.parentElement.classList.add('ficha-aviso-desliza'); // se apaga al empezar a deslizar, como en la ficha
     if(id!=='ficha')limpiezasVista.add(prepararFondoUniverso(raiz,id));
     if(id==='ficha')ajustarFinFicha(raiz);
-    scroll.scrollTop=0;ultimaY=0;actualizarParalajeDetalle();
+    scroll.scrollTop=0;ultimaY=0;prepararFijos(raiz,volver?.parentElement);actualizarParalajeDetalle();
     if(!movimientoReducido()){
       if(id!=='ficha')cambiarObjetivo(id,raiz,anterior);
       else {
@@ -333,15 +365,14 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     if(imagen?.html){figura.innerHTML=imagen.html;}
     else if(imagen){const img=document.createElement('img');img.src=imagen;img.alt='Células de '+nombre;if(imagen.endsWith('/micro-47710.png'))img.className='celula-bacilo';figura.appendChild(img);}
     else{
-      const cv=document.createElement('canvas');figura.appendChild(cv);
-      const estilo={...BASE,shape:nombre.startsWith('Lactobacillus')?'capsule':'disk',elongation:65,c1:grupo==='B'?'#ed74a0':grupo==='L'?'#efcc6d':'#92aa68',c2:grupo==='B'?'#f06779':grupo==='L'?'#ffc21c':'#6a983a',c3:'#fffbee',seed:nombre.length*17};
-      limpiarGrafico=dibujoProcedural(cv,pieza(estilo),350);
+      // La célula de la especie (celulas-especies.js), no la colonia (19/11/2026, Paco).
+      const cv=document.createElement('canvas');cv.className='celula-especie';cv.setAttribute('role','img');cv.setAttribute('aria-label','Células de '+nombre);figura.appendChild(cv);dibujarCelulaEspecie(cv,nombre,grupo);
     }
-    co.insertBefore(figura,el.querySelector('.reglaCartel'));p.textContent=datos?.definicion||'Contenido en preparación.';
+    co.insertBefore(figura,el.querySelector('.reglaCartel'));p.textContent=datos?.definicion||ESPECIES_SIMULADAS[nombre]||'Contenido en preparación.'; // SIMULADO si viene de ESPECIES_SIMULADAS
     const relacionadas=muestras.filter(s=>s.vinculosDatos.especies.includes(nombre));
     const lista=document.createElement('div');lista.className='detalle-fichas-especie';
     for(const s of relacionadas){
-      const b=document.createElement('button');b.type='button';b.textContent=s.codigo+' · '+s.origen+' ↗';
+      const b=document.createElement('button');b.type='button';b.innerHTML=esc(s.codigo+' · '+s.origen)+' '+FLECHA_DIAGONAL;
       b.addEventListener('click',()=>{if(tieneFicha(s))abrir('ficha',s);else{irSeccion('muestras');seleccionar(s);}});lista.appendChild(b);
     }
     if(!relacionadas.length)lista.textContent='No hay muestras vinculadas en el archivo actual.';
@@ -349,10 +380,10 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       const boton=document.createElement('button');boton.type='button';boton.className='masCartel';boton.setAttribute('aria-expanded','false');boton.innerHTML='LEER MÁS AL RESPECTO <img src="src/assets/detalles/c46dc.svg" alt="">';
       const detalle=document.createElement('section');detalle.className='detalleCartel';detalle.hidden=true;
       for(const [etiqueta,valor]of [['Dónde se encuentra',datos?.donde_esta],['Qué produce o transforma',datos?.que_produce_o_transforma]])if(valor){const h=document.createElement('h3'),p=document.createElement('p');h.textContent=etiqueta;p.textContent=valor;detalle.append(h,p);}
-      boton.addEventListener('click',()=>{detalle.hidden=!detalle.hidden;boton.setAttribute('aria-expanded',String(!detalle.hidden));boton.innerHTML=detalle.hidden?'LEER MÁS AL RESPECTO <img src="src/assets/detalles/c46dc.svg" alt="">':'CERRAR INFORMACIÓN ↑';});co.append(boton,detalle);
+      boton.addEventListener('click',()=>{detalle.hidden=!detalle.hidden;boton.setAttribute('aria-expanded',String(!detalle.hidden));boton.innerHTML=detalle.hidden?'LEER MÁS AL RESPECTO <img src="src/assets/detalles/c46dc.svg" alt="">':'CERRAR INFORMACIÓN '+FLECHA_ARRIBA;});co.append(boton,detalle);
     }else{
       const boton=document.createElement('button');boton.type='button';boton.className='masCartel';boton.setAttribute('aria-expanded','false');
-      boton.textContent='VER MUESTRAS VINCULADAS ↗';lista.hidden=true;
+      boton.innerHTML='VER MUESTRAS VINCULADAS '+FLECHA_DIAGONAL;lista.hidden=true;
       boton.addEventListener('click',()=>{lista.hidden=!lista.hidden;boton.setAttribute('aria-expanded',String(!lista.hidden));});co.append(boton,lista);
     }
     montarCartelDetalle(el,nombre,evento,limpiarGrafico);
@@ -429,7 +460,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       const relacionadas=muestras.filter(s=>s.vinculosDatos.especies.includes(nombre));
       if(cuenta)cuenta.textContent=String(relacionadas.length).padStart(2,'0');
       const ilustrada=['Streptococcus thermophilus','Saccharomyces cerevisiae','Penicillium roqueforti'].includes(nombre);
-      interactivo(fila,ev=>cartelEspecie(nombre,n,grupo,ilustrada?imagen:null,ev),nombre);
+      interactivo(fila,ev=>cartelEspecie(nombre,n,grupo,ilustrada?imagen:imagenCelulaEspecie(nombre),ev),nombre);
       const celda=fila.querySelector('[data-name="Fichas"]');
       if(celda){
         const desp=document.createElement('div');desp.className='u-desplegable';desp.inert=true;
@@ -438,7 +469,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
         if(!relacionadas.length){const vacio=document.createElement('p');vacio.className='g-vacio';vacio.textContent='Todavía no hay muestras vinculadas a esta especie.';listaU.appendChild(vacio);}
         for(const s of relacionadas){
           const b=document.createElement('button');b.type='button';b.className='g-muestra';
-          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+' ↗</span>';
+          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+' '+FLECHA_DIAGONAL+'</span>';
           b.addEventListener('click',ev=>{ev.stopPropagation();if(tieneFicha(s))abrir('ficha',s);else{irSeccion('muestras');seleccionar(s);}});listaU.appendChild(b);
         }
         fila.after(desp);
@@ -639,7 +670,6 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     // 19/11/2026 (Paco): la pista de QUÉ ES queda como en el diseño («Mantené el dedo sobre la placa para usar el microscopio»);
     // en las fichas simuladas, el microscopio está en proceso. ESPECIES suma su pista con el mismo estilo, a la izquierda y a la
     // altura de la cabecera de la tabla («bacteria» si todas las especies lo son; si no, «especie»).
-    if(simulada)cambiar('500:7160','El microscopio de esta muestra está en proceso.');
     {const tabla=nodo('500:7205'),modelo=nodo('500:7160');if(tabla&&modelo){const p=document.createElement('p');p.className='ficha-pista-especies';p.style.cssText=modelo.style.cssText;
       const soloBacterias=muestra.grupo==='B';
       Object.assign(p.style,{left:'39px',top:tabla.style.top});p.textContent='Tocá una colonia para ver a qué '+(soloBacterias?'bacteria':'especie')+' corresponde';tabla.parentElement.appendChild(p);}}
@@ -660,7 +690,9 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     };
     const placa=nodo('500:7152');placa.classList.add('ficha-placa');
     // En las simuladas, la placa, las colonias y el microscopio están en proceso (son imágenes del yogur): sin lupa ni toques.
-    if(!simulada){prepararLupa(raiz,ev=>compuesto(nodo('500:7153').querySelector('img'),ev,'placa'));
+    // 19/11/2026: el microscopio también en las simuladas (SIMULADO: misma imagen microscópica para todas).
+    prepararLupa(raiz,ev=>{if(!simulada)compuesto(nodo('500:7153').querySelector('img'),ev,'placa');});
+    if(!simulada){
     const colonias=nodo('500:7198');colonias.classList.add('ficha-colonias');
     interactivo(colonias,ev=>compuesto(colonias.querySelector('img'),ev,'especies'),'Tocar cada colonia para ver las células de su especie');}
     // Simuladas con imagen de colonias (19/11/2026): no hay mapa de qué colonia es cada especie, así que cada toque muestra
@@ -706,12 +738,15 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     const especies=muestra.vinculosDatos.especies,corto=n=>{const [g,...r]=n.split(' ');return r.length?g[0]+'. '+r[0]:n;};
     cambiar('500:7156',f.titulo||muestra.origen);
     cambiar('500:7185',f.contexto||'');cambiar('500:7188',f.descripcion||'');
-    enProceso('500:7194');enProceso('500:7088');
-    // Esquema: sin datos verificados todavía.
-    for(const id of ['500:7053','500:7058','500:7063'])enProceso(id);
+    // SIMULADO (19/11/2026): dónde se tomó, curiosidad, esquema y «Se ayudan» salen de contenido-simulado.js.
+    const c=CONTENIDO_FICHAS_SIMULADO[muestra.codigo];
+    if(c){cambiar('500:7194',c.lugar);cambiar('500:7088',c.curiosidad);cambiar('500:7053',c.come);cambiar('500:7058',c.produce);cambiar('500:7063',c.resultado);}
+    else{enProceso('500:7194');enProceso('500:7088');for(const id of ['500:7053','500:7058','500:7063'])enProceso(id);}
     cambiar('500:7064',especies[0]?corto(especies[0]):'');cambiar('500:7065',especies[1]?corto(especies[1]):'');
     if(!especies[1])nodo('500:7065')?.style.setProperty('visibility','hidden');
-    enProceso('500:7077','En proceso: cómo se relacionan las especies de esta muestra.');
+    if(c)cambiar('500:7077',c.seAyudan);else enProceso('500:7077','En proceso: cómo se relacionan las especies de esta muestra.');
+    // Microscopio simulado: la misma imagen, con el tono del universo de la muestra (levaduras, mohos).
+    raiz.classList.add('ficha-tinta-'+muestra.grupo);
     // Especies: nombre, grupo y la definición de la primera (especies.csv).
     const grupoDe=n=>({B:'Bacteria',L:'Levadura',M:'Moho'}[GRUPOS_ESPECIES[n]]||'');
     // Si falta una especie se oculta su renglón entero (con el circulito) y la línea que lo separa (19/11/2026, Paco: LECHE CRUDA).
@@ -723,7 +758,6 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     // Colonias (19/11/2026): la traducción abstracta de su placa (rosa, como la del yogur); si no hay, en proceso.
     const imgColonias=nodo('500:7198')?.querySelector('img');
     if(PLACAS_FIGURATIVAS.has(muestra.codigo)&&imgColonias){imgColonias.src=`src/assets/placas-abstractas/${muestra.codigo}.png`;}else imagenEnProceso('500:7198','COLONIAS');
-    cambiar('500:7160','El microscopio de esta muestra está en proceso.');
     raiz.classList.add('ficha-simulada');
   }
   function prepararPieFicha(contenedor){
@@ -748,21 +782,50 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   function prepararLupa(raiz,alTocar){
     const placa=raiz.querySelector('.ficha-placa');if(!placa)return;
     const lupa=document.createElement('div');lupa.className='detalle-lupa';lupa.hidden=true;placa.appendChild(lupa);
-    placa.tabIndex=0;placa.setAttribute('role','button');placa.setAttribute('aria-label','Mantener presionado y arrastrar para explorar la vista microscópica');placa.setAttribute('aria-expanded','false');
-    let espera=0,presionando=false,desmontar=null,inicioToque=null,arrastrando=false;
-    let posicion={x:placa.offsetWidth/2,y:placa.offsetHeight/2,ancho:placa.offsetWidth,alto:placa.offsetHeight};
-    const actualizar=()=>{lupa.style.left=(posicion.x-214.5)+'px';lupa.style.top=(posicion.y-214.5)+'px';desmontar?.actualizar?.(posicion);};
-    const mostrar=()=>{if(!presionando)return;lupa.hidden=false;placa.setAttribute('aria-expanded','true');if(!desmontar&&window.MicromundosLupa)desmontar=window.MicromundosLupa.montarLupaFigma(lupa);actualizar();};
-    const ocultar=()=>{clearTimeout(espera);presionando=false;lupa.hidden=true;placa.setAttribute('aria-expanded','false');};
-    const mover=e=>{if(!presionando)return;const r=placa.getBoundingClientRect();posicion={x:(e.clientX-r.left)/escala,y:(e.clientY-r.top)/escala,ancho:placa.offsetWidth,alto:placa.offsetHeight};
-      if(inicioToque&&Math.hypot(e.clientX-inicioToque.x,e.clientY-inicioToque.y)>10){arrastrando=true;clearTimeout(espera);mostrar();}actualizar();};
-    placa.addEventListener('pointerdown',e=>{if(e.button>0)return;presionando=true;arrastrando=false;inicioToque={x:e.clientX,y:e.clientY,t:performance.now()};placa.setPointerCapture(e.pointerId);mover(e);espera=setTimeout(mostrar,350);});
+    placa.tabIndex=0;placa.setAttribute('role','button');placa.setAttribute('aria-label','Mantener presionado para ver la vista microscópica');placa.setAttribute('aria-expanded','false');
+    let espera=0,presionando=false,desmontar=null,inicioToque=null,arrastrando=false,animacion=0;
+    // 19/11/2026 (Paco): el círculo sigue al dedo con un poco de retardo y la imagen de adentro se mueve el doble de rápido;
+    // el círculo no sale de la placa (su centro queda en el disco de la placa menos el radio de la lente, 214,5 px).
+    const RETARDO=.14,RADIO_LENTE=214.5;
+    const medida=()=>({ancho:placa.offsetWidth,alto:placa.offsetHeight});
+    let posicion={x:placa.offsetWidth/2,y:placa.offsetHeight/2,...medida()},objetivo={...posicion};
+    // Radio del agar (sin el borde de vidrio): se mide una vez en la imagen (donde deja de ser opaca); si no se puede, .385.
+    let proporcionAgar=0;
+    const medirAgar=img=>{try{const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(img,0,0,256,256);
+      const d=g.getImageData(0,0,256,256).data,alfa=(x,y)=>d[(y*256+x)*4+3];let mejor=.5;
+      for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])for(let f=.2;f<.5;f+=.004){const x=Math.round(128+dx*f*256),y=Math.round(128+dy*f*256);if(alfa(x,y)<215){mejor=Math.min(mejor,f);break;}}
+      return mejor<.5&&mejor>.25?mejor:.385;}catch{return .385;}};
+    const disco=()=>{const img=raiz.querySelector('[data-node-id="500:7153"] img'),rp=placa.getBoundingClientRect();
+      if(!img)return {x:placa.offsetWidth/2,y:placa.offsetHeight/2,r:Math.min(placa.offsetWidth,placa.offsetHeight)/2};
+      if(!proporcionAgar&&img.complete&&img.naturalWidth)proporcionAgar=medirAgar(img);
+      const ri=img.getBoundingClientRect();return {x:(ri.left+ri.width/2-rp.left)/escala,y:(ri.top+ri.height/2-rp.top)/escala,r:ri.width/escala*(proporcionAgar||.385),lado:ri.width/escala};};
+    const dentro=(x,y)=>{const d=disco(),lim=Math.max(0,d.r-RADIO_LENTE),dx=x-d.x,dy=y-d.y,k=Math.hypot(dx,dy);
+      return k<=lim?{x,y}:{x:d.x+dx/k*lim,y:d.y+dy/k*lim};};
+    const actualizar=()=>{lupa.style.left=(posicion.x-RADIO_LENTE)+'px';lupa.style.top=(posicion.y-RADIO_LENTE)+'px';
+      // mapa: la lente sobre la imagen de la placa (para la concentración de células según las colonias).
+      const d=disco(),lado=d.lado||d.r/.385,mapa={u:(posicion.x-(d.x-lado/2))/lado,v:(posicion.y-(d.y-lado/2))/lado,radio:RADIO_LENTE/lado};
+      desmontar?.actualizar?.({...medida(),x:clamp(d.x+(posicion.x-d.x)*2,0,placa.offsetWidth),y:clamp(d.y+(posicion.y-d.y)*2,0,placa.offsetHeight),mapa});};
+    const seguir=()=>{animacion=0;if(lupa.hidden)return;const k=movimientoReducido()?1:RETARDO;
+      posicion={...medida(),x:posicion.x+(objetivo.x-posicion.x)*k,y:posicion.y+(objetivo.y-posicion.y)*k};actualizar();
+      if(Math.hypot(objetivo.x-posicion.x,objetivo.y-posicion.y)>.3||presionando)animacion=requestAnimationFrame(seguir);};
+    const apuntar=(x,y)=>{objetivo={...medida(),...dentro(x,y)};if(lupa.hidden){posicion={...objetivo};actualizar();}else if(!animacion)animacion=requestAnimationFrame(seguir);};
+    const mostrar=()=>{if(!presionando)return;lupa.hidden=false;placa.setAttribute('aria-expanded','true');if(!desmontar&&window.MicromundosLupa)desmontar=window.MicromundosLupa.montarLupaFigma(lupa,{placa:raiz.querySelector('[data-node-id="500:7153"] img')});posicion={...objetivo};actualizar();if(!animacion)animacion=requestAnimationFrame(seguir);};
+    const ocultar=()=>{clearTimeout(espera);cancelAnimationFrame(animacion);animacion=0;presionando=false;desplazando=null;lupa.hidden=true;placa.setAttribute('aria-expanded','false');};
+    // Aparece donde está el dedo (si el dedo se mueve más de 10 px antes de tiempo, aparece enseguida) y desde ahí lo sigue.
+    // 19/11/2026 (Paco): arrastrar sobre la placa desplaza la ficha (no abre el microscopio); solo mantener el dedo quieto lo abre.
+    // Una vez abierto, el dedo mueve el círculo y la ficha no se desplaza.
+    let desplazando=null;
+    const mover=e=>{if(!presionando)return;
+      if(desplazando){scroll.scrollTop=desplazando.desde-(e.clientY-inicioToque.y)/escala;return;}
+      if(lupa.hidden&&inicioToque&&Math.hypot(e.clientX-inicioToque.x,e.clientY-inicioToque.y)>10){arrastrando=true;clearTimeout(espera);desplazando={desde:scroll.scrollTop};mover(e);return;}
+      const r=placa.getBoundingClientRect();apuntar((e.clientX-r.left)/escala,(e.clientY-r.top)/escala);};
+    placa.addEventListener('pointerdown',e=>{if(e.button>0)return;presionando=true;arrastrando=false;inicioToque={x:e.clientX,y:e.clientY,t:performance.now()};try{placa.setPointerCapture(e.pointerId);}catch{}mover(e);espera=setTimeout(mostrar,350);});
     placa.addEventListener('pointermove',mover);
     placa.addEventListener('contextmenu',e=>e.preventDefault());
     placa.addEventListener('pointerup',e=>{if(presionando&&!arrastrando&&inicioToque&&performance.now()-inicioToque.t<350&&Math.hypot(e.clientX-inicioToque.x,e.clientY-inicioToque.y)<10)alTocar?.(e);ocultar();});
     for(const tipo of ['pointercancel','lostpointercapture'])placa.addEventListener(tipo,ocultar);
-    placa.addEventListener('keydown',e=>{if(!e.repeat&&(e.key==='Enter'||e.key===' ')){e.preventDefault();presionando=true;posicion={x:placa.offsetWidth/2,y:placa.offsetHeight/2,ancho:placa.offsetWidth,alto:placa.offsetHeight};actualizar();espera=setTimeout(mostrar,350);}
-      if(presionando&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();posicion={...posicion,x:clamp(posicion.x+(e.key==='ArrowLeft'?-24:e.key==='ArrowRight'?24:0),0,posicion.ancho),y:clamp(posicion.y+(e.key==='ArrowUp'?-24:e.key==='ArrowDown'?24:0),0,posicion.alto)};mostrar();}
+    placa.addEventListener('keydown',e=>{if(!e.repeat&&(e.key==='Enter'||e.key===' ')){e.preventDefault();presionando=true;const d=disco();apuntar(d.x,d.y);espera=setTimeout(mostrar,350);}
+      if(presionando&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();apuntar(objetivo.x+(e.key==='ArrowLeft'?-24:e.key==='ArrowRight'?24:0),objetivo.y+(e.key==='ArrowUp'?-24:e.key==='ArrowDown'?24:0));mostrar();}
     });
     placa.addEventListener('keyup',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();ocultar();}});
     placa.addEventListener('blur',ocultar);
@@ -770,6 +833,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   }
   function actualizarParalajeDetalle(){
     const aviso=lienzo.querySelector('.ficha-aviso-desliza');if(aviso){aviso.style.opacity=String(1-clamp(scroll.scrollTop/90));aviso.style.visibility=scroll.scrollTop>=90?'hidden':'visible';}
+    actualizarFijos();
     const y=movimientoReducido()?0:scroll.scrollTop;
     for(const capa of lienzo.querySelectorAll('[data-velocidad]')){
       // El scroll ya desplaza el lienzo a velocidad 1; esta compensación conserva la velocidad absoluta de cada plano.

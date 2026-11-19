@@ -1,0 +1,25 @@
+/* ───────── Niveles de BLUR y GRANO (19/11/2026) ─────────
+   Última hoja (después de legibilidad.css). Cada desenfoque y grano se multiplica por su nivel (src/ajustes.js).
+   Valores fijados por Paco (19/11/2026): texto 0,70 px; controles 0 px; el resto ×1. */
+:root{--nivel-blur-texto:.7px;--nivel-blur-controles:0px;--nivel-vidrio:1;--nivel-velos:1;--nivel-fondo:1;--nivel-colonias:1;--nivel-grano-vidrio:1;--nivel-grano-fondo:1;--nivel-grano-colonias:1}
+
+/* Vidrio de los carteles: el desenfoque de lo que está detrás y el borde del vidrio. */
+.cartel{--cartel-background-blur:calc(var(--figma-background-blur)/2*var(--nivel-vidrio));--cartel-layer-blur:calc(var(--figma-layer-blur)/2*var(--nivel-vidrio))}
+/* Grano de los carteles (cada cartel conserva su propia intensidad y se multiplica). */
+.cartel .grano{opacity:calc(var(--cartel-noise-opacity)*var(--nivel-grano-vidrio))}
+#aviso.vis>.grano{opacity:calc(var(--cartel-noise-opacity)*var(--nivel-grano-vidrio))}
+
+/* Velos: superficies que desenfocan lo que tienen detrás. */
+#desenfoqueCabecera i:first-child{-webkit-backdrop-filter:blur(calc(20px*var(--nivel-velos)));backdrop-filter:blur(calc(20px*var(--nivel-velos)))}
+.tp-recuerdo{-webkit-backdrop-filter:blur(calc(12px*var(--nivel-velos)));backdrop-filter:blur(calc(12px*var(--nivel-velos)))}
+#tpNombre{-webkit-backdrop-filter:blur(calc(18px*var(--nivel-velos)));backdrop-filter:blur(calc(18px*var(--nivel-velos)))}
+.tpn-mic-superficie{-webkit-backdrop-filter:blur(calc(8px*var(--nivel-velos)));backdrop-filter:blur(calc(8px*var(--nivel-velos)))}
+.tp-otras{-webkit-backdrop-filter:blur(calc(16px*var(--nivel-velos)));backdrop-filter:blur(calc(16px*var(--nivel-velos)))}
+.tp-editor-velo{-webkit-backdrop-filter:blur(calc(8px*var(--nivel-velos)));backdrop-filter:blur(calc(8px*var(--nivel-velos)))}
+.ficha-galeria__tarjeta::before{-webkit-backdrop-filter:blur(calc(6px*var(--nivel-velos)));backdrop-filter:blur(calc(6px*var(--nivel-velos)))}
+
+/* Fondos: apertura y fondo trasero de los universos. */
+.apertura-fondo{filter:blur(calc(var(--fondo-blur,175px)*var(--nivel-fondo)))}
+.detalle-fondo-atras img{filter:blur(calc(3px*var(--nivel-fondo)))}
+.g-esquina{filter:blur(calc(7.5px*var(--nivel-fondo)))}
+.fondo-grano{opacity:calc(var(--fondo-grano,.14)*var(--nivel-grano-fondo))}

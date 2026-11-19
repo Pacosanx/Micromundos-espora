@@ -3,7 +3,12 @@
 const PLACAS_FIGURATIVAS = new Set(['B-150-LCR','B-302-SDC','BL-043-CDN','BL-163-CHI','BL-183-KOM','M-048-MAB','M-189-BDH','L-108-PDA','L-115-CAR','L-230-SID','M-259-SDG']);
 function placaFigurativa(codigo) {
   if (codigo === 'B-083-YNA') return 'src/assets/detalles/ficha-yogur-crema.png';
-  return PLACAS_FIGURATIVAS.has(codigo) ? `src/assets/placas-figurativas/${codigo}.png` : null;
+  if (PLACAS_FIGURATIVAS.has(codigo)) return `src/assets/placas-figurativas/${codigo}.png`;
+  // SIMULADO (19/11/2026): las muestras sin placa propia repiten una ya diseñada de su mismo grupo, elegida por el código.
+  const grupo = codigo.split('-')[0], mismas = { B: ['B-083-YNA', 'B-150-LCR', 'B-302-SDC'], L: ['L-108-PDA', 'L-115-CAR', 'L-230-SID'], M: ['M-048-MAB', 'M-189-BDH', 'M-259-SDG'], BL: ['BL-043-CDN', 'BL-183-KOM', 'BL-163-CHI'] }[grupo];
+  if (!mismas) return null;
+  const elegida = mismas[[...codigo].reduce((a, ch) => a + ch.charCodeAt(0), 0) % mismas.length];
+  return elegida === 'B-083-YNA' ? 'src/assets/detalles/ficha-yogur-crema.png' : `src/assets/placas-figurativas/${elegida}.png`;
 }
 function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
   // Las que ya tienen placa figurativa van primero (orden estable: el resto queda como venía).

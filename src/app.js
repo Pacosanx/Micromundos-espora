@@ -384,7 +384,7 @@ const SUBE_DESDE = AIRE_ARRIBA + 4, SUBE_LARGO = 30;     // arriba: las filas se
 const BAJA_DESDE = AIRE_ARRIBA + 470, BAJA_LARGO = 200;   // abajo: desenfoque progresivo como en la referencia
 lista.insertAdjacentHTML('beforeend', `<div style="height:${AIRE_ARRIBA}px"></div>`);
 const porFecha = [...muestras].sort((a,b) => b.fecha - a.fecha);
-const flecha = '<svg width="11" height="11" viewBox="0 0 11 11"><path d="M1.5 9.5 L9.5 1.5 M3.5 1.5 H9.5 V7.5" fill="none" stroke="#fff" stroke-width="1.5"/></svg>';
+const flecha = FLECHA_DIAGONAL; // la de «Ver ficha de muestra»
 const CICLOS_LISTA = 3, filasPorCiclo = [];
 for (let ciclo = 0; ciclo < CICLOS_LISTA; ciclo++) {
   const filas = [];
