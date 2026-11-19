@@ -491,7 +491,8 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       $('q').value=relacionadas.length?lugar:'';aplicarFiltros();cambiarListado(true);
       if(relacionadas.length)seleccionar(relacionadas[0]);
     },'Ver muestras de este entorno');
-    function cambiar(i){
+    // dir: de qué lado entra la nueva ilustración (1 = desde la derecha, -1 = desde la izquierda, 0 = solo fundido).
+    function cambiar(i,dir=0){
       indice=(i+filas.length)%filas.length;
       limpiarLugar();limpiarLugar=()=>{};
       const entorno=entornos[indice],nombre=entorno.nombre;
@@ -519,7 +520,10 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
         if(textos[1])textos[1].textContent=entorno['parrafo'+(i+1)];
         bloque.style.visibility='visible';
       }
-      if(!movimientoReducido())marco.animate([{opacity:0},{opacity:1}],{duration:350,easing:'ease-out'});
+      if(!movimientoReducido()){
+        marco.animate([{opacity:0},{opacity:1}],{duration:350,easing:'ease-out'});
+        if(dir)img.animate([{translate:`${dir*90}px 0`},{translate:'0 0'}],{duration:420,easing:'cubic-bezier(.2,.7,.2,1)'});
+      }
     }
     filas.forEach((fila,i)=>interactivo(fila,()=>cambiar(i),'Explorar '+texto(fila.querySelectorAll('p')[1])));
     // Las flechas van a los costados, dentro del círculo de la ilustración (diseño de Paco), centradas en su alto.
@@ -529,6 +533,8 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       const dibujo=document.createElement('div');
       Object.assign(dibujo.style,{position:'absolute',left:'12px',top:'22px',width:flecha.style.width,height:flecha.style.height});
       dibujo.append(...flecha.childNodes);flecha.appendChild(dibujo);
+      // Trazo de 2 px (medio punto más que el de Figma, que se veía muy fino), misma forma.
+      const dib=dibujo.querySelector('img');if(dib){dib.src=delta<0?'__DE_FLECHA_ANTERIOR__':'__DE_FLECHA_SIGUIENTE__';}
       Object.assign(flecha.style,{width:'48px',height:'44px',translate:'-12px -22px'});
       // Se anclan al centro de la pantalla, igual que la ilustración (adaptarMargenesDetalle la pasa a calc(50% ± N px)):
       // antes se medían desde el borde izquierdo y en pantallas de otro ancho quedaban corridas respecto del círculo.
@@ -538,7 +544,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
         const desde=(delta<0?x+84:x+alto-84-24)-12-960; // dibujo de 24 px a 84 px del borde del círculo; la caja táctil empieza 12 px antes
         Object.assign(flecha.style,{top:(arriba+alto/2)+'px',left:`calc(50% ${desde<0?'-':'+'} ${Math.abs(desde).toFixed(3)}px)`,translate:'0 -22px'});
       }
-      interactivo(flecha,()=>cambiar(indice+delta),'Lugar '+nombre);
+      interactivo(flecha,()=>cambiar(indice+delta,delta),'Lugar '+nombre);
     }
     // Alturas fijas: cada bloque de la derecha reserva el alto de su texto más largo entre todos los lugares,
     // así los títulos y «Ver muestras de …» no se mueven al cambiar de ilustración.
@@ -563,17 +569,33 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       const ahora=performance.now();if(ahora<esperaHasta)return;
       if(Math.sign(acumulado)!==dir)acumulado=0;
       acumulado+=ev.deltaMode===1?d*16:d;
-      if(Math.abs(acumulado)>=50){cambiar(indice+dir);acumulado=0;esperaHasta=ahora+450;}
+      if(Math.abs(acumulado)>=50){cambiar(indice+dir,dir);acumulado=0;esperaHasta=ahora+450;}
     },{passive:false});
     // Deslizar hacia los costados sobre la imagen, con el dedo o arrastrando con el mouse (botón izquierdo); el vertical sigue desplazando la página.
     let toque=null;marco.style.touchAction='pan-y';
-    marco.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='mouse'||ev.button===0){toque={x:ev.clientX,y:ev.clientY,id:ev.pointerId};if(ev.pointerType==='mouse')ev.preventDefault();}});
-    marco.addEventListener('pointerup',ev=>{
+    // Mientras se arrastra, la ilustración acompaña al dedo (con resistencia) y se desvanece un poco; al soltar
+    // pasa al lugar siguiente deslizándose, o vuelve a su lugar si el gesto fue corto.
+    const imagen=()=>marco.querySelector('img');
+    const escala=()=>{const r=marco.getBoundingClientRect();return r.width/(marco.offsetWidth||r.width)||1;};
+    marco.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='mouse'||ev.button===0){toque={x:ev.clientX,y:ev.clientY,id:ev.pointerId,horizontal:null};if(ev.pointerType==='mouse')ev.preventDefault();}});
+    marco.addEventListener('pointermove',ev=>{
       if(!toque||toque.id!==ev.pointerId)return;
-      const dx=ev.clientX-toque.x,dy=ev.clientY-toque.y;toque=null;
-      if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3)cambiar(indice+(dx<0?1:-1));
+      const dx=ev.clientX-toque.x,dy=ev.clientY-toque.y;
+      if(toque.horizontal===null){if(Math.hypot(dx,dy)<8)return;toque.horizontal=Math.abs(dx)>Math.abs(dy);if(toque.horizontal)marco.setPointerCapture?.(ev.pointerId);}
+      if(!toque.horizontal||movimientoReducido())return;
+      const d=dx/escala()*.45,im=imagen();if(!im)return;
+      im.style.translate=`${d.toFixed(1)}px 0`;im.style.opacity=String(Math.max(.55,1-Math.abs(d)/500));
     });
-    marco.addEventListener('pointercancel',()=>{toque=null;});
+    const soltarDesliz=ev=>{
+      if(!toque||toque.id!==ev.pointerId)return;
+      const dx=ev.clientX-toque.x,dy=ev.clientY-toque.y,horizontal=toque.horizontal;toque=null;
+      const im=imagen();
+      if(ev.type==='pointerup'&&horizontal&&Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3){const dir=dx<0?1:-1;cambiar(indice+dir,dir);return;}
+      if(im&&im.style.translate&&!movimientoReducido()){const desde=im.style.translate;im.style.translate='';im.style.opacity='';im.animate([{translate:desde,opacity:.8},{translate:'0 0',opacity:1}],{duration:260,easing:'ease-out'});}
+      else if(im){im.style.translate='';im.style.opacity='';}
+    };
+    marco.addEventListener('pointerup',soltarDesliz);
+    marco.addEventListener('pointercancel',soltarDesliz);
     marco.classList.add('entorno-desliza');
     cambiar(0);
     fijarAlturas();document.fonts?.ready.then(()=>{if(marco.isConnected)fijarAlturas();});
