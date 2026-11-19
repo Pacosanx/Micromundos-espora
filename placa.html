@@ -609,7 +609,7 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .tp-contemplando .tp-leyenda,.tp-contemplando .tp-paleta{opacity:0;visibility:hidden;pointer-events:none}
 .tp-leyenda,.tp-paleta{transition:opacity .5s,visibility .5s}
 .tp-contemplando .tp-board{transform:translateX(-50%) scale(1.08)}
-.tp-recuerdo{position:absolute;inset:120px 40px 40px;background:rgba(242,240,232,.72);backdrop-filter:blur(12px);z-index:20;display:flex;align-items:center;justify-content:center}
+.tp-recuerdo{position:absolute;inset:120px 40px 40px;background:rgb(243 236 208 / 80%);backdrop-filter:blur(12px);z-index:20;display:flex;align-items:center;justify-content:center}
 .tp-recuerdo[hidden]{display:none}
 .tp-recuerdo-interior{height:100%;display:flex;flex-direction:column;align-items:center;gap:24px}
 #tpImagenRecuerdo{height:calc(100% - 60px);max-width:100%;object-fit:contain;border-radius:24px}
@@ -911,7 +911,7 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 #tpBiblioteca .tp-biblioteca__labels{grid-template-rows:none;grid-auto-rows:100px;align-content:start}
 /* Placas de otras personas (19/11/2026, simulada): pantalla propia dentro de TU PLACA. Diez placas en dos filas,
    con su epígrafe abajo; las guardadas en esta pantalla van primero. Sin hover. */
-.tp-otras{position:absolute;inset:0;z-index:22;background:rgb(242 240 232 / 88%);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:#0d0f17}
+.tp-otras{position:absolute;inset:0;z-index:22;background:rgb(243 236 208 / 90%);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:#0d0f17}
 .tp-otras[hidden]{display:none}
 .tp-otras-cabeza{position:absolute;left:40px;top:134px;width:1840px;display:grid;grid-template-columns:110px 1fr;column-gap:0;row-gap:8px}
 .tp-otras-cabeza span{grid-row:1 / span 2;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif}
@@ -943,7 +943,7 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .tp-aviso-generar button:focus-visible{outline:2px solid #13151b;outline-offset:4px;border-radius:8px}
 @media(prefers-reduced-motion:reduce){.tp-aviso-generar{transition:none}}
 /* Interruptor de REACCIONES (19/11/2026), arriba a la derecha, sobre DENSIDAD. */
-#tpInterruptorReacciones{all:unset;position:absolute;right:40px;top:226px;display:flex;align-items:center;gap:10px;min-height:var(--area-tactil);cursor:pointer;
+#tpInterruptorReacciones{all:unset;position:absolute;right:40px;top:268px;/* 19/11: a la altura de BIBLIOTECA DE COLONIAS */display:flex;align-items:center;gap:10px;min-height:var(--area-tactil);cursor:pointer;
   font:400 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#0d0f17;opacity:.55;transition:opacity .25s}
 #tpInterruptorReacciones i{width:14px;height:14px;border-radius:50%;box-sizing:border-box;border:1.5px solid currentColor;background:transparent;transition:background .25s}
 #tpInterruptorReacciones.activas{opacity:1;font-weight:700}
@@ -47791,7 +47791,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   function prepararLupa(raiz,alTocar){
     const placa=raiz.querySelector('.ficha-placa');if(!placa)return;
     const lupa=document.createElement('div');lupa.className='detalle-lupa';lupa.hidden=true;placa.appendChild(lupa);
-    placa.tabIndex=0;placa.setAttribute('role','button');placa.setAttribute('aria-label','Mantener presionado para ver la vista microscópica');placa.setAttribute('aria-expanded','false');
+    placa.tabIndex=0;placa.dataset.gestoPropio='';placa.setAttribute('role','button');placa.setAttribute('aria-label','Mantener presionado para ver la vista microscópica');placa.setAttribute('aria-expanded','false');
     let espera=0,presionando=false,desmontar=null,inicioToque=null,arrastrando=false,animacion=0;
     // 19/11/2026 (Paco): el círculo sigue al dedo con un poco de retardo y la imagen de adentro se mueve el doble de rápido;
     // el círculo no sale de la placa (su centro queda en el disco de la placa menos el radio de la lente, 214,5 px).
@@ -49405,7 +49405,7 @@ function prepararTuPlaca(){
   pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones" hidden></div></div><aside id="tpBiblioteca"></aside>
     <div id="tpBoard" class="tp-board" aria-label="Tu placa. Arrastrá una forma de la biblioteca para sembrarla; arrastrá sobre la placa para elegir varias" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><canvas id="tpEscena" class="tp-escena" aria-hidden="true"></canvas><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><svg id="tpPerilla" class="tp-perilla" width="784" height="784" viewBox="0 0 784 784"></svg><p id="tpVacia">ARRASTRÁ UNA COLONIA\nHASTA LA PLACA</p><div id="tpMenu"></div><div id="tpEditor"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
     <button id="tpGenerar" class="tp-generar" type="button" aria-haspopup="true">GENERAR COMPOSICIÓN ↻</button><p class="tp-generar-ayuda" id="tpGenerarAyuda">MANTENÉ APRETADO PARA ELEGIR LA ESTRUCTURA</p><div id="tpEstructuras" class="tp-menu tp-menu-estructuras tp-estructuras" hidden role="menu" aria-label="Estructura de la composición"><i class="tp-estructuras-eje" aria-hidden="true"></i></div><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA →</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
-    <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ${FLECHA_DIAGONAL}</a><button id="tpVerOtras" type="button">VER PLACAS DE OTRAS PERSONAS →</button></div></div></div><section class="tp-otras" id="tpOtras" hidden role="dialog" aria-modal="true" aria-labelledby="tpOtrasTitulo"><header class="tp-otras-cabeza"><span>[04.2]</span><h2 id="tpOtrasTitulo">Placas de otras personas</h2><p>Las placas que armaron hoy otras personas que pasaron por Micromundos.</p></header><ol class="tp-otras-grilla"></ol><div class="tp-otras-acciones"><button id="tpOtrasVolver" type="button">VOLVER A COMPONER</button></div></section>`;
+    <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ${FLECHA_DIAGONAL}</a><button id="tpVerOtras" type="button">VER PLACAS DE OTRAS PERSONAS ${FLECHA_DIAGONAL}</button></div></div></div><section class="tp-otras" id="tpOtras" hidden role="dialog" aria-modal="true" aria-labelledby="tpOtrasTitulo"><header class="tp-otras-cabeza"><span>[04.2]</span><h2 id="tpOtrasTitulo">Placas de otras personas</h2><p>Las placas que armaron hoy otras personas que pasaron por Micromundos.</p></header><ol class="tp-otras-grilla"></ol><div class="tp-otras-acciones"><button id="tpOtrasVolver" type="button">VOLVER A COMPONER</button></div></section>`;
   const board=$('tpBoard'),capa=$('tpColonias'),items=[],elementos=new Map(),historico=[],futuro=[];
   let zoom=100,giro=0,secuencia=0,seleccionado=null,seleccion=[],arrastre=null,siembra=null,lazo=null,antes=null,frame=0,pedido=false,intensidad=85,estructura='propuesta';
   const punto=ev=>{const r=board.getBoundingClientRect();return{x:(ev.clientX-r.left)*784/r.width,y:(ev.clientY-r.top)*784/r.height};};
@@ -49757,7 +49757,7 @@ function prepararTuPlaca(){
     c.drawImage(escenaCv,0,0,784,784);
     c.restore();c.restore();if(!conFondo)return cv.toDataURL('image/png');c.fillStyle='#26312d';c.font='26px Arimo,Arial,sans-serif';c.fillText('MICROMUNDOS · TU PLACA',70,1550);return cv.toDataURL('image/png');
   }
-  $('tpRecuerdo').addEventListener('click',()=>{cerrarMenus();cerrarReaccion();const url=pintarRecuerdo();$('tpImagenRecuerdo').src=url;$('tpImagenRecuerdo').dataset.sinFondo=pintarRecuerdo(false);$('tpGuardar').href=url;$('tpVistaRecuerdo').hidden=false;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=true;$('tpVolver').focus();});
+  $('tpRecuerdo').addEventListener('click',()=>{cerrarMenus();cerrarReaccion();const url=pintarRecuerdo(),sinFondo=pintarRecuerdo(false);$('tpImagenRecuerdo').src=sinFondo;$('tpImagenRecuerdo').dataset.sinFondo=sinFondo;$('tpGuardar').href=url;$('tpVistaRecuerdo').hidden=false;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=true;$('tpVolver').focus();});
   function cerrarRecuerdo(){$('tpVistaRecuerdo').hidden=true;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=false;$('tpRecuerdo').focus();}
   // ── Placas de otras personas (19/11/2026, simulada) ──
   // Las placas guardadas en este equipo (las guarda la página del recuerdo, tu-placa-nombre.js, con el nombre) aparecen primero: para quien viene después,
@@ -51279,9 +51279,10 @@ body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;
   addEventListener('pointerdown', ev => {
     cancelAnimationFrame(inercia);
     if (ev.pointerType !== 'mouse' || ev.button !== 0) return;
-    // Lo que maneja su propio gesto (touch-action: none, como la placa del microscopio o las colonias de TU PLACA) no desplaza
-    // la pantalla: así, con el microscopio abierto, la ficha no se mueve (19/11/2026, Paco).
-    for (let p = ev.target; p && p !== document.documentElement; p = p.parentElement) if (getComputedStyle(p).touchAction === 'none') { toma = null; return; }
+    // Lo que maneja su propio gesto y su propio desplazamiento (la placa del microscopio, marcada con data-gesto-propio) no
+    // desplaza la pantalla (19/11/2026, Paco). Antes se miraba touch-action:none, pero todo TU PLACA lo tiene y eso
+    // dejaba sin desplazamiento a la biblioteca de colonias.
+    if (ev.target.closest?.('[data-gesto-propio]')) { toma = null; return; }
     const caja = desplazable(ev.target);
     toma = caja && { caja, y: ev.clientY, x: ev.clientX, scroll: caja.scrollTop, t: ev.timeStamp, v: 0, ultY: ev.clientY, ultT: ev.timeStamp, id: ev.pointerId };
     arrastro = false;
