@@ -1,48 +1,55 @@
 /* Bienvenida de primera visita (src/bienvenida.js): un cartel de MUESTRAS en tamaño grande.
    Material, tipografía de encabezado, regla y arrastre son los del cartel; acá solo se ajusta el ancho y el contenido. */
-.cartel-bienvenida{width:1180px!important;z-index:30!important}
+/* Ancho justo para el párrafo principal: «Primera visita» comparte el eje derecho con el texto. */
+.cartel-bienvenida{width:996px!important;z-index:30!important}
 /* Los carteles del glosario se ocultan fuera de GLOSARIO (glosario.css); este se muestra en cualquier sección. */
 body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;pointer-events:auto!important}
 .cartel-bienvenida .fi{padding:40px 48px 36px;max-height:none}
 .cartel-glosario.cartel-bienvenida .cabCartel{margin-bottom:32px}
 .cartel-bienvenida .nom{font-size:var(--t-display);line-height:var(--l-display)}
 .cartel-bienvenida .reglaCartel::before{width:calc(100% + 4px);-webkit-mask-size:100% 5px;mask-size:100% 5px}
-.cartel-bienvenida .bv-bajada{margin:28px 0 36px;max-width:900px;font-size:var(--t-titulo);line-height:var(--l-titulo)}
+.cartel-bienvenida .bv-bajada{margin:28px 0 36px;font-size:var(--t-titulo);line-height:var(--l-titulo)}
 /* Mismo par rótulo / valor que el cartel de muestra (la grilla de dos columnas la define el cartel). */
 .cartel-bienvenida .bv-datos dt{font-size:var(--t-etiqueta);text-transform:uppercase;opacity:.6;padding-top:2px}
 .cartel-bienvenida .bv-datos dd{margin:0 32px 0 0;font-size:var(--t-cuerpo)}
 .cartel-bienvenida .bv-grupos{display:flex;flex-wrap:wrap;gap:6px 20px}
 .cartel-bienvenida .bv-grupos>span{display:inline-flex;align-items:center;gap:8px}
 .cartel-bienvenida .bv-grupos .coloresCartel{height:auto}
-/* Indicación del gesto: un punto que se desliza hacia afuera, como el dedo que arrastra el cartel. */
-.cartel-bienvenida .bv-gesto{display:flex;align-items:center;justify-content:center;gap:16px;margin:40px 0 0;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;text-transform:uppercase}
-.bv-gesto-dedo{position:relative;flex:none;width:72px;height:24px}
-.bv-gesto-dedo::before{content:"";position:absolute;left:0;top:50%;width:72px;height:1.5px;margin-top:-.75px;background:linear-gradient(90deg,rgb(19 21 27 / 0),rgb(19 21 27 / 45%))}
-.bv-gesto-dedo::after{content:"";position:absolute;left:0;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:rgb(19 21 27 / 30%);box-shadow:0 0 0 1.5px rgb(19 21 27 / 55%);animation:bvDedo 2.4s ease-in-out infinite}
-@keyframes bvDedo{0%,15%{transform:translateX(0);opacity:0}25%{opacity:1}70%{transform:translateX(72px);opacity:1}85%,100%{transform:translateX(72px);opacity:0}}
-@media(prefers-reduced-motion:reduce){.bv-gesto-dedo::after{animation:none;opacity:1}}
 .cartel-bienvenida:focus-visible{outline:0}
 
-/* Pistas en el momento de actuar (src/pistas.js): vidrio claro y liviano, como el material de los carteles, sin fondo negro. */
-#pista{position:absolute;left:0;top:0;z-index:55;display:flex;align-items:center;gap:2px;max-width:380px;padding:10px 4px 10px 18px;border-radius:16px;
-  background:rgb(242 240 232 / 62%);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px rgb(13 15 23 / 10%);
-  color:#13151b;filter:none;opacity:0;transition:opacity .3s;pointer-events:none}
-#pista[hidden]{display:none}
-#pista.visible{opacity:1}
-#pista p{margin:0;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif}
-#pista button{all:unset;flex:0 0 auto;display:grid;place-items:center;width:var(--area-tactil);height:var(--area-tactil);margin:-10px 0;border-radius:50%;
+/* Material neutro de cartel (vidrio, borde desenfocado y grano, como los carteles de MUESTRAS) sin color de universo. */
+.cartel-neutro{--cartel-fondo:rgb(205 198 186 / 42%);--cartel-noise-opacity:.35}
+
+/* Pistas en el momento de actuar (src/pistas.js) y la ayuda de la bienvenida: cartelitos con el material de los carteles. */
+.pista-ayuda{position:absolute;left:0;top:0;z-index:55;max-width:380px;opacity:0;transition:opacity .3s;pointer-events:none;color:#13151b}
+.pista-ayuda[hidden]{display:none}
+.pista-ayuda.visible{opacity:1}
+.pista-ayuda .fi{padding:10px 4px 10px 18px;border-radius:16px;max-height:none;overflow:visible}
+.pista-ayuda .vidrio,.pista-ayuda .grano{border-radius:16px}
+.pista-ayuda .co{display:flex;align-items:center;gap:6px}
+.pista-ayuda p{margin:0;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif}
+.pista-ayuda button{all:unset;flex:0 0 auto;display:grid;place-items:center;width:var(--area-tactil);height:var(--area-tactil);margin:-10px 0;border-radius:50%;
   font:400 22px/1 Arimo,Arial,sans-serif;opacity:.55;cursor:pointer;pointer-events:auto}
-#pista button:focus-visible{outline:2px solid #92AA68}
-/* Señal hacia el control: un punto con un trazo fino, en lugar del pico macizo. */
-#pista::before,#pista::after{content:"";position:absolute;pointer-events:none}
-#pista::before{width:8px;height:8px;border-radius:50%;background:#13151b;opacity:.55}
-#pista::after{background:rgb(19 21 27 / 35%)}
-#pista[data-donde="abajo"]::before{top:-22px;left:calc(var(--flecha-x) - 4px)}
-#pista[data-donde="abajo"]::after{top:-14px;left:calc(var(--flecha-x) - .5px);width:1px;height:14px}
-#pista[data-donde="arriba"]::before{bottom:-22px;left:calc(var(--flecha-x) - 4px)}
-#pista[data-donde="arriba"]::after{bottom:-14px;left:calc(var(--flecha-x) - .5px);width:1px;height:14px}
-#pista[data-donde="izquierda"]::before{right:-22px;top:calc(var(--flecha-y) - 4px)}
-#pista[data-donde="izquierda"]::after{right:-14px;top:calc(var(--flecha-y) - .5px);width:14px;height:1px}
-#pista[data-donde="derecha"]::before{left:-22px;top:calc(var(--flecha-y) - 4px)}
-#pista[data-donde="derecha"]::after{left:-14px;top:calc(var(--flecha-y) - .5px);width:14px;height:1px}
-@media(prefers-reduced-motion:reduce){#pista{transition:none}}
+.pista-ayuda button:focus-visible{outline:2px solid #92AA68}
+/* Señal hacia el control: un punto con un trazo fino. */
+.pista-ayuda::before,.pista-ayuda::after{content:"";position:absolute;pointer-events:none}
+.pista-ayuda::before{width:8px;height:8px;border-radius:50%;background:#13151b;opacity:.55}
+.pista-ayuda::after{background:rgb(19 21 27 / 35%)}
+.pista-ayuda[data-donde="abajo"]::before{top:-22px;left:calc(var(--flecha-x) - 4px)}
+.pista-ayuda[data-donde="abajo"]::after{top:-14px;left:calc(var(--flecha-x) - .5px);width:1px;height:14px}
+.pista-ayuda[data-donde="arriba"]::before{bottom:-22px;left:calc(var(--flecha-x) - 4px)}
+.pista-ayuda[data-donde="arriba"]::after{bottom:-14px;left:calc(var(--flecha-x) - .5px);width:1px;height:14px}
+.pista-ayuda[data-donde="izquierda"]::before{right:-22px;top:calc(var(--flecha-y) - 4px)}
+.pista-ayuda[data-donde="izquierda"]::after{right:-14px;top:calc(var(--flecha-y) - .5px);width:14px;height:1px}
+.pista-ayuda[data-donde="derecha"]::before{left:-22px;top:calc(var(--flecha-y) - 4px)}
+.pista-ayuda[data-donde="derecha"]::after{left:-14px;top:calc(var(--flecha-y) - .5px);width:14px;height:1px}
+/* La ayuda de la bienvenida: un punto que se desliza hacia afuera, como el dedo que arrastra el cartel. */
+.bv-ayuda{max-width:none;width:max-content;z-index:31}
+.bv-ayuda p{white-space:nowrap}
+.bv-ayuda .fi{padding:12px 20px}
+.bv-ayuda .co{gap:14px}
+.bv-gesto-dedo{position:relative;flex:none;width:56px;height:20px}
+.bv-gesto-dedo::before{content:"";position:absolute;left:0;top:50%;width:56px;height:1.5px;margin-top:-.75px;background:linear-gradient(90deg,rgb(19 21 27 / 0),rgb(19 21 27 / 45%))}
+.bv-gesto-dedo::after{content:"";position:absolute;left:0;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:rgb(19 21 27 / 30%);box-shadow:0 0 0 1.5px rgb(19 21 27 / 55%);animation:bvDedo 2.4s ease-in-out infinite}
+@keyframes bvDedo{0%,15%{transform:translateX(0);opacity:0}25%{opacity:1}70%{transform:translateX(56px);opacity:1}85%,100%{transform:translateX(56px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.pista-ayuda{transition:none}.bv-gesto-dedo::after{animation:none;opacity:1}}

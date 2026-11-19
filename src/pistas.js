@@ -91,10 +91,7 @@
     { id: 'm-listado', texto: 'Tocá LISTADO COMPLETO para ver todas las muestras.', donde: 'abajo',
       cuando: () => seccion() === 'navMuestras' && !conFicha() && pantalla.classList.contains('listado-cerrado'), blanco: () => $('alternarListado'), hecha: () => señal.has('listado') || !pantalla.classList.contains('listado-cerrado') },
     // GLOSARIO
-    { id: 'g-universo', texto: 'Elegí un círculo para conocer a su grupo.', donde: 'abajo',
-      cuando: () => seccion() === 'navGlosario', blanco: () => nucleo(primeraVisible('.g-colonia'), .6), hecha: () => señal.has('universo') },
-    { id: 'g-entorno', texto: 'Tocá «Ver muestras de…» para verlas en la placa.', donde: 'arriba',
-      cuando: () => seccion() === 'navGlosario', blanco: enlaceEntorno, hecha: () => señal.has('entorno') },
+    // GLOSARIO: sin pistas (se quitaron «Elegí un círculo…» y «Tocá «Ver muestras de…»…», 19/11).
     // TU PLACA
     { id: 't-sembrar', texto: 'Arrastrá una forma al interior de la placa.', donde: 'derecha',
       cuando: () => seccion() === 'navTuPlaca' && !q('#tuPlaca .tp-colonia'), blanco: () => primeraVisible('#tuPlaca .tp-paleta-colonia')?.parentElement, hecha: () => !!q('#tuPlaca .tp-colonia') },
@@ -102,17 +99,16 @@
       cuando: () => seccion() === 'navTuPlaca' && $('tpMenu')?.hidden, blanco: () => nucleo(coloniaChica(), .6), hecha: () => $('tpMenu') && !$('tpMenu').hidden },
     { id: 't-funcion', texto: 'Tocá una función y arrastrá para cambiar su valor.', donde: 'derecha',
       cuando: () => seccion() === 'navTuPlaca' && $('tpMenu') && !$('tpMenu').hidden, blanco: () => union('#tpMenu .tp-menu-boton'), hecha: () => señal.has('funcion') },
-    { id: 't-deshacer', texto: 'Tocá DESHACER para volver un paso atrás.', donde: 'arriba',
-      cuando: () => seccion() === 'navTuPlaca' && $('tpMenu')?.hidden && !$('tpDeshacer')?.disabled && hechas.has('t-editar'), blanco: () => $('tpDeshacer'), hecha: () => señal.has('deshacer') },
     { id: 't-guardar', texto: 'Cuando termines, tocá GUARDAR PLACA.', donde: 'arriba',
       cuando: () => seccion() === 'navTuPlaca' && $('tpMenu')?.hidden && !$('tpRecuerdo')?.disabled && document.querySelectorAll('#tuPlaca .tp-colonia').length >= 2, blanco: () => $('tpRecuerdo'), hecha: () => señal.has('guardar') },
   ];
 
   const globo = document.createElement('div');
   globo.id = 'pista';
+  globo.className = 'cartel cartel-neutro pista-ayuda'; // mismo material que los carteles, sin color de universo
   globo.setAttribute('role', 'status');
   globo.hidden = true;
-  globo.innerHTML = '<p></p><button type="button" aria-label="Cerrar pista">×</button>';
+  globo.innerHTML = '<div class="vidrio"></div><div class="flota"><div class="grano"></div><div class="fi"><div class="co"><p></p><button type="button" aria-label="Cerrar pista">×</button></div></div></div>';
   pantalla.appendChild(globo);
   const texto = globo.querySelector('p');
   let actual = null, pausa = 0;

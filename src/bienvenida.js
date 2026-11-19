@@ -25,7 +25,7 @@
   const C = () => window.micromundosCarteles;
   const puntos = g => [...g].map(x => `<i style="background:${C().PALETA_CARTEL[x]}"></i>`).join('');
 
-  let el = null, cancelar = null, agua = null;
+  let el = null, cancelar = null, agua = null, ayuda = null;
   function abrir() {
     if (!C()) { document.addEventListener('micromundos-carteles', abrir, { once: true }); return; }
     el = plantilla.content.firstElementChild.cloneNode(true);
@@ -49,14 +49,20 @@
       if (tit && txt) fila(tit, esc(txt));
     }
     cuerpo.after(datos);
-    const gesto = document.createElement('p');
-    gesto.className = 'bv-gesto';
-    gesto.innerHTML = `<span class="bv-gesto-dedo" aria-hidden="true"></span><span>Arrastrá este cartel fuera de la pantalla para cerrarlo.</span>`;
-    datos.after(gesto);
     C().universoCartel(el, 'BL');
     ancla.appendChild(el);
-    const w = el.offsetWidth, h = el.offsetHeight;
-    el.style.transform = `translate(${Math.round(960 - w / 2)}px,${Math.round(550 - h / 2)}px)`;
+    const w = el.offsetWidth, h = el.offsetHeight, y0 = Math.round(550 - h / 2 - 40);
+    el.style.transform = `translate(${Math.round(960 - w / 2)}px,${y0}px)`;
+    // Cómo cerrarlo: un cartelito de ayuda como las demás pistas, debajo del cartel, con un punto que se desliza hacia afuera.
+    ayuda = document.createElement('div');
+    ayuda.className = 'cartel cartel-neutro pista-ayuda bv-ayuda visible';
+    ayuda.dataset.donde = 'abajo';
+    ayuda.setAttribute('role', 'note');
+    ayuda.innerHTML = '<div class="vidrio"></div><div class="flota"><div class="grano"></div><div class="fi"><div class="co"><span class="bv-gesto-dedo" aria-hidden="true"></span><p>Arrastrá este cartel fuera de la pantalla para cerrarlo.</p></div></div></div>';
+    ancla.appendChild(ayuda);
+    ayuda.style.setProperty('--flecha-x', ayuda.offsetWidth / 2 + 'px');
+    ayuda.style.transform = `translate(${Math.round(960 - ayuda.offsetWidth / 2)}px,${y0 + h + 30}px)`;
+    el.addEventListener('pointerdown', () => ayuda?.classList.remove('visible'), { once: true });
     agua = C().activarOleajeCartel(el, 0);
     cancelar = C().activarArrastreCartel(el, pos => { el.style.transform = `translate(${pos.x.toFixed(1)}px,${pos.y.toFixed(1)}px)`; }, cerrar);
     el.addEventListener('keydown', ev => { if (ev.key === 'Escape') { ev.preventDefault(); el.classList.remove('vis'); setTimeout(cerrar, 350); } });
@@ -66,7 +72,7 @@
   function cerrar() {
     if (!el) return;
     marcarVista();
-    cancelar?.(); agua?.detener(); el.remove(); el = null;
+    cancelar?.(); agua?.detener(); el.remove(); el = null; ayuda?.remove(); ayuda = null;
     pantalla.dataset.bienvenida = 'cerrada';
     document.getElementById('titulo')?.focus?.({ preventScroll: true });
   }
