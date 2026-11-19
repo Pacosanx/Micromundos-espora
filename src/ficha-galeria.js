@@ -28,12 +28,12 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
       const origen = document.createElement('h2');
       origen.className = 'ficha-galeria__origen';
       origen.textContent = otra.origen;
-      origen.style.fontSize = Math.min(32, 430 / Math.max(1, otra.origen.length)) + 'px';
       const codigo = document.createElement('p');
       codigo.className = 'ficha-galeria__codigo';
       codigo.textContent = otra.codigo;
       encabezado.append(origen, codigo);
 
+      // Pendiente (CHECKLIST): acá va la placa figurativa de cada muestra. Todavía no existen; mientras tanto, la forma de la muestra en la PLACA.
       const marco = document.createElement('div');
       marco.className = 'ficha-galeria__marco';
       const fuente = otra.el?.querySelector('canvas');
@@ -47,34 +47,41 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
         marco.appendChild(canvas);
       }
 
-      const grupo = document.createElement('p');
-      grupo.className = 'ficha-galeria__grupo';
-      const etiqueta = document.createElement('span');
-      etiqueta.textContent = 'GRUPO';
-      const valor = document.createElement('span');
-      valor.textContent = GRUPO_NOMBRE[otra.grupo] || otra.grupo;
-      grupo.append(etiqueta, valor);
-
-      const especies = document.createElement('div');
-      especies.className = 'ficha-galeria__especies';
+      // GRUPO y COMPARTE como pares rótulo / valor en una misma grilla, con la misma jerarquía y alineación.
+      const datos = document.createElement('dl');
+      datos.className = 'ficha-galeria__datos';
+      const fila = (rotulo, valores, clase) => {
+        const dt = document.createElement('dt');
+        dt.textContent = rotulo;
+        const dd = document.createElement('dd');
+        if (clase) dd.className = clase;
+        for (const v of valores) { const linea = document.createElement('span'); linea.textContent = v; dd.appendChild(linea); }
+        datos.append(dt, dd);
+        return dd;
+      };
+      // GRUPO con los mismos circulitos de color que el cartel de la muestra en MUESTRAS (coloresCartel, carteles.js).
+      const grupo = fila('GRUPO', [GRUPO_NOMBRE[otra.grupo] || otra.grupo], 'ficha-galeria__grupo');
+      const puntos = document.createElement('span');
+      puntos.className = 'coloresCartel'; puntos.setAttribute('aria-hidden', 'true');
+      puntos.innerHTML = coloresCartel(otra.grupo);
+      grupo.firstChild.prepend(puntos);
       const compartidas = otra.vinculosDatos.especies.filter(e => muestra.vinculosDatos.especies.includes(e));
-      const comparte = document.createElement('span');
-      comparte.className = 'ficha-galeria__comparte';
-      comparte.textContent = 'COMPARTE';
-      especies.appendChild(comparte);
-      for (const nombre of compartidas.slice(0, 2)) {
-        const especie = document.createElement('p');
-        especie.textContent = nombre;
-        especies.appendChild(especie);
+      const especies = fila('COMPARTE', compartidas.slice(0, 2), 'ficha-galeria__especie');
+      if (compartidas.length > 2) {
+        const mas = document.createElement('span');
+        mas.className = 'ficha-galeria__mas';
+        mas.textContent = 'y ' + (compartidas.length - 2) + ' más';
+        especies.appendChild(mas);
       }
 
       const boton = document.createElement('button');
       boton.className = 'ficha-galeria__cta';
       boton.type = 'button';
-      boton.textContent = 'VER FICHA DE MUESTRA ↗';
+      // Misma flecha que «Ver ficha de muestra» del cartel de MUESTRAS (cartel-flecha.svg girada 45°).
+      boton.innerHTML = `<span>VER FICHA DE MUESTRA</span><img src="${RECURSOS_CARTEL.flecha}" width="11.3995" height="11.0459" alt="">`;
       if (ciclo !== lado) boton.tabIndex = -1;
       boton.addEventListener('click', () => alAbrir(otra));
-      tarjeta.append(encabezado, marco, grupo, especies, boton);
+      tarjeta.append(encabezado, marco, datos, boton);
       track.appendChild(tarjeta);
       tarjetas.push(tarjeta);
     }

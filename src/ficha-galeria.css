@@ -18,29 +18,37 @@
   background: none; box-shadow: none; scroll-snap-align: start; isolation: isolate;
   /* La "forma" del contenedor (tinte, textura y desenfoque de fondo) vive en dos capas con los bordes difuminados por máscara,
      de modo que no se marca un rectángulo; el contenido queda nítido y sin máscara. */
-  --borde-suave: linear-gradient(to right, transparent, #000 44px, #000 calc(100% - 44px), transparent),
-    linear-gradient(to bottom, transparent, #000 44px, #000 calc(100% - 44px), transparent);
+  --borde-suave: linear-gradient(to right, transparent, #000 80px, #000 calc(100% - 80px), transparent),
+    linear-gradient(to bottom, transparent, #000 64px, #000 calc(100% - 64px), transparent);
 }
 .ficha-galeria__tarjeta::before, .ficha-galeria__tarjeta::after {
   /* Sólo se extiende hacia los costados: la galería recorta en vertical, así que arriba y abajo el difuminado queda dentro de la tarjeta. */
-  position: absolute; z-index: -1; inset: 0 -22px; content: ''; pointer-events: none;
+  position: absolute; z-index: -1; inset: 0 -40px; content: ''; pointer-events: none;
   -webkit-mask-image: var(--borde-suave); mask-image: var(--borde-suave);
   -webkit-mask-composite: source-in; mask-composite: intersect;
 }
-.ficha-galeria__tarjeta::before { background: rgb(255 255 255 / 8%); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-.ficha-galeria__tarjeta::after { background: url('src/assets/detalles/38083.png') center / cover; opacity: .15; filter: blur(4px); }
-.ficha-galeria__encabezado { position: relative; min-height: 72px; }
+/* Contenedor más leve: menos tinte y textura, borde más difuminado, para que la tarjeta se integre al fondo. */
+.ficha-galeria__tarjeta::before { background: rgb(255 255 255 / 5%); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.ficha-galeria__tarjeta::after { background: url('src/assets/detalles/38083.png') center / cover; opacity: .08; filter: blur(4px); }
+/* Jerarquía: nombre (título) > código (etiqueta tenue) > imagen > datos (rótulo tenue + valor de cuerpo) > acción (botón). */
+/* Nombre a la izquierda y código a la derecha, alineados por arriba como en el cartel (diseño de Paco, Figma 560:13923). */
+.ficha-galeria__encabezado { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
 .ficha-galeria__origen {
   margin: 0; overflow: hidden; color: #0d0f17; font: 400 var(--t-titulo)/var(--l-titulo) Arimo, Arial, sans-serif;
-  text-overflow: ellipsis; white-space: nowrap; padding-right:100px;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; text-wrap: balance;
 }
-.ficha-galeria__codigo { position: absolute; top: 0; right: 0; margin: 0; color: #0d0f17; font: 400 var(--t-etiqueta)/var(--l-etiqueta) Arimo, Arial, sans-serif; }
+.ficha-galeria__codigo { flex: none; margin: 0; padding-top: 3px; text-align: right; color: #0d0f17; opacity: .6; font: 400 var(--t-etiqueta)/var(--l-etiqueta) Arimo, Arial, sans-serif; letter-spacing: .08em; }
 .ficha-galeria__marco { display: grid; flex: 0 0 354px; width: 354px; height: 354px; place-items: center; overflow: hidden; background: transparent; }
 .ficha-galeria__canvas { display: block; width: 354px; height: 354px; }
-.ficha-galeria__grupo { display: flex; justify-content: space-between; gap: 12px; margin: 14px 0 0; color: #0d0f17; font: 400 var(--t-etiqueta)/var(--l-etiqueta) Arimo, Arial, sans-serif; }
-.ficha-galeria__grupo span:first-child, .ficha-galeria__comparte { letter-spacing: .08em; }
-.ficha-galeria__especies { min-height: 42px; margin-top: 8px; color: #0d0f17; }
-.ficha-galeria__especies p { margin: 0; font: italic 400 var(--t-cuerpo)/var(--l-cuerpo) Arimo, Arial, sans-serif; }
-.ficha-galeria__comparte { display: block; margin-bottom: 2px; font: 400 var(--t-etiqueta)/var(--l-etiqueta) Arimo, Arial, sans-serif; }
+.ficha-galeria__datos { display: grid; grid-template-columns: 104px 1fr; align-items: baseline; gap: 8px 12px; margin: 16px 0 0; color: #0d0f17; }
+.ficha-galeria__datos dt { opacity: .6; font: 400 var(--t-etiqueta)/var(--l-cuerpo) Arimo, Arial, sans-serif; letter-spacing: .08em; }
+.ficha-galeria__datos dd { display: flex; flex-direction: column; margin: 0; font: 400 var(--t-cuerpo)/var(--l-cuerpo) Arimo, Arial, sans-serif; }
+.ficha-galeria__especie span { font-style: italic; }
+.ficha-galeria__especie .ficha-galeria__mas { font-style: normal; opacity: .6; }
 .ficha-galeria__cta { align-self: flex-start; margin: auto 0 0; padding: 14px 0; border: 0; background: transparent; color: #0d0f17; cursor: pointer; font: 700 var(--t-boton)/var(--l-boton) Arimo, Arial, sans-serif; letter-spacing: .05em; }
 .ficha-galeria__cta:focus-visible { background: rgb(255 255 255 / 35%); outline: 2px solid #0d0f17; outline-offset: 3px; }
+
+.ficha-galeria__grupo > span { display: inline-flex; align-items: center; gap: 8px; }
+.ficha-galeria__grupo .coloresCartel { height: auto; }
+.ficha-galeria__cta { display: inline-flex; align-items: center; gap: 12px; }
+.ficha-galeria__cta img { flex: none; transform: rotate(-45deg); filter: brightness(0); opacity: .92; }
