@@ -495,9 +495,20 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       indice=(i+filas.length)%filas.length;
       limpiarLugar();limpiarLugar=()=>{};
       const entorno=entornos[indice],nombre=entorno.nombre;
-      if(enlace)enlace.textContent='VER MUESTRAS DE '+nombre.toUpperCase()+' ↗';
+      if(enlace){
+        // Misma flecha que «Ver ficha de muestra» en los carteles de MUESTRAS (cartel-flecha.svg girada 45°).
+        enlace.textContent='VER MUESTRAS DE '+nombre.toUpperCase();enlace.classList.add('entorno-enlace');
+        const flecha=document.createElement('img');flecha.src='__CARTEL_FLECHA__';flecha.width=11.3995;flecha.height=11.0459;flecha.alt='';enlace.appendChild(flecha);
+      }
       for(const [n,fila]of filas.entries()){fila.style.opacity=n===indice?'1':'.45';fila.setAttribute('aria-pressed',String(n===indice));}
-      if(contador)contador.textContent=String(indice+1).padStart(2,'0')+' / '+String(filas.length).padStart(2,'0');
+      // Contador: un circulito por lugar (diseño de Paco); el actual va lleno. Sin números escritos.
+      if(contador){
+        if(!contador.classList.contains('entorno-puntos')){
+          contador.classList.add('entorno-puntos');contador.replaceChildren();contador.setAttribute('role','group');
+          filas.forEach((_,n)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Lugar '+(n+1)+' de '+filas.length);b.addEventListener('click',()=>cambiar(n));b.append(document.createElement('img'));contador.appendChild(b);});
+        }
+        [...contador.children].forEach((b,n)=>{const im=b.firstChild;im.src=n===indice?'__DE_PUNTO_ACTUAL__':'__DE_PUNTO__';im.width=im.height=15;im.alt='';b.setAttribute('aria-current',String(n===indice));});
+      }
       marco.replaceChildren();
       const img=document.createElement('img');img.src=entorno.imagen;img.alt=nombre;
       const encuadre=entorno.encuadre||{escala:1,x:0,y:0};
@@ -519,9 +530,13 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       Object.assign(dibujo.style,{position:'absolute',left:'12px',top:'22px',width:flecha.style.width,height:flecha.style.height});
       dibujo.append(...flecha.childNodes);flecha.appendChild(dibujo);
       Object.assign(flecha.style,{width:'48px',height:'44px',translate:'-12px -22px'});
-      if(Number.isFinite(arriba)&&Number.isFinite(alto)&&marco.style.left){
+      // Se anclan al centro de la pantalla, igual que la ilustración (adaptarMargenesDetalle la pasa a calc(50% ± N px)):
+      // antes se medían desde el borde izquierdo y en pantallas de otro ancho quedaban corridas respecto del círculo.
+      const x=longitudDetalle(marco.style.left||'');
+      if(Number.isFinite(arriba)&&Number.isFinite(alto)&&x!==null){
         raiz.appendChild(flecha);flecha.dataset.anclaCentro='1';flecha.classList.add('entorno-flecha');
-        Object.assign(flecha.style,{top:(arriba+alto/2)+'px',left:delta<0?`calc(${marco.style.left} + 84px)`:`calc(${marco.style.left} + ${alto-84-24}px)`});
+        const desde=(delta<0?x+84:x+alto-84-24)-12-960; // dibujo de 24 px a 84 px del borde del círculo; la caja táctil empieza 12 px antes
+        Object.assign(flecha.style,{top:(arriba+alto/2)+'px',left:`calc(50% ${desde<0?'-':'+'} ${Math.abs(desde).toFixed(3)}px)`,translate:'0 -22px'});
       }
       interactivo(flecha,()=>cambiar(indice+delta),'Lugar '+nombre);
     }
@@ -537,11 +552,12 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
         if(maximo){bloque.style.height=maximo+'px';bloque.style.flexShrink='0';}
       }
     };
-    // Rueda del mouse o trackpad sobre la imagen: pasa al lugar siguiente o anterior.
-    // En el primero y el último lugar la rueda vuelve a mover la página, para no quedar atrapada en la ilustración.
+    // Solo hacia los costados: desplazamiento horizontal del trackpad (o Mayús + rueda) sobre la imagen pasa al lugar siguiente o anterior.
+    // El desplazamiento vertical sigue moviendo la página. En el primero y el último lugar tampoco se retiene.
     let acumulado=0,esperaHasta=0;
     marco.addEventListener('wheel',ev=>{
-      const d=Math.abs(ev.deltaX)>Math.abs(ev.deltaY)?ev.deltaX:ev.deltaY,dir=Math.sign(d);if(!dir)return;
+      if(Math.abs(ev.deltaX)<=Math.abs(ev.deltaY))return;
+      const d=ev.deltaX,dir=Math.sign(d);if(!dir)return;
       if((dir>0&&indice===filas.length-1)||(dir<0&&indice===0)){acumulado=0;return;}
       ev.preventDefault();
       const ahora=performance.now();if(ahora<esperaHasta)return;
@@ -549,9 +565,9 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       acumulado+=ev.deltaMode===1?d*16:d;
       if(Math.abs(acumulado)>=50){cambiar(indice+dir);acumulado=0;esperaHasta=ahora+450;}
     },{passive:false});
-    // Deslizamiento táctil horizontal sobre la imagen; el vertical sigue desplazando la página.
+    // Deslizar hacia los costados sobre la imagen, con el dedo o arrastrando con el mouse (botón izquierdo); el vertical sigue desplazando la página.
     let toque=null;marco.style.touchAction='pan-y';
-    marco.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='mouse')toque={x:ev.clientX,y:ev.clientY,id:ev.pointerId};});
+    marco.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='mouse'||ev.button===0){toque={x:ev.clientX,y:ev.clientY,id:ev.pointerId};if(ev.pointerType==='mouse')ev.preventDefault();}});
     marco.addEventListener('pointerup',ev=>{
       if(!toque||toque.id!==ev.pointerId)return;
       const dx=ev.clientX-toque.x,dy=ev.clientY-toque.y;toque=null;

@@ -156,3 +156,14 @@
 .entorno-flecha{z-index:2}
 .entorno-flecha img{filter:brightness(0);opacity:.62;transition:opacity .2s}
 .entorno-flecha:active img,.entorno-flecha:focus-visible img{opacity:.9}
+
+/* Contador del carrusel: un circulito por lugar, sin números (diseño de Paco). */
+.entorno-puntos{display:flex!important;justify-content:center;align-items:center;gap:12px;margin:0}
+.entorno-puntos button{all:unset;display:block;width:15px;height:15px;cursor:pointer;border-radius:50%}
+.entorno-puntos button img{display:block;width:15px;height:15px}
+.entorno-puntos button:focus-visible{outline:2px solid #c9e7a4;outline-offset:3px}
+/* «Ver muestras de …» con la flecha de «Ver ficha de muestra» de los carteles, girada 45°. */
+.entorno-enlace{display:inline-flex!important;align-items:center;gap:12px}
+.entorno-enlace img{flex:none;transform:rotate(-45deg)}
+.entorno-desliza{cursor:grab;-webkit-user-select:none;user-select:none}
+.entorno-desliza img{-webkit-user-drag:none;pointer-events:none}

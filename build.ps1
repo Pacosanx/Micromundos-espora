@@ -70,6 +70,8 @@ $recursos = @{
   '__CARTEL_LINEA__' = @('cartel-linea.svg','image/svg+xml')
   '__CARTEL_COLORES__' = @('cartel-colores-bl.svg','image/svg+xml')
   '__CARTEL_FLECHA__' = @('cartel-flecha.svg','image/svg+xml')
+  '__DE_PUNTO__' = @('donde-estan/punto.svg','image/svg+xml')
+  '__DE_PUNTO_ACTUAL__' = @('donde-estan/punto-actual.svg','image/svg+xml')
 }
 foreach($marca in $recursos.Keys){
   $recurso = $recursos[$marca]
