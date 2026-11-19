@@ -2,7 +2,7 @@
 .tp-biblioteca__top { margin-bottom:18px; }
 .tp-biblioteca__top h2 { margin:0 0 10px; font:700 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif; letter-spacing:0; filter:blur(.5px); }
 .tp-biblioteca__top p { margin:0; font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif; }
-.tp-biblioteca__modes { display:flex; height:52px; align-items:center; gap:18px; }
+.tp-biblioteca__modes { display:none; }
 .tp-biblioteca__mode-label { margin-right:auto; font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif; }
 .tp-biblioteca__mode { display:flex; align-items:center; gap:8px; padding:0; border:0; background:transparent; color:#0d0f17; cursor:pointer; font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif; }
 .tp-biblioteca__mode img { width:24px; height:24px; object-fit:contain; }
@@ -11,13 +11,39 @@
 .tp-biblioteca__hint { margin-left:auto; align-self:center; color:#0d0f17; font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif; white-space:nowrap; opacity:calc(1 - var(--tp-last-fade,0)); }
 .tp-biblioteca__tab { position:relative; padding:0 2px; border:0; background:transparent; color:#0d0f17; cursor:pointer; font:700 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif; }
 .tp-biblioteca__tab[aria-selected="false"] { opacity:.45; filter:blur(1px); font-weight:400; }
-.tp-biblioteca__content { display:grid; grid-template-columns:160px 1fr; width:640px; height:320px; overflow:hidden; }
-.tp-biblioteca__labels { display:grid; grid-template-rows:repeat(4,100px); }
-.tp-biblioteca__state { display:flex; align-items:center; font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif; }
-.tp-biblioteca__viewport { height:320px; overflow-x:hidden; overflow-y:auto; scrollbar-width:none; overscroll-behavior:contain; }
+.tp-biblioteca__content { display:grid; grid-template-columns:160px 1fr; width:640px; height:420px; overflow:hidden; }
+.tp-biblioteca__labels { display:flex; flex-direction:column; }
+.tp-biblioteca__labels > * { flex:none; }
+#tuPlaca .tp-biblioteca__state { all:unset; box-sizing:border-box; display:flex; align-items:center; height:100px; font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif; color:#0d0f17; cursor:pointer; text-decoration:underline dotted rgb(13 15 23 / 40%); text-underline-offset:5px; }
+#tuPlaca .tp-biblioteca__state:focus-visible { outline:2px solid #0d0f17; outline-offset:-3px; }
+.tp-biblioteca__rotulo { display:flex; align-items:flex-end; height:36px; padding-bottom:4px; box-sizing:border-box; font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif; letter-spacing:.08em; opacity:.7; }
+.tp-biblioteca__hueco { grid-column:1 / -1; height:36px; }
+.tp-biblioteca__viewport { height:420px; overflow-x:hidden; overflow-y:auto; scrollbar-width:none; overscroll-behavior:contain; }
 .tp-biblioteca__viewport::-webkit-scrollbar { display:none; }
-.tp-biblioteca__track { display:grid; grid-template-columns:repeat(4,118px); grid-auto-rows:100px; padding-left:21px; }
+.tp-biblioteca__track { display:grid; grid-template-columns:repeat(4,118px); grid-auto-rows:auto; align-content:start; padding-left:21px; }
 .tp-paleta-colonia { display:grid; width:110px; height:100px; place-items:center; padding:0; border:0; background:transparent; cursor:pointer; }
 .tp-paleta-colonia canvas { display:block; width:100px; height:100px; }
 .tp-paleta-colonia:focus-visible,.tp-biblioteca__tab:focus-visible,.tp-biblioteca__mode:focus-visible { outline:2px solid #0d0f17; outline-offset:-3px; }
 .tp-biblioteca__state:last-child { filter:blur(calc(var(--tp-last-fade,0) * 1px)); }
+/* Cartelito de ayuda de TU PLACA (19/11/2026): material de los carteles, neutro, con un punto y un trazo hacia lo que explica. */
+.cartel-neutro{--cartel-fondo:rgb(205 198 186 / 42%);--cartel-noise-opacity:.35}
+#tuPlaca .tp-ayuda{--cartel-fondo:rgb(226 221 210 / 78%);position:absolute;z-index:40;opacity:0;translate:0 6px;transition:opacity .3s,translate .3s;pointer-events:none;color:#13151b}
+#tuPlaca .tp-ayuda.visible{opacity:1;translate:0 0}
+.tp-ayuda .fi{padding:14px 20px 14px 18px;border-radius:16px;max-height:none;overflow:visible}
+.tp-ayuda .vidrio,.tp-ayuda .grano{border-radius:16px}
+.tp-ayuda .co{display:flex;flex-direction:column;gap:4px}
+#tuPlaca .tp-ayuda p{margin:0;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif}
+#tuPlaca .tp-ayuda p.tp-ayuda-titulo{font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.7}
+#tuPlaca .tp-ayuda p.tp-ayuda-nota{font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.7}
+.tp-ayuda::before,.tp-ayuda::after{content:"";position:absolute;pointer-events:none}
+.tp-ayuda::before{width:8px;height:8px;border-radius:50%;background:#13151b;opacity:.55}
+.tp-ayuda::after{background:rgb(19 21 27 / 35%)}
+.tp-ayuda[data-donde="abajo"]::before{top:-22px;left:calc(var(--flecha-x) - 4px)}
+.tp-ayuda[data-donde="abajo"]::after{top:-14px;left:calc(var(--flecha-x) - .5px);width:1px;height:14px}
+.tp-ayuda[data-donde="arriba"]::before{bottom:-22px;left:calc(var(--flecha-x) - 4px)}
+.tp-ayuda[data-donde="arriba"]::after{bottom:-14px;left:calc(var(--flecha-x) - .5px);width:1px;height:14px}
+@media(prefers-reduced-motion:reduce){#tuPlaca .tp-ayuda{transition:none}}
+/* Sin la bajada ni la indicación de modo, las pestañas y la grilla suben: más filas a la vista. */
+#tuPlaca #tpBiblioteca .tp-biblioteca__tabs{top:52px}
+#tuPlaca #tpBiblioteca .tp-biblioteca__content{top:139px;height:500px}
+#tuPlaca #tpBiblioteca .tp-biblioteca__viewport{height:500px}

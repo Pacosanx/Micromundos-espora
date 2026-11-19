@@ -1,3 +1,18 @@
+// Cartelito de ayuda de TU PLACA (19/11/2026): material de los carteles en versión neutra, con un punto que señala a qué se refiere.
+// Se va solo, o al tocar en cualquier lado. Uno por vez.
+function ayudaTuPlaca(partes,{x,y,ancho=360,donde='abajo',flecha=24,duracion=6000}={}){
+  const tp=document.getElementById('tuPlaca');if(!tp)return null;
+  ayudaTuPlaca.cerrar?.();
+  const el=document.createElement('div');el.className='cartel cartel-neutro tp-ayuda';el.dataset.donde=donde;el.setAttribute('role','status');
+  el.style.cssText=`left:${x}px;top:${y}px;max-width:${ancho}px;--flecha-x:${flecha}px`;
+  el.innerHTML='<div class="vidrio"></div><div class="flota"><div class="grano"></div><div class="fi"><div class="co"></div></div></div>';
+  const co=el.querySelector('.co');for(const [clase,texto] of partes){const p=document.createElement('p');if(clase)p.className=clase;p.textContent=texto;co.appendChild(p);}
+  tp.appendChild(el);requestAnimationFrame(()=>el.classList.add('visible'));
+  let reloj=0;const cerrar=()=>{clearTimeout(reloj);removeEventListener('pointerdown',alTocar,true);el.classList.remove('visible');setTimeout(()=>el.remove(),300);if(ayudaTuPlaca.cerrar===cerrar)ayudaTuPlaca.cerrar=null;};
+  const alTocar=ev=>{if(!el.contains(ev.target))cerrar();};
+  setTimeout(()=>addEventListener('pointerdown',alTocar,true),0);reloj=setTimeout(cerrar,duracion);
+  ayudaTuPlaca.cerrar=cerrar;return el;
+}
 function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () => {}, alModo = () => {} } = {}) {
   const grupos = [
     { id:'B', nombre:'BACTERIAS', colores:['#ff4c52','#f58bc3','#fffbee'], seed:31 },
@@ -47,11 +62,12 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
   host.classList.add('tp-biblioteca');
   const top = document.createElement('div'); top.className='tp-biblioteca__top';
   const heading = document.createElement('h2'); heading.textContent='BIBLIOTECA DE COLONIAS';
-  const subtitle = document.createElement('p'); subtitle.textContent='Arrastrá una colonia al interior de la placa.';
-  top.append(heading,subtitle);
+  // 19/11/2026 · Qué va fijo y qué como cartelito de ayuda:
+  //  fijo: el título, las pestañas por grupo, los rótulos FORMA / COMPOSICIÓN y el nombre de cada fila;
+  //  cartelito: qué es cada fila y si reacciona (tocar su nombre) y «arrastrá sobre la placa para elegir varias» (tu-placa-v12.js).
+  //  «Arrastrá una colonia al interior de la placa» se quita: lo dice la placa vacía.
+  top.append(heading);
   const modes = document.createElement('div'); modes.className='tp-biblioteca__modes';
-  // 18/11/2026: sin modos de siembra (se quitaron «En estría» y «En grupo»): tocar la placa siembra una, arrastrar elige varias.
-  const modeLabel = document.createElement('span'); modeLabel.className='tp-biblioteca__mode-label'; modeLabel.textContent='ARRASTRÁ SOBRE LA PLACA PARA ELEGIR VARIAS'; modes.appendChild(modeLabel);
   const tabs=document.createElement('div');tabs.className='tp-biblioteca__tabs';tabs.setAttribute('role','tablist');
   const content=document.createElement('div');content.className='tp-biblioteca__content';
   const labels=document.createElement('div');labels.className='tp-biblioteca__labels';
@@ -80,8 +96,12 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
     }
     const scrolled=()=>{labels.style.transform=`translateY(${-viewport.scrollTop}px)`;host.style.setProperty('--tp-last-fade',String(Math.min(1,viewport.scrollTop/40)));};
     viewport.onscroll=scrolled;scrolled();
+    let seccion=null;
     for(const estado of estadosVisibles){
-      const label=document.createElement('div');label.className='tp-biblioteca__state';label.textContent=estado.nombre;labels.appendChild(label);
+      const nueva=estado.composicion?'COMPOSICIÓN':'FORMA';
+      if(nueva!==seccion){seccion=nueva;const r=document.createElement('div');r.className='tp-biblioteca__rotulo';r.textContent=nueva;labels.appendChild(r);const hueco=document.createElement('div');hueco.className='tp-biblioteca__hueco';hueco.setAttribute('aria-hidden','true');track.appendChild(hueco);}
+      const label=document.createElement('button');label.type='button';label.className='tp-biblioteca__state';label.textContent=estado.nombre;label.setAttribute('aria-label',estado.nombre+': qué es');labels.appendChild(label);
+      label.addEventListener('click',ev=>{ev.stopPropagation();explicarFila(estado,label);});
       for(const variante of variantes){
         const estilo=estilos.find(s=>s.g===grupoActual&&s.estado===estado.id&&s.variante===variante.id);
         const button=document.createElement('button');button.type='button';button.className='tp-paleta-colonia';button.dataset.styleId=estilo.id;button.dataset.codigo=estilo.codigo;
@@ -99,6 +119,18 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
         canvas.style.width=canvas.style.height=(diametroPreview/.84)+'px';
       }
     }
+  }
+  // Cartelito de cada fila: la nota del estado (las mismas de los carteles de MUESTRAS) y si reacciona en la placa.
+  // Reacciona igual que en tu-placa-v12.js: las formas del Atlas y «Anillo fino» sí; las otras de composición no.
+  const NOTAS={MO:'En resina, como objeto de exhibición.',R:'Se conservan fotos y notas; la muestra física ya no está.',C:'Reserva física.'};
+  function explicarFila(estado,label){
+    const reacciona=!estado.composicion||estado.id==='AF';
+    const partes=[['tp-ayuda-titulo',estado.nombre.toUpperCase()]];
+    if(NOTAS[estado.id])partes.push(['',NOTAS[estado.id]]);
+    else if(estado.composicion)partes.push(['','Forma para componer: no es una muestra del Atlas.']);
+    partes.push(['tp-ayuda-nota',reacciona?'Reacciona cuando se encuentra con otra colonia.':'No reacciona: es parte del fondo de la composición.']);
+    const tp=document.getElementById('tuPlaca'),r=tp.getBoundingClientRect(),k=r.width/tp.offsetWidth||1,b=label.getBoundingClientRect();
+    ayudaTuPlaca(partes,{x:(b.left-r.left)/k,y:(b.bottom-r.top)/k+30,ancho:420,flecha:24});
   }
   drawGroup();
   return { estilos, seleccionado:()=>elegido, modo:()=>'una', destroy(){if(destruido)return;destruido=true;limpiarMontajes();host.replaceChildren();host.classList.remove('tp-biblioteca')} };

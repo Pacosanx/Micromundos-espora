@@ -81,7 +81,8 @@ function prepararTuPlaca(){
     pintarEscena();dibujarReacciones();dibujarPerilla();if(seleccionado&&!$('tpMenu').hidden){const c=centro();if(c)menu.situar(c.x,c.y);}pedido=false;
   }
   function solicitarDibujo(){if(!pedido){pedido=true;frame=requestAnimationFrame(dibujar);}}
-  function actualizar(){const n=items.length;$('tpCuenta').textContent=n+(n===1?' colonia':' colonias');$('tpVacia').hidden=!!n;$('tpRecuerdo').disabled=!n;$('tpDeshacer').disabled=!historico.length;$('tpRehacer').disabled=!futuro.length;$('tpReiniciar').disabled=!n;}
+  let ayudaLazo=false;try{ayudaLazo=sessionStorage.getItem('micromundos-ayuda-lazo')==='1';}catch{}
+  function actualizar(){const n=items.length;if(n>=2&&!ayudaLazo&&!lazo){ayudaLazo=true;try{sessionStorage.setItem('micromundos-ayuda-lazo','1');}catch{}setTimeout(()=>{if(!$('tpVistaRecuerdo').hidden)return;ayudaTuPlaca([['','Arrastrá sobre la placa para elegir varias colonias a la vez.']],{x:1320-190,y:952,ancho:380,donde:'arriba',flecha:190,duracion:7000});},700);}$('tpCuenta').textContent=n+(n===1?' colonia':' colonias');$('tpVacia').hidden=!!n;$('tpRecuerdo').disabled=!n;$('tpDeshacer').disabled=!historico.length;$('tpRehacer').disabled=!futuro.length;$('tpReiniciar').disabled=!n;}
   function abrirMenu(it){
     const enGrupo=seleccion.length>1&&seleccion.includes(it);
     if(seleccionado===it&&!$('tpMenu').hidden){menu.cerrar();if(!enGrupo)seleccion=[];dibujar();return;}
@@ -99,7 +100,7 @@ function prepararTuPlaca(){
 
   // Fondo de la placa: tocar siembra una colonia al soltar; arrastrar dibuja un lazo que elige varias.
   let toque=null;
-  function iniciarLazo(p){lazo={puntos:[toque.inicio,p]};toque=null;seleccion=[];seleccionado=null;board.classList.add('tp-lazando');dibujar();}
+  function iniciarLazo(p){ayudaTuPlaca.cerrar?.();lazo={puntos:[toque.inicio,p]};toque=null;seleccion=[];seleccionado=null;board.classList.add('tp-lazando');dibujar();}
   function dentroDelLazo(p,poli){let adentro=false;for(let i=0,j=poli.length-1;i<poli.length;j=i++){const a=poli[i],b=poli[j];if((a.y>p.y)!==(b.y>p.y)&&p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x)adentro=!adentro;}return adentro;}
   function cerrarLazo(){
     const poli=lazo.puntos;lazo=null;board.classList.remove('tp-lazando');$('tpTrazo').querySelector('path').setAttribute('d','');
