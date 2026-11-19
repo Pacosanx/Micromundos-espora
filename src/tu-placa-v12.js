@@ -255,7 +255,7 @@ function prepararTuPlaca(){
         b.innerHTML=`<svg viewBox="0 0 30 20" aria-hidden="true">${glifos[modo](COLOR_TIPO[fila],COLOR_TIPO[col])}</svg><span>${REACCIONES[modo].nombre.toUpperCase()}</span>`;b.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(modo);});caja.appendChild(b);});});}
 
   // Zoom y giro de la placa entera (19/11/2026), como el slider de zoom de MUESTRAS:
-  //  · ZOOM, a la derecha (+ arriba, − abajo): igual que en MUESTRAS, los centros de las colonias se alejan o acercan al centro
+  //  · DENSIDAD (antes ZOOM; Paco, 19/11: lo que hace es juntar o separar la composición), a la derecha (+ arriba, − abajo): igual que en MUESTRAS, los centros de las colonias se alejan o acercan al centro
   //    de la placa y las colonias NO cambian de tamaño (se separan). 50 % a 200 %.
   //  · GIRAR, a la izquierda, mismo arco sin + ni −: gira toda la composición alrededor del centro (−180° a 180°).
   // Reemplazan a la perilla de REACCIONES (Paco: «priorizo este»); las reacciones quedan fijas en 85 %.
@@ -270,13 +270,13 @@ function prepararTuPlaca(){
     const signo=(a,mas)=>{const [cx,cy]=pp(a),r=a*Math.PI/180,rx=Math.cos(r),ry=Math.sin(r),tx=-ry,ty=rx,L=6;
       return `M${cx-rx*L},${cy-ry*L}L${cx+rx*L},${cy+ry*L}`+(mas?`M${cx-tx*L},${cy-ty*L}L${cx+tx*L},${cy+ty*L}`:'');};
     let h='';
-    for(const k of ['zoom','giro']){const A=ARCOS[k],[x,y]=pp(angDe(k,tDe(k))),[lx,ly]=pp(A.a0,R_ARCO+(k==='zoom'?40:28));
+    for(const k of ['zoom','giro']){const A=ARCOS[k],[x,y]=pp(angDe(k,tDe(k))),[lx,ly]=pp((A.a0+A.a1)/2,R_ARCO+36); // rótulo y valor a la altura del centro del arco (Paco, 19/11)
       h+=`<path class="tp-zoom-linea" d="${arco(Math.min(A.a0,A.a1),Math.max(A.a0,A.a1))}"/><path class="tp-zoom-linea" d="${remate(A.a0)+remate(A.a1)}"/>`;
       if(k==='zoom'){const [mx,my]=pp(A.a0-SEP),[nx,ny]=pp(A.a1+SEP);h+=`<path class="tp-zoom-linea" d="${signo(A.a0-SEP,true)+signo(A.a1+SEP,false)}"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="1" cx="${mx}" cy="${my}" r="18"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="-1" cx="${nx}" cy="${ny}" r="18"/>`;}
       const valor=k==='zoom'?Math.round(zoom)+' %':Math.round(giro)+'°';
-      h+=`<text class="tp-zoom-rotulo" x="${lx}" y="${ly-14}" text-anchor="${A.lado>0?'start':'end'}">${k==='zoom'?'ZOOM':'GIRAR'}</text><text class="tp-zoom-valor" x="${lx}" y="${ly+4}" text-anchor="${A.lado>0?'start':'end'}">${valor}</text>
+      h+=`<text class="tp-zoom-rotulo" x="${lx}" y="${ly-4}" text-anchor="${A.lado>0?'start':'end'}">${k==='zoom'?'DENSIDAD':'GIRAR'}</text><text class="tp-zoom-valor" x="${lx}" y="${ly+16}" text-anchor="${A.lado>0?'start':'end'}">${valor}</text>
         <path class="tp-perilla-control tp-perilla-toque" data-arco="${k}" d="${arco(Math.min(A.a0,A.a1),Math.max(A.a0,A.a1))}"/>
-        <g class="tp-perilla-control" data-arco="${k}" role="slider" tabindex="0" aria-label="${k==='zoom'?'Zoom de la placa':'Girar la placa'}" aria-valuemin="${k==='zoom'?50:-180}" aria-valuemax="${k==='zoom'?200:180}" aria-valuenow="${Math.round(k==='zoom'?zoom:giro)}" aria-valuetext="${valor}"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="8" class="tp-zoom-manija"/></g>`;}
+        <g class="tp-perilla-control" data-arco="${k}" role="slider" tabindex="0" aria-label="${k==='zoom'?'Densidad de la composición':'Girar la placa'}" aria-valuemin="${k==='zoom'?50:-180}" aria-valuemax="${k==='zoom'?200:180}" aria-valuenow="${Math.round(k==='zoom'?zoom:giro)}" aria-valuetext="${valor}"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="8" class="tp-zoom-manija"/></g>`;}
     perilla.innerHTML=h;
     if(girandoPerilla!==null)perilla.querySelector(`g[data-arco="${arcoActivo}"]`)?.focus?.({preventScroll:true});
   }
