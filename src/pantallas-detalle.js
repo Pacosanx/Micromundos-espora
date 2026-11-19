@@ -748,13 +748,15 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   function prepararLupa(raiz,alTocar){
     const placa=raiz.querySelector('.ficha-placa');if(!placa)return;
     const lupa=document.createElement('div');lupa.className='detalle-lupa';lupa.hidden=true;placa.appendChild(lupa);
-    placa.tabIndex=0;placa.setAttribute('role','button');placa.setAttribute('aria-label','Mantener presionado y arrastrar para explorar la vista microscópica');placa.setAttribute('aria-expanded','false');
+    placa.tabIndex=0;placa.setAttribute('role','button');placa.setAttribute('aria-label','Mantener presionado para ver la vista microscópica');placa.setAttribute('aria-expanded','false');
     let espera=0,presionando=false,desmontar=null,inicioToque=null,arrastrando=false;
     let posicion={x:placa.offsetWidth/2,y:placa.offsetHeight/2,ancho:placa.offsetWidth,alto:placa.offsetHeight};
     const actualizar=()=>{lupa.style.left=(posicion.x-214.5)+'px';lupa.style.top=(posicion.y-214.5)+'px';desmontar?.actualizar?.(posicion);};
     const mostrar=()=>{if(!presionando)return;lupa.hidden=false;placa.setAttribute('aria-expanded','true');if(!desmontar&&window.MicromundosLupa)desmontar=window.MicromundosLupa.montarLupaFigma(lupa);actualizar();};
     const ocultar=()=>{clearTimeout(espera);presionando=false;lupa.hidden=true;placa.setAttribute('aria-expanded','false');};
-    const mover=e=>{if(!presionando)return;const r=placa.getBoundingClientRect();posicion={x:(e.clientX-r.left)/escala,y:(e.clientY-r.top)/escala,ancho:placa.offsetWidth,alto:placa.offsetHeight};
+    // 19/11/2026 (Paco): el círculo del microscopio queda fijo donde apareció aunque el dedo se mueva, y se va al soltar.
+    // Antes de aparecer sigue al dedo (aparece donde está); si el dedo se mueve más de 10 px, aparece enseguida.
+    const mover=e=>{if(!presionando||!lupa.hidden)return;const r=placa.getBoundingClientRect();posicion={x:(e.clientX-r.left)/escala,y:(e.clientY-r.top)/escala,ancho:placa.offsetWidth,alto:placa.offsetHeight};
       if(inicioToque&&Math.hypot(e.clientX-inicioToque.x,e.clientY-inicioToque.y)>10){arrastrando=true;clearTimeout(espera);mostrar();}actualizar();};
     placa.addEventListener('pointerdown',e=>{if(e.button>0)return;presionando=true;arrastrando=false;inicioToque={x:e.clientX,y:e.clientY,t:performance.now()};placa.setPointerCapture(e.pointerId);mover(e);espera=setTimeout(mostrar,350);});
     placa.addEventListener('pointermove',mover);

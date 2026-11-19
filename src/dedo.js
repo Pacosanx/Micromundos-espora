@@ -58,6 +58,9 @@
   addEventListener('pointerdown', ev => {
     cancelAnimationFrame(inercia);
     if (ev.pointerType !== 'mouse' || ev.button !== 0) return;
+    // Lo que maneja su propio gesto (touch-action: none, como la placa del microscopio o las colonias de TU PLACA) no desplaza
+    // la pantalla: así, con el microscopio abierto, la ficha no se mueve (19/11/2026, Paco).
+    for (let p = ev.target; p && p !== document.documentElement; p = p.parentElement) if (getComputedStyle(p).touchAction === 'none') { toma = null; return; }
     const caja = desplazable(ev.target);
     toma = caja && { caja, y: ev.clientY, x: ev.clientX, scroll: caja.scrollTop, t: ev.timeStamp, v: 0, ultY: ev.clientY, ultT: ev.timeStamp, id: ev.pointerId };
     arrastro = false;
