@@ -5,7 +5,11 @@
 (() => {
   const CLAVE = 'micromundos-pistas-vistas';
   const params = new URLSearchParams(location.search);
-  const almacen = (() => { try { return params.has('kiosco') ? sessionStorage : localStorage; } catch { return null; } })();
+  // 19/11/2026: en el servidor local (revisión de ramas) lo visto se recuerda solo en memoria, así cada recarga vuelve a
+  // mostrarlo. Todas las ramas comparten localhost:5530: si no, lo visto en una rama quedaba visto en todas.
+  const enLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:';
+  const memoria = new Map(), almacenMemoria = { getItem: k => memoria.has(k) ? memoria.get(k) : null, setItem: (k, v) => memoria.set(k, String(v)), removeItem: k => memoria.delete(k) };
+  const almacen = (() => { try { return enLocal ? almacenMemoria : params.has('kiosco') ? sessionStorage : localStorage; } catch { return null; } })();
   let hechas = new Set();
   try { if (!params.has('pistas')) hechas = new Set(JSON.parse(almacen?.getItem(CLAVE) || '[]')); } catch {}
   const guardar = () => { try { almacen?.setItem(CLAVE, JSON.stringify([...hechas])); } catch {} };
