@@ -5,7 +5,7 @@
 //   muescas     → cantidades (arco con marcas)
 //   radial      → lo que crece desde el centro (filamentos, anillo, profundidad, manchas)
 //   2D          → dirección y cantidad juntas (expansión, color medio lineal)
-//   tocar       → opciones (distribución y tratamiento del color) y el dado (variante del patrón)
+//   tocar       → opciones (distribución y tratamiento del color); tocar de nuevo MANCHAS o PIGMENTOS da otra variante
 // Lo que cambia cómo ESTÁ la colonia en la placa (tamaño, giro, foco, opacidad) queda en el aro del nivel 1.
 
 function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}}){
@@ -26,7 +26,10 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
     { const a=(180-(i-(pestanas.length-1)/2)*13)*Math.PI/180; b.style.left=(C+Math.cos(a)*452)+'px'; b.style.top=(C+Math.sin(a)*452)+'px'; } // siguen el arco del círculo mayor
     b.addEventListener('pointerdown',ev=>{ev.stopPropagation();pestana=id;dibujar();});b.addEventListener('keydown',ev=>{if(['Enter',' '].includes(ev.key)){ev.preventDefault();pestana=id;dibujar();}const d={ArrowDown:1,ArrowUp:-1}[ev.key];if(d){ev.preventDefault();const ids=pestanas.map(p=>p[0]);pestana=ids[(ids.indexOf(id)+d+ids.length)%ids.length];dibujar();tabs.querySelector('[aria-selected="true"]')?.focus({preventScroll:true});}});tabs.appendChild(b);});
   host.querySelector('.tp-editor-listo').addEventListener('click',ev=>{ev.stopPropagation();cerrar();});
-  host.querySelector('.tp-editor-velo').addEventListener('pointerdown',ev=>{ev.stopPropagation();if(!arrastre)cerrar();});
+  // 19/11/2026: tocar dentro del contenedor no lo cierra; tocar afuera, sí (Paco).
+  host.querySelector('.tp-editor-velo').addEventListener('pointerdown',ev=>ev.stopPropagation());
+  host.addEventListener('pointerdown',ev=>{if(ev.target===host&&!arrastre)cerrar();}); // las esquinas del cuadro, fuera del círculo
+  document.addEventListener('pointerdown',ev=>{if(!host.hidden&&!arrastre&&!host.contains(ev.target))cerrar();},true);
 
   // Valor efectivo: el que usa el motor (estilo de la biblioteca o composición + lo editado).
   const valor=k=>estilo[k];
@@ -61,14 +64,14 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
       {tipo:'dial',key:'rimSize',etiqueta:'Borde',min:40,max:180,paso:1,a0:134,a1:160,visible:conTratamiento('rimmed'),mostrar:porcentaje},
       {tipo:'dial',key:'spotCount',etiqueta:'Manchas',min:1,max:8,paso:1,a0:134,a1:160,visible:conTratamiento('spotted'),mostrar:v=>String(v)},
       {tipo:'radial',key:'spotSize',etiqueta:'Tamaño de manchas',min:40,max:180,angulo:()=>110,r0:R0*.3,r1:R0*1.05,visible:conTratamiento('spotted'),mostrar:porcentaje},
-      {tipo:'dado',key:'pigmentSeed',etiqueta:'Variante',angulo:68,radio:205,visible:conTratamiento('spotted','patchy')},
       {tipo:'dial',key:'grain',etiqueta:'Grano',min:0,max:70,paso:1,a0:56,a1:80,mostrar:porcentaje},
       {tipo:'dial',key:'porosity',etiqueta:'Porosidad',min:0,max:100,paso:1,a0:100,a1:124,mostrar:porcentaje},
     ],
   };
 
   // Dónde van los nombres (19/11/2026, igual en las tres ventanas):
-  //  · arcos (diales y grupos de opciones): el nombre afuera, en el centro del arco; el valor adentro, junto a la perilla;
+  //  · arcos (diales y grupos de opciones): el nombre afuera, en el centro del arco y curvado con él (así nunca sale del
+  //    contenedor); el valor adentro, junto a la perilla;
   //  · líneas que salen del centro: el nombre en la punta; el valor junto a la perilla;
   //  · lo que se arrastra suelto (expansión, color medio, recorte): el nombre junto a su perilla.
   // Los pares de arcos van espejados respecto del eje vertical.
@@ -78,6 +81,15 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
   function tirador(x,y,id,parte='',activo=false){
     const g=el('g',{class:'tp-editor-tirador'+(activo?' tp-editor-tirador-activo':''),'data-control':id,'data-parte':parte});
     el('circle',{cx:x,cy:y,r:26,class:'tp-editor-toque'},g);el('circle',{cx:x,cy:y,r:11,class:'tp-editor-perilla'},g);return g;
+  }
+  // Nombre curvo: sigue la circunferencia de radio r, centrado en el ángulo a, y se lee siempre de izquierda a derecha.
+  let nArco=0;
+  function textoArco(a,r,t,clase='tp-editor-etiqueta'){
+    const abajo=Math.sin(rad(a))>.05,span=70,id='tpEdArco'+(nArco++);
+    const [x0,y0]=pt(abajo?a+span:a-span,r),[x1,y1]=pt(abajo?a-span:a+span,r);
+    el('path',{id,d:`M${x0},${y0}A${r},${r} 0 0 ${abajo?0:1} ${x1},${y1}`,fill:'none',stroke:'none'});
+    const n=el('text',{class:clase,'dominant-baseline':'middle'}),tp=document.createElementNS(ns,'textPath');
+    tp.setAttribute('href','#'+id);tp.setAttribute('startOffset','50%');tp.setAttribute('text-anchor','middle');tp.textContent=t;n.appendChild(tp);return n;
   }
   const ladoEtiqueta=a=>{const c=Math.cos(rad(a));return c>.3?'start':c<-.3?'end':'middle';};
   function boton(x,y,html,etiqueta,alTocar,presionado){
@@ -95,7 +107,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
   }
 
   function dibujarGuias(){
-    svg.replaceChildren();opciones.replaceChildren();
+    svg.replaceChildren();opciones.replaceChildren();nArco=0;
     controles[pestana].forEach((c,i)=>{
       if(c.visible&&!c.visible())return;
       const id=String(i),activo=arrastre?.id===id;
@@ -105,7 +117,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
         if(t>0)el('path',{d:arcoD(c.a0,a,RD),class:'tp-editor-lleno'});
         if(c.paso>=1&&c.max-c.min<=20)for(let n=0;n<=c.max-c.min;n++){const b=c.a0+(c.a1-c.a0)*n/(c.max-c.min),[x0,y0]=pt(b,RD-5),[x1,y1]=pt(b,RD+5);el('line',{x1:x0,y1:y0,x2:x1,y2:y1,class:'tp-editor-muesca'});}
         const toque=el('path',{d:arcoD(c.a0,c.a1,RD),class:'tp-editor-carril-toque','data-control':id});toque.dataset.parte='carril';
-        const am=(c.a0+c.a1)/2,[lx,ly]=pt(am,RD+30);texto(lx,ly,c.etiqueta.toUpperCase(),'tp-editor-etiqueta',ladoEtiqueta(am));
+        textoArco((c.a0+c.a1)/2,RD+26,c.etiqueta.toUpperCase());
         const [x,y]=pt(a,RD);tirador(x,y,id,'',activo);const [vx,vy]=pt(a,RD-26);texto(vx,vy,c.mostrar(v),'tp-editor-valor');
       }else if(c.tipo==='radial'){
         const v=valor(c.key),a=c.angulo(),t=(v-c.min)/(c.max-c.min),r=c.r0+(c.r1-c.r0)*(c.invertido?1-t:t);
@@ -129,7 +141,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
         if(arc<360)el('path',{d:arcoD(a0,a0+arc,rc),class:'tp-editor-lleno'});else el('circle',{cx:C,cy:C,r:rc,class:'tp-editor-lleno'});
         const [x0,y0]=pt(a0,rc),[x1,y1]=pt(a0+arc-(arc>=360?8:0),rc);
         tirador(x0,y0,id,'inicio',activo&&arrastre.parte==='inicio');tirador(x1,y1,id,'fin',activo&&arrastre.parte==='fin');
-        const af=a0+arc-(arc>=360?8:0),[lx,ly]=pt(af,rc+28);texto(lx,ly,arc>=360?'RECORTE':'RECORTE · '+Math.round(arc)+'°','tp-editor-etiqueta',ladoEtiqueta(af));
+        const af=a0+arc-(arc>=360?8:0);textoArco(af,rc+24,arc>=360?'RECORTE':'RECORTE · '+Math.round(arc)+'°');
       }else if(c.tipo==='medio'){
         const lineal=valor('gradient')==='linear',v=valor('midpoint'),a=lineal?valor('angle')+giroMarco():-40,r=v/100*R0,[x,y]=pt(a,r);
         if(lineal){const [p0x,p0y]=pt(a+180,R0),[p1x,p1y]=pt(a,R0);el('line',{x1:p0x,y1:p0y,x2:p1x,y2:p1y,class:'tp-editor-carril'});}
@@ -138,13 +150,13 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
       }else if(c.tipo==='miniaturas'){
         const actual=valor(c.key)??'none';
         c.opciones.forEach(([op,nombre],n)=>{const [x,y]=pt(c.a0+n*c.paso,RD);
-          boton(x,y,`<i style="background:${fondoMiniatura(op)}"></i><span>${nombre}</span>`,c.etiqueta+': '+nombre,()=>{if(op!==valor(c.key))elegir({[c.key]:op});},op===actual);});
-        const am=c.a0+(c.opciones.length-1)*c.paso/2,[lx,ly]=pt(am,RD+52);texto(lx,ly,c.etiqueta.toUpperCase(),'tp-editor-etiqueta',ladoEtiqueta(am));
-      }else if(c.tipo==='dado'){
-        const [x,y]=pt(c.angulo,c.radio??RD);
-        const b=boton(x,y,`<i class="tp-editor-dado"><img src="src/assets/tu-placa/tp-variacion.svg" alt=""></i><span>${c.etiqueta}</span>`,c.etiqueta+' del patrón: tocar para otra',()=>{elegir({[c.key]:Math.floor(Math.random()*1000)});
-          const img=opciones.querySelector('.tp-editor-dado img');if(img&&!matchMedia('(prefers-reduced-motion: reduce)').matches)img.animate([{transform:'rotate(0)'},{transform:'rotate(360deg)'}],{duration:420,easing:'cubic-bezier(.3,.9,.3,1)'});});
-        b.classList.add('tp-editor-boton-dado');
+          const conVariante=c.key==='colorTreatment'&&['spotted','patchy'].includes(op);
+          // 19/11/2026: sin botón VARIANTE; volver a tocar MANCHAS o PIGMENTOS ya elegidos genera otra variante (Paco).
+          const b=boton(x,y,`<i style="background:${fondoMiniatura(op)}"></i><span>${nombre}</span>`,c.etiqueta+': '+nombre+(conVariante&&op===actual?' (tocar de nuevo para otra variante)':''),()=>{
+            if(op!==valor(c.key))elegir({[c.key]:op});
+            else if(conVariante){elegir({pigmentSeed:Math.floor(Math.random()*1000)});const i=opciones.querySelector(`[data-op="${op}"] i`);if(i&&!matchMedia('(prefers-reduced-motion: reduce)').matches)i.animate([{transform:'rotate(0)'},{transform:'rotate(360deg)'}],{duration:420,easing:'cubic-bezier(.3,.9,.3,1)'});}
+          },op===actual);b.dataset.op=op;});
+        textoArco(c.a0+(c.opciones.length-1)*c.paso/2,RD+40,c.etiqueta.toUpperCase());
       }
     });
   }

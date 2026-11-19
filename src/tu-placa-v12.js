@@ -55,7 +55,7 @@ function prepararTuPlaca(){
   const menu=montarMenuTuPlaca($('tpMenu'),{obtener:()=>seleccionado?{...seleccionado,duplicados:hijos(seleccionado).length}:null,empezar:iniciarCambio,terminar:terminarCambio,
     quitar:()=>{iniciarCambio();quitar(seleccionado);terminarCambio();},
     variar:()=>{for(const it of elegidas()){it.seed=Math.floor(Math.random()*1000);sincronizarHijos(it);}dibujar();},
-    transformar:()=>{if(!seleccionado)return;menu.cerrar();editor.abrir();},
+    transformar:()=>{if(!seleccionado)return;menu.cerrar();editor.abrir();animarPerilla(false);},
     cambiar:(k,v)=>{
       for(const it of elegidas()){
         if(k==='duplicar'){let hs=hijos(it);while(hs.length<v&&items.length<120){const h=crear(modelo(it),it.x,it.y,it.tamano,it.id);if(!h)break;if(it.estilo){h.estilo={...it.estilo};h.grupo=it.grupo;}h.sinReacciones=it.sinReacciones;hs.push(h);}while(hs.length>v){const h=hs.pop();items.splice(items.indexOf(h),1);}}
@@ -68,7 +68,7 @@ function prepararTuPlaca(){
     base:()=>({fuente:estiloBase(seleccionado),ajustes:migrarAjustes(seleccionado.ajustes),familia:familiaDe(seleccionado),rot:seleccionado.rot,foco:seleccionado.foco,opacidad:seleccionado.opacidad??100,radio:radioDibujo(seleccionado)}),
     cambiar:parcial=>{for(const it of elegidas()){it.ajustes={...migrarAjustes(it.ajustes),...parcial};sincronizarHijos(it);}},
     empezar:iniciarCambio,terminar:()=>{dibujar();terminarCambio();},
-    alCerrar:()=>{if(seleccionado&&items.includes(seleccionado)){const c=centro();menu.abrir(c.x,c.y);}dibujar();},
+    alCerrar:()=>{animarPerilla(true);if(seleccionado&&items.includes(seleccionado)){const c=centro();menu.abrir(c.x,c.y);}dibujar();},
   });
 
   function dibujar(){
@@ -293,18 +293,35 @@ function prepararTuPlaca(){
   const arco=(a0,a1)=>{const [x0,y0]=pp(a0),[x1,y1]=pp(a1);return `M${x0},${y0}A${R_ARCO},${R_ARCO} 0 0 ${a1>a0?1:0} ${x1},${y1}`;};
   const tDe=k=>k==='zoom'?Math.max(0,Math.min(1,Math.log(zoom/50)/Math.log(4))):(giro+180)/360; // 1 = arriba
   const angDe=(k,t)=>{const A=ARCOS[k];return A.a1+(A.a0-A.a1)*t;};
+  // 19/11/2026: al abrir TRANSFORMAR, GIRAR y DENSIDAD se van con la misma transición que el arco de zoom de MUESTRAS:
+  // primero se apagan manija, remates, signos y nombres; después cada arco se recoge hacia su centro y queda un punto que se apaga.
+  let progresoPerilla=1,animPerilla=0;
+  const suaveP=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
+  function animarPerilla(mostrar){
+    cancelAnimationFrame(animPerilla);animPerilla=0;const desde=progresoPerilla,hasta=mostrar?1:0;
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches||desde===hasta){progresoPerilla=hasta;dibujarPerilla();return;}
+    const inicio=performance.now(),duracion=(mostrar?950:650)*Math.abs(hasta-desde);
+    const paso=ahora=>{const t=Math.max(0,Math.min(1,(ahora-inicio)/duracion));progresoPerilla=desde+(hasta-desde)*t;dibujarPerilla();animPerilla=t<1?requestAnimationFrame(paso):0;};
+    animPerilla=requestAnimationFrame(paso);
+  }
   function dibujarPerilla(){
+    const P=progresoPerilla;if(P<=0){perilla.innerHTML='';return;}
+    const abrir=suaveP((P-.1)/.6),detalle=suaveP((P-.7)/.1).toFixed(3),signos=suaveP((P-.8)/.2).toFixed(3),punto=(1-suaveP((P-.22)/.25)).toFixed(3),listo=P===1;
+    perilla.style.opacity=suaveP(P/.1).toFixed(3);
     const remate=a=>{const [x0,y0]=pp(a,R_ARCO-9),[x1,y1]=pp(a,R_ARCO+9);return `M${x0},${y0}L${x1},${y1}`;};
     const signo=(a,mas)=>{const [cx,cy]=pp(a),r=a*Math.PI/180,rx=Math.cos(r),ry=Math.sin(r),tx=-ry,ty=rx,L=6;
       return `M${cx-rx*L},${cy-ry*L}L${cx+rx*L},${cy+ry*L}`+(mas?`M${cx-tx*L},${cy-ty*L}L${cx+tx*L},${cy+ty*L}`:'');};
     let h='';
     for(const k of ['zoom','giro']){const A=ARCOS[k],[x,y]=pp(angDe(k,tDe(k))),[lx,ly]=pp((A.a0+A.a1)/2,R_ARCO+36); // rótulo y valor a la altura del centro del arco (Paco, 19/11)
-      h+=`<path class="tp-zoom-linea" d="${arco(Math.min(A.a0,A.a1),Math.max(A.a0,A.a1))}"/><path class="tp-zoom-linea" d="${remate(A.a0)+remate(A.a1)}"/>`;
-      if(k==='zoom'){const [mx,my]=pp(A.a0-SEP),[nx,ny]=pp(A.a1+SEP);h+=`<path class="tp-zoom-linea" d="${signo(A.a0-SEP,true)+signo(A.a1+SEP,false)}"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="1" cx="${mx}" cy="${my}" r="18"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="-1" cx="${nx}" cy="${ny}" r="18"/>`;}
+      const am=(A.a0+A.a1)/2,semi=Math.abs(A.a1-A.a0)/2*abrir,[cx0,cy0]=pp(am);
+      h+=`<g style="pointer-events:${listo?'auto':'none'}">`;
+      if(abrir>0)h+=`<path class="tp-zoom-linea" d="${arco(am-semi,am+semi)}"/>`;
+      h+=`<circle cx="${cx0}" cy="${cy0}" r="2" class="tp-zoom-manija" opacity="${punto}"/><path class="tp-zoom-linea" opacity="${detalle}" d="${remate(A.a0)+remate(A.a1)}"/>`;
+      if(k==='zoom'){const [mx,my]=pp(A.a0-SEP),[nx,ny]=pp(A.a1+SEP);h+=`<path class="tp-zoom-linea" opacity="${signos}" d="${signo(A.a0-SEP,true)+signo(A.a1+SEP,false)}"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="1" cx="${mx}" cy="${my}" r="18"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="-1" cx="${nx}" cy="${ny}" r="18"/>`;}
       const valor=k==='zoom'?Math.round(zoom)+' %':Math.round(giro)+'°';
-      h+=`<text class="tp-zoom-rotulo" x="${lx}" y="${ly-4}" text-anchor="${A.lado>0?'start':'end'}">${k==='zoom'?'DENSIDAD':'GIRAR'}</text><text class="tp-zoom-valor" x="${lx}" y="${ly+16}" text-anchor="${A.lado>0?'start':'end'}">${valor}</text>
+      h+=`<g opacity="${detalle}"><text class="tp-zoom-rotulo" x="${lx}" y="${ly-4}" text-anchor="${A.lado>0?'start':'end'}">${k==='zoom'?'DENSIDAD':'GIRAR'}</text><text class="tp-zoom-valor" x="${lx}" y="${ly+16}" text-anchor="${A.lado>0?'start':'end'}">${valor}</text>
         <path class="tp-perilla-control tp-perilla-toque" data-arco="${k}" d="${arco(Math.min(A.a0,A.a1),Math.max(A.a0,A.a1))}"/>
-        <g class="tp-perilla-control" data-arco="${k}" role="slider" tabindex="0" aria-label="${k==='zoom'?'Densidad de la composición':'Girar la placa'}" aria-valuemin="${k==='zoom'?50:-180}" aria-valuemax="${k==='zoom'?200:180}" aria-valuenow="${Math.round(k==='zoom'?zoom:giro)}" aria-valuetext="${valor}"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="8" class="tp-zoom-manija"/></g>`;}
+        <g class="tp-perilla-control" data-arco="${k}" role="slider" tabindex="0" aria-label="${k==='zoom'?'Densidad de la composición':'Girar la placa'}" aria-valuemin="${k==='zoom'?50:-180}" aria-valuemax="${k==='zoom'?200:180}" aria-valuenow="${Math.round(k==='zoom'?zoom:giro)}" aria-valuetext="${valor}"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="8" class="tp-zoom-manija"/></g></g></g>`;}
     perilla.innerHTML=h;
     if(girandoPerilla!==null)perilla.querySelector(`g[data-arco="${arcoActivo}"]`)?.focus?.({preventScroll:true});
   }
