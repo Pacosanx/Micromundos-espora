@@ -1,6 +1,6 @@
 // ───────── Bienvenida de primera visita ─────────
 // Capa breve que aparece al terminar la apertura, solo la primera vez. Textos tomados de «Micromundos» (#queEs), sin contenido nuevo.
-// Se recuerda que ya se vio (localStorage). En modo kiosco (?kiosco) se recuerda solo durante la visita (sessionStorage),
+// Las pistas junto a cada control están en src/pistas.js. Se recuerda que ya se vio (localStorage). En modo kiosco (?kiosco) se recuerda solo durante la visita (sessionStorage),
 // así cada persona nueva la ve. Para volver a verla: botón «VER LA INTRODUCCIÓN» en MICROMUNDOS. Para probarla: ?bienvenida.
 (() => {
   const CLAVE = 'micromundos-bienvenida-vista';

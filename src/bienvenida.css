@@ -31,3 +31,19 @@
 .qe-ver-bienvenida:focus-visible{outline:3px solid #92AA68;outline-offset:3px}
 
 @media(prefers-reduced-motion:reduce){#bienvenida,.bv-cartel{transition:none}}
+
+/* Pistas en el momento de actuar (src/pistas.js): un globo oscuro con flecha hacia el control. */
+#pista{position:absolute;left:0;top:0;z-index:55;display:flex;align-items:center;gap:4px;max-width:380px;padding:12px 6px 12px 20px;border-radius:18px;
+  background:#0d0f17;color:#f2f0e8;filter:none;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 8px 28px rgba(13,15,23,.18)}
+#pista[hidden]{display:none}
+#pista.visible{opacity:1}
+#pista p{margin:0;font:400 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif}
+#pista button{all:unset;flex:0 0 auto;display:grid;place-items:center;width:var(--area-tactil);height:var(--area-tactil);margin:-8px 0;border-radius:50%;
+  font:400 28px/1 Arimo,Arial,sans-serif;cursor:pointer;pointer-events:auto}
+#pista button:focus-visible{outline:2px solid #92AA68}
+#pista::before{content:"";position:absolute;width:16px;height:16px;background:#0d0f17;transform:rotate(45deg)}
+#pista[data-donde="abajo"]::before{top:-7px;left:calc(var(--flecha-x) - 8px)}
+#pista[data-donde="arriba"]::before{bottom:-7px;left:calc(var(--flecha-x) - 8px)}
+#pista[data-donde="izquierda"]::before{right:-7px;top:calc(var(--flecha-y) - 8px)}
+#pista[data-donde="derecha"]::before{left:-7px;top:calc(var(--flecha-y) - 8px)}
+@media(prefers-reduced-motion:reduce){#pista{transition:none}}
