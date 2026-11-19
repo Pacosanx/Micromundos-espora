@@ -55,6 +55,14 @@ body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;
 @keyframes bvDedo{0%,15%{transform:translateX(0);opacity:0}25%{opacity:1}70%{transform:translateX(56px);opacity:1}85%,100%{transform:translateX(56px);opacity:0}}
 @media(prefers-reduced-motion:reduce){.pista-ayuda{transition:none}.bv-gesto-dedo::after{animation:none;opacity:1}}
 /* Línea libre de las pistas (src/pistas.js): trazo fino de largo variable y un punto sobre el control. */
+/* 19/11/2026: el cartelito entero flota (como los carteles) y se saca arrastrándolo; ya no lleva ×. */
+#pista.visible{pointer-events:auto;cursor:grab;touch-action:none;animation:pistaFlota 7s ease-in-out infinite}
+#pista .flota{animation:none}
+#pista.arrastrando{cursor:grabbing;animation-play-state:paused}
+#pista.saliendo{opacity:0!important;filter:blur(14px)!important;transition:opacity .3s,filter .3s}
+#pista .fi{padding-right:18px}
+@keyframes pistaFlota{0%,100%{translate:0 0}33%{translate:2px -5px}66%{translate:-2px 3px}}
+@media(prefers-reduced-motion:reduce){#pista.visible{animation:none}}
 #pistaLinea{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:54;opacity:0;transition:opacity .3s}
 #pistaLinea.visible{opacity:1}
 #pistaLinea line{stroke:rgb(19 21 27 / 45%);stroke-width:1}

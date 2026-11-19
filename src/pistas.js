@@ -1,6 +1,6 @@
 // ───────── Pistas en el momento de actuar ─────────
 // Un cartelito por vez, junto al control, con una sola acción y un verbo concreto. Se retira cuando la persona hace
-// la acción o lo cierra con ×, y no vuelve a aparecer (localStorage; en ?kiosco, solo durante la visita).
+// la acción o lo arrastra para sacarlo (19/11/2026: flota como los carteles y no lleva ×), y no vuelve a aparecer (localStorage; en ?kiosco, solo durante la visita).
 // Esperan a que se cierre la bienvenida (y no aparecen en el instante entre la apertura y el cartel). ?pistas las vuelve a mostrar todas.
 (() => {
   const CLAVE = 'micromundos-pistas-vistas';
@@ -108,7 +108,7 @@
   globo.className = 'cartel cartel-neutro pista-ayuda'; // mismo material que los carteles, sin color de universo
   globo.setAttribute('role', 'status');
   globo.hidden = true;
-  globo.innerHTML = '<div class="vidrio"></div><div class="flota"><div class="grano"></div><div class="fi"><div class="co"><p></p><button type="button" aria-label="Cerrar pista">×</button></div></div></div>';
+  globo.innerHTML = '<div class="vidrio"></div><div class="flota"><div class="grano"></div><div class="fi"><div class="co"><p></p></div></div></div>';
   pantalla.appendChild(globo);
   // Línea libre entre el cartelito y lo que señala (19/11/2026): un trazo fino de largo variable, en cualquier dirección,
   // que termina en un punto sobre el borde del control. Reemplaza al trazo corto que siempre salía hacia arriba.
@@ -121,7 +121,28 @@
 
   const terminar = id => { hechas.add(id); guardar(); ocultar(); pausa = performance.now() + 900; };
   const ocultar = () => { actual = null; globo.classList.remove('visible'); globo.hidden = true; linea.classList.remove('visible'); };
-  globo.querySelector('button').addEventListener('click', ev => { ev.stopPropagation(); if (actual) terminar(actual.id); });
+  // Arrastrar para sacarlo: se mueve con el dedo, se desenfoca y se apaga a medida que se aleja; si se suelta lejos (más de
+  // 70 px), se va y la pista queda vista. Si se suelta cerca, vuelve a su lugar.
+  let agarre = null;
+  const escala = () => { const s = pantalla.getBoundingClientRect(); return s.width / (pantalla.offsetWidth || 1920); };
+  globo.addEventListener('pointerdown', ev => {
+    if (!actual || ev.button > 0) return; ev.preventDefault(); ev.stopPropagation();
+    agarre = { id: ev.pointerId, px: ev.clientX, py: ev.clientY, q: globo._q || { x: 0, y: 0 }, d: 0 };
+    globo.setPointerCapture?.(ev.pointerId); globo.classList.add('arrastrando'); linea.classList.remove('visible');
+  });
+  globo.addEventListener('pointermove', ev => {
+    if (!agarre || ev.pointerId !== agarre.id) return;
+    const k = escala(), dx = (ev.clientX - agarre.px) / k, dy = (ev.clientY - agarre.py) / k; agarre.d = Math.hypot(dx, dy);
+    globo.style.transform = `translate(${Math.round(agarre.q.x + dx)}px,${Math.round(agarre.q.y + dy)}px)`;
+    const f = Math.min(1, agarre.d / 160); globo.style.filter = `blur(${(f * 6).toFixed(2)}px)`; globo.style.opacity = (1 - f * .6).toFixed(3);
+  });
+  const soltar = ev => {
+    if (!agarre || ev.pointerId !== agarre.id) return;
+    const lejos = agarre.d > 70; agarre = null; globo.classList.remove('arrastrando');
+    if (lejos && actual) { globo.classList.add('saliendo'); const id = actual.id; setTimeout(() => { globo.classList.remove('saliendo'); globo.style.filter = ''; globo.style.opacity = ''; terminar(id); }, 320); }
+    else { globo.style.filter = ''; globo.style.opacity = ''; if (actual) linea.classList.add('visible'); }
+  };
+  globo.addEventListener('pointerup', soltar); globo.addEventListener('pointercancel', soltar);
 
   const ubicar = (p, el) => {
     // La escena puede ser más ancha o más alta que 1920 × 1100 (pantallas de otra proporción): se mide con su tamaño real.
@@ -147,7 +168,8 @@
     const posibles = giros.map(posicion).filter(cabe);
     let q = posibles.find(q => !tapa(q)) || posibles[0];
     if (!q) { q = posicion(giros[0]); q.x = Math.min(Math.max(q.x, M), W - M - g.w); q.y = Math.min(Math.max(q.y, M), H - M - g.h); }
-    globo.dataset.donde = 'libre';
+    globo.dataset.donde = 'libre'; globo._q = q;
+    if (agarre) return; // mientras se arrastra, manda el dedo
     globo.style.transform = `translate(${Math.round(q.x)}px,${Math.round(q.y)}px)`;
     // Línea: del borde del cartelito al borde del control (punto), sobre la recta entre los dos centros.
     const gx = q.x + g.w / 2, gy = q.y + g.h / 2, vx = cx - gx, vy = cy - gy, d = Math.hypot(vx, vy) || 1, ux = vx / d, uy = vy / d;
