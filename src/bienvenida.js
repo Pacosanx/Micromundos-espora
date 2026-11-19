@@ -53,7 +53,7 @@
       if (tit && txt) fila(tit, esc(txt));
     }
     cuerpo.after(datos);
-    C().universoCartel(el, 'BL');
+    C().universoCartel(el, 'BLM'); // 19/11/2026 (Paco): el contenedor con los tres colores del proyecto (bacterias, levaduras y mohos)
     ancla.appendChild(el);
     const w = el.offsetWidth, h = el.offsetHeight, y0 = Math.round(550 - h / 2 - 40);
     el.style.transform = `translate(${Math.round(960 - w / 2)}px,${y0}px)`;
