@@ -26,8 +26,8 @@
 .tp-paleta-colonia:focus-visible,.tp-biblioteca__tab:focus-visible,.tp-biblioteca__mode:focus-visible { outline:2px solid #0d0f17; outline-offset:-3px; }
 .tp-biblioteca__state:last-child { filter:blur(calc(var(--tp-last-fade,0) * 1px)); }
 /* Cartelito de ayuda de TU PLACA (19/11/2026): material de los carteles, neutro, con un punto y un trazo hacia lo que explica. */
-.cartel-neutro{--cartel-fondo:rgb(205 198 186 / 42%);--cartel-noise-opacity:.35}
-#tuPlaca .tp-ayuda{--cartel-fondo:rgb(226 221 210 / 78%);position:absolute;z-index:40;opacity:0;translate:0 6px;transition:opacity .3s,translate .3s;pointer-events:none;color:#13151b}
+.cartel-neutro{--cartel-fondo:rgb(240 236 226 / 62%);--cartel-noise-opacity:.14}
+#tuPlaca .tp-ayuda{position:absolute;z-index:40;opacity:0;translate:0 6px;transition:opacity .3s,translate .3s;pointer-events:none;color:#13151b}
 #tuPlaca .tp-ayuda.visible{opacity:1;translate:0 0}
 .tp-ayuda .fi{padding:14px 20px 14px 18px;border-radius:16px;max-height:none;overflow:visible}
 .tp-ayuda .vidrio,.tp-ayuda .grano{border-radius:16px}
@@ -47,3 +47,7 @@
 #tuPlaca #tpBiblioteca .tp-biblioteca__tabs{top:52px}
 #tuPlaca #tpBiblioteca .tp-biblioteca__content{top:139px;height:500px}
 #tuPlaca #tpBiblioteca .tp-biblioteca__viewport{height:500px}
+/* Solo las colonias (19/11/2026): sin la columna de nombres; la grilla arranca en el margen del título. */
+#tuPlaca #tpBiblioteca .tp-biblioteca__content{grid-template-columns:1fr}
+#tuPlaca #tpBiblioteca .tp-biblioteca__labels{display:none}
+#tuPlaca #tpBiblioteca .tp-biblioteca__track{padding-left:0;margin-left:-12px}
