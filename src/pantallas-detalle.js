@@ -644,6 +644,9 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     const aviso=nodo('500:7158').parentElement;aviso.classList.add('ficha-aviso-desliza');
     const flecha=aviso.querySelector('img');if(flecha){flecha.style.filter='brightness(0)';let p=flecha.parentElement;while(p&&p!==aviso){p.style.mixBlendMode='normal';p=p.parentElement;}}
     const miniatura=nodo('500:7166');miniatura.replaceChildren();const cv=document.createElement('canvas');cv.width=cv.height=116;cv.style.width=cv.style.height='100%';cv.getContext('2d').drawImage(muestra.el.querySelector('canvas'),0,0,116,116);miniatura.appendChild(cv);
+    // 19/11/2026 (Paco): la colonia va a la izquierda de YOGUR NATURAL, centrada en la altura de las mayúsculas, y el título
+    // se corre a la derecha para darle lugar. La caja mide 116 px y el círculo que se ve, unos 38: su borde izquierdo queda en el margen (39 px).
+    {const titulo=nodo('500:7156');if(titulo){Object.assign(miniatura.style,{left:'0px',top:'805px'});titulo.style.marginLeft='70px';}}
     let siguienteEspecie=0;
     const compuesto=(img,ev,tipo)=>{
       let indice;
