@@ -787,7 +787,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   function prepararLupa(raiz,alTocar){
     const placa=raiz.querySelector('.ficha-placa');if(!placa)return;
     const lupa=document.createElement('div');lupa.className='detalle-lupa';lupa.hidden=true;placa.appendChild(lupa);
-    placa.tabIndex=0;placa.setAttribute('role','button');placa.setAttribute('aria-label','Mantener presionado para ver la vista microscópica');placa.setAttribute('aria-expanded','false');
+    placa.tabIndex=0;placa.dataset.gestoPropio='';placa.setAttribute('role','button');placa.setAttribute('aria-label','Mantener presionado para ver la vista microscópica');placa.setAttribute('aria-expanded','false');
     let espera=0,presionando=false,desmontar=null,inicioToque=null,arrastrando=false,animacion=0;
     // 19/11/2026 (Paco): el círculo sigue al dedo con un poco de retardo y la imagen de adentro se mueve el doble de rápido;
     // el círculo no sale de la placa (su centro queda en el disco de la placa menos el radio de la lente, 214,5 px).
