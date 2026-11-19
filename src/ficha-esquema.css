@@ -7,3 +7,8 @@
 .fe-especie{position:absolute;text-align:center;font:italic 400 17.33px/22px Arimo,Arial,sans-serif}
 .fe-ayudan{position:absolute;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .fe-ayudan p{margin:0;font:400 17.33px/24px Arimo,Arial,sans-serif}
+.fe-paso{position:absolute;display:flex;flex-direction:column;align-items:center;gap:6px}
+.fe-num{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgb(13 15 23 / 45%);font:400 var(--t-etiqueta)/1 Arimo,Arial,sans-serif}
+.fe-que{font:400 17.33px/22px Arimo,Arial,sans-serif}
+.fe-rapidez{position:absolute;display:block}
+.fe-barra{position:absolute;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.7}
