@@ -5,6 +5,8 @@
 .fe-rot{font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em;opacity:.65}
 .fe-val{font:400 17.33px/22px Arimo,Arial,sans-serif}
 .fe-especie{position:absolute;text-align:center;font:italic 400 17.33px/22px Arimo,Arial,sans-serif}
-.fe-ayudan{position:absolute;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
-.fe-ayudan p{margin:0;font:400 17.33px/24px Arimo,Arial,sans-serif}
+/* «Se ayudan» igual que «Qué es» (debajo de YOGUR NATURAL): rótulo 14,67 px en mayúscula al 70 % y texto 17,33 / 24 px. */
+.fe-ayudan{position:absolute;display:flex;flex-direction:column;align-items:flex-start;gap:22px;text-align:left}
+.fe-ayudan .fe-rot{letter-spacing:normal;opacity:.7}
+.fe-ayudan p{margin:0;font:400 17.33px/24.26px Arimo,Arial,sans-serif;color:#0d0f17}
 .fe-verbo{position:absolute;text-align:center;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em;opacity:.7}

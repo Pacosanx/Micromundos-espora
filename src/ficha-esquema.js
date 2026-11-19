@@ -64,7 +64,7 @@
     const rotulo = (x, val, ancho = 150) => { const d = document.createElement('div'); d.className = 'fe-nodo'; d.style.cssText = `left:${x - ancho / 2}px;top:${cy}px;width:${ancho}px;translate:0 -50%`; d.innerHTML = `<span class="fe-val"></span>`; d.children[0].textContent = val; caja.appendChild(d); };
 
     // Posiciones en la grilla de 1920: COME | especies | PRODUCE | RESULTADO
-    const xCome = 140, xPar = 600, sep = especies.length > 1 ? 92 : 0, xProd = 1090, xRes = 1470, R = 84, RE = 96;
+    const xCome = 140, xPar = 600, sep = especies.length > 1 ? 108 : 0, xProd = 1090, xRes = 1470, R = 84, RE = 96;
     circulo(xCome, R); rotulo(xCome, valCome);
     especies.slice(0, 2).forEach((e, i) => {
       const x = xPar + (i ? sep : -sep);
@@ -81,8 +81,10 @@
     circulo(xRes, R); rotulo(xRes, valRes);
     // «Se ayudan» entre las dos especies
     if (rotAyuda) {
-      const d = document.createElement('div'); d.className = 'fe-ayudan'; d.style.cssText = `left:${xPar - 200}px;top:${cy + RE + 44}px;width:400px`;
-      d.innerHTML = '<span class="fe-rot"></span><p></p>'; d.children[0].textContent = (especies.length > 1 ? '⇄  ' : '') + rotAyuda; d.children[1].textContent = parrafo.join(' ');
+      const d = document.createElement('div'); d.className = 'fe-ayudan'; // Como el párrafo «Qué es» de la ficha: a la izquierda (x = 43), arriba de la sección, 281 px de ancho.
+      const tit = lienzo.querySelector('[data-node-id="500:7039"]'), yTit = tit ? rel(tit).y - arriba : cy - RE - 220;
+      d.style.cssText = `left:43px;top:${yTit + 80}px;width:281px`;
+      d.innerHTML = '<span class="fe-rot"></span><p></p>'; d.children[0].textContent = rotAyuda; d.children[1].textContent = parrafo.join(' ');
       caja.appendChild(d);
     }
     cont.appendChild(caja);
