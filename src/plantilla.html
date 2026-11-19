@@ -94,7 +94,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #guiaBoton .guia-accion{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);letter-spacing:.08em;text-transform:uppercase;opacity:.7;white-space:nowrap}
 #guiaBoton .guia-accion::after{content:'↑';display:inline-block;margin-left:6px;transition:rotate .3s}
 #leyenda.cerrada #guiaBoton .guia-accion::after{rotate:180deg}
-#guiaBoton:hover .guia-accion,#guiaBoton:focus-visible .guia-accion{opacity:1}
+#guiaBoton:active .guia-accion,#guiaBoton:focus-visible .guia-accion{opacity:1}
 #guiaBoton:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 #guiaResumen{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#fff;mix-blend-mode:difference;opacity:.7;margin-top:-16px}
 #guiaResumen[hidden]{display:none}
