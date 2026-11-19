@@ -104,9 +104,15 @@
 
 #tpBiblioteca .tp-biblioteca__labels{grid-template-rows:none;grid-auto-rows:100px;align-content:start}
 
-/* Aviso al generar sobre una placa armada (propuesta, rama tuplaca-generar). */
-.tp-aviso-generar{position:absolute;left:40px;top:858px;z-index:6;display:flex;align-items:center;gap:20px;padding:12px 12px 12px 20px;border-radius:18px;background:#0d0f17;color:#f2f0e8;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s}
-.tp-aviso-generar[hidden]{display:none}.tp-aviso-generar.visible{opacity:1;transform:none}
+/* Aviso al generar sobre una placa armada (propuesta, rama tuplaca-generar).
+   Va sobre la propia placa, abajo y centrado: es lo que cambió. Material de vidrio claro como los carteles,
+   texto de cuerpo y la acción como los textos-botón del sistema (mayúscula 700 con la flecha de los carteles, girada hacia atrás). */
+.tp-aviso-generar{position:absolute;left:calc(50% + 360.4px);top:812px;z-index:6;display:flex;flex-direction:column;align-items:center;gap:4px;max-width:520px;padding:16px 28px 6px;border-radius:24px;
+  background:linear-gradient(90deg,rgb(229 125 171 / 22%),rgb(242 199 94 / 22%)),rgb(242 240 232 / 55%);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  color:#13151b;text-align:center;opacity:0;translate:-50% 8px;transition:opacity .3s,translate .3s}
+.tp-aviso-generar[hidden]{display:none}.tp-aviso-generar.visible{opacity:1;translate:-50% 0}
 .tp-aviso-generar p{margin:0;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif}
-.tp-aviso-generar button{all:unset;min-height:var(--area-tactil);padding:0 20px;border-radius:999px;background:#f2f0e8;color:#0d0f17;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;cursor:pointer}
+.tp-aviso-generar button{all:unset;display:inline-flex;align-items:center;gap:12px;min-height:var(--area-tactil);font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;text-transform:uppercase;cursor:pointer}
+.tp-aviso-generar button img{flex:none;transform:rotate(180deg);filter:brightness(0);opacity:.92}
+.tp-aviso-generar button:focus-visible{outline:2px solid #13151b;outline-offset:4px;border-radius:8px}
 @media(prefers-reduced-motion:reduce){.tp-aviso-generar{transition:none}}
