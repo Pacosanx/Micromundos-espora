@@ -113,3 +113,8 @@
 /* Jerarquía (19/11/2026): GENERAR COMPOSICIÓN más grande que su aclaración (una regla general de TU PLACA, #tuPlaca p, dejaba la aclaración en 20 px). */
 #tuPlaca .tp-generar{font:700 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif;top:963px} /* el bloque apoya en la misma línea inferior que DESHACER y GUARDAR PLACA */
 #tuPlaca p.tp-generar-ayuda{top:997px;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif}
+/* Zoom de la placa (19/11/2026): el mismo dibujo que el slider de zoom de MUESTRAS, en tinta oscura sobre el papel. */
+.tp-zoom-linea{fill:none;stroke:#0d0f17;stroke-width:2;stroke-linecap:round}
+.tp-zoom-manija{fill:#0d0f17}
+.tp-zoom-paso{fill:transparent;pointer-events:all;cursor:pointer}
+.tp-perilla g:focus-visible .tp-zoom-manija{stroke:#0d0f17;stroke-width:6;stroke-opacity:.25}
