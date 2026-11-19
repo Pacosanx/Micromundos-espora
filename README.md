@@ -53,6 +53,9 @@ La colección es ficticia y las reacciones de TU PLACA son interpretaciones grá
 
 Para instalar lo de Node: instalar Node.js desde nodejs.org, abrir PowerShell en esta carpeta y correr `npm install` una vez. Las pruebas de Node no sustituyen la revisión visual: siempre abrir `placa.html` y mirar las pantallas tocadas.
 
+En una carpeta de rama (`git worktree`, por ejemplo `placa-kiosco`) no hace falta reinstalar: se usa `linkedom` de la carpeta principal con `$env:NODE_PATH = "..\placa
+ode_modules"` antes de correr `node`.
+
 ## Cómo publicarlo
 
 1. Rearmar `placa.html` con `armar.bat` y comprobarlo con `verificar-armado.bat`.
