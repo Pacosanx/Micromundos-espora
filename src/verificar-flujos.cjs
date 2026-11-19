@@ -107,7 +107,7 @@ async function avanzar(ms=600){for(let t=0;t<ms;t+=20){reloj+=20;const lote=[...
       const especie=$('detalleLienzo').querySelector('[data-node-id="500:7214"]');click(especie);await avanzar();const cartel=[...document.querySelectorAll('.cartel-ficha-especie')].find(el=>el.querySelector('.nom').textContent==='Streptococcus thermophilus');assert(cartel,'Falta el cartel de la ficha');assert.equal(cartel.querySelector('.cod').textContent,'ST');const leer=cartel.querySelector('.masCartel');click(leer);assert(!cartel.querySelector('.detalleCartel').hidden);click(leer);assert(cartel.querySelector('.detalleCartel').hidden);
       assert($('detalleLienzo').querySelector('.detalle-galeria button'),'Falta galería de relaciones reales');
       const tarjeta=$('detalleLienzo').querySelector('.ficha-galeria__tarjeta[data-ciclo="1"]'),codigoRelacionado=tarjeta.querySelector('.ficha-galeria__codigo').textContent;
-      assert.equal(tarjeta.querySelector('button').textContent,'VER FICHA DE MUESTRA ↗');click(tarjeta.querySelector('button'));await avanzar();
+      assert.equal(tarjeta.querySelector('button').textContent,'VER FICHA DE MUESTRA');assert(tarjeta.querySelector('button img'),'Falta la flecha de los carteles');click(tarjeta.querySelector('button'));await avanzar();
       assert($('detalleLienzo').querySelector('.detalle-ficha-archivo'),'La tarjeta vuelve al esquema en vez de abrir una ficha');
       assert($('detalleLienzo').textContent.includes(codigoRelacionado),'La ficha corresponde a otra muestra');
       assert(!$('detalleLienzo').textContent.includes('Heladera de una casa'),'La ficha hereda textos del yogur');
