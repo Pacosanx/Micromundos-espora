@@ -3,29 +3,31 @@
    fondos, elipses, el vidrio y la textura de los carteles, la regla de color de la cabecera, el logotipo de espora
    ni los velos decorativos de TU PLACA.
    Esta hoja se carga al final (build.ps1) y usa !important porque varias capas traen el desenfoque en línea
-   (diseños de Figma, vinculos.js y el desvanecido del listado en app.js). Para devolver un desenfoque, quitar su selector de acá. */
+   (diseños de Figma, vinculos.js y el desvanecido del listado en app.js). Para devolver un desenfoque, quitar su selector de acá.
+   19/11/2026: el desenfoque de textos y controles ya no es «none» sino un nivel regulable (--nivel-blur-texto y
+   --nivel-blur-controles, en 0 px por defecto; ver src/ajustes.js y src/niveles-blur-grano.css). */
 
 /* Escenario: .3 px sobre todo el lienzo (incluye navegación, años y rótulos). */
 #stage{filter:none!important}
 
 /* Cabecera y navegación */
 #cabecera .fila,#cabecera #navegacionPrincipal button,.g-nav-copia,#seccion,#alternarListado,
-#titulo,.vista{filter:none!important}
+#titulo,.vista{filter:blur(var(--nivel-blur-texto,0px))!important}
 #buscador svg{filter:brightness(0)!important}
 
 /* MUESTRAS: guía, listado y estados inactivos (se conserva la opacidad) */
-#leyenda .rotulo,#leyenda .item span,#leyenda .tam span,#guiaBoton,#guiaResumen,.guia-uso{filter:none!important}
-#lista .fila,#lista .filete,#listaCab span{filter:none!important}
+#leyenda .rotulo,#leyenda .item span,#leyenda .tam span,#guiaBoton,#guiaResumen,.guia-uso{filter:blur(var(--nivel-blur-texto,0px))!important}
+#lista .fila,#lista .filete,#listaCab span{filter:blur(var(--nivel-blur-texto,0px))!important}
 
 /* Carteles (muestra, especie, glosario, célula): texto nítido; el vidrio sigue igual */
-:is(#ficha,.cartel-glosario,.cartel-especie,.cartel-celula) :is(.nom,.cod,.definicionGlosario,.masCartel){filter:none!important}
+:is(#ficha,.cartel-glosario,.cartel-especie,.cartel-celula) :is(.nom,.cod,.definicionGlosario,.masCartel){filter:blur(var(--nivel-blur-texto,0px))!important}
 
 /* Apertura: solo la invitación */
-.apertura-invitacion{filter:none!important}
+.apertura-invitacion{filter:blur(var(--nivel-blur-texto,0px))!important}
 
 /* GLOSARIO y universos */
-.g-volver,.g-bajar,.g-colonia .g-rotulo,.g-chips i,.universo-titulo,#tuPlaca h1{filter:none!important}
-.detalle-composicion p,.detalle-composicion [aria-label="Continuar hacia abajo"],.ficha-aviso-desliza{filter:none!important}
+.g-volver,.g-bajar,.g-colonia .g-rotulo,.g-chips i,.universo-titulo,#tuPlaca h1{filter:blur(var(--nivel-blur-texto,0px))!important}
+.detalle-composicion p,.detalle-composicion [aria-label="Continuar hacia abajo"],.ficha-aviso-desliza{filter:blur(var(--nivel-blur-texto,0px))!important}
 
 /* TU PLACA: rótulos, botones, pestañas, perilla e indicaciones */
 .tp-indicacion,.tp-check__caja,#tpBiblioteca .tp-biblioteca__top p,.tp-biblioteca__top h2,
@@ -36,7 +38,7 @@
 #tpReacciones .tp-encuentros-titulo,.tp-encuentros-cabeza,.tp-encuentros-cabeza i,.tp-encuentros-celda svg,
 .tp-perilla-carril,.tp-perilla-lleno,.tp-perilla-titulo,.tp-estructuras svg,.tp-estructuras span,
 #tuPlaca .tp-editor-pestanas button,#tuPlaca .tp-editor-pestanas button[aria-selected="true"]::after,#tuPlaca .tp-editor-listo,
-#tuPlaca .tp-pie h1,.tp-pie button{filter:none!important}
+#tuPlaca .tp-pie h1,.tp-pie button{filter:blur(var(--nivel-blur-controles,0px))!important}
 
 /* Contraste (medido el 18/11 sobre el fondo crema #F2F0E8; ver CONTRASTE en REVISION_RAMAS).
    Los estados inactivos siguen viéndose apagados, pero se leen. Las indicaciones llegan a 4,5:1. */
