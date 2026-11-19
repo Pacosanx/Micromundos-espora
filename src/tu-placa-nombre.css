@@ -25,6 +25,8 @@
 .tpn-linea{left:calc(50% - 307px);top:447px;width:614px;height:10px}
 #tpNombre .tpn-indicacion{top:999px;font:400 24px/24px Arimo,Arial,sans-serif}
 .tpn-indicacion[hidden]{display:none}
+#tpNombre:has(.tpn-omitir:not([hidden])) .tpn-aviso,#tpNombre:has(.tpn-indicacion[hidden]) .tpn-aviso{display:none}
+#tpNombre .tpn-aviso{position:absolute;left:50%;translate:-50% 0;top:1044px;margin:0;white-space:nowrap;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;color:#0d0f17;opacity:.7}
 /* El micrófono: la superficie redonda de los botones del sistema (vidrio con borde desenfocado) y un glifo sintético */
 .tpn-mic{all:unset;left:calc(50% - 116.5px);top:655px;width:233px;height:233px;border-radius:50%;cursor:pointer;-webkit-touch-callout:none;transition:scale .2s;display:grid;place-items:center}
 #tpNombre .tpn-mic[hidden]{display:none}

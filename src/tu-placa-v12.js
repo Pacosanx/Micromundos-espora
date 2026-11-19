@@ -393,9 +393,12 @@ function prepararTuPlaca(){
   }
   // Epígrafe de las guardadas en este equipo: nombre, día y hora (19/11/2026, Paco); si no hay nombre, «Guardada el …».
   const hora=(f,n)=>{const d=new Date(f),dd=v=>String(v).padStart(2,'0'),cuando=dd(d.getDate())+'/'+dd(d.getMonth()+1)+' · '+dd(d.getHours())+':'+dd(d.getMinutes());return n?n.toUpperCase()+' · '+cuando:'Guardada el '+cuando;};
+  // 19/11/2026: las compartidas vienen de Supabase (window.MicromundosPlacas, tu-placa-nombre.js). Mientras llegan, o si no hay
+  // conexión, se muestran las guardadas en este equipo.
+  let compartidas=null;
   function armarOtras(){
     const ol=$('tpOtras').querySelector('.tp-otras-grilla');ol.replaceChildren();
-    const propias=leerPropias().slice().reverse(),pendientes=[];
+    const propias=(compartidas||leerPropias().slice().reverse()).slice(0,TOTAL_OTRAS),pendientes=[];
     propias.forEach(p=>{const li=document.createElement('li');li.className='tp-otras-propia';const im=document.createElement('img');im.src=p.img;im.alt='Placa guardada en esta pantalla';
       const t=document.createElement('p');t.textContent=hora(p.fecha,p.nombre);li.append(im,t);ol.appendChild(li);});
     // 19/11/2026 (Paco): las de otras personas llevan nombre y una hora de hoy (al azar, fija durante el día y anterior a ahora),
@@ -407,7 +410,8 @@ function prepararTuPlaca(){
     const siguiente=()=>{const p=pendientes.shift();if(!p||$('tpOtras').hidden)return;const [n,caja]=p;let cv=simuladas.get(n);if(!cv){cv=placaSimulada(n,400);simuladas.set(n,cv);}caja.appendChild(cv);setTimeout(siguiente,30);};
     setTimeout(siguiente,60);
   }
-  function abrirOtras(){$('tpVistaRecuerdo').hidden=true;$('tpOtras').hidden=false;armarOtras();$('tpOtrasVolver').focus({preventScroll:true});}
+  function abrirOtras(){$('tpVistaRecuerdo').hidden=true;$('tpOtras').hidden=false;armarOtras();$('tpOtrasVolver').focus({preventScroll:true});
+    window.MicromundosPlacas?.leer(TOTAL_OTRAS).then(l=>{if(!l||$('tpOtras').hidden)return;const antes=JSON.stringify(compartidas?.map(p=>p.fecha));compartidas=l;if(JSON.stringify(l.map(p=>p.fecha))!==antes)armarOtras();});}
   function cerrarOtras(){if($('tpOtras').hidden)return;$('tpOtras').hidden=true;cerrarRecuerdo();}
   $('tpVerOtras').addEventListener('click',abrirOtras);$('tpOtrasVolver').addEventListener('click',cerrarOtras);
   pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('tpOtras').hidden)cerrarOtras();});

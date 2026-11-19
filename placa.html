@@ -49792,9 +49792,12 @@ function prepararTuPlaca(){
   }
   // Epígrafe de las guardadas en este equipo: nombre, día y hora (19/11/2026, Paco); si no hay nombre, «Guardada el …».
   const hora=(f,n)=>{const d=new Date(f),dd=v=>String(v).padStart(2,'0'),cuando=dd(d.getDate())+'/'+dd(d.getMonth()+1)+' · '+dd(d.getHours())+':'+dd(d.getMinutes());return n?n.toUpperCase()+' · '+cuando:'Guardada el '+cuando;};
+  // 19/11/2026: las compartidas vienen de Supabase (window.MicromundosPlacas, tu-placa-nombre.js). Mientras llegan, o si no hay
+  // conexión, se muestran las guardadas en este equipo.
+  let compartidas=null;
   function armarOtras(){
     const ol=$('tpOtras').querySelector('.tp-otras-grilla');ol.replaceChildren();
-    const propias=leerPropias().slice().reverse(),pendientes=[];
+    const propias=(compartidas||leerPropias().slice().reverse()).slice(0,TOTAL_OTRAS),pendientes=[];
     propias.forEach(p=>{const li=document.createElement('li');li.className='tp-otras-propia';const im=document.createElement('img');im.src=p.img;im.alt='Placa guardada en esta pantalla';
       const t=document.createElement('p');t.textContent=hora(p.fecha,p.nombre);li.append(im,t);ol.appendChild(li);});
     // 19/11/2026 (Paco): las de otras personas llevan nombre y una hora de hoy (al azar, fija durante el día y anterior a ahora),
@@ -49806,7 +49809,8 @@ function prepararTuPlaca(){
     const siguiente=()=>{const p=pendientes.shift();if(!p||$('tpOtras').hidden)return;const [n,caja]=p;let cv=simuladas.get(n);if(!cv){cv=placaSimulada(n,400);simuladas.set(n,cv);}caja.appendChild(cv);setTimeout(siguiente,30);};
     setTimeout(siguiente,60);
   }
-  function abrirOtras(){$('tpVistaRecuerdo').hidden=true;$('tpOtras').hidden=false;armarOtras();$('tpOtrasVolver').focus({preventScroll:true});}
+  function abrirOtras(){$('tpVistaRecuerdo').hidden=true;$('tpOtras').hidden=false;armarOtras();$('tpOtrasVolver').focus({preventScroll:true});
+    window.MicromundosPlacas?.leer(TOTAL_OTRAS).then(l=>{if(!l||$('tpOtras').hidden)return;const antes=JSON.stringify(compartidas?.map(p=>p.fecha));compartidas=l;if(JSON.stringify(l.map(p=>p.fecha))!==antes)armarOtras();});}
   function cerrarOtras(){if($('tpOtras').hidden)return;$('tpOtras').hidden=true;cerrarRecuerdo();}
   $('tpVerOtras').addEventListener('click',abrirOtras);$('tpOtrasVolver').addEventListener('click',cerrarOtras);
   pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('tpOtras').hidden)cerrarOtras();});
@@ -51351,6 +51355,8 @@ body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;
 .tpn-linea{left:calc(50% - 307px);top:447px;width:614px;height:10px}
 #tpNombre .tpn-indicacion{top:999px;font:400 24px/24px Arimo,Arial,sans-serif}
 .tpn-indicacion[hidden]{display:none}
+#tpNombre:has(.tpn-omitir:not([hidden])) .tpn-aviso,#tpNombre:has(.tpn-indicacion[hidden]) .tpn-aviso{display:none}
+#tpNombre .tpn-aviso{position:absolute;left:50%;translate:-50% 0;top:1044px;margin:0;white-space:nowrap;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;color:#0d0f17;opacity:.7}
 /* El micrófono: la superficie redonda de los botones del sistema (vidrio con borde desenfocado) y un glifo sintético */
 .tpn-mic{all:unset;left:calc(50% - 116.5px);top:655px;width:233px;height:233px;border-radius:50%;cursor:pointer;-webkit-touch-callout:none;transition:scale .2s;display:grid;place-items:center}
 #tpNombre .tpn-mic[hidden]{display:none}
@@ -51412,6 +51418,26 @@ body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;
       <path d="M27 50a21 21 0 0 0 42 0" fill="none" stroke="#13151b" stroke-width="2" stroke-linecap="round"/>
       <path d="M48 71v8" stroke="#13151b" stroke-width="2" stroke-linecap="round"/></svg>`;
 
+  // ── Placas compartidas (19/11/2026, Paco): se guardan en Supabase para que se vean desde el link de GitHub ──
+  // La clave es la pública («publishable»): solo deja agregar y leer placas (reglas RLS de la tabla public.placas).
+  // En el servidor local no se sube nada (para no llenar la tabla con pruebas), salvo con ?nube.
+  const NUBE = { url: 'https://pbzugtzeuflyofilpvnr.supabase.co/rest/v1/placas', clave: 'sb_publishable_poNqm-Q6PErdmv2T3w8yQA_Oc02jkfH' };
+  const enLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && !params.has('nube');
+  window.MicromundosPlacas = {
+    guardar(imagen, nombreDado) {
+      if (enLocal || typeof fetch !== 'function' || imagen.length > 200000) return Promise.resolve(false);
+      return this.pendiente = fetch(NUBE.url, { method: 'POST', headers: { apikey: NUBE.clave, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ imagen, nombre: String(nombreDado || '').trim().slice(0, 24) }) }).then(r => r.ok).catch(() => false);
+    },
+    leer(cuantas = 20) {
+      if (typeof fetch !== 'function') return Promise.resolve(null);
+      // Espera a que termine de subir la última placa guardada, para que ya aparezca.
+      return Promise.resolve(this.pendiente).then(() => fetch(NUBE.url + '?select=nombre,creada,imagen&order=creada.desc&limit=' + cuantas, { headers: { apikey: NUBE.clave } })
+        .then(r => r.ok ? r.json() : null).then(l => Array.isArray(l) ? l.filter(p => typeof p?.imagen === 'string' && p.imagen.startsWith('data:image/'))
+          .map(p => ({ img: p.imagen, nombre: p.nombre || '', fecha: Date.parse(p.creada) || Date.now() })) : null)).catch(() => null);
+    }
+  };
+
   const capa = document.createElement('div');
   capa.id = 'tpNombre';
   capa.hidden = true;
@@ -51427,6 +51453,7 @@ body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;
     <div class="tpn-confirmar" hidden><p>¿Está bien así?</p><div><button type="button" class="tpn-si">SÍ, ES MI NOMBRE</button><i></i><button type="button" class="tpn-otra">DICTAR DE NUEVO</button></div></div>
     <button type="button" class="tpn-mic" aria-label="Mantené apretado para dictar tu nombre"><span class="tpn-mic-superficie"></span>${MIC}</button>
     <p class="tpn-indicacion" aria-live="polite">${INDICACION}</p>
+    <p class="tpn-aviso">Tu placa y tu nombre se van a ver en PLACAS DE OTRAS PERSONAS.</p>
     <button type="button" class="tpn-omitir" hidden>GUARDAR SIN NOMBRE</button>`;
   const montar = () => { const tp = $('tuPlaca'); if (tp && !capa.isConnected) tp.appendChild(capa); return !!tp; };
   const mic = capa.querySelector('.tpn-mic'), salida = capa.querySelector('.tpn-nombre'), indicacion = capa.querySelector('.tpn-indicacion');
@@ -51545,6 +51572,8 @@ body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;
       // Sin fondo (19/11/2026, Paco): WebP con transparencia; si el navegador no lo arma, PNG.
       let dato = c.toDataURL('image/webp', .86); if (!dato.startsWith('data:image/webp')) dato = c.toDataURL('image/png');
       lista.push({ img: dato, nombre: nombre.trim(), fecha: fecha.getTime() });
+      // A la nube: con el dictado simulado el nombre siempre es «Paco», así que sin ?dictado la placa sube sin nombre.
+      window.MicromundosPlacas?.guardar(dato, DICTADO_REAL ? nombre : '');
       try { localStorage.setItem(CLAVE_PLACAS, JSON.stringify(lista.slice(-4))); } catch {}
     };
     img.src = url;

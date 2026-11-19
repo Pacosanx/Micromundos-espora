@@ -23,6 +23,26 @@
       <path d="M27 50a21 21 0 0 0 42 0" fill="none" stroke="#13151b" stroke-width="2" stroke-linecap="round"/>
       <path d="M48 71v8" stroke="#13151b" stroke-width="2" stroke-linecap="round"/></svg>`;
 
+  // ── Placas compartidas (19/11/2026, Paco): se guardan en Supabase para que se vean desde el link de GitHub ──
+  // La clave es la pública («publishable»): solo deja agregar y leer placas (reglas RLS de la tabla public.placas).
+  // En el servidor local no se sube nada (para no llenar la tabla con pruebas), salvo con ?nube.
+  const NUBE = { url: 'https://pbzugtzeuflyofilpvnr.supabase.co/rest/v1/placas', clave: 'sb_publishable_poNqm-Q6PErdmv2T3w8yQA_Oc02jkfH' };
+  const enLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && !params.has('nube');
+  window.MicromundosPlacas = {
+    guardar(imagen, nombreDado) {
+      if (enLocal || typeof fetch !== 'function' || imagen.length > 200000) return Promise.resolve(false);
+      return this.pendiente = fetch(NUBE.url, { method: 'POST', headers: { apikey: NUBE.clave, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ imagen, nombre: String(nombreDado || '').trim().slice(0, 24) }) }).then(r => r.ok).catch(() => false);
+    },
+    leer(cuantas = 20) {
+      if (typeof fetch !== 'function') return Promise.resolve(null);
+      // Espera a que termine de subir la última placa guardada, para que ya aparezca.
+      return Promise.resolve(this.pendiente).then(() => fetch(NUBE.url + '?select=nombre,creada,imagen&order=creada.desc&limit=' + cuantas, { headers: { apikey: NUBE.clave } })
+        .then(r => r.ok ? r.json() : null).then(l => Array.isArray(l) ? l.filter(p => typeof p?.imagen === 'string' && p.imagen.startsWith('data:image/'))
+          .map(p => ({ img: p.imagen, nombre: p.nombre || '', fecha: Date.parse(p.creada) || Date.now() })) : null)).catch(() => null);
+    }
+  };
+
   const capa = document.createElement('div');
   capa.id = 'tpNombre';
   capa.hidden = true;
@@ -38,6 +58,7 @@
     <div class="tpn-confirmar" hidden><p>¿Está bien así?</p><div><button type="button" class="tpn-si">SÍ, ES MI NOMBRE</button><i></i><button type="button" class="tpn-otra">DICTAR DE NUEVO</button></div></div>
     <button type="button" class="tpn-mic" aria-label="Mantené apretado para dictar tu nombre"><span class="tpn-mic-superficie"></span>${MIC}</button>
     <p class="tpn-indicacion" aria-live="polite">${INDICACION}</p>
+    <p class="tpn-aviso">Tu placa y tu nombre se van a ver en PLACAS DE OTRAS PERSONAS.</p>
     <button type="button" class="tpn-omitir" hidden>GUARDAR SIN NOMBRE</button>`;
   const montar = () => { const tp = $('tuPlaca'); if (tp && !capa.isConnected) tp.appendChild(capa); return !!tp; };
   const mic = capa.querySelector('.tpn-mic'), salida = capa.querySelector('.tpn-nombre'), indicacion = capa.querySelector('.tpn-indicacion');
@@ -156,6 +177,8 @@
       // Sin fondo (19/11/2026, Paco): WebP con transparencia; si el navegador no lo arma, PNG.
       let dato = c.toDataURL('image/webp', .86); if (!dato.startsWith('data:image/webp')) dato = c.toDataURL('image/png');
       lista.push({ img: dato, nombre: nombre.trim(), fecha: fecha.getTime() });
+      // A la nube: con el dictado simulado el nombre siempre es «Paco», así que sin ?dictado la placa sube sin nombre.
+      window.MicromundosPlacas?.guardar(dato, DICTADO_REAL ? nombre : '');
       try { localStorage.setItem(CLAVE_PLACAS, JSON.stringify(lista.slice(-4))); } catch {}
     };
     img.src = url;
