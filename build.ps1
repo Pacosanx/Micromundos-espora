@@ -26,6 +26,9 @@ $t = $t.Replace('/*GLOSARIO*/', ('const TERMINOS_GLOSARIO = ' + (ConvertTo-Json 
 $t = $t.Replace('/*APERTURA*/', ('const RECETA_APERTURA = ' + (Leer 'apertura-palabra.json') + ';const RECETA_FONDO_APERTURA = ' + (Leer 'apertura-fondo.json') + ';' + [Environment]::NewLine + (Leer 'apertura.js')))
 $t = $t.Replace('/*LISTADO*/', (Leer 'listado.js'))
 $t = $t.Replace('/*MUESTRARIO*/', ('const GUIA_MUESTRARIO = ' + (Leer 'muestrario.json') + ';' + [Environment]::NewLine + (Leer 'muestrario.js')))
+# Modo dedo (solo con ?dedo): el mouse se comporta como un dedo. Ver src/dedo.js.
+$finDedo = $t.LastIndexOf('</body>')
+$t = $t.Substring(0, $finDedo) + '<script id="dedoScript">' + (Leer 'dedo.js') + '</script>' + [Environment]::NewLine + $t.Substring($finDedo)
 $especies = @{}
 $gruposEspecies = @{}
 Import-Csv -LiteralPath (Join-Path $base 'base/colonias.csv') -Delimiter ';' -Encoding UTF8 | ForEach-Object {
