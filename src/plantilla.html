@@ -262,6 +262,12 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .apertura-marca{position:absolute;left:calc(50% - 186.6715px);top:calc(50% + 72px);width:373.343px;height:85.148px;filter:blur(2px);opacity:var(--salida-apertura)}
 .apertura-marca img{position:absolute;left:-.44%;top:-1.92%;width:100.88%;height:103.85%;filter:brightness(0)}
 .apertura-invitacion{position:absolute;left:50%;bottom:77px;transform:translateX(-50%);font:400 var(--t-sub)/var(--l-sub) Arimo,Arial,sans-serif;white-space:nowrap;color:#0d0f17;filter:blur(1.5px);opacity:var(--salida-apertura)}
+/* Reposo (propuesta, rama reposo): un anillo, como un toque, se expande cada 4 s encima de ella. */
+.apertura-invitacion::before{content:"";position:absolute;left:50%;top:-64px;width:44px;height:44px;margin-left:-22px;border-radius:50%;box-shadow:inset 0 0 0 2px #0d0f17;opacity:0;animation:reposoToque 4s ease-out infinite}
+.apertura-invitacion::after{content:"";position:absolute;left:50%;top:-50px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#0d0f17;opacity:0;animation:reposoDedo 4s ease-out infinite}
+@keyframes reposoToque{0%,30%{transform:scale(.4);opacity:0}38%{opacity:.55}100%{transform:scale(2.2);opacity:0}}
+@keyframes reposoDedo{0%,22%{transform:scale(1.6);opacity:0}32%{transform:scale(1);opacity:.5}46%{opacity:.5}62%,100%{transform:scale(1);opacity:0}}
+@media(prefers-reduced-motion:reduce){.apertura-invitacion::before,.apertura-invitacion::after{animation:none}}
 #aperturaPalabra{position:absolute;left:calc(50% - 850px);top:calc(50% - 599px);width:1700px;height:1134px;mix-blend-mode:darken;pointer-events:none}
 .apertura-lista #aperturaPalabra{display:none}
 /* La mezcla "darken" ya la aplica #aperturaPalabra a todo el grupo; repetirla en cada una de las 173 partículas obligaba al navegador a un pase de mezcla por partícula. */
