@@ -82,6 +82,38 @@
   history.pushState({ kiosco: true }, '');
   addEventListener('popstate', () => history.pushState({ kiosco: true }, ''));
 
+  // 4. Áreas de toque: varios controles miden menos de 48 px de alto (navegación, DESHACER, GUARDAR PLACA, enlaces de la ficha…).
+  //    Sin cambiar cómo se ven: un toque que cae fuera de todo control, pero a menos de 48 px de uno chico, lo activa.
+  //    Solo para toques quietos (no arrastres), así no interfiere con sembrar ni mover fichas.
+  const MIN = 48, INTERACTIVO = 'button,a[href],[role="button"],[role="tab"],input,select,textarea,label,summary,[tabindex="0"]';
+  let inicioToque = null;
+  addEventListener('pointerdown', ev => { inicioToque = { x: ev.clientX, y: ev.clientY }; }, { capture: true, passive: true });
+  const visible = el => {
+    for (let p = el; p && p !== document.body; p = p.parentElement) {
+      const c = getComputedStyle(p);
+      if (c.display === 'none' || c.visibility === 'hidden' || +c.opacity < .05 || p.inert || p.hidden) return false;
+    }
+    return getComputedStyle(el).pointerEvents !== 'none' && !el.disabled;
+  };
+  addEventListener('click', ev => {
+    if (!ev.isTrusted || ev.target.closest?.(INTERACTIVO) || aviso.contains(ev.target)) return;
+    if (inicioToque && Math.hypot(ev.clientX - inicioToque.x, ev.clientY - inicioToque.y) > 10) return;
+    const escala = (document.getElementById('stage')?.getBoundingClientRect().width || 1920) / 1920;
+    const min = MIN * escala;
+    let mejor = null, distMejor = Infinity;
+    for (const el of document.querySelectorAll(INTERACTIVO)) {
+      const r = el.getBoundingClientRect();
+      if (!r.width || (r.width >= min && r.height >= min)) continue;
+      const ex = Math.max(0, (min - r.width) / 2), ey = Math.max(0, (min - r.height) / 2);
+      if (ev.clientX < r.left - ex || ev.clientX > r.right + ex || ev.clientY < r.top - ey || ev.clientY > r.bottom + ey) continue;
+      const d = Math.hypot(ev.clientX - (r.left + r.right) / 2, ev.clientY - (r.top + r.bottom) / 2);
+      if (d < distMejor && visible(el)) { mejor = el; distMejor = d; }
+    }
+    if (!mejor) return;
+    ev.preventDefault(); ev.stopPropagation();
+    mejor.click();
+  }, { capture: true });
+
   // 3. Pantalla completa al primer toque
   const completa = () => {
     if (!document.fullscreenElement && raiz.requestFullscreen) raiz.requestFullscreen({ navigationUI: 'hide' }).catch(() => {});

@@ -7,6 +7,7 @@ El modo kiosco se activa abriendo `placa.html?kiosco`. En la web pública (sin `
 - **Reinicio entre visitantes.** Tras 120 s sin tocar muestra «¿Seguís ahí?» con una cuenta de 15 s. Si nadie toca, vuelve a la portada y borra la placa de TU PLACA a medio hacer, la selección y las fichas abiertas. En la portada no reinicia (ya es la pantalla de reposo).
 - **Bloqueo de gestos del navegador.** Sin pellizco ni doble toque para ampliar, sin Ctrl + rueda, sin menú contextual, sin selección de texto (salvo en el buscador), sin arrastrar imágenes, sin «atrás» por gesto o tecla, y sin atajos de recarga, impresión o pestañas.
 - **Pantalla completa** al primer toque.
+- **Áreas de toque más grandes.** Varios controles miden menos de 48 px de alto (la navegación, DESHACER, REHACER, VACIAR LA PLACA, GUARDAR PLACA, las pestañas de TU PLACA y los enlaces de la ficha). Un toque quieto que cae a menos de 48 px de uno de ellos, fuera de cualquier otro control, lo activa. No cambia cómo se ven y no afecta a los arrastres.
 
 ## Opciones
 
