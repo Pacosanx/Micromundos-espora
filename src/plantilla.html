@@ -8,9 +8,7 @@
 <script>document.documentElement.style.setProperty('--escala-inicial',Math.min(innerWidth/1920,innerHeight/1100));</script>
 <link rel="preload" as="image" href="src/assets/apertura-palabra.png" fetchpriority="high">
 <title>Placa · Muestras (Micromundos)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap" rel="stylesheet">
+<style id="fuenteArimo">/*FUENTE_ARIMO*/</style>
 <style>
 :root{
   --t-display:72px;--l-display:72px;
@@ -404,23 +402,24 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
       <p class="qe-bajada">Es una colección de vida que no se ve a simple vista: bacterias, levaduras y mohos que viven en la comida, en la tierra, en las casas y en nuestro propio cuerpo. Acá podés recorrer sus muestras, conocer a cada grupo y sembrar tu propia placa.</p>
     </div>
     <div class="qe-claves">
-      <div>
+      <figure class="qe-colonia" aria-hidden="true"><div class="qe-colonia-placa"><i class="qe-colonia-punto"></i></div></figure>
+      <div class="qe-colonia-texto">
         <h2>Qué es una colonia</h2>
         <p>Millones de microbios que nacen de uno solo y crecen juntos hasta que se pueden ver.</p>
       </div>
-      <div>
+      <div class="qe-clave-color">
         <h2>Cada color, un grupo</h2>
         <ul class="qe-grupos">
-          <li><i style="--c:#DD82AB" aria-hidden="true"></i>Bacterias</li>
-          <li><i style="--c:#FFA600" aria-hidden="true"></i>Levaduras</li>
-          <li><i style="--c:#92AA68" aria-hidden="true"></i>Mohos</li>
+          <li data-g="B"><i style="--c:#DD82AB" aria-hidden="true"></i>Bacterias</li>
+          <li data-g="L"><i style="--c:#FFA600" aria-hidden="true"></i>Levaduras</li>
+          <li data-g="M"><i style="--c:#92AA68" aria-hidden="true"></i>Mohos</li>
         </ul>
       </div>
     </div>
     <ol class="qe-pasos">
-      <li><button type="button" data-ir-seccion="muestras"><span class="qe-num">01</span><span class="qe-tit">Muestras</span><span class="qe-txt">Cada círculo de la placa es una muestra. Tocalo para saber de dónde viene y qué creció en ella.</span><span class="qe-ir">Ver muestras</span></button></li>
-      <li><button type="button" data-ir-seccion="glosario"><span class="qe-num">02</span><span class="qe-tit">Glosario</span><span class="qe-txt">Conocé a las bacterias, las levaduras y los mohos, y los lugares donde viven.</span><span class="qe-ir">Ir al glosario</span></button></li>
-      <li><button type="button" data-ir-seccion="tuplaca"><span class="qe-num">03</span><span class="qe-tit">Tu placa</span><span class="qe-txt">Sembrá colonias en una placa vacía y armá tu propio micromundo.</span><span class="qe-ir">Armar mi placa</span></button></li>
+      <li><button type="button" data-ir-seccion="muestras"><span class="qe-num">[01.0]</span><span class="qe-tit">Muestras</span><span class="qe-txt">Cada círculo de la placa es una muestra. Tocalo para saber de dónde viene y qué creció en ella.</span><span class="qe-ir">Ver muestras</span></button></li>
+      <li><button type="button" data-ir-seccion="glosario"><span class="qe-num">[03.0]</span><span class="qe-tit">Glosario</span><span class="qe-txt">Conocé a las bacterias, las levaduras y los mohos, y los lugares donde viven.</span><span class="qe-ir">Ir al glosario</span></button></li>
+      <li><button type="button" data-ir-seccion="tuplaca"><span class="qe-num">[04.0]</span><span class="qe-tit">Tu placa</span><span class="qe-txt">Sembrá colonias en una placa vacía y armá tu propio micromundo.</span><span class="qe-ir">Armar mi placa</span></button></li>
     </ol>
   </section>
   <div id="desenfoqueCabecera" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
@@ -507,6 +506,8 @@ const RECETAS = { A: /*RECETA_A*/, B: /*RECETA_B*/ };
 /*PANTALLAS_DETALLE*/
 /*GLOSARIO*/
 /*APP*/
+// La bienvenida (src/bienvenida.js) usa el mismo cartel y el mismo arrastre que MUESTRAS.
+window.micromundosCarteles={activarArrastreCartel,activarOleajeCartel,universoCartel,PALETA_CARTEL};document.dispatchEvent(new Event('micromundos-carteles'));
 })));
 </script>
 </body>

@@ -1,5 +1,7 @@
-# Arma placa.html uniendo los archivos de src/ (no necesita Python).
+# Arma placa.html uniendo los archivos de src/ (no necesita Python). Es el único comando de armado vigente.
 # Uso: doble clic en armar.bat, o en PowerShell:  powershell -ExecutionPolicy Bypass -File build.ps1
+# -Salida otro.html escribe en otro archivo (lo usa verificar-armado.ps1 para comparar sin pisar placa.html).
+param([string]$Salida = 'placa.html')
 $base = Split-Path -Parent $MyInvocation.MyCommand.Path
 $src  = Join-Path $base 'src'
 $utf8 = New-Object System.Text.UTF8Encoding($false)
@@ -13,12 +15,16 @@ Import-Csv -LiteralPath (Join-Path $base 'base/entornos_muestras.csv') -Delimite
 }
 $jsonEntMuestras = ConvertTo-Json -InputObject $entMuestras -Depth 5 -Compress
 $t = Leer 'plantilla.html'
+# Arimo incrustada (src/assets/fuentes): el Atlas no depende de internet para la tipografía.
+$arimoLatin = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $src 'assets/fuentes/arimo-latin.woff2')))
+$arimoExt = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $src 'assets/fuentes/arimo-latin-ext.woff2')))
+$t = $t.Replace('/*FUENTE_ARIMO*/', ("@font-face{font-family:'Arimo';font-style:normal;font-weight:400 700;font-display:swap;src:url(data:font/woff2;base64,$arimoExt) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}" + "@font-face{font-family:'Arimo';font-style:normal;font-weight:400 700;font-display:swap;src:url(data:font/woff2;base64,$arimoLatin) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}"))
 $t = $t.Replace('/*ESTILOS_DETALLES*/', ('/*ESTILOS_DETALLES*/' + [Environment]::NewLine + (Leer 'tu-placa-biblioteca.css') + [Environment]::NewLine + (Leer 'tu-placa-v12.css') + [Environment]::NewLine + (Leer 'tu-placa-encuentros.css')))
 $microLocal = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $src 'assets/detalles/lupa-micro-local.jpg')))
 $t = $t.Replace('<script defer src="src/assets/lupa-figma.js"></script>', ('<script>window.MICROMUNDOS_MICRO_LOCAL="data:image/jpeg;base64,' + $microLocal + '";</script><script data-lupa-runtime>' + (Leer 'assets/lupa-figma.js') + '</script>'))
 $t = $t.Replace('/*ESTILOS_DETALLES*/', ((Leer 'pantallas-detalle.css') + [Environment]::NewLine + (Leer 'ficha-galeria.css')))
 $t = $t.Replace('/*PANTALLAS_DETALLE*/', ('const RECETA_PIE_FICHA = ' + (Leer 'assets/detalles/ficha-footer.receta.json') + ';' + [Environment]::NewLine + (Leer 'ficha-galeria.js') + [Environment]::NewLine + '/*PANTALLAS_DETALLE*/'))
-$t = $t.Replace('/*PANTALLAS_DETALLE*/', ('const CELULAS_FICHA = ' + (Leer 'ficha-colonias.json') + ';const ENTORNOS_DETALLE = ' + [IO.File]::ReadAllText((Join-Path $base 'base/entornos.json'), $utf8) + ';const ENTORNOS_MUESTRAS = ' + $jsonEntMuestras + ';const DISENOS_DETALLE = ' + (Leer 'pantallas-detalle.json') + ';' + [Environment]::NewLine + ('const FONDOS_UNIVERSOS = ' + (Leer 'fondos-universos.json') + ';' + [Environment]::NewLine + (Leer 'fondos-universos.js') + [Environment]::NewLine + (Leer 'pantallas-detalle.js')) + [Environment]::NewLine + ((Leer 'tu-placa-estructuras.js') + [Environment]::NewLine + (Leer 'tu-placa-generador.js') + [Environment]::NewLine + (Leer 'tu-placa-motor.js') + [Environment]::NewLine + (Leer 'tu-placa-biblioteca.js') + [Environment]::NewLine + (Leer 'tu-placa-menu.js') + [Environment]::NewLine + (Leer 'tu-placa-editor.js') + [Environment]::NewLine + (Leer 'tu-placa-v12.js'))))
+$t = $t.Replace('/*PANTALLAS_DETALLE*/', ('const CELULAS_FICHA = ' + (Leer 'ficha-colonias.json') + ';const ENTORNOS_DETALLE = ' + [IO.File]::ReadAllText((Join-Path $base 'base/entornos.json'), $utf8) + ';const ENTORNOS_MUESTRAS = ' + $jsonEntMuestras + ';const DISENOS_DETALLE = ' + (Leer 'pantallas-detalle.json') + ';' + [Environment]::NewLine + ('const FONDOS_UNIVERSOS = ' + (Leer 'fondos-universos.json') + ';' + [Environment]::NewLine + (Leer 'fondos-universos.js') + [Environment]::NewLine + (Leer 'pantallas-detalle.js')) + [Environment]::NewLine + ((Leer 'tu-placa-estructuras.js') + [Environment]::NewLine + (Leer 'tu-placa-generador.js') + [Environment]::NewLine + (Leer 'tu-placa-motor.js') + [Environment]::NewLine + (Leer 'tu-placa-biblioteca.js') + [Environment]::NewLine + (Leer 'tu-placa-menu.js') + [Environment]::NewLine + (Leer 'tu-placa-editor.js') + [Environment]::NewLine + (Leer 'tu-placa-v12.js') + [Environment]::NewLine + (Leer 'que-es.js'))))
 $t = $t.Replace('/*ESTILOS_GLOSARIO*/', ((Leer 'glosario.css') + [Environment]::NewLine + (Leer 'que-es.css')))
 # Legibilidad: última hoja de estilos, quita el desenfoque de textos y controles (ver src/legibilidad.css).
 $t = $t.Replace('</head>', ('<style id="legibilidad">' + (Leer 'legibilidad.css') + '</style>' + [Environment]::NewLine + '</head>'))
@@ -30,8 +36,11 @@ $t = $t.Replace('/*APERTURA*/', ('const RECETA_APERTURA = ' + (Leer 'apertura-pa
 $finTpPropuesta = $t.LastIndexOf('</body>')
 $t = $t.Substring(0, $finTpPropuesta) + '<style id="tpPropuestaEstilos">' + (Leer 'tu-placa-propuesta.css') + '</style><script id="tpPropuestaScript">' + (Leer 'tu-placa-propuesta.js') + '</script>' + [Environment]::NewLine + $t.Substring($finTpPropuesta)
 $t = $t.Replace('/*LISTADO*/', (Leer 'listado.js'))
+# Bienvenida de primera visita y pistas (ver src/bienvenida.js y src/pistas.js): estilo y script al final del body.
+$finBienvenida = $t.LastIndexOf('</body>')
+$t = $t.Substring(0, $finBienvenida) + '<style id="bienvenidaEstilos">' + (Leer 'bienvenida.css') + '</style><script id="bienvenidaScript">' + (Leer 'bienvenida.js') + '</script><script id="pistasScript">' + (Leer 'pistas.js') + '</script>' + [Environment]::NewLine + $t.Substring($finBienvenida)
 $t = $t.Replace('/*MUESTRARIO*/', ('const GUIA_MUESTRARIO = ' + (Leer 'muestrario.json') + ';' + [Environment]::NewLine + (Leer 'muestrario.js')))
-# Modo dedo (solo con ?dedo): el mouse se comporta como un dedo. Ver src/dedo.js.
+# Modo dedo (siempre, salvo con ?mouse): el mouse se comporta como un dedo. Ver src/dedo.js.
 $finDedo = $t.LastIndexOf('</body>')
 $t = $t.Substring(0, $finDedo) + '<script id="dedoScript">' + (Leer 'dedo.js') + '</script>' + [Environment]::NewLine + $t.Substring($finDedo)
 $especies = @{}
@@ -51,6 +60,9 @@ Import-Csv -LiteralPath (Join-Path $base 'base/especies.csv') -Delimiter ';' -En
   $catalogo[$_.especie] = @{ definicion = $_.definicion; donde_esta = $_.donde_esta; que_produce_o_transforma = $_.que_produce_o_transforma }
 }
 $t = $t.Replace('/*CARTELES*/', ('const CATALOGO_ESPECIES = ' + (ConvertTo-Json -InputObject $catalogo -Depth 4 -Compress) + ';' + [Environment]::NewLine + (Leer 'carteles.js')))
+# Propuesta: nombre de la placa dictado (src/tu-placa-nombre.js y .css; diseño de Paco, Figma 621:863).
+$finNombre = $t.LastIndexOf('</body>')
+$t = $t.Substring(0, $finNombre) + '<style id="tpNombreEstilos">' + (Leer 'tu-placa-nombre.css') + '</style><script id="tpNombreScript">' + (Leer 'tu-placa-nombre.js') + '</script>' + [Environment]::NewLine + $t.Substring($finNombre)
 $t = $t.Replace('/*VINCULOS*/', ('const DATOS_VINCULOS = ' + $jsonVinculos + ';' + [Environment]::NewLine + 'const GRUPOS_ESPECIES = ' + $jsonGrupos + ';' + [Environment]::NewLine + (Leer 'vinculos.js')))
 $t = $t.Replace('/*DATOS*/',    (Leer 'datos.js'))
 $t = $t.Replace('/*COLONIAS*/', (Leer 'colonias-core.js'))
@@ -78,6 +90,13 @@ $recursos = @{
   '__CARTEL_LINEA__' = @('cartel-linea.svg','image/svg+xml')
   '__CARTEL_COLORES__' = @('cartel-colores-bl.svg','image/svg+xml')
   '__CARTEL_FLECHA__' = @('cartel-flecha.svg','image/svg+xml')
+  '__DE_PUNTO__' = @('donde-estan/punto.svg','image/svg+xml')
+  '__DE_PUNTO_ACTUAL__' = @('donde-estan/punto-actual.svg','image/svg+xml')
+  '__DE_FLECHA_ANTERIOR__' = @('donde-estan/flecha-anterior.svg','image/svg+xml')
+  '__DE_FLECHA_SIGUIENTE__' = @('donde-estan/flecha-siguiente.svg','image/svg+xml')
+  '__TPN_ELIPSE__' = @('nombre/elipse.svg','image/svg+xml')
+  '__TPN_LINEA__' = @('nombre/linea.svg','image/svg+xml')
+  '__TPN_MICROFONO__' = @('nombre/microfono.svg','image/svg+xml')
 }
 foreach($marca in $recursos.Keys){
   $recurso = $recursos[$marca]
@@ -87,10 +106,14 @@ foreach($marca in $recursos.Keys){
   # La ruta funciona tanto junto a src/ en el prototipo como desde dist/index.html.
   $t = $t.Replace($marca, ('src/assets/' + $recurso[0]))
 }
+# Modo kiosco (solo con ?kiosco en la dirección): reinicio por inactividad y bloqueo de gestos. Ver src/kiosco.js.
+$finCuerpo = $t.LastIndexOf('</body>')
+$t = $t.Substring(0, $finCuerpo) + '<script>' + (Leer 'kiosco.js') + '</script>' + [Environment]::NewLine + $t.Substring($finCuerpo)
 # La máscara conserva su alfa original y evita el bloqueo CORS de máscaras en file://.
 $mascaraCampo = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $src 'assets/detalles/mascara-campo-suave.png')))
 $t = $t.Replace('__MASCARA_CAMPO_SUAVE__', ('data:image/png;base64,' + $mascaraCampo))
 $mascaraTransformacion = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $src 'assets/detalles/mascara-transformacion.png')))
 $t = $t.Replace('__MASCARA_FICHA_TRANSFORMACION__', ('data:image/png;base64,' + $mascaraTransformacion))
-[IO.File]::WriteAllText((Join-Path $base 'placa.html'), $t, $utf8)
-Write-Host "placa.html listo ($($t.Length) caracteres)"
+$destino = if ([IO.Path]::IsPathRooted($Salida)) { $Salida } else { Join-Path $base $Salida }
+[IO.File]::WriteAllText($destino, $t, $utf8)
+Write-Host "$Salida listo ($($t.Length) caracteres)"

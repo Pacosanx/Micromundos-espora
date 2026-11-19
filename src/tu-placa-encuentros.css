@@ -1,17 +1,33 @@
 /* 18/11/2026 · Placa de encuentros como motor de TU PLACA. Se carga después de tu-placa-v12.css. */
 
-/* Leyenda fija de encuentros (reemplaza al checkbox "Mostrar reacciones"). */
+/* Guía «Cómo leer los encuentros»: la misma lógica que «Cómo leer la placa» de MUESTRAS (19/11/2026).
+   Cerrada: solo la columna de ejemplos (se pueden tocar). Abierta: el nombre de la reacción y qué colonias la producen.
+   Tocar un ejemplo abre su cartel y marca en la placa los encuentros de esa reacción. */
 .tp-indicacion{pointer-events:none}
-#tpReacciones{width:282px;pointer-events:auto}
-#tpReacciones .tp-encuentros-titulo{margin:0 0 8px;font-size:var(--t-etiqueta);opacity:.7;filter:blur(.4px)}
-.tp-encuentros{position:static;display:grid;grid-template-columns:62px repeat(3,72px);grid-auto-rows:auto;gap:0;align-items:center;margin-bottom:8px}
-.tp-encuentros-cabeza{display:flex;align-items:center;gap:4px;font:400 11px/13px Arimo,Arial,sans-serif;letter-spacing:.02em;opacity:.75;filter:blur(.3px);justify-content:center}
-.tp-encuentros-cabeza.tp-encuentros-fila{justify-content:flex-start}
-.tp-encuentros-cabeza i{flex:none;width:8px;height:8px;border-radius:50%;filter:blur(.6px)}
-#tuPlaca .tp-encuentros-celda{all:unset;display:grid;justify-items:center;gap:1px;min-height:36px;align-content:center;cursor:pointer;border-radius:10px;transition:background .2s}
-.tp-encuentros-celda svg{width:36px;height:24px;filter:blur(.5px)}
-.tp-encuentros-celda span{font:700 10px/12px Arimo,Arial,sans-serif;letter-spacing:.03em;opacity:.7}
-#tuPlaca .tp-encuentros-celda:focus-visible,#tuPlaca .tp-encuentros-celda:active{background:#ed74a018}
+#tpReacciones{width:282px;pointer-events:auto;display:flex;flex-direction:column;gap:20px;filter:none}
+#tuPlaca #tpGuiaEncuentros{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;min-height:48px;margin:-14px 0 -10px;cursor:pointer;color:#0d0f17;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);letter-spacing:.08em;text-transform:uppercase}
+#tpGuiaEncuentros .guia-flecha{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgb(13 15 23 / 35%);transition:box-shadow .3s}
+#tpGuiaEncuentros .guia-flecha svg{display:block;rotate:180deg;transition:rotate .35s}
+#tpReacciones.cerrada #tpGuiaEncuentros .guia-flecha svg{rotate:0deg}
+#tpGuiaEncuentros .guia-titulo{white-space:nowrap;opacity:.7}
+#tpGuiaEncuentros:active .guia-flecha,#tpGuiaEncuentros:focus-visible .guia-flecha{box-shadow:inset 0 0 0 1.5px #0d0f17}
+#tuPlaca #tpReacciones p.tp-encuentros-uso{max-width:270px;margin:-6px 0 0;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#0d0f17;opacity:.6;max-height:60px;overflow:hidden;transition:opacity .3s,max-height .35s,margin .35s}
+.tp-encuentros{position:static;display:flex;flex-direction:column;gap:6px}
+#tuPlaca .tp-encuentros-item{all:unset;display:flex;align-items:center;height:36px;cursor:pointer}
+.tp-encuentros-item .ic{display:grid;place-items:center;width:40px;height:36px;flex:none;transition:opacity .35s}
+.tp-encuentros-item svg{width:40px;height:27px;filter:blur(.5px)}
+.tp-encuentros-item .tx{display:flex;flex-direction:column;margin-left:20px;white-space:nowrap;color:#0d0f17;transition:opacity .35s}
+.tp-encuentros-item .tx b{font:400 11px/13px Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.7}
+.tp-encuentros-item .tx span{font-size:var(--t-etiqueta);line-height:18px}
+.tp-encuentros.filtrando .tp-encuentros-item:not(.activo) :is(.ic,.tx){opacity:.55}
+#tuPlaca .tp-encuentros-item:focus-visible{outline:2px solid #0d0f17;outline-offset:4px;border-radius:8px}
+#tuPlaca #tpReacciones.cerrada p.tp-encuentros-uso{opacity:0;max-height:0;margin:0!important;pointer-events:none}
+#tpReacciones.cerrada .tp-encuentros-item .tx{opacity:0!important;pointer-events:none}
+#tpReacciones.cerrada{gap:12px}
+/* En la placa: la reacción que se lee queda marcada; las otras bajan. */
+#tpLineas .tp-reaccion-otra,#tpRotulos .tp-reaccion-otra{opacity:.3}
+#tpLineas .tp-reaccion-leida{stroke-dasharray:none}
+@media(prefers-reduced-motion:reduce){#tpGuiaEncuentros .guia-flecha svg,.tp-encuentros-item :is(.ic,.tx),.tp-encuentros-uso{transition:none}}
 
 /* La placa se dibuja entera en un lienzo (motor del muestrario); los botones de colonia quedan encima, transparentes, para tocar y arrastrar. */
 .tp-escena{position:absolute;left:0;top:0;width:784px;height:784px;pointer-events:none}
@@ -33,16 +49,23 @@
 
 /* GENERAR: tocar / mantener apretado (abanico de estructuras). */
 .tp-generar-ayuda{position:absolute;left:40px;top:978px;margin:0;font:400 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;opacity:.5;filter:blur(.4px);pointer-events:none}
-.tp-estructuras{position:absolute;left:24px;top:832px;width:480px;height:110px;z-index:12}
-.tp-estructuras::before{content:"";position:absolute;left:-18px;top:-44px;width:490px;height:150px;border-radius:40px;background:#f2f0e8e8;filter:blur(6px);pointer-events:none}
-.tp-estructuras[hidden]{display:none}
-#tuPlaca .tp-estructuras button{all:unset;position:absolute;width:84px;display:grid;justify-items:center;gap:6px;cursor:pointer;animation:tp-abanico .35s cubic-bezier(.3,.9,.3,1) both}
-.tp-estructuras button:nth-child(2){animation-delay:.03s}.tp-estructuras button:nth-child(3){animation-delay:.06s}.tp-estructuras button:nth-child(4){animation-delay:.09s}.tp-estructuras button:nth-child(5){animation-delay:.12s}
-.tp-estructuras svg{width:56px;height:56px;border-radius:50%;background:#ffffffcc;box-shadow:0 0 0 1px #212121e6;fill:#212121;filter:blur(.4px)}
-.tp-estructuras button[aria-checked="true"] svg{box-shadow:0 0 0 2.5px #212121;background:#fff}
-.tp-estructuras span{font:700 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;text-transform:uppercase;text-align:center;filter:blur(.3px)}
-.tp-estructuras button:focus-visible svg{box-shadow:0 0 0 2.5px #ed74a0}
-@keyframes tp-abanico{from{opacity:0;transform:translateY(24px) scale(.6)}to{opacity:1;transform:none}}
+/* Estructura (19/11/2026): el aro del menú contextual, alrededor de GENERAR. Cinco botones redondos con el ícono de cada
+   estructura y su nombre afuera; la que está en uso va rellena, como TRANSFORMAR en el aro de las colonias. */
+/* 19/11/2026: en fila horizontal, a la derecha de GENERAR COMPOSICIÓN, con un eje punteado detrás. */
+#tuPlaca .tp-menu-estructuras{left:500px;top:977px;z-index:12;pointer-events:none}
+.tp-estructuras-eje{position:absolute;left:0;top:-.5px;width:496px;height:0;border-top:1px dashed rgb(13 15 23 / 30%)}
+.tp-menu-estructuras .tp-menu-boton span{left:24px!important;right:auto!important;top:60px!important;transform:translateX(-50%)!important;font-weight:400;letter-spacing:.04em;white-space:normal!important;width:112px;text-align:center;line-height:16px}
+.tp-menu-estructuras[hidden]{display:none}
+.tp-menu-estructuras .tp-menu-boton{animation:tp-aro-entra .4s cubic-bezier(.3,.9,.3,1) both;animation-delay:calc(var(--i) * 40ms)}
+.tp-menu-estructuras .tp-menu-icono{left:10px;top:10px;width:28px;height:28px;fill:#212121;filter:blur(.25px)}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"] .tp-menu-superficie{display:none}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"]::before{content:'';position:absolute;inset:0;border-radius:50%;background:#212121;filter:blur(.6px);box-shadow:0 2px 6px #0003}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"] .tp-menu-icono{fill:#f2f0e8}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"] span{opacity:1}
+.tp-menu-estructuras .tp-menu-boton:focus-visible .tp-menu-superficie{filter:none;outline:2px solid #0d0f17;border-radius:50%}
+@keyframes tp-aro-entra{from{opacity:0;translate:-10px 0}to{opacity:1;translate:0 0}}
+@media(prefers-reduced-motion:reduce){.tp-menu-estructuras .tp-menu-boton{animation:none}}
+@keyframes tp-abanico{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* Nivel 2 · Transformar: la colonia se agranda en el centro y se edita con tiradores. */
 .tp-editor{position:absolute;left:0;top:0;width:784px;height:784px;z-index:9;touch-action:none}
@@ -85,7 +108,7 @@
 .tp-editor-miniatura[aria-pressed="true"] span{font-weight:700}
 @keyframes tp-aparecer{from{opacity:0}to{opacity:1}}
 @keyframes tp-crecer{from{opacity:0;transform:scale(.5)}to{opacity:1}}
-@media(prefers-reduced-motion:reduce){.tp-editor-velo,.tp-editor-colonia,.tp-editor-guias,.tp-estructuras button{animation:none}}
+@media(prefers-reduced-motion:reduce){.tp-editor-velo,.tp-editor-colonia,.tp-editor-guias,.tp-estructuras-lista button{animation:none}}
 
 /* TRANSFORMAR en el aro: relleno, con la flecha de abrir. Es el único botón que no se gira: abre el editor. */
 .tp-menu-boton[data-accion="transformar"] .tp-menu-superficie{display:none}
@@ -98,3 +121,13 @@
 #tpColonias .tp-colonia{clip-path:circle(31% at 50% 50%)}
 /* Ventana de TRANSFORMAR: sin desenfoque en textos (como el resto del sistema). */
 #tuPlaca .tp-editor-pestanas button,#tuPlaca .tp-editor-listo,.tp-editor-miniatura i{filter:none}
+/* La reacción, dibujada en su cartel (19/11/2026). */
+.cartel-reaccion .tp-reaccion-figura{display:block;width:354px;height:200px;margin:-8px 0 16px}
+/* Jerarquía (19/11/2026): GENERAR COMPOSICIÓN más grande que su aclaración (una regla general de TU PLACA, #tuPlaca p, dejaba la aclaración en 20 px). */
+#tuPlaca .tp-generar{font:700 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif;top:963px} /* el bloque apoya en la misma línea inferior que DESHACER y GUARDAR PLACA */
+#tuPlaca p.tp-generar-ayuda{top:997px;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif}
+/* Zoom de la placa (19/11/2026): el mismo dibujo que el slider de zoom de MUESTRAS, en tinta oscura sobre el papel. */
+.tp-zoom-linea{fill:none;stroke:#0d0f17;stroke-width:2;stroke-linecap:round}
+.tp-zoom-manija{fill:#0d0f17}
+.tp-zoom-paso{fill:transparent;pointer-events:all;cursor:pointer}
+.tp-perilla g:focus-visible .tp-zoom-manija{stroke:#0d0f17;stroke-width:6;stroke-opacity:.25}
