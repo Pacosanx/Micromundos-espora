@@ -1,6 +1,6 @@
 // ───────── Modo kiosco (pantalla táctil del museo) ─────────
 // Se activa solo con ?kiosco en la dirección (placa.html?kiosco). En la web pública no cambia nada.
-// Opciones: ?kiosco&espera=120 (segundos sin tocar antes del aviso) &aviso=15 (segundos del aviso antes de reiniciar).
+// Opciones: ?kiosco&espera=15 (segundos sin tocar antes del aviso) &aviso=5 (segundos del aviso antes de reiniciar).
 // Hace tres cosas:
 //  1. Reinicio entre visitantes: tras un rato sin tocar avisa y, si nadie responde, vuelve a la portada
 //     con la placa en curso, la selección y las fichas abiertas borradas. Las placas ya guardadas (imágenes) no se tocan.
@@ -10,8 +10,8 @@
 (() => {
   const params = new URLSearchParams(location.search);
   if (!params.has('kiosco')) return;
-  const ESPERA = Math.max(20, Number(params.get('espera')) || 120) * 1000;
-  const AVISO = Math.max(5, Number(params.get('aviso')) || 15);
+  const ESPERA = Math.max(5, Number(params.get('espera')) || 15) * 1000;
+  const AVISO = Math.max(3, Number(params.get('aviso')) || 5);
   const raiz = document.documentElement;
   raiz.classList.add('modo-kiosco');
 
