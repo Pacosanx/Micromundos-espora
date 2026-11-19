@@ -40,7 +40,7 @@ $t = $t.Replace('/*LISTADO*/', (Leer 'listado.js'))
 $finBienvenida = $t.LastIndexOf('</body>')
 $t = $t.Substring(0, $finBienvenida) + '<style id="bienvenidaEstilos">' + (Leer 'bienvenida.css') + '</style><script id="bienvenidaScript">' + (Leer 'bienvenida.js') + '</script><script id="pistasScript">' + (Leer 'pistas.js') + '</script>' + [Environment]::NewLine + $t.Substring($finBienvenida)
 $t = $t.Replace('/*MUESTRARIO*/', ('const GUIA_MUESTRARIO = ' + (Leer 'muestrario.json') + ';' + [Environment]::NewLine + (Leer 'muestrario.js')))
-# Modo dedo (solo con ?dedo): el mouse se comporta como un dedo. Ver src/dedo.js.
+# Modo dedo (siempre, salvo con ?mouse): el mouse se comporta como un dedo. Ver src/dedo.js.
 $finDedo = $t.LastIndexOf('</body>')
 $t = $t.Substring(0, $finDedo) + '<script id="dedoScript">' + (Leer 'dedo.js') + '</script>' + [Environment]::NewLine + $t.Substring($finDedo)
 $especies = @{}
