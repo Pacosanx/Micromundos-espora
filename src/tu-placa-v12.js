@@ -165,8 +165,8 @@ function prepararTuPlaca(){
   let relojAvisoGenerar=0,cuadroAvisoGenerar=0;
   function avisarGenerada(cuantas){
     let aviso=$('tpAvisoGenerar');
-    if(!aviso){aviso=document.createElement('div');aviso.id='tpAvisoGenerar';aviso.className='tp-aviso-generar';aviso.setAttribute('role','status');
-      aviso.innerHTML='<p></p><button type="button"><img src="__CARTEL_FLECHA__" width="11.3995" height="11.0459" alt=""><span>RECUPERAR LA ANTERIOR</span></button>';pagina.appendChild(aviso);
+    if(!aviso){aviso=document.createElement('div');aviso.id='tpAvisoGenerar';aviso.className='tp-aviso-generar cartel cartel-neutro';aviso.setAttribute('role','status');
+      aviso.innerHTML='<div class="vidrio"></div><div class="flota"><div class="grano"></div><div class="fi"><div class="co"><p></p><button type="button"><img src="__CARTEL_FLECHA__" width="11.3995" height="11.0459" alt=""><span>RECUPERAR LA ANTERIOR</span></button></div></div></div>';pagina.appendChild(aviso);
       aviso.querySelector('button').addEventListener('click',ev=>{ev.stopPropagation();cerrarAvisoGenerar();deshacer();});}
     aviso.querySelector('p').textContent=`Composición nueva. La anterior tenía ${cuantas} ${cuantas===1?'colonia':'colonias'}.`;
     aviso.hidden=false;cancelAnimationFrame(cuadroAvisoGenerar);cuadroAvisoGenerar=requestAnimationFrame(()=>aviso.classList.add('visible'));
