@@ -748,21 +748,43 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   function prepararLupa(raiz,alTocar){
     const placa=raiz.querySelector('.ficha-placa');if(!placa)return;
     const lupa=document.createElement('div');lupa.className='detalle-lupa';lupa.hidden=true;placa.appendChild(lupa);
-    placa.tabIndex=0;placa.setAttribute('role','button');placa.setAttribute('aria-label','Mantener presionado y arrastrar para explorar la vista microscópica');placa.setAttribute('aria-expanded','false');
-    let espera=0,presionando=false,desmontar=null,inicioToque=null,arrastrando=false;
-    let posicion={x:placa.offsetWidth/2,y:placa.offsetHeight/2,ancho:placa.offsetWidth,alto:placa.offsetHeight};
-    const actualizar=()=>{lupa.style.left=(posicion.x-214.5)+'px';lupa.style.top=(posicion.y-214.5)+'px';desmontar?.actualizar?.(posicion);};
-    const mostrar=()=>{if(!presionando)return;lupa.hidden=false;placa.setAttribute('aria-expanded','true');if(!desmontar&&window.MicromundosLupa)desmontar=window.MicromundosLupa.montarLupaFigma(lupa);actualizar();};
-    const ocultar=()=>{clearTimeout(espera);presionando=false;lupa.hidden=true;placa.setAttribute('aria-expanded','false');};
-    const mover=e=>{if(!presionando)return;const r=placa.getBoundingClientRect();posicion={x:(e.clientX-r.left)/escala,y:(e.clientY-r.top)/escala,ancho:placa.offsetWidth,alto:placa.offsetHeight};
-      if(inicioToque&&Math.hypot(e.clientX-inicioToque.x,e.clientY-inicioToque.y)>10){arrastrando=true;clearTimeout(espera);mostrar();}actualizar();};
-    placa.addEventListener('pointerdown',e=>{if(e.button>0)return;presionando=true;arrastrando=false;inicioToque={x:e.clientX,y:e.clientY,t:performance.now()};placa.setPointerCapture(e.pointerId);mover(e);espera=setTimeout(mostrar,350);});
+    placa.tabIndex=0;placa.setAttribute('role','button');placa.setAttribute('aria-label','Mantener presionado para ver la vista microscópica');placa.setAttribute('aria-expanded','false');
+    let espera=0,presionando=false,desmontar=null,inicioToque=null,arrastrando=false,animacion=0;
+    // 19/11/2026 (Paco): el círculo sigue al dedo con un poco de retardo y la imagen de adentro se mueve el doble de rápido;
+    // el círculo no sale de la placa (su centro queda en el disco de la placa menos el radio de la lente, 214,5 px).
+    const RETARDO=.14,RADIO_LENTE=214.5;
+    const medida=()=>({ancho:placa.offsetWidth,alto:placa.offsetHeight});
+    let posicion={x:placa.offsetWidth/2,y:placa.offsetHeight/2,...medida()},objetivo={...posicion};
+    const disco=()=>{const img=raiz.querySelector('[data-node-id="500:7153"] img'),rp=placa.getBoundingClientRect();
+      if(!img)return {x:placa.offsetWidth/2,y:placa.offsetHeight/2,r:Math.min(placa.offsetWidth,placa.offsetHeight)/2};
+      const ri=img.getBoundingClientRect();return {x:(ri.left+ri.width/2-rp.left)/escala,y:(ri.top+ri.height/2-rp.top)/escala,r:ri.width/escala*.445};};
+    const dentro=(x,y)=>{const d=disco(),lim=Math.max(0,d.r-RADIO_LENTE),dx=x-d.x,dy=y-d.y,k=Math.hypot(dx,dy);
+      return k<=lim?{x,y}:{x:d.x+dx/k*lim,y:d.y+dy/k*lim};};
+    const actualizar=()=>{lupa.style.left=(posicion.x-RADIO_LENTE)+'px';lupa.style.top=(posicion.y-RADIO_LENTE)+'px';
+      // mapa: la lente sobre la imagen de la placa (para la concentración de células según las colonias).
+      const d=disco(),lado=d.r/.445,mapa={u:(posicion.x-(d.x-lado/2))/lado,v:(posicion.y-(d.y-lado/2))/lado,radio:RADIO_LENTE/lado};
+      desmontar?.actualizar?.({...medida(),x:clamp(d.x+(posicion.x-d.x)*2,0,placa.offsetWidth),y:clamp(d.y+(posicion.y-d.y)*2,0,placa.offsetHeight),mapa});};
+    const seguir=()=>{animacion=0;if(lupa.hidden)return;const k=movimientoReducido()?1:RETARDO;
+      posicion={...medida(),x:posicion.x+(objetivo.x-posicion.x)*k,y:posicion.y+(objetivo.y-posicion.y)*k};actualizar();
+      if(Math.hypot(objetivo.x-posicion.x,objetivo.y-posicion.y)>.3||presionando)animacion=requestAnimationFrame(seguir);};
+    const apuntar=(x,y)=>{objetivo={...medida(),...dentro(x,y)};if(lupa.hidden){posicion={...objetivo};actualizar();}else if(!animacion)animacion=requestAnimationFrame(seguir);};
+    const mostrar=()=>{if(!presionando)return;lupa.hidden=false;placa.setAttribute('aria-expanded','true');if(!desmontar&&window.MicromundosLupa)desmontar=window.MicromundosLupa.montarLupaFigma(lupa,{placa:raiz.querySelector('[data-node-id="500:7153"] img')});posicion={...objetivo};actualizar();if(!animacion)animacion=requestAnimationFrame(seguir);};
+    const ocultar=()=>{clearTimeout(espera);cancelAnimationFrame(animacion);animacion=0;presionando=false;desplazando=null;lupa.hidden=true;placa.setAttribute('aria-expanded','false');};
+    // Aparece donde está el dedo (si el dedo se mueve más de 10 px antes de tiempo, aparece enseguida) y desde ahí lo sigue.
+    // 19/11/2026 (Paco): arrastrar sobre la placa desplaza la ficha (no abre el microscopio); solo mantener el dedo quieto lo abre.
+    // Una vez abierto, el dedo mueve el círculo y la ficha no se desplaza.
+    let desplazando=null;
+    const mover=e=>{if(!presionando)return;
+      if(desplazando){scroll.scrollTop=desplazando.desde-(e.clientY-inicioToque.y)/escala;return;}
+      if(lupa.hidden&&inicioToque&&Math.hypot(e.clientX-inicioToque.x,e.clientY-inicioToque.y)>10){arrastrando=true;clearTimeout(espera);desplazando={desde:scroll.scrollTop};mover(e);return;}
+      const r=placa.getBoundingClientRect();apuntar((e.clientX-r.left)/escala,(e.clientY-r.top)/escala);};
+    placa.addEventListener('pointerdown',e=>{if(e.button>0)return;presionando=true;arrastrando=false;inicioToque={x:e.clientX,y:e.clientY,t:performance.now()};try{placa.setPointerCapture(e.pointerId);}catch{}mover(e);espera=setTimeout(mostrar,350);});
     placa.addEventListener('pointermove',mover);
     placa.addEventListener('contextmenu',e=>e.preventDefault());
     placa.addEventListener('pointerup',e=>{if(presionando&&!arrastrando&&inicioToque&&performance.now()-inicioToque.t<350&&Math.hypot(e.clientX-inicioToque.x,e.clientY-inicioToque.y)<10)alTocar?.(e);ocultar();});
     for(const tipo of ['pointercancel','lostpointercapture'])placa.addEventListener(tipo,ocultar);
-    placa.addEventListener('keydown',e=>{if(!e.repeat&&(e.key==='Enter'||e.key===' ')){e.preventDefault();presionando=true;posicion={x:placa.offsetWidth/2,y:placa.offsetHeight/2,ancho:placa.offsetWidth,alto:placa.offsetHeight};actualizar();espera=setTimeout(mostrar,350);}
-      if(presionando&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();posicion={...posicion,x:clamp(posicion.x+(e.key==='ArrowLeft'?-24:e.key==='ArrowRight'?24:0),0,posicion.ancho),y:clamp(posicion.y+(e.key==='ArrowUp'?-24:e.key==='ArrowDown'?24:0),0,posicion.alto)};mostrar();}
+    placa.addEventListener('keydown',e=>{if(!e.repeat&&(e.key==='Enter'||e.key===' ')){e.preventDefault();presionando=true;const d=disco();apuntar(d.x,d.y);espera=setTimeout(mostrar,350);}
+      if(presionando&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();apuntar(objetivo.x+(e.key==='ArrowLeft'?-24:e.key==='ArrowRight'?24:0),objetivo.y+(e.key==='ArrowUp'?-24:e.key==='ArrowDown'?24:0));mostrar();}
     });
     placa.addEventListener('keyup',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();ocultar();}});
     placa.addEventListener('blur',ocultar);
