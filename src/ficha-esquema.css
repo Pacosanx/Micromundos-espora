@@ -1,8 +1,10 @@
-/* Propuesta «Qué produce o transforma» con «Se ayudan» dentro del esquema (src/ficha-esquema.js).
-   Misma tinta y tipografía que los rótulos del esquema de Figma; sin colores nuevos. */
+/* Propuesta «Qué produce o transforma» como cadena lineal (src/ficha-esquema.js). Verbos sobre las líneas; en los círculos, el valor. */
 .ficha-esquema{pointer-events:none;color:#0d0f17;font-family:Arimo,Arial,sans-serif}
-.ficha-esquema>div{position:absolute}
+.ficha-esquema svg{position:absolute;left:0;top:0;overflow:visible}
+.fe-nodo{position:absolute;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
 .fe-rot{font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em;opacity:.65}
-.fe-paso{display:flex;align-items:flex-start;gap:8px;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.85}
-.fe-num{flex:none;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1px dashed rgb(13 15 23 / 45%);font-size:11px;line-height:1}
-.fe-rapidez{font-style:italic}
+.fe-val{font:400 17.33px/22px Arimo,Arial,sans-serif}
+.fe-especie{position:absolute;text-align:center;font:italic 400 17.33px/22px Arimo,Arial,sans-serif}
+.fe-ayudan{position:absolute;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.fe-ayudan p{margin:0;font:400 17.33px/24px Arimo,Arial,sans-serif}
+.fe-verbo{position:absolute;text-align:center;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em;opacity:.7}
