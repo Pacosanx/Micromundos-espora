@@ -23,6 +23,9 @@ $t = $t.Replace('/*ESTILOS_GLOSARIO*/', ((Leer 'glosario.css') + [Environment]::
 $terminosGlosario = @(Import-Csv -LiteralPath (Join-Path $base 'base/glosario.csv') -Delimiter ';' -Encoding UTF8)
 $vinculosGlosario = @(Import-Csv -LiteralPath (Join-Path $base 'base/glosario_muestras.csv') -Delimiter ';' -Encoding UTF8)
 $t = $t.Replace('/*GLOSARIO*/', ('const TERMINOS_GLOSARIO = ' + (ConvertTo-Json -InputObject $terminosGlosario -Depth 5 -Compress) + ';const VINCULOS_GLOSARIO = ' + (ConvertTo-Json -InputObject $vinculosGlosario -Depth 5 -Compress) + ';' + [Environment]::NewLine + (Leer 'glosario.js')))
+# Propuesta del gráfico «Qué produce o transforma» (src/ficha-esquema.js y .css).
+$finEsquema = $t.LastIndexOf('</body>')
+$t = $t.Substring(0, $finEsquema) + '<style id="fichaEsquemaEstilos">' + (Leer 'ficha-esquema.css') + '</style><script id="fichaEsquemaScript">' + (Leer 'ficha-esquema.js') + '</script>' + [Environment]::NewLine + $t.Substring($finEsquema)
 $t = $t.Replace('/*APERTURA*/', ('const RECETA_APERTURA = ' + (Leer 'apertura-palabra.json') + ';const RECETA_FONDO_APERTURA = ' + (Leer 'apertura-fondo.json') + ';' + [Environment]::NewLine + (Leer 'apertura.js')))
 $t = $t.Replace('/*LISTADO*/', (Leer 'listado.js'))
 $t = $t.Replace('/*MUESTRARIO*/', ('const GUIA_MUESTRARIO = ' + (Leer 'muestrario.json') + ';' + [Environment]::NewLine + (Leer 'muestrario.js')))
