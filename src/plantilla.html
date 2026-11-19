@@ -208,7 +208,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .cartel .fondoCartel{position:absolute;inset:0;filter:blur(4px);pointer-events:none}
 .cartel .textura{position:absolute;inset:0;border-radius:24px;overflow:hidden;pointer-events:none}
 .cartel .textura::before{content:"";position:absolute;left:-5px;top:-72.29%;width:calc(100% + 10px);height:167.5%;background:url('__CARTEL_FONDO__') center/100% 100% no-repeat;opacity:.26;mix-blend-mode:darken}
-.cartel:not([data-universo="BL"]) .textura::before{filter:grayscale(1);mix-blend-mode:multiply}
+.cartel:not([data-universo="BL"]):not([data-universo="BLM"]) .textura::before{filter:grayscale(1);mix-blend-mode:multiply}
 /* El reflejo se aplica a la caja completa (se refleja sobre sí misma) y el zoom sólo es positivo: así la textura siempre cubre todo el cartel.
    Antes el reflejo iba dentro de la misma escala, y con el origen cerca de un borde la textura dejaba una franja sin cubrir (corte vertical visible). */
 .cartel:not(.cartel-especie) .textura{transform:scaleX(var(--tx-f,1))}
