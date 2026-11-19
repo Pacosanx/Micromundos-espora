@@ -33,6 +33,7 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
       codigo.textContent = otra.codigo;
       encabezado.append(origen, codigo);
 
+      // Pendiente (CHECKLIST): acá va la placa figurativa de cada muestra. Todavía no existen; mientras tanto, la forma de la muestra en la PLACA.
       const marco = document.createElement('div');
       marco.className = 'ficha-galeria__marco';
       const fuente = otra.el?.querySelector('canvas');
@@ -58,7 +59,12 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
         datos.append(dt, dd);
         return dd;
       };
-      fila('GRUPO', [GRUPO_NOMBRE[otra.grupo] || otra.grupo]);
+      // GRUPO con los mismos circulitos de color que el cartel de la muestra en MUESTRAS (coloresCartel, carteles.js).
+      const grupo = fila('GRUPO', [GRUPO_NOMBRE[otra.grupo] || otra.grupo], 'ficha-galeria__grupo');
+      const puntos = document.createElement('span');
+      puntos.className = 'coloresCartel'; puntos.setAttribute('aria-hidden', 'true');
+      puntos.innerHTML = coloresCartel(otra.grupo);
+      grupo.firstChild.prepend(puntos);
       const compartidas = otra.vinculosDatos.especies.filter(e => muestra.vinculosDatos.especies.includes(e));
       const especies = fila('COMPARTE', compartidas.slice(0, 2), 'ficha-galeria__especie');
       if (compartidas.length > 2) {
@@ -71,7 +77,8 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
       const boton = document.createElement('button');
       boton.className = 'ficha-galeria__cta';
       boton.type = 'button';
-      boton.textContent = 'VER FICHA DE MUESTRA ↗';
+      // Misma flecha que «Ver ficha de muestra» del cartel de MUESTRAS (cartel-flecha.svg girada 45°).
+      boton.innerHTML = `<span>VER FICHA DE MUESTRA</span><img src="${RECURSOS_CARTEL.flecha}" width="11.3995" height="11.0459" alt="">`;
       if (ciclo !== lado) boton.tabIndex = -1;
       boton.addEventListener('click', () => alAbrir(otra));
       tarjeta.append(encabezado, marco, datos, boton);
