@@ -209,7 +209,7 @@ function prepararTuPlaca(){
   function cerrarReaccion(){cancelarPopup();cancelarPopup=()=>{};popup?.remove();popup=null;if(leyendo)marcarLeida(null);}
   function abrirReaccion(modo){cerrarReaccion();marcarLeida(modo);const datos=REACCIONES[modo];
     popup=$('plantillaCartelGlosario').content.firstElementChild.cloneNode(true);popup.classList.remove('cartel-glosario');popup.classList.add('cartel-especie','cartel-reaccion');popup.style.width='402px';popup.querySelector('.nom').textContent=datos.nombre;popup.querySelector('.nom').style.textTransform='none';popup.querySelector('.cod').textContent='';popup.querySelector('.definicionGlosario').textContent=datos.texto;popup.querySelector('.masCartel')?.remove();popup.querySelector('.detalleCartel')?.remove();
-    const figura=figuraReaccion(modo);if(figura){const def=popup.querySelector('.definicionGlosario');def.parentNode.insertBefore(figura,def);}const p=document.createElement('p');p.className='tp-reaccion-combinacion';p.textContent=datos.pareja+(datos.detalle?' · '+datos.detalle:'');popup.querySelector('.co').appendChild(p);$('anclaCarteles').appendChild(popup);universoCartel(popup,'B');ubicarCartelFlotante(popup);
+    const figura=figuraReaccion(modo);if(figura){const def=popup.querySelector('.definicionGlosario');def.parentNode.insertBefore(figura,def);}const p=document.createElement('p');p.className='tp-reaccion-combinacion';p.textContent=datos.pareja+(datos.detalle?' · '+datos.detalle:'');popup.querySelector('.co').appendChild(p);$('anclaCarteles').appendChild(popup);universoCartel(popup,letrasReaccion(modo));ubicarCartelFlotante(popup);
     const el=popup;cancelarPopup=activarArrastreCartel(el,p=>{el.style.transform=`translate(${p.x}px,${p.y}px)`;},cerrarReaccion);requestAnimationFrame(()=>el.isConnected&&el.classList.add('vis'));
   }
   // La placa entera se dibuja en un solo lienzo: cada colonia es un sprite del motor y los encuentros operan sobre sus píxeles.
@@ -242,6 +242,8 @@ function prepararTuPlaca(){
 
   // 19/11/2026: sin leyenda fija (Paco: los nombres de las reacciones ya aparecen en la placa). El cartel de cada reacción
   // la muestra: dos colonias de la pareja que la produce, dibujadas y encontrándose con el mismo motor de la placa.
+  // Color del cartel de cada reacción: el de los universos de la pareja que la produce (moho = M, bacteria = B, levadura = L).
+  function letrasReaccion(modo){const letra={moho:'M',bacteria:'B',levadura:'L'};for(const a of ORDEN)for(const b of ORDEN)if(REGLAS[par(a,b)]===modo)return [...new Set([letra[a],letra[b]])].join('');return 'B';}
   function figuraReaccion(modo){
     const letra={moho:'M',bacteria:'B',levadura:'L'};let pareja=null;
     for(const a of ORDEN)for(const b of ORDEN)if(!pareja&&REGLAS[par(a,b)]===modo)pareja=[a,b];
