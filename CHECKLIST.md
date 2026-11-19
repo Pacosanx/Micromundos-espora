@@ -1,6 +1,6 @@
 # Micromundos · Checklist de lo que falta
 
-Actualizado el 18/11/2026. Versión en `main`: commit `73461c6`.
+Actualizado el 19/11/2026.
 Sitio: https://pacosanx.github.io/Micromundos-espora/ · Repositorio: https://github.com/Pacosanx/Micromundos-espora
 
 ## Primera visita y ayudas durante el recorrido
@@ -13,9 +13,8 @@ Sitio: https://pacosanx.github.io/Micromundos-espora/ · Repositorio: https://gi
 
 ## MUESTRAS · Lectura de la placa
 
-- [ ] **Rediseñar la leyenda con jerarquías tipográficas claras.** Diferenciar el título de la guía, los rótulos Color / Forma / Tamaño, los ejemplos y las indicaciones de uso. Revisar tamaños, pesos, alineación, espaciado y contraste junto con los estados de los filtros.
-- [ ] **Permitir abrir y cerrar la leyenda.** Probar «Cómo leer la placa» como nombre del control, con «Ver guía» y «Cerrar guía» como textos de acción. Definir el estado inicial y comprobar que se pueda volver a abrir, que el control indique su estado y que los filtros sigan activos al cerrarla.
-- [ ] Explicar cómo se leen las muestras mixtas en la guía de color. Revisar con Paco las paletas pendientes de bacteria + moho, levadura + moho y los tres grupos juntos.
+- [x] **Rediseñar la leyenda con jerarquías tipográficas claras.** Diferenciar el título de la guía, los rótulos Color / Forma / Tamaño, los ejemplos y las indicaciones de uso. Revisar tamaños, pesos, alineación, espaciado y contraste junto con los estados de los filtros. *(En main el 19/11.)* Empieza cerrada (solo la columna de ejemplos, que sigue filtrando), chevron del sistema y selección múltiple de filtros.
+- [x] **Permitir abrir y cerrar la leyenda.** Probar «Cómo leer la placa» como nombre del control, con «Ver guía» y «Cerrar guía» como textos de acción. Definir el estado inicial y comprobar que se pueda volver a abrir, que el control indique su estado y que los filtros sigan activos al cerrarla. *(En main el 19/11.)* «LISTADO COMPLETO» lleva el mismo chevron y quedó a la misma altura.
 - [ ] Revisar PLACA, VÍNCULOS y MUESTRARIO con el listado abierto y cerrado. Comprobar que se entiendan la selección, los filtros y la vuelta desde una ficha o un entorno.
 
 ## Pantallas de universo · «Dónde están»
@@ -27,13 +26,15 @@ Sitio: https://pacosanx.github.io/Micromundos-espora/ · Repositorio: https://gi
 
 ## Ficha de muestra
 
-- [ ] **Corregir las tarjetas de «Muestras que comparten especies con esta»** (galería al pie de la ficha). Tipografía floja: revisar jerarquía entre el nombre, el código, GRUPO y COMPARTE, el especie en cursiva y «Ver ficha de muestra», con tamaños, pesos y espaciado coherentes con la escala del Atlas. Los contenedores todavía se marcan demasiado: suavizar más sus bordes y fondo para que se integren.
+- [x] **Corregir las tarjetas de «Muestras que comparten especies con esta»** (galería al pie de la ficha). Tipografía floja: revisar jerarquía entre el nombre, el código, GRUPO y COMPARTE, el especie en cursiva y «Ver ficha de muestra», con tamaños, pesos y espaciado coherentes con la escala del Atlas. Los contenedores todavía se marcan demasiado: suavizar más sus bordes y fondo para que se integren. *(En main el 19/11.)* Código a la derecha alineado arriba, circulitos de grupo del cartel y flecha de «Ver ficha de muestra». Falta la placa figurativa (ítem siguiente).
 - [ ] **Mejorar el gráfico de «Qué produce o transforma»** de la ficha.
+- [ ] **Placas figurativas para las tarjetas de «Muestras que comparten especies».** Cada tarjeta debe mostrar la placa figurativa de su muestra (pedido de Paco, 19/11). Completar las que falten.
 
 ## Legibilidad y contraste
 
-- [ ] Quitar el desenfoque de la tipografía y los controles en todo el Atlas, de acuerdo con lo definido el 17/11. Conservar el tratamiento visual de las colonias, los fondos y el vidrio de los carteles.
-- [ ] Revisar que la leyenda, la navegación, los cartelitos, los rótulos y los estados inactivos mantengan buen contraste sobre fondos variables. Comparar capturas antes y después en las pantallas principales.
+- [x] Quitar el desenfoque de la tipografía y los controles en todo el Atlas, de acuerdo con lo definido el 17/11. Conservar el tratamiento visual de las colonias, los fondos y el vidrio de los carteles. *(En main el 19/11.)*
+- [ ] **Poner blur en la tipografía de manera controlada.** Controlar mejor el blur y el grano en todo el proyecto (pedido de Paco, 19/11).
+- [x] Revisar que la leyenda, la navegación, los cartelitos, los rótulos y los estados inactivos mantengan buen contraste sobre fondos variables. Comparar capturas antes y después en las pantallas principales. *(En main el 19/11.)* Contraste de los estados inactivos e indicaciones corregido.
 
 ## Para revisar en tu pantalla (F11)
 - [ ] Galería de la ficha del yogur: bordes de las tarjetas, desenfoque de los dos márgenes y scroll que arranca en la segunda tarjeta. (No se pudo ver a tamaño real.)
@@ -55,7 +56,12 @@ El muestrario de prueba permite comparar variantes. Queda pendiente elegir cuál
   - Al ser un kiosco público: que no dependa de un teclado físico (teclado en pantalla o dictado), que funcione con gente de paso que no conoce el Atlas y que se pueda omitir el nombre.
   - Privacidad: avisar que se usa el micrófono, no guardar el audio (solo el texto), decidir si el nombre se muestra a otros visitantes y si se filtran nombres inapropiados.
   - Las placas de otros usuarios las comparten todos los visitantes: decidir cuántas se muestran, por cuánto tiempo y cómo se evita que se llene o se desordene.
-- [ ] Darle más protagonismo a TU PLACA. Revisar el título, la presencia del borde de la placa vacía, el peso de la biblioteca y la indicación de dónde soltar la primera colonia.
+- [x] Darle más protagonismo a TU PLACA. Revisar el título, la presencia del borde de la placa vacía, el peso de la biblioteca y la indicación de dónde soltar la primera colonia. *(En main el 19/11.)* Borde punteado que late con la placa vacía (tenue con colonias), resaltado del color del grupo al arrastrar y «ARRASTRÁ UNA COLONIA HASTA LA PLACA». Se siembra solo arrastrando.
+- [ ] **Leyendas de reacciones en TU PLACA.** Diseñarlas con la lógica de la guía de MUESTRAS («Cómo leer la placa»).
+- [ ] **Menú de colonias de TU PLACA.** Revisar su estructura y decidir qué información va fija y cuál como cartelito de ayuda.
+- [ ] **Menús contextuales y «reacciones en la placa».** Revisar su diseño y sumar opciones de edición de la placa entera, como girar o hacer zoom.
+- [ ] **Menú de edición de la colonia individual.** Los títulos no funcionan adentro del círculo: ponerlos afuera, a la izquierda, con un iconito cada uno, como en el menú contextual. Verificar el uso tipográfico.
+- [ ] **Pantalla con las placas de otras personas.** Diseñarla; por ahora puede ser simulada (no hace falta guardarlas de verdad).
 - [ ] Afinar el menú contextual para ajustar desde el primer gesto. Al mantener apretado y girar, el valor y la colonia deben cambiar en vivo mientras los otros botones se repliegan con una animación breve. Probar con mouse y pantalla táctil.
 - [ ] Llevar a la biblioteca estructuras de COLONIAS como Banda, Retícula, Campo disperso y Campo radial. Elegir cuáles ofrecer y probar que cada una se pueda sembrar como conjunto en una placa que ya tiene colonias, mover, editar y deshacer.
 - [ ] Adaptar el arco de MUESTRAS a los controles generales de TU PLACA. Incluir Foco, Giro, Paleta por porcentajes y Variación de las formas y tamaños individuales. Tamaño y Opacidad siguen siendo ajustes de cada colonia.
@@ -73,7 +79,7 @@ El muestrario de prueba permite comparar variantes. Queda pendiente elegir cuál
 El diseño final se monta en una pantalla táctil de uso público, para visitantes que pasan. Esto condiciona varias de las tareas anteriores.
 
 - [ ] **Reinicio entre visitantes.** Volver a la portada tras un rato sin tocar (con aviso previo breve) y borrar lo que quedó a medio hacer: placa en curso, selección, fichas abiertas. Definir el tiempo de inactividad y qué se conserva (por ejemplo, las placas ya guardadas).
-- [ ] **Pantalla de reposo atractiva.** Que la portada invite a tocar y se entienda sin explicación ni instrucciones previas.
+- [x] **Pantalla de reposo atractiva.** Que la portada invite a tocar y se entienda sin explicación ni instrucciones previas. *(En main el 19/11.)* Un anillo, como un toque, se expande sobre «TOCÁ PARA COMENZAR».
 - [ ] **Bloquear gestos y menús del navegador.** Pantalla completa, sin barra de direcciones, sin zoom por pellizco, sin selección de texto, sin menú contextual y sin salir por accidente.
 - [ ] **Áreas de toque y uso con muchos visitantes.** Botones grandes, tolerancia a toques erráticos o con varios dedos, y que ninguna acción importante requiera precisión fina.
 - [ ] **Funcionar sin conexión.** Incluir Arimo y todo lo necesario en el proyecto, y definir qué pasa si el reconocimiento de voz o el guardado dependen de internet.
@@ -94,9 +100,11 @@ El diseño final se monta en una pantalla táctil de uso público, para visitant
 - [ ] Borrar ramas ya incorporadas: `tipografia`, `correcciones`, `menu-ruido`, `ruido-colonias`, `publicar/2026-11-16-ultima-version`, `ajustes/cartel-celula-especie`.
 - [ ] Borrar copias de prueba en `placa`: `placa_prueba_original.html`, `placa_prueba_colonias.html`, `placa_prueba_entornos.html`.
 - [ ] Configurar el email real en git (hoy los commits salen como `paco@local.invalid`).
-- [ ] Encontrar la imagen del sitio publicado que carga sin dirección (aparece en la consola; no rompe nada visible).
+- [x] Encontrar la imagen del sitio publicado que carga sin dirección (aparece en la consola; no rompe nada visible). *(En main el 19/11.)* Era el pedido de /favicon.ico: ahora el ícono va incrustado.
 
 ## Contenido
+- [ ] **Más fichas de muestras.** Hoy solo está la del yogur: simular otras, empezando por las que ya estaban planeadas.
+- [ ] **Pantalla MICROMUNDOS.** Ponerle más esfuerzo de diseño.
 - [ ] Glosario: cinco términos siguen en borrador, sin definición: Flagelo, Biofilm, Masa madre, Agar, Crecimiento.
 - [ ] Más conceptos del glosario en la ficha (por ejemplo Coco y Bacilo para las dos especies del yogur): hay que redactar frases nuevas.
 - [ ] Decidir cuáles fichas sumar después de Yogur. Para cada una, preparar los textos, sus imágenes de placa, colonias y microscopio, y el esquema que explica qué sucede en esa muestra. Evaluar la plantilla común alimentada desde las tablas.
