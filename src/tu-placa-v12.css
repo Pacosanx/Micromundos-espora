@@ -103,5 +103,3 @@
 #tuPlaca{overflow:clip}
 
 #tpBiblioteca .tp-biblioteca__labels{grid-template-rows:none;grid-auto-rows:100px;align-content:start}
-/* Material de los carteles sin color de universo (avisos y cartelitos de TU PLACA). */
-.cartel-neutro{--cartel-fondo:rgb(205 198 186 / 42%);--cartel-noise-opacity:.35}
