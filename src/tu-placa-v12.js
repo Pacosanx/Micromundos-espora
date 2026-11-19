@@ -12,7 +12,7 @@ function prepararTuPlaca(){
     <button id="tpGenerar" class="tp-generar" type="button" aria-haspopup="true">GENERAR COMPOSICIÓN ↻</button><p class="tp-generar-ayuda" id="tpGenerarAyuda">MANTENÉ APRETADO PARA ELEGIR LA ESTRUCTURA</p><div id="tpEstructuras" class="tp-estructuras" hidden role="menu" aria-label="Estructuras de composición"></div><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA →</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
     <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a></div></div></div>`;
   const board=$('tpBoard'),capa=$('tpColonias'),items=[],elementos=new Map(),historico=[],futuro=[];
-  let zoom=100,secuencia=0,seleccionado=null,seleccion=[],arrastre=null,siembra=null,lazo=null,antes=null,frame=0,pedido=false,intensidad=85,estructura='propuesta';
+  let zoom=100,giro=0,secuencia=0,seleccionado=null,seleccion=[],arrastre=null,siembra=null,lazo=null,antes=null,frame=0,pedido=false,intensidad=85,estructura='propuesta';
   const punto=ev=>{const r=board.getBoundingClientRect();return{x:(ev.clientX-r.left)*784/r.width,y:(ev.clientY-r.top)*784/r.height};};
   const dentro=p=>Math.hypot(p.x-392,p.y-392)<386;
   const hash=n=>{let x=Math.imul(n^0x45d9f3b,0x45d9f3b);x=Math.imul(x^(x>>>16),0x45d9f3b);return ((x^(x>>>16))>>>0)/4294967296;};
@@ -28,11 +28,11 @@ function prepararTuPlaca(){
   const estiloAro={...piezas.find(p=>p.tipo==='placa').it.style};
   const aroCanvas=$('tpAroPlaca'),ladoAro=784/(estiloAro.size/100)/WF;aroCanvas.style.width=aroCanvas.style.height=ladoAro+'px';aroCanvas.style.left=aroCanvas.style.top=(784-ladoAro)/2+'px';
   mountColonias(aroCanvas,{recipe:pieza(estiloAro),maxResolution:1100});aroCanvas.style.width=aroCanvas.style.height=ladoAro+'px';
-  const snapshot=()=>JSON.stringify({items,contador:secuencia,intensidad,estructura,zoom});
+  const snapshot=()=>JSON.stringify({items,contador:secuencia,intensidad,estructura,zoom,giro});
   function guardar(){try{localStorage.setItem(clave,snapshot());}catch{}}
   function iniciarCambio(){if(antes===null)antes=snapshot();}
   function terminarCambio(){if(antes!==null&&antes!==snapshot()){historico.push(antes);if(historico.length>60)historico.shift();futuro.length=0;}antes=null;actualizar();guardar();}
-  function restaurar(texto){const s=JSON.parse(texto);zoom=Number.isFinite(s.zoom)?s.zoom:100;items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);intensidad=Number.isFinite(s.intensidad)?s.intensidad:85;estructura=s.estructura||estructura;seleccionado=null;seleccion=[];cerrarMenus();dibujar();actualizar();guardar();}
+  function restaurar(texto){const s=JSON.parse(texto);zoom=Number.isFinite(s.zoom)?s.zoom:100;giro=Number.isFinite(s.giro)?s.giro:0;items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);intensidad=Number.isFinite(s.intensidad)?s.intensidad:85;estructura=s.estructura||estructura;seleccionado=null;seleccion=[];cerrarMenus();dibujar();actualizar();guardar();}
   function deshacer(){if(historico.length){futuro.push(snapshot());restaurar(historico.pop());}}
   function rehacer(){if(futuro.length){historico.push(snapshot());restaurar(futuro.pop());}}
   function crear(e,x,y,tamano=e.tamano,parent=null){if(items.length>=120)return null;const it={id:++secuencia,modelo:e.id,x,y,tamano,escala:100,rot:0,foco:100,opacidad:100,seed:e.style.seed%1000,parent,manual:false,org:0,sinReacciones:!!e.composicion&&e.estado!=='AF'};items.push(it);return it;}
@@ -148,7 +148,7 @@ function prepararTuPlaca(){
   function abrirEstructuras(){menu.cerrar();editor.cerrar();abanico.hidden=false;for(const b of abanico.children)b.setAttribute('aria-checked',String(b.dataset.estructura===estructura));abanico.querySelector('[aria-checked="true"]')?.focus({preventScroll:true});$('tpGenerar').setAttribute('aria-expanded','true');}
   function cerrarEstructuras(){if(abanico.hidden)return;abanico.hidden=true;$('tpGenerar').setAttribute('aria-expanded','false');}
   function generar(){
-    iniciarCambio();cerrarMenus();cerrarReaccion();items.length=0;zoom=100;seleccionado=null;seleccion=[];
+    iniciarCambio();cerrarMenus();cerrarReaccion();items.length=0;zoom=100;giro=0;seleccionado=null;seleccion=[];
     if(estructura==='propuesta'){
       const composicion=generarComposicionTuPlaca(),dimension=784/composicion.diametroAro;
       for(const e of composicion)agregarGenerada(e.style,392+(e.x-.5)*dimension,392+(e.y-.5)*dimension,e.w*dimension,{green:'M',yellow:'L',rose:'B'}[e.familia]);
@@ -175,7 +175,7 @@ function prepararTuPlaca(){
     b.addEventListener('keydown',ev=>{if(['Enter',' '].includes(ev.key)){ev.preventDefault();generar();}if(ev.key==='ArrowUp'||ev.key==='ContextMenu'){ev.preventDefault();abrirEstructuras();}});
     b.addEventListener('contextmenu',ev=>ev.preventDefault());
     abanico.addEventListener('keydown',ev=>{if(ev.key==='Escape'){cerrarEstructuras();b.focus();}});}
-  $('tpDeshacer').addEventListener('click',deshacer);$('tpRehacer').addEventListener('click',rehacer);$('tpReiniciar').addEventListener('click',()=>{iniciarCambio();items.length=0;zoom=100;seleccionado=null;seleccion=[];cerrarMenus();cerrarReaccion();dibujar();terminarCambio();});
+  $('tpDeshacer').addEventListener('click',deshacer);$('tpRehacer').addEventListener('click',rehacer);$('tpReiniciar').addEventListener('click',()=>{iniciarCambio();items.length=0;zoom=100;giro=0;seleccionado=null;seleccion=[];cerrarMenus();cerrarReaccion();dibujar();terminarCambio();});
 
   // Encuentros: reglas y dibujo del motor de la Placa de encuentros del muestrario (MotorMuestrario.escena).
   const TIPOS={M:'moho',B:'bacteria',L:'levadura'},ORDEN=['moho','bacteria','levadura'],COLOR_TIPO={moho:'#27633f',bacteria:'#ff4c52',levadura:'#ff9c20'};
@@ -254,34 +254,49 @@ function prepararTuPlaca(){
       ORDEN.forEach((col,j)=>{if(j<i){caja.appendChild(document.createElement('span'));return;}const modo=REGLAS[par(fila,col)],b=document.createElement('button');b.type='button';b.className='tp-encuentros-celda';b.setAttribute('aria-label',REACCIONES[modo].pareja+': '+REACCIONES[modo].nombre+(REACCIONES[modo].detalle?', '+REACCIONES[modo].detalle:''));
         b.innerHTML=`<svg viewBox="0 0 30 20" aria-hidden="true">${glifos[modo](COLOR_TIPO[fila],COLOR_TIPO[col])}</svg><span>${REACCIONES[modo].nombre.toUpperCase()}</span>`;b.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(modo);});caja.appendChild(b);});});}
 
-  // Zoom de la placa entera (19/11/2026), como el slider de zoom de MUESTRAS: un arco a la derecha de la placa con remates,
-  // + arriba (acerca) y − abajo (aleja) y una manija. Acerca o aleja toda la composición desde el centro (50 % a 200 %).
-  // Reemplaza a la perilla de REACCIONES (Paco: «priorizo este»); las reacciones quedan fijas en 85 %.
-  const perilla=$('tpPerilla'),P={a0:-30,a1:30,r:432},SEP=4.6;let girandoPerilla=null;
-  const enPerilla=t=>P.a1-(P.a1-P.a0)*t,pp=(a,r=P.r)=>[392+Math.cos(a*Math.PI/180)*r,392+Math.sin(a*Math.PI/180)*r];
-  const arcoPerilla=(a0,a1)=>{const [x0,y0]=pp(a0),[x1,y1]=pp(a1);return `M${x0},${y0}A${P.r},${P.r} 0 0 ${a1>a0?1:0} ${x1},${y1}`;};
-  const tZoom=()=>Math.max(0,Math.min(1,Math.log(zoom/50)/Math.log(4)));
+  // Zoom y giro de la placa entera (19/11/2026), como el slider de zoom de MUESTRAS:
+  //  · ZOOM, a la derecha (+ arriba, − abajo): igual que en MUESTRAS, los centros de las colonias se alejan o acercan al centro
+  //    de la placa y las colonias NO cambian de tamaño (se separan). 50 % a 200 %.
+  //  · GIRAR, a la izquierda, mismo arco sin + ni −: gira toda la composición alrededor del centro (−180° a 180°).
+  // Reemplazan a la perilla de REACCIONES (Paco: «priorizo este»); las reacciones quedan fijas en 85 %.
+  const perilla=$('tpPerilla'),R_ARCO=432,SEP=4.6;let girandoPerilla=null,arcoActivo=null;
+  const ARCOS={zoom:{a0:-30,a1:30,lado:1},giro:{a0:210,a1:150,lado:-1}}; // a0 = arriba
+  const pp=(a,r=R_ARCO)=>[392+Math.cos(a*Math.PI/180)*r,392+Math.sin(a*Math.PI/180)*r];
+  const arco=(a0,a1)=>{const [x0,y0]=pp(a0),[x1,y1]=pp(a1);return `M${x0},${y0}A${R_ARCO},${R_ARCO} 0 0 ${a1>a0?1:0} ${x1},${y1}`;};
+  const tDe=k=>k==='zoom'?Math.max(0,Math.min(1,Math.log(zoom/50)/Math.log(4))):(giro+180)/360; // 1 = arriba
+  const angDe=(k,t)=>{const A=ARCOS[k];return A.a1+(A.a0-A.a1)*t;};
   function dibujarPerilla(){
-    const t=tZoom(),[x,y]=pp(enPerilla(t));
-    const remate=a=>{const [x0,y0]=pp(a,P.r-9),[x1,y1]=pp(a,P.r+9);return `M${x0},${y0}L${x1},${y1}`;};
+    const remate=a=>{const [x0,y0]=pp(a,R_ARCO-9),[x1,y1]=pp(a,R_ARCO+9);return `M${x0},${y0}L${x1},${y1}`;};
     const signo=(a,mas)=>{const [cx,cy]=pp(a),r=a*Math.PI/180,rx=Math.cos(r),ry=Math.sin(r),tx=-ry,ty=rx,L=6;
       return `M${cx-rx*L},${cy-ry*L}L${cx+rx*L},${cy+ry*L}`+(mas?`M${cx-tx*L},${cy-ty*L}L${cx+tx*L},${cy+ty*L}`:'');};
-    const [mx,my]=pp(P.a0-SEP),[nx,ny]=pp(P.a1+SEP);
-    perilla.innerHTML=`<path class="tp-zoom-linea" d="${arcoPerilla(P.a0,P.a1)}"/><path class="tp-zoom-linea" d="${remate(P.a0)+remate(P.a1)}"/><path class="tp-zoom-linea" d="${signo(P.a0-SEP,true)+signo(P.a1+SEP,false)}"/>
-      <path class="tp-perilla-control tp-perilla-toque" d="${arcoPerilla(P.a0,P.a1)}"/>
-      <circle class="tp-perilla-control tp-zoom-paso" data-paso="1" cx="${mx}" cy="${my}" r="18"/><circle class="tp-perilla-control tp-zoom-paso" data-paso="-1" cx="${nx}" cy="${ny}" r="18"/>
-      <g class="tp-perilla-control" role="slider" tabindex="0" aria-label="Zoom de la placa" aria-valuemin="50" aria-valuemax="200" aria-valuenow="${Math.round(zoom)}" aria-valuetext="${Math.round(zoom)} %"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="8" class="tp-zoom-manija"/></g>`;
-    if(girandoPerilla!==null)perilla.querySelector('g')?.focus?.({preventScroll:true});
+    let h='';
+    for(const k of ['zoom','giro']){const A=ARCOS[k],[x,y]=pp(angDe(k,tDe(k))),[lx,ly]=pp(A.a0,R_ARCO+(k==='zoom'?40:28));
+      h+=`<path class="tp-zoom-linea" d="${arco(Math.min(A.a0,A.a1),Math.max(A.a0,A.a1))}"/><path class="tp-zoom-linea" d="${remate(A.a0)+remate(A.a1)}"/>`;
+      if(k==='zoom'){const [mx,my]=pp(A.a0-SEP),[nx,ny]=pp(A.a1+SEP);h+=`<path class="tp-zoom-linea" d="${signo(A.a0-SEP,true)+signo(A.a1+SEP,false)}"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="1" cx="${mx}" cy="${my}" r="18"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="-1" cx="${nx}" cy="${ny}" r="18"/>`;}
+      const valor=k==='zoom'?Math.round(zoom)+' %':Math.round(giro)+'°';
+      h+=`<text class="tp-zoom-rotulo" x="${lx}" y="${ly-14}" text-anchor="${A.lado>0?'start':'end'}">${k==='zoom'?'ZOOM':'GIRAR'}</text><text class="tp-zoom-valor" x="${lx}" y="${ly+4}" text-anchor="${A.lado>0?'start':'end'}">${valor}</text>
+        <path class="tp-perilla-control tp-perilla-toque" data-arco="${k}" d="${arco(Math.min(A.a0,A.a1),Math.max(A.a0,A.a1))}"/>
+        <g class="tp-perilla-control" data-arco="${k}" role="slider" tabindex="0" aria-label="${k==='zoom'?'Zoom de la placa':'Girar la placa'}" aria-valuemin="${k==='zoom'?50:-180}" aria-valuemax="${k==='zoom'?200:180}" aria-valuenow="${Math.round(k==='zoom'?zoom:giro)}" aria-valuetext="${valor}"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="8" class="tp-zoom-manija"/></g>`;}
+    perilla.innerHTML=h;
+    if(girandoPerilla!==null)perilla.querySelector(`g[data-arco="${arcoActivo}"]`)?.focus?.({preventScroll:true});
   }
+  // Zoom: solo se mueven los centros (las colonias conservan su tamaño), como en MUESTRAS.
   function aplicarZoom(z){z=Math.max(50,Math.min(200,z));const f=z/zoom;if(Math.abs(f-1)<1e-4)return;
-    for(const it of items){it.x=392+(it.x-392)*f;it.y=392+(it.y-392)*f;it.escala*=f;}zoom=z;solicitarDibujo();}
-  function ponerIntensidad(ev){const p=punto(ev),a=Math.atan2(p.y-392,p.x-392)*180/Math.PI;aplicarZoom(50*4**Math.max(0,Math.min(1,(P.a1-a)/(P.a1-P.a0))));}
+    for(const it of items){it.x=392+(it.x-392)*f;it.y=392+(it.y-392)*f;}zoom=z;solicitarDibujo();}
+  function aplicarGiro(g){g=Math.max(-180,Math.min(180,g));const d=g-giro;if(Math.abs(d)<.01)return;const a=d*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
+    for(const it of items){const x=it.x-392,y=it.y-392;it.x=392+x*c-y*s;it.y=392+x*s+y*c;it.rot+=d;}giro=g;solicitarDibujo();}
+  function ponerIntensidad(ev){const p=punto(ev);let a=Math.atan2(p.y-392,p.x-392)*180/Math.PI;const A=ARCOS[arcoActivo];
+    if(arcoActivo==='giro'&&a<0)a+=360;const t=Math.max(0,Math.min(1,(a-A.a1)/(A.a0-A.a1)));
+    if(arcoActivo==='zoom')aplicarZoom(50*4**t);else aplicarGiro(-180+360*t);}
   perilla.addEventListener('pointerdown',ev=>{const c=ev.target.closest('.tp-perilla-control');if(!c)return;ev.preventDefault();ev.stopPropagation();cerrarMenus();cerrarReaccion();iniciarCambio();
     if(c.dataset.paso){aplicarZoom(zoom*(c.dataset.paso==='1'?1.25:.8));dibujar();terminarCambio();return;}
-    girandoPerilla=ev.pointerId;perilla.setPointerCapture?.(ev.pointerId);ponerIntensidad(ev);});
+    arcoActivo=c.dataset.arco||'zoom';girandoPerilla=ev.pointerId;perilla.setPointerCapture?.(ev.pointerId);ponerIntensidad(ev);});
   perilla.addEventListener('pointermove',ev=>{if(girandoPerilla!==null)ponerIntensidad(ev);});
   const soltarPerilla=()=>{if(girandoPerilla===null)return;girandoPerilla=null;dibujar();terminarCambio();};perilla.addEventListener('pointerup',soltarPerilla);perilla.addEventListener('pointercancel',soltarPerilla);
-  perilla.addEventListener('keydown',ev=>{const d={ArrowUp:1.1,ArrowRight:1.1,ArrowDown:1/1.1,ArrowLeft:1/1.1}[ev.key];if(d===undefined&&!['Home','End'].includes(ev.key))return;ev.preventDefault();iniciarCambio();aplicarZoom(ev.key==='Home'?50:ev.key==='End'?200:zoom*d);dibujar();terminarCambio();perilla.querySelector('g')?.focus({preventScroll:true});});
+  perilla.addEventListener('keydown',ev=>{const g=ev.target.closest('g[data-arco]');if(!g)return;const k=g.dataset.arco,arriba=['ArrowUp','ArrowRight'].includes(ev.key),abajo=['ArrowDown','ArrowLeft'].includes(ev.key);
+    if(!arriba&&!abajo&&!['Home','End'].includes(ev.key))return;ev.preventDefault();iniciarCambio();
+    if(k==='zoom')aplicarZoom(ev.key==='Home'?50:ev.key==='End'?200:zoom*(arriba?1.1:1/1.1));else aplicarGiro(ev.key==='Home'?-180:ev.key==='End'?180:giro+(arriba?10:-10));
+    dibujar();terminarCambio();perilla.querySelector(`g[data-arco="${k}"]`)?.focus({preventScroll:true});});
 
   function pintarRecuerdo(){
     dibujar();const cv=document.createElement('canvas');cv.width=cv.height=1600;const c=cv.getContext('2d');c.fillStyle='#f2f0e8';c.fillRect(0,0,1600,1600);c.save();c.scale(1600/860,1600/860);c.translate(38,20);c.drawImage(aroCanvas,(784-ladoAro)/2,(784-ladoAro)/2,ladoAro,ladoAro);c.save();c.beginPath();c.arc(392,392,392,0,Math.PI*2);c.clip();
@@ -293,7 +308,7 @@ function prepararTuPlaca(){
   $('tpVolver').addEventListener('click',cerrarRecuerdo);pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('tpVistaRecuerdo').hidden)cerrarRecuerdo();});
   document.addEventListener('cerrar-tuplaca',()=>{cerrarMenus();cerrarReaccion();if(!$('tpVistaRecuerdo').hidden)cerrarRecuerdo();});
   try{const guardado=JSON.parse(localStorage.getItem(clave)||'null');if(guardado&&Array.isArray(guardado.items)){for(const it of guardado.items.slice(0,120))if((modelos.has(it.modelo)||it.estilo)&&[it.x,it.y,it.tamano,it.escala,it.rot,it.foco,it.seed].every(Number.isFinite))items.push(it);secuencia=Math.max(guardado.contador||0,...items.map(i=>i.id));
-      intensidad=Number.isFinite(guardado.intensidad)?guardado.intensidad:guardado.reacciones===false?0:85;zoom=Number.isFinite(guardado.zoom)?guardado.zoom:100;if(ESTRUCTURAS.some(([id])=>id===guardado.estructura))estructura=guardado.estructura;}
+      intensidad=Number.isFinite(guardado.intensidad)?guardado.intensidad:guardado.reacciones===false?0:85;zoom=Number.isFinite(guardado.zoom)?guardado.zoom:100;giro=Number.isFinite(guardado.giro)?guardado.giro:0;if(ESTRUCTURAS.some(([id])=>id===guardado.estructura))estructura=guardado.estructura;}
     else{const viejo=JSON.parse(localStorage.getItem('micromundos-tuplaca-v1')||'[]');if(Array.isArray(viejo))for(const it of viejo.slice(0,60)){const grupo=['B','L','M'][Math.floor(it.estilo/4)],estado=it.estilo%4===3?'R':it.estilo%4===2?'C':'A',m=modelos.get(grupo+'-'+estado+'-01');if(m&&[it.x,it.y,it.tamano].every(Number.isFinite))crear(m,it.x*784/720,it.y*784/720,it.tamano);}}
   }catch{}
   dibujar();actualizar();guardar();
