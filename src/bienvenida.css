@@ -18,7 +18,8 @@ body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;
 .cartel-bienvenida:focus-visible{outline:0}
 
 /* Material neutro de cartel (vidrio, borde desenfocado y grano, como los carteles de MUESTRAS) sin color de universo. */
-.cartel-neutro{--cartel-fondo:rgb(205 198 186 / 42%);--cartel-noise-opacity:.35}
+/* Calibrado (19/11/2026): más claro y con menos grano; con .35 de grano y el fondo más oscuro quedaban grises. */
+.cartel-neutro{--cartel-fondo:rgb(240 236 226 / 62%);--cartel-noise-opacity:.14}
 
 /* Pistas en el momento de actuar (src/pistas.js) y la ayuda de la bienvenida: cartelitos con el material de los carteles. */
 .pista-ayuda{position:absolute;left:0;top:0;z-index:55;max-width:380px;opacity:0;transition:opacity .3s;pointer-events:none;color:#13151b}
@@ -53,3 +54,10 @@ body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;
 .bv-gesto-dedo::after{content:"";position:absolute;left:0;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:rgb(19 21 27 / 30%);box-shadow:0 0 0 1.5px rgb(19 21 27 / 55%);animation:bvDedo 2.4s ease-in-out infinite}
 @keyframes bvDedo{0%,15%{transform:translateX(0);opacity:0}25%{opacity:1}70%{transform:translateX(56px);opacity:1}85%,100%{transform:translateX(56px);opacity:0}}
 @media(prefers-reduced-motion:reduce){.pista-ayuda{transition:none}.bv-gesto-dedo::after{animation:none;opacity:1}}
+/* Línea libre de las pistas (src/pistas.js): trazo fino de largo variable y un punto sobre el control. */
+#pistaLinea{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:54;opacity:0;transition:opacity .3s}
+#pistaLinea.visible{opacity:1}
+#pistaLinea line{stroke:rgb(19 21 27 / 45%);stroke-width:1}
+#pistaLinea circle{fill:#13151b;opacity:.6}
+.pista-ayuda[data-donde="libre"]::before,.pista-ayuda[data-donde="libre"]::after{display:none}
+@media(prefers-reduced-motion:reduce){#pistaLinea{transition:none}}

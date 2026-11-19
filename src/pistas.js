@@ -110,31 +110,48 @@
   globo.hidden = true;
   globo.innerHTML = '<div class="vidrio"></div><div class="flota"><div class="grano"></div><div class="fi"><div class="co"><p></p><button type="button" aria-label="Cerrar pista">×</button></div></div></div>';
   pantalla.appendChild(globo);
+  // Línea libre entre el cartelito y lo que señala (19/11/2026): un trazo fino de largo variable, en cualquier dirección,
+  // que termina en un punto sobre el borde del control. Reemplaza al trazo corto que siempre salía hacia arriba.
+  const linea = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  linea.id = 'pistaLinea'; linea.setAttribute('aria-hidden', 'true');
+  linea.innerHTML = '<line/><circle r="4"/>';
+  pantalla.appendChild(linea);
   const texto = globo.querySelector('p');
   let actual = null, pausa = 0;
 
   const terminar = id => { hechas.add(id); guardar(); ocultar(); pausa = performance.now() + 900; };
-  const ocultar = () => { actual = null; globo.classList.remove('visible'); globo.hidden = true; };
+  const ocultar = () => { actual = null; globo.classList.remove('visible'); globo.hidden = true; linea.classList.remove('visible'); };
   globo.querySelector('button').addEventListener('click', ev => { ev.stopPropagation(); if (actual) terminar(actual.id); });
 
   const ubicar = (p, el) => {
     // La escena puede ser más ancha o más alta que 1920 × 1100 (pantallas de otra proporción): se mide con su tamaño real.
-    // Antes se suponía 1920 de ancho y en esas pantallas el globo quedaba corrido respecto del control.
     const s = pantalla.getBoundingClientRect(), W = pantalla.offsetWidth || 1920, H = pantalla.offsetHeight || 1100, k = s.width / W;
     const r = el.getBoundingClientRect();
     const b = { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
-    const g = { w: globo.offsetWidth, h: globo.offsetHeight }, M = 16, A = 28; // margen y distancia hasta el control (punto + trazo)
-    let donde = p.donde, x, y;
-    const cabe = d => d === 'abajo' ? b.y + b.h + A + g.h < H - M : d === 'arriba' ? b.y - A - g.h > M : d === 'izquierda' ? b.x - A - g.w > M : b.x + b.w + A + g.w < W - M;
-    if (!cabe(donde)) donde = ['abajo', 'arriba', 'izquierda', 'derecha'].find(cabe) || 'abajo';
-    if (donde === 'abajo' || donde === 'arriba') { x = b.x + b.w / 2 - g.w / 2; y = donde === 'abajo' ? b.y + b.h + A : b.y - A - g.h; }
-    else { y = b.y + b.h / 2 - g.h / 2; x = donde === 'izquierda' ? b.x - A - g.w : b.x + b.w + A; }
-    const xc = Math.min(Math.max(x, M), W - M - g.w), yc = Math.min(Math.max(y, M), H - M - g.h);
-    globo.dataset.donde = donde;
-    // la flecha sigue apuntando al control aunque el globo se haya corrido para no salirse
-    globo.style.setProperty('--flecha-x', `${Math.min(Math.max(b.x + b.w / 2 - xc, 24), g.w - 24)}px`);
-    globo.style.setProperty('--flecha-y', `${Math.min(Math.max(b.y + b.h / 2 - yc, 24), g.h - 24)}px`);
-    globo.style.transform = `translate(${Math.round(xc)}px,${Math.round(yc)}px)`;
+    const g = { w: globo.offsetWidth, h: globo.offsetHeight }, M = 16, A = 72; // margen y largo de la línea hasta el control
+    const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+    // Direcciones posibles: primero la pedida y sus diagonales, después las demás. El cartelito queda lejos y la línea es larga y libre.
+    const DIR = { abajo: [0, 1], arriba: [0, -1], izquierda: [-1, 0], derecha: [1, 0] };
+    const [dx0, dy0] = DIR[p.donde] || DIR.abajo;
+    const giros = [0, 40, -40, 90, -90, 135, -135, 180].map(a => { const t = a * Math.PI / 180; return [dx0 * Math.cos(t) - dy0 * Math.sin(t), dx0 * Math.sin(t) + dy0 * Math.cos(t)]; });
+    const posicion = ([dx, dy]) => {
+      // Centro del cartelito: fuera de la caja del control, a A de distancia, en la dirección (dx, dy).
+      const sx = Math.abs(dx) > 1e-6 ? (b.w / 2 + g.w / 2) / Math.abs(dx) : Infinity, sy = Math.abs(dy) > 1e-6 ? (b.h / 2 + g.h / 2) / Math.abs(dy) : Infinity;
+      const t = Math.min(sx, sy) + A;
+      return { x: cx + dx * t - g.w / 2, y: cy + dy * t - g.h / 2 };
+    };
+    const cabe = q => q.x >= M && q.y >= M && q.x + g.w <= W - M && q.y + g.h <= H - M;
+    let q = giros.map(posicion).find(cabe);
+    if (!q) { q = posicion(giros[0]); q.x = Math.min(Math.max(q.x, M), W - M - g.w); q.y = Math.min(Math.max(q.y, M), H - M - g.h); }
+    globo.dataset.donde = 'libre';
+    globo.style.transform = `translate(${Math.round(q.x)}px,${Math.round(q.y)}px)`;
+    // Línea: del borde del cartelito al borde del control (punto), sobre la recta entre los dos centros.
+    const gx = q.x + g.w / 2, gy = q.y + g.h / 2, vx = cx - gx, vy = cy - gy, d = Math.hypot(vx, vy) || 1, ux = vx / d, uy = vy / d;
+    const borde = (w, h) => Math.min(Math.abs(ux) > 1e-6 ? w / 2 / Math.abs(ux) : Infinity, Math.abs(uy) > 1e-6 ? h / 2 / Math.abs(uy) : Infinity);
+    const desde = borde(g.w, g.h) + 6, hasta = d - borde(b.w, b.h) + 2;
+    const [x1, y1, x2, y2] = [gx + ux * desde, gy + uy * desde, gx + ux * Math.max(desde, hasta), gy + uy * Math.max(desde, hasta)];
+    const l = linea.querySelector('line'); l.setAttribute('x1', x1); l.setAttribute('y1', y1); l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+    const c = linea.querySelector('circle'); c.setAttribute('cx', x2); c.setAttribute('cy', y2);
   };
 
   const bienvenidaAbierta = () => ['pendiente', 'abierta'].includes(pantalla.dataset.bienvenida);
@@ -156,7 +173,7 @@
       const el = p.blanco();
       if (!el || !visible(el)) continue;
       actual = p; p.seccion = seccion(); texto.textContent = p.texto; globo.hidden = false; ubicar(p, el);
-      requestAnimationFrame(() => globo.classList.add('visible'));
+      requestAnimationFrame(() => { globo.classList.add('visible'); linea.classList.add('visible'); });
       return;
     }
   };
