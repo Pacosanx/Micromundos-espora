@@ -153,7 +153,9 @@
       const s = 1600 / 860, c = document.createElement('canvas'); c.width = c.height = 360;
       c.getContext('2d').drawImage(img, 20 * s, 2 * s, 820 * s, 820 * s, 0, 0, 360, 360);
       let lista = []; try { lista = JSON.parse(localStorage.getItem(CLAVE_PLACAS) || '[]'); if (!Array.isArray(lista)) lista = []; } catch {}
-      lista.push({ img: c.toDataURL('image/jpeg', .84), nombre: nombre.trim(), fecha: fecha.getTime() });
+      // Sin fondo (19/11/2026, Paco): WebP con transparencia; si el navegador no lo arma, PNG.
+      let dato = c.toDataURL('image/webp', .86); if (!dato.startsWith('data:image/webp')) dato = c.toDataURL('image/png');
+      lista.push({ img: dato, nombre: nombre.trim(), fecha: fecha.getTime() });
       try { localStorage.setItem(CLAVE_PLACAS, JSON.stringify(lista.slice(-4))); } catch {}
     };
     img.src = url;
@@ -183,6 +185,6 @@
     const imprimir = ficha.querySelector('.tpn-imprimir'); delete imprimir.dataset.estado; imprimir.textContent = 'IMPRIMIR RECUERDO';
     ficha.querySelector('.tpn-ficha-nombre').textContent = (nombre.trim() || 'Sin nombre').toUpperCase();
     ficha.querySelector('.tpn-ficha-fecha').textContent = `${dos(fecha.getDate())}/${dos(fecha.getMonth() + 1)}/${fecha.getFullYear()} · ${dos(fecha.getHours())}:${dos(fecha.getMinutes())}`;
-    const url = $('tpGuardar')?.href; if (url) sumarALasDemas(url, fecha);
+    const url = $('tpImagenRecuerdo')?.dataset.sinFondo || $('tpGuardar')?.href; if (url) sumarALasDemas(url, fecha);
   }
 })();

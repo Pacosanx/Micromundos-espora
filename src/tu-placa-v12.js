@@ -348,12 +348,13 @@ function prepararTuPlaca(){
     if(k==='zoom')aplicarZoom(ev.key==='Home'?50:ev.key==='End'?200:zoom*(arriba?1.1:1/1.1));else aplicarGiro(ev.key==='Home'?-180:ev.key==='End'?180:giro+(arriba?10:-10));
     dibujar();terminarCambio();perilla.querySelector(`g[data-arco="${k}"]`)?.focus({preventScroll:true});});
 
-  function pintarRecuerdo(){
-    dibujar();const cv=document.createElement('canvas');cv.width=cv.height=1600;const c=cv.getContext('2d');c.fillStyle='#f2f0e8';c.fillRect(0,0,1600,1600);c.save();c.scale(1600/860,1600/860);c.translate(38,20);c.drawImage(aroCanvas,(784-ladoAro)/2,(784-ladoAro)/2,ladoAro,ladoAro);c.save();c.beginPath();c.arc(392,392,392,0,Math.PI*2);c.clip();
+  // conFondo=false: la misma placa sin fondo ni pie (19/11/2026, Paco): es la que se guarda para PLACAS DE OTRAS PERSONAS.
+  function pintarRecuerdo(conFondo=true){
+    if(conFondo)dibujar();const cv=document.createElement('canvas');cv.width=cv.height=1600;const c=cv.getContext('2d');if(conFondo){c.fillStyle='#f2f0e8';c.fillRect(0,0,1600,1600);}c.save();c.scale(1600/860,1600/860);c.translate(38,20);c.drawImage(aroCanvas,(784-ladoAro)/2,(784-ladoAro)/2,ladoAro,ladoAro);c.save();c.beginPath();c.arc(392,392,392,0,Math.PI*2);c.clip();
     c.drawImage(escenaCv,0,0,784,784);
-    c.restore();c.restore();c.fillStyle='#26312d';c.font='26px Arimo,Arial,sans-serif';c.fillText('MICROMUNDOS · TU PLACA',70,1550);return cv.toDataURL('image/png');
+    c.restore();c.restore();if(!conFondo)return cv.toDataURL('image/png');c.fillStyle='#26312d';c.font='26px Arimo,Arial,sans-serif';c.fillText('MICROMUNDOS · TU PLACA',70,1550);return cv.toDataURL('image/png');
   }
-  $('tpRecuerdo').addEventListener('click',()=>{cerrarMenus();cerrarReaccion();const url=pintarRecuerdo();$('tpImagenRecuerdo').src=url;$('tpGuardar').href=url;$('tpVistaRecuerdo').hidden=false;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=true;$('tpVolver').focus();});
+  $('tpRecuerdo').addEventListener('click',()=>{cerrarMenus();cerrarReaccion();const url=pintarRecuerdo();$('tpImagenRecuerdo').src=url;$('tpImagenRecuerdo').dataset.sinFondo=pintarRecuerdo(false);$('tpGuardar').href=url;$('tpVistaRecuerdo').hidden=false;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=true;$('tpVolver').focus();});
   function cerrarRecuerdo(){$('tpVistaRecuerdo').hidden=true;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=false;$('tpRecuerdo').focus();}
   // ── Placas de otras personas (19/11/2026, simulada) ──
   // Las placas guardadas en este equipo (las guarda la página del recuerdo, tu-placa-nombre.js, con el nombre) aparecen primero: para quien viene después,
@@ -371,8 +372,8 @@ function prepararTuPlaca(){
     const cv=document.createElement('canvas');cv.width=cv.height=Math.round(L);const c=cv.getContext('2d');c.translate(m,m);
     c.drawImage(aroCanvas,(784-ladoAro)/2*K,(784-ladoAro)/2*K,ladoAro*K,ladoAro*K);c.save();c.beginPath();c.arc(lado/2,lado/2,lado/2,0,Math.PI*2);c.clip();c.drawImage(imagen,0,0);c.restore();return cv;
   }
-  // Epígrafe de las guardadas en este equipo: el nombre que se dictó y la hora (si no hay nombre, solo la hora).
-  const hora=(f,n)=>{const d=new Date(f),hh=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');return n?n.toUpperCase()+' · '+hh:'Guardada a las '+hh;};
+  // Epígrafe de las guardadas en este equipo: nombre, día y hora (19/11/2026, Paco); si no hay nombre, «Guardada el …».
+  const hora=(f,n)=>{const d=new Date(f),dd=v=>String(v).padStart(2,'0'),cuando=dd(d.getDate())+'/'+dd(d.getMonth()+1)+' · '+dd(d.getHours())+':'+dd(d.getMinutes());return n?n.toUpperCase()+' · '+cuando:'Guardada el '+cuando;};
   function armarOtras(){
     const ol=$('tpOtras').querySelector('.tp-otras-grilla');ol.replaceChildren();
     const propias=leerPropias().slice().reverse(),pendientes=[];
