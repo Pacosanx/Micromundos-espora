@@ -124,6 +124,7 @@ El diseño final se monta en una pantalla táctil de uso público, para visitant
 - [x] Escribir un README con qué es Micromundos, cómo abrirlo, reconstruirlo, probarlo y publicarlo, y dónde consultar créditos y fuentes. Poner al día el traspaso, la escala tipográfica, la documentación de la base y `PUBLICACION.md` según el estado real. *(En main el 19/11.)*
 - [ ] Hacer el recorrido final en la versión publicada y verificar navegación, legibilidad, carga de recursos y claridad de las acciones en cada pantalla.
 - [ ] Para el video que prepara Paco, mostrar TU PLACA temprano y abreviar el resto del recorrido. Revisar una toma con mouse para comprobar que el cursor, los gestos y los cartelitos se lean y se entiendan.
+- [ ] Revisar todas las flechas, chevrones, íconos y botones que aparecen en el proyecto (pedido de Paco, 19/11).
 
 ## Cómo actualizar el sitio
 1. Rearmar `placa.html` con `armar.bat`.
