@@ -19,7 +19,7 @@
     if (!el) return false;
     const r = el.getBoundingClientRect();
     if (r.width < 2 || r.height < 2) return false;
-    if (!(el instanceof Element)) return true; // caja calculada (ver union)
+    if (typeof el.tagName !== 'string') return true; // caja calculada (ver union)
     for (let p = el; p && p !== document.body; p = p.parentElement) {
       if (p.hidden || p.inert) return false;
       const c = getComputedStyle(p);
@@ -153,7 +153,8 @@
       return;
     }
   };
-  setInterval(paso, 300);
+  const ciclo = () => { paso(); setTimeout(ciclo, 300); };
+  ciclo();
 
   // «VER LA INTRODUCCIÓN» (en MICROMUNDOS) también vuelve a mostrar las pistas.
   document.addEventListener('click', ev => {
