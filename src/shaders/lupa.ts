@@ -1,6 +1,9 @@
 // Lente circular sobre un campo microscópico continuo, anclado a la placa.
 type Posicion = {x:number;y:number;ancho:number;alto:number};
 const diametro=429;
+// 19/11/2026 (Paco): la imagen microscópica es el doble de grande que la placa (antes .72, ahora .36 de extensión):
+// la lente muestra la mitad de campo y, al mover el dedo, el campo corre el doble de rápido.
+const AUMENTO=.36;
 const vertex=`attribute vec2 a_pos; varying vec2 v_uv;
 void main(){v_uv=a_pos*.5+.5;gl_Position=vec4(a_pos,0.,1.);}`;
 const fragment=`precision highp float;
@@ -58,7 +61,7 @@ export function montarLupaFigma(contenedor:HTMLElement){
   const centro=gl.getUniformLocation(programa,'u_centro'),extension=gl.getUniformLocation(programa,'u_extension'),texel=gl.getUniformLocation(programa,'u_texel');
   dibujar=()=>{if(!listo||terminado)return;gl.useProgram(programa);gl.viewport(0,0,resolucion,resolucion);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
    gl.uniform2f(centro,.5+(posicion.x/posicion.ancho-.5)*.72,.5+(posicion.y/posicion.alto-.5)*.72);
-   gl.uniform2f(extension,.72*diametro/posicion.ancho,.72*diametro/posicion.alto);gl.uniform2f(texel,1/imagen.naturalWidth,1/imagen.naturalHeight);
+   gl.uniform2f(extension,AUMENTO*diametro/posicion.ancho,AUMENTO*diametro/posicion.alto);gl.uniform2f(texel,1/imagen.naturalWidth,1/imagen.naturalHeight);
    gl.drawArrays(gl.TRIANGLES,0,6);
   };
  }
@@ -69,7 +72,7 @@ export function montarLupaFigma(contenedor:HTMLElement){
   else{
    const reemplazo=document.createElement('canvas');reemplazo.className=canvas.className;reemplazo.width=reemplazo.height=resolucion;canvas.replaceWith(reemplazo);
    const ctx=reemplazo.getContext('2d')!;
-   dibujar=()=>{const lado=imagen.naturalWidth*.72*diametro/posicion.ancho,cx=imagen.naturalWidth*(.5+(posicion.x/posicion.ancho-.5)*.72),cy=imagen.naturalHeight*(.5+(posicion.y/posicion.alto-.5)*.72);ctx.clearRect(0,0,resolucion,resolucion);ctx.drawImage(imagen,cx-lado/2,cy-lado/2,lado,lado,0,0,resolucion,resolucion);};
+   dibujar=()=>{const lado=imagen.naturalWidth*AUMENTO*diametro/posicion.ancho,cx=imagen.naturalWidth*(.5+(posicion.x/posicion.ancho-.5)*.72),cy=imagen.naturalHeight*(.5+(posicion.y/posicion.alto-.5)*.72);ctx.clearRect(0,0,resolucion,resolucion);ctx.drawImage(imagen,cx-lado/2,cy-lado/2,lado,lado,0,0,resolucion,resolucion);};
   }
   listo=true;solicitar();
  };

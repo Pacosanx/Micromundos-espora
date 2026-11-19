@@ -491,13 +491,25 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       $('q').value=relacionadas.length?lugar:'';aplicarFiltros();cambiarListado(true);
       if(relacionadas.length)seleccionar(relacionadas[0]);
     },'Ver muestras de este entorno');
-    function cambiar(i){
+    // dir: de qué lado entra la nueva ilustración (1 = desde la derecha, -1 = desde la izquierda, 0 = solo fundido).
+    function cambiar(i,dir=0){
       indice=(i+filas.length)%filas.length;
       limpiarLugar();limpiarLugar=()=>{};
       const entorno=entornos[indice],nombre=entorno.nombre;
-      if(enlace)enlace.textContent='VER MUESTRAS DE '+nombre.toUpperCase()+' →';
+      if(enlace){
+        // Misma flecha que «Ver ficha de muestra» en los carteles de MUESTRAS (cartel-flecha.svg girada 45°).
+        enlace.textContent='VER MUESTRAS DE '+nombre.toUpperCase();enlace.classList.add('entorno-enlace');
+        const flecha=document.createElement('img');flecha.src='__CARTEL_FLECHA__';flecha.width=11.3995;flecha.height=11.0459;flecha.alt='';enlace.appendChild(flecha);
+      }
       for(const [n,fila]of filas.entries()){fila.style.opacity=n===indice?'1':'.45';fila.setAttribute('aria-pressed',String(n===indice));}
-      if(contador)contador.textContent=String(indice+1).padStart(2,'0')+' / '+String(filas.length).padStart(2,'0');
+      // Contador: un circulito por lugar (diseño de Paco); el actual va lleno. Sin números escritos.
+      if(contador){
+        if(!contador.classList.contains('entorno-puntos')){
+          contador.classList.add('entorno-puntos');contador.replaceChildren();contador.setAttribute('role','group');
+          filas.forEach((_,n)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Lugar '+(n+1)+' de '+filas.length);b.addEventListener('click',()=>cambiar(n));b.append(document.createElement('img'));contador.appendChild(b);});
+        }
+        [...contador.children].forEach((b,n)=>{const im=b.firstChild;im.src=n===indice?'__DE_PUNTO_ACTUAL__':'__DE_PUNTO__';im.width=im.height=15;im.alt='';b.setAttribute('aria-current',String(n===indice));});
+      }
       marco.replaceChildren();
       const img=document.createElement('img');img.src=entorno.imagen;img.alt=nombre;
       const encuadre=entorno.encuadre||{escala:1,x:0,y:0};
@@ -508,18 +520,85 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
         if(textos[1])textos[1].textContent=entorno['parrafo'+(i+1)];
         bloque.style.visibility='visible';
       }
-      if(!movimientoReducido())marco.animate([{opacity:0},{opacity:1}],{duration:350,easing:'ease-out'});
+      if(!movimientoReducido()){
+        marco.animate([{opacity:0},{opacity:1}],{duration:350,easing:'ease-out'});
+        if(dir)img.animate([{translate:`${dir*90}px 0`},{translate:'0 0'}],{duration:420,easing:'cubic-bezier(.2,.7,.2,1)'});
+      }
     }
     filas.forEach((fila,i)=>interactivo(fila,()=>cambiar(i),'Explorar '+texto(fila.querySelectorAll('p')[1])));
+    // Las flechas van a los costados, dentro del círculo de la ilustración (diseño de Paco), centradas en su alto.
+    const arriba=parseFloat(marco.style.top),alto=parseFloat(marco.style.height)||parseFloat(marco.style.width);
     for(const [nombre,delta]of [['anterior',-1],['siguiente',1]]){
       const flecha=raiz.querySelector(`[data-name="${nombre}"]`);if(!flecha)continue;
       const dibujo=document.createElement('div');
       Object.assign(dibujo.style,{position:'absolute',left:'12px',top:'22px',width:flecha.style.width,height:flecha.style.height});
       dibujo.append(...flecha.childNodes);flecha.appendChild(dibujo);
+      // Trazo de 2 px (medio punto más que el de Figma, que se veía muy fino), misma forma.
+      const dib=dibujo.querySelector('img');if(dib){dib.src=delta<0?'__DE_FLECHA_ANTERIOR__':'__DE_FLECHA_SIGUIENTE__';}
       Object.assign(flecha.style,{width:'48px',height:'44px',translate:'-12px -22px'});
-      interactivo(flecha,()=>cambiar(indice+delta),'Lugar '+nombre);
+      // Se anclan al centro de la pantalla, igual que la ilustración (adaptarMargenesDetalle la pasa a calc(50% ± N px)):
+      // antes se medían desde el borde izquierdo y en pantallas de otro ancho quedaban corridas respecto del círculo.
+      const x=longitudDetalle(marco.style.left||'');
+      if(Number.isFinite(arriba)&&Number.isFinite(alto)&&x!==null){
+        raiz.appendChild(flecha);flecha.dataset.anclaCentro='1';flecha.classList.add('entorno-flecha');
+        const desde=(delta<0?x+84:x+alto-84-24)-12-960; // dibujo de 24 px a 84 px del borde del círculo; la caja táctil empieza 12 px antes
+        Object.assign(flecha.style,{top:(arriba+alto/2)+'px',left:`calc(50% ${desde<0?'-':'+'} ${Math.abs(desde).toFixed(3)}px)`,translate:'0 -22px'});
+      }
+      interactivo(flecha,()=>cambiar(indice+delta,delta),'Lugar '+nombre);
     }
+    // Alturas fijas: cada bloque de la derecha reserva el alto de su texto más largo entre todos los lugares,
+    // así los títulos y «Ver muestras de …» no se mueven al cambiar de ilustración.
+    const fijarAlturas=()=>{
+      for(const [i,bloque]of bloques.entries()){
+        const textos=bloque.querySelectorAll('p');if(!textos[1])continue;
+        const antes=[textos[0].textContent,textos[1].textContent];let maximo=0;
+        bloque.style.height='';
+        for(const e of entornos){textos[0].textContent=e['titulo'+(i+1)];textos[1].textContent=e['parrafo'+(i+1)];maximo=Math.max(maximo,bloque.offsetHeight);}
+        [textos[0].textContent,textos[1].textContent]=antes;
+        if(maximo){bloque.style.height=maximo+'px';bloque.style.flexShrink='0';}
+      }
+    };
+    // Solo hacia los costados: desplazamiento horizontal del trackpad (o Mayús + rueda) sobre la imagen pasa al lugar siguiente o anterior.
+    // El desplazamiento vertical sigue moviendo la página. En el primero y el último lugar tampoco se retiene.
+    let acumulado=0,esperaHasta=0;
+    marco.addEventListener('wheel',ev=>{
+      if(Math.abs(ev.deltaX)<=Math.abs(ev.deltaY))return;
+      const d=ev.deltaX,dir=Math.sign(d);if(!dir)return;
+      if((dir>0&&indice===filas.length-1)||(dir<0&&indice===0)){acumulado=0;return;}
+      ev.preventDefault();
+      const ahora=performance.now();if(ahora<esperaHasta)return;
+      if(Math.sign(acumulado)!==dir)acumulado=0;
+      acumulado+=ev.deltaMode===1?d*16:d;
+      if(Math.abs(acumulado)>=50){cambiar(indice+dir,dir);acumulado=0;esperaHasta=ahora+450;}
+    },{passive:false});
+    // Deslizar hacia los costados sobre la imagen, con el dedo o arrastrando con el mouse (botón izquierdo); el vertical sigue desplazando la página.
+    let toque=null;marco.style.touchAction='pan-y';
+    // Mientras se arrastra, la ilustración acompaña al dedo (con resistencia) y se desvanece un poco; al soltar
+    // pasa al lugar siguiente deslizándose, o vuelve a su lugar si el gesto fue corto.
+    const imagen=()=>marco.querySelector('img');
+    const escala=()=>{const r=marco.getBoundingClientRect();return r.width/(marco.offsetWidth||r.width)||1;};
+    marco.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='mouse'||ev.button===0){toque={x:ev.clientX,y:ev.clientY,id:ev.pointerId,horizontal:null};if(ev.pointerType==='mouse')ev.preventDefault();}});
+    marco.addEventListener('pointermove',ev=>{
+      if(!toque||toque.id!==ev.pointerId)return;
+      const dx=ev.clientX-toque.x,dy=ev.clientY-toque.y;
+      if(toque.horizontal===null){if(Math.hypot(dx,dy)<8)return;toque.horizontal=Math.abs(dx)>Math.abs(dy);if(toque.horizontal)marco.setPointerCapture?.(ev.pointerId);}
+      if(!toque.horizontal||movimientoReducido())return;
+      const d=dx/escala()*.45,im=imagen();if(!im)return;
+      im.style.translate=`${d.toFixed(1)}px 0`;im.style.opacity=String(Math.max(.55,1-Math.abs(d)/500));
+    });
+    const soltarDesliz=ev=>{
+      if(!toque||toque.id!==ev.pointerId)return;
+      const dx=ev.clientX-toque.x,dy=ev.clientY-toque.y,horizontal=toque.horizontal;toque=null;
+      const im=imagen();
+      if(ev.type==='pointerup'&&horizontal&&Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3){const dir=dx<0?1:-1;cambiar(indice+dir,dir);return;}
+      if(im&&im.style.translate&&!movimientoReducido()){const desde=im.style.translate;im.style.translate='';im.style.opacity='';im.animate([{translate:desde,opacity:.8},{translate:'0 0',opacity:1}],{duration:260,easing:'ease-out'});}
+      else if(im){im.style.translate='';im.style.opacity='';}
+    };
+    marco.addEventListener('pointerup',soltarDesliz);
+    marco.addEventListener('pointercancel',soltarDesliz);
+    marco.classList.add('entorno-desliza');
     cambiar(0);
+    fijarAlturas();document.fonts?.ready.then(()=>{if(marco.isConnected)fijarAlturas();});
   }
   // La ficha de muestra enlaza al glosario las palabras que ya usa (sin cambiar su texto): primera aparición de cada concepto, en frases de lectura.
   function enlazarConceptosFicha(raiz){
@@ -557,12 +636,21 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     const cambiar=(id,t)=>{const e=nodo(id);if(e)e.textContent=t;};
     const simulada=fichaSimulada(muestra);if(simulada)adaptarFichaSimulada(raiz,muestra,simulada,nodo,cambiar);
     cambiar('500:7170',muestra.codigo);cambiar('500:7179',muestra.colonias+' aprox.');cambiar('500:7182',String(muestra.vinculosDatos.especies.length));
-    cambiar('500:7160',simulada?'El microscopio de esta muestra está en proceso.':'Tocá una colonia para ver sus células. Mantené el dedo para usar el microscopio.');
+    // 19/11/2026 (Paco): la pista de QUÉ ES queda como en el diseño («Mantené el dedo sobre la placa para usar el microscopio»);
+    // en las fichas simuladas, el microscopio está en proceso. ESPECIES suma su pista con el mismo estilo, a la izquierda y a la
+    // altura de la cabecera de la tabla («bacteria» si todas las especies lo son; si no, «especie»).
+    if(simulada)cambiar('500:7160','El microscopio de esta muestra está en proceso.');
+    {const tabla=nodo('500:7205'),modelo=nodo('500:7160');if(tabla&&modelo){const p=document.createElement('p');p.className='ficha-pista-especies';p.style.cssText=modelo.style.cssText;
+      const soloBacterias=muestra.grupo==='B';
+      Object.assign(p.style,{left:'39px',top:tabla.style.top});p.textContent='Tocá una colonia para ver a qué '+(soloBacterias?'bacteria':'especie')+' corresponde';tabla.parentElement.appendChild(p);}}
     cambiar('500:7191',fechaTexto(muestra));cambiar('500:7173',GRUPO_NOMBRE[muestra.grupo]);cambiar('500:7176',ESTADO_NOMBRE[muestra.estado]);
     nodo('500:7158').style.mixBlendMode='normal';nodo('500:7158').style.color='#0d0f17';nodo('500:7158').parentElement.style.mixBlendMode='normal';
     const aviso=nodo('500:7158').parentElement;aviso.classList.add('ficha-aviso-desliza');
     const flecha=aviso.querySelector('img');if(flecha){flecha.style.filter='brightness(0)';let p=flecha.parentElement;while(p&&p!==aviso){p.style.mixBlendMode='normal';p=p.parentElement;}}
     const miniatura=nodo('500:7166');miniatura.replaceChildren();const cv=document.createElement('canvas');cv.width=cv.height=116;cv.style.width=cv.style.height='100%';cv.getContext('2d').drawImage(muestra.el.querySelector('canvas'),0,0,116,116);miniatura.appendChild(cv);
+    // 19/11/2026 (Paco): la colonia va a la izquierda de YOGUR NATURAL, centrada en la altura de las mayúsculas, y el título
+    // se corre a la derecha para darle lugar. La caja mide 116 px y el círculo que se ve, unos 38: su borde izquierdo queda en el margen (39 px).
+    {const titulo=nodo('500:7156');if(titulo){Object.assign(miniatura.style,{left:'0px',top:'805px'});titulo.style.marginLeft='70px';}}
     let siguienteEspecie=0;
     const compuesto=(img,ev,tipo)=>{
       let indice;

@@ -31,7 +31,7 @@
 > - Transición corregida siguiendo `espora/atlas/graficos/superposicion/app.js`: `mezclaVista` interpola con requestAnimationFrame posición, tamaño y opacidad de las muestras. Los extremos de cada hilo se recalculan con esas mismas coordenadas en cada cuadro. No agregar una transición CSS a `.it` porque desincroniza líneas y muestras. Dura 1,1 s, admite invertir el recorrido desde el punto actual y respeta movimiento reducido. Prueba con reloj y DOM simulados: extremos de las 969 líneas durante el recorrido, escala, reversión sin salto, retorno exacto, filtros y movimiento reducido aprobados; sigue pendiente revisión visual real.
 > - Es un diagrama circular sin cintas con las mismas 146 muestras (se reutilizan sus canvas), ordenadas por grupo y fecha. Sus tamaños se reducen con un factor común para distribuirlas en la circunferencia.
 > - Criterio confirmado por Paco: dos muestras se conectan cuando comparten al menos una especie de bacteria, levadura o moho. La base actual produce 969 conexiones únicas, sin enlaces de una muestra consigo misma.
-> - `src/vinculos.js` contiene distribución, conexiones y cambio de vista. `build.ps1` y `build.py` incorporan los CSV de `base/` al HTML; no hay fetch ni servidor requerido. Se vincula por receta + id para conservar la identidad visual.
+> - `src/vinculos.js` contiene distribución, conexiones y cambio de vista. `build.ps1` incorpora los CSV de `base/` al HTML; no hay fetch ni servidor requerido. Se vincula por receta + id para conservar la identidad visual.
 > - Tocar VÍNCULOS abre la vista; tocar PLACA vuelve. Se conservan selección, ficha, filtros, búsqueda y zoom de PLACA. En VÍNCULOS se ocultan el zoom y los aros temporales. La ficha incluye las especies; la selección destaca las conexiones de esa muestra.
 > - Comprobado con DOM simulado: sintaxis del HTML generado, cobertura de las 146 muestras con especies, circunferencia, conexiones, selección, filtros, búsqueda y retorno repetido a PLACA. Pendiente revisión visual en navegador real: el navegador de revisión bloqueó el protocolo file://.
 
@@ -67,16 +67,16 @@ Todo el prototipo termina en **un solo HTML** (`placa.html`), generado desde `sr
 | Archivo | Qué contiene |
 |---|---|
 | `placa.html` | El resultado final. Se abre con doble clic (necesita internet solo para la fuente Arimo de Google Fonts). |
-| `src/plantilla.html` | Estructura HTML y todo el CSS. Tiene cuatro marcadores (`/*DATOS*/`, `/*COLONIAS*/`, `/*FONDO*/`, `/*APP*/`) que `build.py` reemplaza. |
+| `src/plantilla.html` | Estructura HTML y todo el CSS. Tiene cuatro marcadores (`/*DATOS*/`, `/*COLONIAS*/`, `/*FONDO*/`, `/*APP*/`) que `build.ps1` reemplaza. |
 | `src/app.js` | Toda la lógica: posiciones, zoom, selección, ficha, filtros, lista, animación de entrada. |
 | `src/datos.js` | La colección ficticia: 66 muestras en `MUESTRAS_RAW`. |
 | `src/colonias-core.js` | Copia del renderer `colonias.js` de Paco, **con dos parches míos** (ver 4). |
 | `src/fondo.json` | Los elementos grandes de las dos composiciones circulares de Paco (`A`, `B`) y los medianos (`mid`). |
-| `build.py` | Arma `placa.html` uniendo lo anterior. Correr: `python3 build.py`. |
+| `build.ps1` / `armar.bat` | Arma `placa.html` uniendo lo anterior. Correr: doble clic en `armar.bat`. (`build.py` quedó retirado: solo llama a `build.ps1`.) |
 | `shot.py` | Abre `placa.html` en Chrome sin pantalla y saca capturas (usa Playwright). Ejemplo: `python3 shot.py 'click:870,540' 'shot:s2.png'`. |
 | `referencia/` | La imagen de referencia de Paco y su CSS de Figma (`placa_css.txt`), si están en el paquete. |
 
-Los paths dentro de `build.py` y `shot.py` son relativos a la carpeta del proyecto. Si no corren, ajustar la línea de la ruta base.
+Los paths dentro de `build.ps1` y `shot.py` son relativos a la carpeta del proyecto. Si no corren, ajustar la línea de la ruta base.
 
 ## 3. Cómo está pensada la pantalla
 
@@ -129,7 +129,7 @@ Paco dijo que "no quedó como esperaba" sin detallar. Mis hipótesis, para que s
 ## 6. Cómo trabajar con Paco
 
 - Paco hace referencias en Figma y diseñan juntos; vos tocás el código. Antes de un cambio grande, mostrá una captura (`shot.py`).
-- Cada cambio visual: regenerar con `python3 build.py`, abrir `placa.html` y revisar la captura. Comprobar también la selección, el zoom y los filtros, porque tocan casi todo.
+- Cada cambio visual: regenerar con `armar.bat`, abrir `placa.html` y revisar la captura. Comprobar también la selección, el zoom y los filtros, porque tocan casi todo.
 - Cuando se decida algo importante, recordarle a Paco actualizar `04_decisiones_y_estado.md`.
 - Pendientes abiertos (del 05): orientación del tiempo (hoy: presente al centro), paletas de combinaciones, si los halos de fondo codifican algo o son atmósfera, tamaños mín/máx definitivos y `nMax`, qué es una "relación" para el esquema de conexiones (VÍNCULOS), y cómo se ven los filtros sobre la placa.
 
