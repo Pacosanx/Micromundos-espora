@@ -110,6 +110,8 @@ function cambiarVista(nueva){
   cancelAnimationFrame(animZoom);
   cancelAnimationFrame(animVista);
   vista=nueva;
+  // 19/11/2026: MUESTRARIO no lleva LISTADO COMPLETO (Paco); si estaba abierto, se cierra al entrar.
+  if(vista==='muestrario'&&listadoAbierto)cambiarListado(false);
   if(vista==='placa')animarEntradaAros();
   pantalla.classList.toggle('vista-vinculos',vista==='vinculos');
   pantalla.classList.toggle('vista-muestrario',vista==='muestrario');
