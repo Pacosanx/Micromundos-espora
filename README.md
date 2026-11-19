@@ -59,7 +59,7 @@ Para instalar lo de Node: instalar Node.js desde nodejs.org, abrir PowerShell en
 2. Confirmar los cambios y hacer `git push` desde `main`.
 3. GitHub Pages se reconstruye solo en uno o dos minutos.
 
-El repositorio es https://github.com/Pacosanx/Micromundos-espora. `PUBLICACION.md` describe otra copia (la de Codex, en `micromundos-publico`), que está desactualizada; el enlace vigente es el de GitHub Pages.
+El repositorio es https://github.com/Pacosanx/Micromundos-espora. `PUBLICACION.md` resume cómo se publica y guarda los datos de una copia anterior (Sites, en `micromundos-publico`) que ya no se actualiza.
 
 ## Créditos y fuentes
 

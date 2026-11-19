@@ -1,5 +1,26 @@
 # Publicación de Micromundos
 
+## Enlace vigente: GitHub Pages
+
+**https://pacosanx.github.io/Micromundos-espora/**
+
+- Repositorio: https://github.com/Pacosanx/Micromundos-espora
+- Se publica la rama `main`. `index.html` redirige a `placa.html`.
+- No hay credenciales de publicación guardadas en el proyecto.
+
+### Cómo actualizar el sitio
+
+1. Rearmar `placa.html` con `armar.bat`.
+2. Comprobar que coincida con las fuentes con `verificar-armado.bat`.
+3. Confirmar los cambios y hacer `git push` desde `main`.
+4. Pages se reconstruye solo en uno o dos minutos. Abrir el enlace y recorrer PLACA, GLOSARIO y TU PLACA.
+
+Las ramas de trabajo no se publican: solo lo que llega a `main`.
+
+## Copia anterior (desactualizada)
+
+Antes de pasar a GitHub Pages hubo otra copia publicada con el workflow de Sites, desde `../micromundos-publico`. Ya no se actualiza y quedó en la versión 19 (16/11/2026). Se conservan sus datos por si hace falta darla de baja o reutilizarla:
+
 URL pública: https://micromundos-atlas-paco.m-camilalucero.chatgpt.site
 
 Actualizada el 16/11/2026, versión 19.
