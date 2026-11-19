@@ -7,7 +7,8 @@ function prepararMuestrario(){
     const celda=it||{x:4+(i%17)*79.470588,y:Math.floor(i/17)*78.666667,width:79.470588,height:78.666667};
     // Comprimir la amplitud de tamaños permite leer las pequeñas dentro de una celda de ~80 px.
     const diametro=26+34*clamp((s.d-D_MIN)/(D_MAX-D_MIN));
-    s.grilla={x:celda.x+celda.width/2,y:celda.y+celda.height/2,factor:diametro/s.d};
+    s.grilla={x:celda.x+celda.width/2,y:celda.y+celda.height/2,factor:diametro/s.d,diametro};
+    const cod=document.createElement('span');cod.textContent=s.codigo;$('codigosMuestrario').appendChild(cod);s.codEl=cod;
   });
 }
 function posicionMuestrario(s){
