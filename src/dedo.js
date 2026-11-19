@@ -1,11 +1,11 @@
 // ───────── Modo dedo: el mouse se comporta como un dedo ─────────
-// Se activa solo con ?dedo en la dirección (placa.html?dedo). Sirve para grabar el video con mouse y para probar
-// en la compu cómo se siente la pantalla táctil. En la web pública no cambia nada.
+// Siempre activo (Paco, 19/11/2026): con mouse, el Atlas se usa como en la pantalla táctil. Para trabajar con el
+// mouse común, agregar ?mouse a la dirección (placa.html?mouse). Con un dedo de verdad no cambia nada.
 //  1. El cursor se reemplaza por una yema: un círculo suave que se marca al apretar y deja una estela corta al arrastrar.
 //  2. Arrastrar con el botón apretado desplaza el listado, las fichas largas y el glosario, con inercia (como el dedo).
 //  3. La rueda del mouse no hace nada: con el dedo no existe.
 (() => {
-  if (!new URLSearchParams(location.search).has('dedo')) return;
+  if (new URLSearchParams(location.search).has('mouse')) return;
   document.documentElement.classList.add('modo-dedo');
 
   const estilo = document.createElement('style');

@@ -1,7 +1,7 @@
 /* Micromundos: presentación corta del proyecto. Una sola pantalla, sin scroll.
    Tipografía sin blur (decisión de Paco: fuera el blur tipográfico por ahora). */
 #queEs{position:absolute;inset:0;z-index:4;visibility:hidden;opacity:0;transition:opacity .4s,visibility .4s;color:#0d0f17;
-  display:grid;grid-template-columns:minmax(0,1fr) 420px;grid-template-rows:1fr auto;column-gap:120px;row-gap:72px;
+  display:grid;grid-template-columns:minmax(0,1fr) 760px;grid-template-rows:1fr auto;column-gap:100px;row-gap:72px;
   padding:236px 40px 64px;box-sizing:border-box}
 #queEs[hidden]{display:none}
 .en-quees #queEs{visibility:visible;opacity:1}
@@ -11,12 +11,28 @@
 .qe-bajada{margin:0;max-width:1040px;font:400 var(--t-titulo)/var(--l-titulo) Arimo,Arial,sans-serif}
 
 /* Columna derecha: la clave de color y qué es una colonia. */
-.qe-claves{align-self:end;display:flex;flex-direction:column;gap:40px}
+.qe-claves{align-self:end;display:grid;grid-template-columns:320px minmax(0,1fr);grid-template-rows:auto auto;column-gap:48px;row-gap:36px;align-items:start}
+/* 19/11/2026: qué es una colonia, mostrado. Una placa con una colonia que crece desde un punto (un solo microbio)
+   hasta verse entera; al lado, el texto y la clave de color con colonias de verdad. */
+.qe-colonia{grid-row:1 / span 2;margin:0;width:320px;height:320px}
+.qe-colonia-placa{position:relative;width:320px;height:320px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgb(13 15 23 / 22%);background:radial-gradient(circle,rgb(255 255 255 / 35%),rgb(255 255 255 / 0%) 70%)}
+.qe-colonia-placa::after{content:'';position:absolute;inset:14px;border-radius:50%;border:1px dashed rgb(13 15 23 / 22%)}
+.qe-colonia-punto{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:#0d0f17;opacity:.6;animation:qe-punto 7s ease-in-out infinite}
+.qe-colonia-crece{position:absolute;left:50%;top:50%;width:300px!important;height:300px!important;translate:-50% -50%;scale:.02;opacity:0;pointer-events:none}
+.qe-colonia-crece.activa{animation:qe-crece 7s cubic-bezier(.45,0,.2,1) both}
+@keyframes qe-crece{0%{scale:.02;opacity:0}8%{scale:.02;opacity:1}62%{scale:1;opacity:1}88%{scale:1;opacity:1}100%{scale:1;opacity:0}}
+@keyframes qe-punto{0%,6%{opacity:.6}12%,90%{opacity:0}100%{opacity:.6}}
+.qe-colonia-texto{max-width:380px}
+.qe-clave-color{grid-column:2}
 .qe-claves h2{margin:0 0 16px;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;text-transform:uppercase;opacity:.6}
 .qe-claves p{margin:0;font:400 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif}
 .qe-grupos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;font:400 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif}
 .qe-grupos li{display:flex;align-items:center;gap:20px}
 .qe-grupos i{flex:0 0 28px;height:28px;border-radius:50%;background:radial-gradient(circle,var(--c) 0 38%,transparent 72%)}
+.qe-grupos{gap:10px}
+.qe-grupos li{gap:12px}
+.qe-grupos canvas{flex:none;width:44px!important;height:44px!important;margin:-6px}
+.qe-grupos li:has(canvas) i{display:none}
 
 /* Tres pasos: cada uno lleva a su sección. */
 .qe-pasos{grid-column:1/-1;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}
@@ -33,4 +49,4 @@
 .qe-ir{display:flex;align-items:center;gap:10px;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;text-transform:uppercase}
 .qe-ir::after{content:"";width:18px;height:12px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 12'%3E%3Cpath d='M0 6h16M11 1l5 5-5 5' fill='none' stroke='%230d0f17' stroke-width='1.5'/%3E%3C/svg%3E") center/contain no-repeat}
 
-@media(prefers-reduced-motion:reduce){#queEs{transition:none}}
+@media(prefers-reduced-motion:reduce){#queEs{transition:none}.qe-colonia-crece.activa{animation:none;scale:1;opacity:1}.qe-colonia-punto{animation:none;opacity:0}}
