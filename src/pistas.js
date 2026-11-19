@@ -141,7 +141,11 @@
       return { x: cx + dx * t - g.w / 2, y: cy + dy * t - g.h / 2 };
     };
     const cabe = q => q.x >= M && q.y >= M && q.x + g.w <= W - M && q.y + g.h <= H - M;
-    let q = giros.map(posicion).find(cabe);
+    // Entre las que entran, la primera que no tape controles ni colonias (se miran las esquinas y el centro del cartelito).
+    const tapa = q => [[0, 0], [1, 0], [0, 1], [1, 1], [.5, .5]].some(([fx, fy]) => document.elementsFromPoint(s.left + (q.x + fx * g.w) * k, s.top + (q.y + fy * g.h) * k)
+      .some(e => e !== globo && !globo.contains(e) && e.matches?.('button,a,[role="button"],.tp-paleta-colonia,.tp-colonia,.muestra') && e !== el && !(el._el && el._el === e)));
+    const posibles = giros.map(posicion).filter(cabe);
+    let q = posibles.find(q => !tapa(q)) || posibles[0];
     if (!q) { q = posicion(giros[0]); q.x = Math.min(Math.max(q.x, M), W - M - g.w); q.y = Math.min(Math.max(q.y, M), H - M - g.h); }
     globo.dataset.donde = 'libre';
     globo.style.transform = `translate(${Math.round(q.x)}px,${Math.round(q.y)}px)`;
