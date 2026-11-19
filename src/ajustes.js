@@ -1,11 +1,11 @@
 // ───────── Niveles de BLUR y GRANO (19/11/2026) ─────────
 // Todo el desenfoque y el grano del proyecto pasan por nueve niveles (variables CSS en :root y un multiplicador que leen los
-// motores de canvas). Con los valores por defecto, todo se ve exactamente como antes.
+// motores de canvas). Valores fijados por Paco el 19/11/2026: texto 0,70 px; el resto como estaba.
 // Con ?ajustes en la dirección aparece un panel para regularlos en la pantalla real; lo regulado se recuerda en este
 // navegador (solo con ?ajustes) y se copia con «Copiar valores» para dejarlo fijo en el código (NIVELES_BASE de acá).
 (() => {
   const NIVELES = [
-    { id: 'blur-texto', nombre: 'Desenfoque · texto', min: 0, max: 3, paso: .05, unidad: 'px', base: 0, ayuda: 'Toda la tipografía (títulos, rótulos, párrafos, carteles).' },
+    { id: 'blur-texto', nombre: 'Desenfoque · texto', min: 0, max: 3, paso: .05, unidad: 'px', base: .7, ayuda: 'Toda la tipografía (títulos, rótulos, párrafos, carteles).' },
     { id: 'blur-controles', nombre: 'Desenfoque · controles', min: 0, max: 3, paso: .05, unidad: 'px', base: 0, ayuda: 'Botones, pestañas y rótulos de TU PLACA y del menú.' },
     { id: 'vidrio', nombre: 'Desenfoque · vidrio de carteles', min: 0, max: 3, paso: .05, unidad: '×', base: 1, ayuda: 'Lo que se ve borroso detrás de cada cartel y su borde.' },
     { id: 'velos', nombre: 'Desenfoque · velos', min: 0, max: 3, paso: .05, unidad: '×', base: 1, ayuda: 'Barra de arriba, recuerdo, nombre, placas de otras personas, galería.' },

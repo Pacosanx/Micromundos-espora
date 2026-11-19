@@ -1,5 +1,7 @@
 // Cartel de muestra: referencia Figma 396:8047, con datos y universo cromático propios.
 const RECURSOS_CARTEL={coloresBL:'__CARTEL_COLORES__',flecha:'__CARTEL_FLECHA__'};
+// 19/11/2026 (Paco): todas las flechas de «ir a» son la de «Ver ficha de muestra» (cartel-flecha.svg, girada 45°).
+const FLECHA_DIAGONAL='<img class="flecha-diagonal" src="__CARTEL_FLECHA__" width="11.3995" height="11.0459" alt="">',FLECHA_ARRIBA='<img class="flecha-diagonal flecha-arriba" src="__CARTEL_FLECHA__" width="11.3995" height="11.0459" alt="">';
 const PALETA_CARTEL={B:'#e57dab',L:'#f2c75e',M:'#92aa68'};
 const escaparCartel=valor=>String(valor??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function universoCartel(el,grupo='BL'){

@@ -1,7 +1,7 @@
 /* ───────── Niveles de BLUR y GRANO (19/11/2026) ─────────
    Última hoja (después de legibilidad.css). Cada desenfoque y grano se multiplica por su nivel (src/ajustes.js).
-   Con los niveles por defecto (texto y controles 0 px, el resto ×1) todo queda como estaba. */
-:root{--nivel-blur-texto:0px;--nivel-blur-controles:0px;--nivel-vidrio:1;--nivel-velos:1;--nivel-fondo:1;--nivel-colonias:1;--nivel-grano-vidrio:1;--nivel-grano-fondo:1;--nivel-grano-colonias:1}
+   Valores fijados por Paco (19/11/2026): texto 0,70 px; controles 0 px; el resto ×1. */
+:root{--nivel-blur-texto:.7px;--nivel-blur-controles:0px;--nivel-vidrio:1;--nivel-velos:1;--nivel-fondo:1;--nivel-colonias:1;--nivel-grano-vidrio:1;--nivel-grano-fondo:1;--nivel-grano-colonias:1}
 
 /* Vidrio de los carteles: el desenfoque de lo que está detrás y el borde del vidrio. */
 .cartel{--cartel-background-blur:calc(var(--figma-background-blur)/2*var(--nivel-vidrio));--cartel-layer-blur:calc(var(--figma-layer-blur)/2*var(--nivel-vidrio))}

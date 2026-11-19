@@ -57,7 +57,7 @@
 .g-muestra{all:unset;display:grid;grid-template-columns:100px minmax(0,1fr);gap:24px;min-height:var(--area-tactil);width:100%;cursor:pointer;text-transform:uppercase;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo)}
 .g-muestra>span:first-child{font-size:var(--t-etiqueta);opacity:.75}
 .g-muestra>span:last-child{overflow-wrap:anywhere}
-.g-muestra img{width:12px;height:12px;rotate:-45deg;filter:brightness(0);margin-left:8px}
+.g-muestra img{width:11.3995px;height:11.0459px;rotate:-45deg;filter:brightness(0);opacity:.92;margin-left:8px} /* la de «Ver ficha de muestra» */
 .g-muestra:focus-visible{color:#687f42;outline:0}
 .g-vacio{margin:0;max-width:380px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);opacity:.65}
 @media(prefers-reduced-motion:reduce){#glosario,.g-desplegable,#centro,#derecha,#leyenda,#izqAbajo{transition:none}}

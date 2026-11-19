@@ -141,6 +141,10 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     copia.removeAttribute('data-node-id');for(const el of copia.querySelectorAll('[data-node-id]'))el.removeAttribute('data-node-id');
     Object.assign(copia.style,{position:'absolute',left:((r.left-caja.left)/escala)+'px',top:((r.top-caja.top)/escala)+'px',width:(r.width/escala)+'px',height:(r.height/escala)+'px',margin:'0',right:'auto',bottom:'auto',transform:'none',translate:'none',
       color:css.color,fontFamily:css.fontFamily,fontSize:css.fontSize,fontWeight:css.fontWeight,letterSpacing:css.letterSpacing,textTransform:css.textTransform,lineHeight:css.lineHeight,mixBlendMode:css.mixBlendMode,opacity:css.opacity,filter:'none'});
+    // Fuera de la ficha, los estilos que dependen del contexto (color de la tinta y mezcla «difference») se pierden y VOLVER
+    // quedaba en blanco (19/11/2026): se copian de cada elemento original.
+    const originales=[...original.querySelectorAll('*')],copias=[...copia.querySelectorAll('*')];
+    originales.forEach((o,i)=>{const c=copias[i];if(!c)return;const s=getComputedStyle(o);c.style.color=s.color;c.style.mixBlendMode=s.mixBlendMode;});
     for(const [k,v] of Object.entries(datos))copia.dataset[k]=v;fijos.appendChild(copia);return copia;};
   function prepararFijos(raiz,volver){
     fijos.replaceChildren();rotulosFijos=[];
@@ -368,7 +372,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     const relacionadas=muestras.filter(s=>s.vinculosDatos.especies.includes(nombre));
     const lista=document.createElement('div');lista.className='detalle-fichas-especie';
     for(const s of relacionadas){
-      const b=document.createElement('button');b.type='button';b.textContent=s.codigo+' · '+s.origen+' ↗';
+      const b=document.createElement('button');b.type='button';b.innerHTML=esc(s.codigo+' · '+s.origen)+' '+FLECHA_DIAGONAL;
       b.addEventListener('click',()=>{if(tieneFicha(s))abrir('ficha',s);else{irSeccion('muestras');seleccionar(s);}});lista.appendChild(b);
     }
     if(!relacionadas.length)lista.textContent='No hay muestras vinculadas en el archivo actual.';
@@ -376,10 +380,10 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       const boton=document.createElement('button');boton.type='button';boton.className='masCartel';boton.setAttribute('aria-expanded','false');boton.innerHTML='LEER MÁS AL RESPECTO <img src="src/assets/detalles/c46dc.svg" alt="">';
       const detalle=document.createElement('section');detalle.className='detalleCartel';detalle.hidden=true;
       for(const [etiqueta,valor]of [['Dónde se encuentra',datos?.donde_esta],['Qué produce o transforma',datos?.que_produce_o_transforma]])if(valor){const h=document.createElement('h3'),p=document.createElement('p');h.textContent=etiqueta;p.textContent=valor;detalle.append(h,p);}
-      boton.addEventListener('click',()=>{detalle.hidden=!detalle.hidden;boton.setAttribute('aria-expanded',String(!detalle.hidden));boton.innerHTML=detalle.hidden?'LEER MÁS AL RESPECTO <img src="src/assets/detalles/c46dc.svg" alt="">':'CERRAR INFORMACIÓN ↑';});co.append(boton,detalle);
+      boton.addEventListener('click',()=>{detalle.hidden=!detalle.hidden;boton.setAttribute('aria-expanded',String(!detalle.hidden));boton.innerHTML=detalle.hidden?'LEER MÁS AL RESPECTO <img src="src/assets/detalles/c46dc.svg" alt="">':'CERRAR INFORMACIÓN '+FLECHA_ARRIBA;});co.append(boton,detalle);
     }else{
       const boton=document.createElement('button');boton.type='button';boton.className='masCartel';boton.setAttribute('aria-expanded','false');
-      boton.textContent='VER MUESTRAS VINCULADAS ↗';lista.hidden=true;
+      boton.innerHTML='VER MUESTRAS VINCULADAS '+FLECHA_DIAGONAL;lista.hidden=true;
       boton.addEventListener('click',()=>{lista.hidden=!lista.hidden;boton.setAttribute('aria-expanded',String(!lista.hidden));});co.append(boton,lista);
     }
     montarCartelDetalle(el,nombre,evento,limpiarGrafico);
@@ -465,7 +469,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
         if(!relacionadas.length){const vacio=document.createElement('p');vacio.className='g-vacio';vacio.textContent='Todavía no hay muestras vinculadas a esta especie.';listaU.appendChild(vacio);}
         for(const s of relacionadas){
           const b=document.createElement('button');b.type='button';b.className='g-muestra';
-          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+' ↗</span>';
+          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+' '+FLECHA_DIAGONAL+'</span>';
           b.addEventListener('click',ev=>{ev.stopPropagation();if(tieneFicha(s))abrir('ficha',s);else{irSeccion('muestras');seleccionar(s);}});listaU.appendChild(b);
         }
         fila.after(desp);
@@ -785,14 +789,21 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     const RETARDO=.14,RADIO_LENTE=214.5;
     const medida=()=>({ancho:placa.offsetWidth,alto:placa.offsetHeight});
     let posicion={x:placa.offsetWidth/2,y:placa.offsetHeight/2,...medida()},objetivo={...posicion};
+    // Radio del agar (sin el borde de vidrio): se mide una vez en la imagen (donde deja de ser opaca); si no se puede, .385.
+    let proporcionAgar=0;
+    const medirAgar=img=>{try{const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(img,0,0,256,256);
+      const d=g.getImageData(0,0,256,256).data,alfa=(x,y)=>d[(y*256+x)*4+3];let mejor=.5;
+      for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])for(let f=.2;f<.5;f+=.004){const x=Math.round(128+dx*f*256),y=Math.round(128+dy*f*256);if(alfa(x,y)<215){mejor=Math.min(mejor,f);break;}}
+      return mejor<.5&&mejor>.25?mejor:.385;}catch{return .385;}};
     const disco=()=>{const img=raiz.querySelector('[data-node-id="500:7153"] img'),rp=placa.getBoundingClientRect();
       if(!img)return {x:placa.offsetWidth/2,y:placa.offsetHeight/2,r:Math.min(placa.offsetWidth,placa.offsetHeight)/2};
-      const ri=img.getBoundingClientRect();return {x:(ri.left+ri.width/2-rp.left)/escala,y:(ri.top+ri.height/2-rp.top)/escala,r:ri.width/escala*.445};};
+      if(!proporcionAgar&&img.complete&&img.naturalWidth)proporcionAgar=medirAgar(img);
+      const ri=img.getBoundingClientRect();return {x:(ri.left+ri.width/2-rp.left)/escala,y:(ri.top+ri.height/2-rp.top)/escala,r:ri.width/escala*(proporcionAgar||.385),lado:ri.width/escala};};
     const dentro=(x,y)=>{const d=disco(),lim=Math.max(0,d.r-RADIO_LENTE),dx=x-d.x,dy=y-d.y,k=Math.hypot(dx,dy);
       return k<=lim?{x,y}:{x:d.x+dx/k*lim,y:d.y+dy/k*lim};};
     const actualizar=()=>{lupa.style.left=(posicion.x-RADIO_LENTE)+'px';lupa.style.top=(posicion.y-RADIO_LENTE)+'px';
       // mapa: la lente sobre la imagen de la placa (para la concentración de células según las colonias).
-      const d=disco(),lado=d.r/.445,mapa={u:(posicion.x-(d.x-lado/2))/lado,v:(posicion.y-(d.y-lado/2))/lado,radio:RADIO_LENTE/lado};
+      const d=disco(),lado=d.lado||d.r/.385,mapa={u:(posicion.x-(d.x-lado/2))/lado,v:(posicion.y-(d.y-lado/2))/lado,radio:RADIO_LENTE/lado};
       desmontar?.actualizar?.({...medida(),x:clamp(d.x+(posicion.x-d.x)*2,0,placa.offsetWidth),y:clamp(d.y+(posicion.y-d.y)*2,0,placa.offsetHeight),mapa});};
     const seguir=()=>{animacion=0;if(lupa.hidden)return;const k=movimientoReducido()?1:RETARDO;
       posicion={...medida(),x:posicion.x+(objetivo.x-posicion.x)*k,y:posicion.y+(objetivo.y-posicion.y)*k};actualizar();

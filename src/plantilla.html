@@ -141,9 +141,9 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 .fila{display:flex;align-items:center;height:24px;cursor:pointer;color:#fff;mix-blend-mode:difference;text-transform:uppercase}
 .fila .c{width:100px;margin-right:55px;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
 .fila .n{flex:1;display:flex;justify-content:space-between;align-items:center;padding-right:1px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo)}
-.fila .n svg{display:none}
+.fila .n :is(svg,img){display:none}
 .fila.sel{font-weight:700}
-.fila.sel .n svg{display:block}
+.fila.sel .n :is(svg,img){display:block}
 .filete{height:1px;background:#fff;mix-blend-mode:difference;opacity:.4;margin:12px 0}
 .fila.apagada{opacity:.3}
 /* Color directo: el fundido del contenedor no debe cambiar el resultado de Difference. */
@@ -233,6 +233,9 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 .coloresCartel i{display:block;width:10px;height:10px;border-radius:50%}
 .masCartel{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:var(--area-tactil);margin-top:14px;padding:0;background:none;border:0;color:inherit;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;text-transform:uppercase;cursor:pointer}
 .masCartel img{transform:rotate(-45deg);flex:none;filter:brightness(0);opacity:.92}
+/* 19/11/2026 (Paco): la misma flecha en todas las «ir a» (FLECHA_DIAGONAL, carteles.js). */
+.flecha-diagonal{display:inline-block;flex:none;vertical-align:middle;width:11.3995px;height:11.0459px;margin-left:8px;transform:rotate(-45deg);filter:brightness(0);opacity:.92}
+.flecha-diagonal.flecha-arriba{transform:rotate(-90deg)}.masCartel .flecha-diagonal{margin-left:0}
 .masCartel:focus-visible,:is(#ficha,.cartel-glosario,.cartel-especie) .x:focus-visible{outline:0;background:rgba(146,170,104,.25);border-radius:8px}
 .detalleCartel{margin-top:16px;border-top:1px solid rgba(100,110,90,.2)}
 .especieDetalle{padding-top:16px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo)}

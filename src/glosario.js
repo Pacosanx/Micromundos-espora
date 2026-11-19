@@ -23,6 +23,16 @@ function fichasDeTermino(termino,catalogo=muestras){
   const patron=PATRONES_FICHA[termino.id];if(!patron||typeof tieneFicha!=='function')return [];
   return catalogo.filter(s=>tieneFicha(s)&&patron.test(textoDeFicha(s)));
 }
+// SIMULADO (19/11/2026, Paco): cantidades de fichas al azar (fijas por concepto) hasta tener los números reales. Primero van
+// las fichas que de verdad lo nombran y se completa con otras con ficha. Para volver a los reales: usar fichasDeTermino.
+function fichasSimuladasDeTermino(termino,catalogo=muestras){
+  const reales=fichasDeTermino(termino,catalogo),conFicha=typeof tieneFicha==='function'?catalogo.filter(s=>tieneFicha(s)):[];
+  let h=2166136261;for(const c of termino.id)h=Math.imul(h^c.charCodeAt(0),16777619);const azar=()=>((h=Math.imul(h^(h>>>13),1597334677)>>>0)/4294967296);
+  const cantidad=Math.max(reales.length,1+Math.floor(azar()*24)),total=Math.min(conFicha.length,cantidad);
+  const resto=conFicha.filter(s=>!reales.includes(s)).map(s=>[azar(),s]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+  const lista=[...reales,...resto].slice(0,total);lista.cantidad=cantidad; // el número mostrado (puede superar las fichas que hay hoy)
+  return lista;
+}
 function prepararNavegacionPrincipal(cambiar){
   const contenedor=$('navegacionPrincipal');
   const botones={muestras:$('navMuestras'),glosario:$('navGlosario'),tuplaca:$('navTuPlaca'),quees:$('navQueEs')};
@@ -91,8 +101,8 @@ function prepararGlosario(){
   const colorGrupo=g=>`<span class="g-chips" aria-label="${esc(GRUPO_NOMBRE[g]||g)}">${[...g].map(c=>`<i style="background:${PALETA_CARTEL[c]}"></i>`).join('')}</span>`;
   function crearFila(t,primera){
     const caja=document.createElement('section');caja.className='g-entrada';caja.dataset.termino=t.id;
-    const relacionadas=fichasDeTermino(t);
-    caja.innerHTML=`<button type="button" class="g-fila" aria-expanded="false" aria-controls="g-detalle-${esc(t.id)}"><span class="g-bloque">${primera?esc(t.bloque):''}</span><span class="g-numero">${numero(t)}</span><span class="g-termino">${esc(t.termino)}</span><span class="g-cuenta">${String(relacionadas.length).padStart(2,'0')} <span class="g-indicador">+</span></span>${colorGrupo(t.grupo)}</button><div class="g-desplegable" id="g-detalle-${esc(t.id)}" inert><div class="g-desplegable-interior"><div class="g-muestras"></div></div></div>`;
+    const relacionadas=fichasSimuladasDeTermino(t);
+    caja.innerHTML=`<button type="button" class="g-fila" aria-expanded="false" aria-controls="g-detalle-${esc(t.id)}"><span class="g-bloque">${primera?esc(t.bloque):''}</span><span class="g-numero">${numero(t)}</span><span class="g-termino">${esc(t.termino)}</span><span class="g-cuenta">${String(relacionadas.cantidad??relacionadas.length).padStart(2,'0')} <span class="g-indicador">+</span></span>${colorGrupo(t.grupo)}</button><div class="g-desplegable" id="g-detalle-${esc(t.id)}" inert><div class="g-desplegable-interior"><div class="g-muestras"></div></div></div>`;
     const lista=caja.querySelector('.g-muestras');
     if(!relacionadas.length){const p=document.createElement('p');p.className='g-vacio';p.textContent='Todavía no aparece en ninguna ficha.';lista.appendChild(p);}
     for(const s of relacionadas){

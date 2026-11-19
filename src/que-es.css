@@ -47,6 +47,6 @@
 .qe-tit{font:700 var(--t-sub)/var(--l-sub) Arimo,Arial,sans-serif;text-transform:uppercase}
 .qe-txt{font:400 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif;max-width:480px;flex:1}
 .qe-ir{display:flex;align-items:center;gap:10px;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;text-transform:uppercase}
-/* 19/11/2026 (Paco): flechas en diagonal */ .qe-ir::after{content:"";width:18px;height:12px;rotate:-45deg;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 12'%3E%3Cpath d='M0 6h16M11 1l5 5-5 5' fill='none' stroke='%230d0f17' stroke-width='1.5'/%3E%3C/svg%3E") center/contain no-repeat}
+/* 19/11/2026 (Paco): flechas en diagonal */ .qe-ir::after{content:"";flex:none;width:11.3995px;height:11.0459px;background:url("__CARTEL_FLECHA__") center/contain no-repeat;transform:rotate(-45deg);filter:brightness(0);opacity:.92} /* la de «Ver ficha de muestra» */
 
 @media(prefers-reduced-motion:reduce){#queEs{transition:none}.qe-colonia-crece.activa{animation:none;scale:1;opacity:1}.qe-colonia-punto{animation:none;opacity:0}}
