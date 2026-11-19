@@ -85,8 +85,8 @@
 
 /* La zona táctil de cada colonia es su círculo (la colonia ocupa el 60 % de su caja): el resto de la caja deja pasar el lazo y la siembra. */
 #tpColonias .tp-colonia{clip-path:circle(31% at 50% 50%)}
-
-/* Menú de la placa entera (19/11/2026): el mismo aro, con un centro marcado para que se lea que actúa sobre toda la placa. */
-.tp-menu-placa .tp-menu-circunferencia{opacity:.85}
-.tp-menu-placa::before{content:'';position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:#13151b;opacity:.55;filter:blur(.4px)}
-.tp-menu-placa::after{content:'PLACA';position:absolute;left:0;top:14px;translate:-50% 0;font:700 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.7;white-space:nowrap}
+/* Zoom de la placa (19/11/2026): el mismo dibujo que el slider de zoom de MUESTRAS, en tinta oscura sobre el papel. */
+.tp-zoom-linea{fill:none;stroke:#0d0f17;stroke-width:2;stroke-linecap:round}
+.tp-zoom-manija{fill:#0d0f17}
+.tp-zoom-paso{fill:transparent;pointer-events:all;cursor:pointer}
+.tp-perilla g:focus-visible .tp-zoom-manija{stroke:#0d0f17;stroke-width:6;stroke-opacity:.25}

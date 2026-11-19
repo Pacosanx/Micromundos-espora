@@ -8,11 +8,11 @@
 function prepararTuPlaca(){
   const pagina=$('tuPlaca'),ruta='src/assets/tu-placa/',clave='micromundos-tuplaca-v2',ns='http://www.w3.org/2000/svg';
   pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones"><p class="tp-encuentros-titulo">ENCUENTROS</p><div id="tpLeyenda" class="tp-encuentros" role="group" aria-label="Reacción según el tipo de colonia"></div><p>Una interpretación gráfica. Acercá dos colonias para que se encuentren.</p></div></div><aside id="tpBiblioteca"></aside>
-    <div id="tpBoard" class="tp-board" aria-label="Tu placa. Arrastrá una forma de la biblioteca para sembrarla; arrastrá sobre la placa para elegir varias; mantené apretado el fondo para girar o acercar la placa entera" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><canvas id="tpEscena" class="tp-escena" aria-hidden="true"></canvas><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><svg id="tpPerilla" class="tp-perilla" width="784" height="784" viewBox="0 0 784 784"></svg><p id="tpVacia">ARRASTRÁ UNA COLONIA\nHASTA LA PLACA</p><div id="tpMenu"></div><div id="tpMenuPlaca"></div><div id="tpEditor"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
+    <div id="tpBoard" class="tp-board" aria-label="Tu placa. Arrastrá una forma de la biblioteca para sembrarla; arrastrá sobre la placa para elegir varias" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><canvas id="tpEscena" class="tp-escena" aria-hidden="true"></canvas><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><svg id="tpPerilla" class="tp-perilla" width="784" height="784" viewBox="0 0 784 784"></svg><p id="tpVacia">ARRASTRÁ UNA COLONIA\nHASTA LA PLACA</p><div id="tpMenu"></div><div id="tpEditor"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
     <button id="tpGenerar" class="tp-generar" type="button" aria-haspopup="true">GENERAR COMPOSICIÓN ↻</button><p class="tp-generar-ayuda" id="tpGenerarAyuda">MANTENÉ APRETADO PARA ELEGIR LA ESTRUCTURA</p><div id="tpEstructuras" class="tp-estructuras" hidden role="menu" aria-label="Estructuras de composición"></div><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA →</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
     <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a></div></div></div>`;
   const board=$('tpBoard'),capa=$('tpColonias'),items=[],elementos=new Map(),historico=[],futuro=[];
-  let secuencia=0,seleccionado=null,seleccion=[],arrastre=null,siembra=null,lazo=null,antes=null,frame=0,pedido=false,intensidad=85,estructura='propuesta';
+  let zoom=100,secuencia=0,seleccionado=null,seleccion=[],arrastre=null,siembra=null,lazo=null,antes=null,frame=0,pedido=false,intensidad=85,estructura='propuesta';
   const punto=ev=>{const r=board.getBoundingClientRect();return{x:(ev.clientX-r.left)*784/r.width,y:(ev.clientY-r.top)*784/r.height};};
   const dentro=p=>Math.hypot(p.x-392,p.y-392)<386;
   const hash=n=>{let x=Math.imul(n^0x45d9f3b,0x45d9f3b);x=Math.imul(x^(x>>>16),0x45d9f3b);return ((x^(x>>>16))>>>0)/4294967296;};
@@ -28,11 +28,11 @@ function prepararTuPlaca(){
   const estiloAro={...piezas.find(p=>p.tipo==='placa').it.style};
   const aroCanvas=$('tpAroPlaca'),ladoAro=784/(estiloAro.size/100)/WF;aroCanvas.style.width=aroCanvas.style.height=ladoAro+'px';aroCanvas.style.left=aroCanvas.style.top=(784-ladoAro)/2+'px';
   mountColonias(aroCanvas,{recipe:pieza(estiloAro),maxResolution:1100});aroCanvas.style.width=aroCanvas.style.height=ladoAro+'px';
-  const snapshot=()=>JSON.stringify({items,contador:secuencia,intensidad,estructura});
+  const snapshot=()=>JSON.stringify({items,contador:secuencia,intensidad,estructura,zoom});
   function guardar(){try{localStorage.setItem(clave,snapshot());}catch{}}
   function iniciarCambio(){if(antes===null)antes=snapshot();}
   function terminarCambio(){if(antes!==null&&antes!==snapshot()){historico.push(antes);if(historico.length>60)historico.shift();futuro.length=0;}antes=null;actualizar();guardar();}
-  function restaurar(texto){const s=JSON.parse(texto);items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);intensidad=Number.isFinite(s.intensidad)?s.intensidad:85;estructura=s.estructura||estructura;seleccionado=null;seleccion=[];cerrarMenus();dibujar();actualizar();guardar();}
+  function restaurar(texto){const s=JSON.parse(texto);zoom=Number.isFinite(s.zoom)?s.zoom:100;items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);intensidad=Number.isFinite(s.intensidad)?s.intensidad:85;estructura=s.estructura||estructura;seleccionado=null;seleccion=[];cerrarMenus();dibujar();actualizar();guardar();}
   function deshacer(){if(historico.length){futuro.push(snapshot());restaurar(historico.pop());}}
   function rehacer(){if(futuro.length){historico.push(snapshot());restaurar(futuro.pop());}}
   function crear(e,x,y,tamano=e.tamano,parent=null){if(items.length>=120)return null;const it={id:++secuencia,modelo:e.id,x,y,tamano,escala:100,rot:0,foco:100,opacidad:100,seed:e.style.seed%1000,parent,manual:false,org:0,sinReacciones:!!e.composicion&&e.estado!=='AF'};items.push(it);return it;}
@@ -47,7 +47,7 @@ function prepararTuPlaca(){
   // Selección: una colonia (tocar) o varias (lazo). El menú y el editor actúan sobre todas.
   const elegidas=()=>seleccion.length?seleccion.filter(s=>items.includes(s)):seleccionado?[seleccionado]:[];
   function centro(){const g=elegidas();if(!g.length)return null;return {x:g.reduce((n,i)=>n+i.x,0)/g.length,y:g.reduce((n,i)=>n+i.y,0)/g.length};}
-  function cerrarMenus(){menu.cerrar();menuPlaca?.cerrar();editor?.cerrar();cerrarEstructuras();}
+  function cerrarMenus(){menu.cerrar();editor?.cerrar();cerrarEstructuras();}
   const menu=montarMenuTuPlaca($('tpMenu'),{obtener:()=>seleccionado?{...seleccionado,duplicados:hijos(seleccionado).length}:null,empezar:iniciarCambio,terminar:terminarCambio,
     quitar:()=>{iniciarCambio();quitar(seleccionado);terminarCambio();},
     variar:()=>{for(const it of elegidas()){it.seed=Math.floor(Math.random()*1000);sincronizarHijos(it);}dibujar();},
@@ -67,23 +67,6 @@ function prepararTuPlaca(){
     alCerrar:()=>{if(seleccionado&&items.includes(seleccionado)){const c=centro();menu.abrir(c.x,c.y);}dibujar();},
   });
 
-  // ── Menú de la placa entera (19/11/2026): se abre manteniendo apretado el fondo de la placa (o con la tecla M sobre la placa).
-  // Mismo aro que el de cada colonia, con tres acciones: Girar (toda la composición alrededor del centro), Zoom (acercar o alejar
-  // toda la composición desde el centro) y Variación (otra versión de todas las colonias). Cada vez que se abre parte de 0° y 100 %.
-  let basePlaca=null;const estadoPlaca={escala:100,rot:0,foco:100,opacidad:100,duplicados:0,seed:''};
-  const menuPlaca=montarMenuTuPlaca($('tpMenuPlaca'),{obtener:()=>items.length?estadoPlaca:null,empezar:iniciarCambio,terminar:terminarCambio,quitar:()=>{},
-    acciones:['girar','tamano','variacion'],nombresPropios:{tamano:'Zoom',girar:'Girar',variacion:'Variación'},
-    ayudas:{girar:'Girar la placa entera',tamano:'Zoom: acercar o alejar la placa entera',variacion:'Variación: otra versión de todas las colonias'},
-    variar:()=>{for(const it of items)if(!it.parent){it.seed=Math.floor(Math.random()*1000);sincronizarHijos(it);}dibujar();},
-    cambiar:(k,v)=>{
-      if(k==='girar')estadoPlaca.rot=v;else if(k==='tamano')estadoPlaca.escala=v;else return;
-      const a=estadoPlaca.rot*Math.PI/180,c=Math.cos(a),s=Math.sin(a),f=estadoPlaca.escala/100;
-      for(const b of basePlaca){const x=(b.x-392)*f,y=(b.y-392)*f;b.it.x=392+x*c-y*s;b.it.y=392+x*s+y*c;b.it.rot=b.rot+estadoPlaca.rot;b.it.escala=b.escala*f;}
-      solicitarDibujo();menuPlaca.actualizar();
-    }});
-  $('tpMenuPlaca').classList.add('tp-menu-placa');
-  function abrirMenuPlaca(p){if(!items.length)return;cerrarMenus();seleccion=[];seleccionado=null;estadoPlaca.escala=100;estadoPlaca.rot=0;
-    basePlaca=items.map(it=>({it,x:it.x,y:it.y,rot:it.rot,escala:it.escala}));menuPlaca.abrir(p.x,p.y);dibujar();}
   function dibujar(){
     for(const [id,el]of elementos)if(!items.some(i=>i.id===id)){el.remove();elementos.delete(id);}
     const varias=elegidas().length>1;
@@ -116,7 +99,7 @@ function prepararTuPlaca(){
 
   // Fondo de la placa: tocar siembra una colonia al soltar; arrastrar dibuja un lazo que elige varias.
   let toque=null;
-  function iniciarLazo(p){clearTimeout(toque?.reloj);lazo={puntos:[toque.inicio,p]};toque=null;seleccion=[];seleccionado=null;board.classList.add('tp-lazando');dibujar();}
+  function iniciarLazo(p){lazo={puntos:[toque.inicio,p]};toque=null;seleccion=[];seleccionado=null;board.classList.add('tp-lazando');dibujar();}
   function dentroDelLazo(p,poli){let adentro=false;for(let i=0,j=poli.length-1;i<poli.length;j=i++){const a=poli[i],b=poli[j];if((a.y>p.y)!==(b.y>p.y)&&p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x)adentro=!adentro;}return adentro;}
   function cerrarLazo(){
     const poli=lazo.puntos;lazo=null;board.classList.remove('tp-lazando');$('tpTrazo').querySelector('path').setAttribute('d','');
@@ -125,8 +108,8 @@ function prepararTuPlaca(){
     dibujar();
   }
   board.addEventListener('pointerdown',ev=>{if(ev.target.closest('button,.tp-menu,.tp-editor,.tp-perilla-control')||ev.button>0)return;ev.preventDefault();cerrarMenus();seleccion=[];seleccionado=null;const p=punto(ev);if(!dentro(p)){dibujar();return;}
-    toque={inicio:p,cliente:{x:ev.clientX,y:ev.clientY},reloj:setTimeout(()=>{if(toque){toque=null;abrirMenuPlaca(p);}},500)};board.setPointerCapture?.(ev.pointerId);dibujar();});
-  board.addEventListener('keydown',ev=>{if(ev.target===board&&ev.key.toLowerCase()==='m'){ev.preventDefault();abrirMenuPlaca({x:392,y:392});$('tpMenuPlaca').querySelector('button')?.focus({preventScroll:true});return;}if(ev.target===board&&['Enter',' '].includes(ev.key)){ev.preventDefault();iniciarCambio();sembrar({x:392,y:392},biblioteca.seleccionado(),true);terminarCambio();}});
+    toque={inicio:p,cliente:{x:ev.clientX,y:ev.clientY}};board.setPointerCapture?.(ev.pointerId);dibujar();});
+  board.addEventListener('keydown',ev=>{if(ev.target===board&&['Enter',' '].includes(ev.key)){ev.preventDefault();iniciarCambio();sembrar({x:392,y:392},biblioteca.seleccionado(),true);terminarCambio();}});
   pagina.addEventListener('pointermove',ev=>{
     if(toque){if(Math.hypot(ev.clientX-toque.cliente.x,ev.clientY-toque.cliente.y)>8)iniciarLazo(punto(ev));else return;}
     if(lazo){const p=punto(ev),u=lazo.puntos[lazo.puntos.length-1];if(Math.hypot(p.x-u.x,p.y-u.y)>4){lazo.puntos.push(p);$('tpTrazo').querySelector('path').setAttribute('d',lazo.puntos.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+','+q.y.toFixed(1)).join('')+'Z');}return;}
@@ -140,7 +123,7 @@ function prepararTuPlaca(){
   });
   function soltar(ev,cancelado=false){
     // Tocar la placa vacía ya no siembra la forma elegida: se siembra solo arrastrando desde la biblioteca (o con Enter, por teclado).
-    if(toque){clearTimeout(toque.reloj);toque=null;return;}
+    if(toque){toque=null;return;}
     if(lazo){if(cancelado){lazo=null;board.classList.remove('tp-lazando');$('tpTrazo').querySelector('path').setAttribute('d','');}else cerrarLazo();terminarCambio();return;}
     if(arrastre){const a=arrastre;arrastre=null;$('tpAvisoQuitar').hidden=true;if(cancelado){for(const o of a.origen){o.g.x=o.x;o.g.y=o.y;}}else if(!a.movido)abrirMenu(a.it);else if(a.grupo.length===1&&!dentro(a.it))quitar(a.it);else if(a.grupo.length>1){for(const g of a.grupo)if(!dentro(g)){const d=Math.hypot(g.x-392,g.y-392);g.x=392+(g.x-392)*370/d;g.y=392+(g.y-392)*370/d;}}dibujar();terminarCambio();}
     // Al soltar siempre se vuelve a dibujar: el último cuadro del arrastre muestra suelto el grupo que se estaba moviendo.
@@ -165,7 +148,7 @@ function prepararTuPlaca(){
   function abrirEstructuras(){menu.cerrar();editor.cerrar();abanico.hidden=false;for(const b of abanico.children)b.setAttribute('aria-checked',String(b.dataset.estructura===estructura));abanico.querySelector('[aria-checked="true"]')?.focus({preventScroll:true});$('tpGenerar').setAttribute('aria-expanded','true');}
   function cerrarEstructuras(){if(abanico.hidden)return;abanico.hidden=true;$('tpGenerar').setAttribute('aria-expanded','false');}
   function generar(){
-    iniciarCambio();cerrarMenus();cerrarReaccion();items.length=0;seleccionado=null;seleccion=[];
+    iniciarCambio();cerrarMenus();cerrarReaccion();items.length=0;zoom=100;seleccionado=null;seleccion=[];
     if(estructura==='propuesta'){
       const composicion=generarComposicionTuPlaca(),dimension=784/composicion.diametroAro;
       for(const e of composicion)agregarGenerada(e.style,392+(e.x-.5)*dimension,392+(e.y-.5)*dimension,e.w*dimension,{green:'M',yellow:'L',rose:'B'}[e.familia]);
@@ -192,7 +175,7 @@ function prepararTuPlaca(){
     b.addEventListener('keydown',ev=>{if(['Enter',' '].includes(ev.key)){ev.preventDefault();generar();}if(ev.key==='ArrowUp'||ev.key==='ContextMenu'){ev.preventDefault();abrirEstructuras();}});
     b.addEventListener('contextmenu',ev=>ev.preventDefault());
     abanico.addEventListener('keydown',ev=>{if(ev.key==='Escape'){cerrarEstructuras();b.focus();}});}
-  $('tpDeshacer').addEventListener('click',deshacer);$('tpRehacer').addEventListener('click',rehacer);$('tpReiniciar').addEventListener('click',()=>{iniciarCambio();items.length=0;seleccionado=null;seleccion=[];cerrarMenus();cerrarReaccion();dibujar();terminarCambio();});
+  $('tpDeshacer').addEventListener('click',deshacer);$('tpRehacer').addEventListener('click',rehacer);$('tpReiniciar').addEventListener('click',()=>{iniciarCambio();items.length=0;zoom=100;seleccionado=null;seleccion=[];cerrarMenus();cerrarReaccion();dibujar();terminarCambio();});
 
   // Encuentros: reglas y dibujo del motor de la Placa de encuentros del muestrario (MotorMuestrario.escena).
   const TIPOS={M:'moho',B:'bacteria',L:'levadura'},ORDEN=['moho','bacteria','levadura'],COLOR_TIPO={moho:'#27633f',bacteria:'#ff4c52',levadura:'#ff9c20'};
@@ -271,23 +254,34 @@ function prepararTuPlaca(){
       ORDEN.forEach((col,j)=>{if(j<i){caja.appendChild(document.createElement('span'));return;}const modo=REGLAS[par(fila,col)],b=document.createElement('button');b.type='button';b.className='tp-encuentros-celda';b.setAttribute('aria-label',REACCIONES[modo].pareja+': '+REACCIONES[modo].nombre+(REACCIONES[modo].detalle?', '+REACCIONES[modo].detalle:''));
         b.innerHTML=`<svg viewBox="0 0 30 20" aria-hidden="true">${glifos[modo](COLOR_TIPO[fila],COLOR_TIPO[col])}</svg><span>${REACCIONES[modo].nombre.toUpperCase()}</span>`;b.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(modo);});caja.appendChild(b);});});}
 
-  // Perilla de reacciones sobre el borde de la placa: 0 = sin reacciones (reemplaza a "Mostrar reacciones").
-  const perilla=$('tpPerilla'),P={a0:8,a1:68,r:414};let girandoPerilla=null;
+  // Zoom de la placa entera (19/11/2026), como el slider de zoom de MUESTRAS: un arco a la derecha de la placa con remates,
+  // + arriba (acerca) y − abajo (aleja) y una manija. Acerca o aleja toda la composición desde el centro (50 % a 200 %).
+  // Reemplaza a la perilla de REACCIONES (Paco: «priorizo este»); las reacciones quedan fijas en 85 %.
+  const perilla=$('tpPerilla'),P={a0:-30,a1:30,r:432},SEP=4.6;let girandoPerilla=null;
   const enPerilla=t=>P.a1-(P.a1-P.a0)*t,pp=(a,r=P.r)=>[392+Math.cos(a*Math.PI/180)*r,392+Math.sin(a*Math.PI/180)*r];
   const arcoPerilla=(a0,a1)=>{const [x0,y0]=pp(a0),[x1,y1]=pp(a1);return `M${x0},${y0}A${P.r},${P.r} 0 0 ${a1>a0?1:0} ${x1},${y1}`;};
+  const tZoom=()=>Math.max(0,Math.min(1,Math.log(zoom/50)/Math.log(4)));
   function dibujarPerilla(){
-    const t=intensidad/100,a=enPerilla(t),[x,y]=pp(a),[lx,ly]=pp(P.a0-6,P.r+14);
-    perilla.innerHTML=`<path class="tp-perilla-carril" d="${arcoPerilla(P.a0,P.a1)}"/>${t>0?`<path class="tp-perilla-lleno" d="${arcoPerilla(P.a1,a)}"/>`:''}
+    const t=tZoom(),[x,y]=pp(enPerilla(t));
+    const remate=a=>{const [x0,y0]=pp(a,P.r-9),[x1,y1]=pp(a,P.r+9);return `M${x0},${y0}L${x1},${y1}`;};
+    const signo=(a,mas)=>{const [cx,cy]=pp(a),r=a*Math.PI/180,rx=Math.cos(r),ry=Math.sin(r),tx=-ry,ty=rx,L=6;
+      return `M${cx-rx*L},${cy-ry*L}L${cx+rx*L},${cy+ry*L}`+(mas?`M${cx-tx*L},${cy-ty*L}L${cx+tx*L},${cy+ty*L}`:'');};
+    const [mx,my]=pp(P.a0-SEP),[nx,ny]=pp(P.a1+SEP);
+    perilla.innerHTML=`<path class="tp-zoom-linea" d="${arcoPerilla(P.a0,P.a1)}"/><path class="tp-zoom-linea" d="${remate(P.a0)+remate(P.a1)}"/><path class="tp-zoom-linea" d="${signo(P.a0-SEP,true)+signo(P.a1+SEP,false)}"/>
       <path class="tp-perilla-control tp-perilla-toque" d="${arcoPerilla(P.a0,P.a1)}"/>
-      <g class="tp-perilla-control" role="slider" tabindex="0" aria-label="Intensidad de las reacciones" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${intensidad}" aria-valuetext="${intensidad?intensidad+' %':'Sin reacciones'}"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="11" class="tp-perilla-perilla"/></g>
-      <text x="${lx}" y="${ly}" class="tp-perilla-titulo">REACCIONES</text><text x="${lx}" y="${ly+19}" class="tp-perilla-valor">${intensidad?intensidad+' %':'APAGADAS'}</text>`;
+      <circle class="tp-perilla-control tp-zoom-paso" data-paso="1" cx="${mx}" cy="${my}" r="18"/><circle class="tp-perilla-control tp-zoom-paso" data-paso="-1" cx="${nx}" cy="${ny}" r="18"/>
+      <g class="tp-perilla-control" role="slider" tabindex="0" aria-label="Zoom de la placa" aria-valuemin="50" aria-valuemax="200" aria-valuenow="${Math.round(zoom)}" aria-valuetext="${Math.round(zoom)} %"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="8" class="tp-zoom-manija"/></g>`;
     if(girandoPerilla!==null)perilla.querySelector('g')?.focus?.({preventScroll:true});
   }
-  function ponerIntensidad(ev){const p=punto(ev),a=Math.atan2(p.y-392,p.x-392)*180/Math.PI;intensidad=Math.round(Math.max(0,Math.min(1,(P.a1-a)/(P.a1-P.a0)))*20)*5;solicitarDibujo();}
-  perilla.addEventListener('pointerdown',ev=>{if(!ev.target.closest('.tp-perilla-control'))return;ev.preventDefault();ev.stopPropagation();cerrarMenus();cerrarReaccion();iniciarCambio();girandoPerilla=ev.pointerId;perilla.setPointerCapture?.(ev.pointerId);ponerIntensidad(ev);});
+  function aplicarZoom(z){z=Math.max(50,Math.min(200,z));const f=z/zoom;if(Math.abs(f-1)<1e-4)return;
+    for(const it of items){it.x=392+(it.x-392)*f;it.y=392+(it.y-392)*f;it.escala*=f;}zoom=z;solicitarDibujo();}
+  function ponerIntensidad(ev){const p=punto(ev),a=Math.atan2(p.y-392,p.x-392)*180/Math.PI;aplicarZoom(50*4**Math.max(0,Math.min(1,(P.a1-a)/(P.a1-P.a0))));}
+  perilla.addEventListener('pointerdown',ev=>{const c=ev.target.closest('.tp-perilla-control');if(!c)return;ev.preventDefault();ev.stopPropagation();cerrarMenus();cerrarReaccion();iniciarCambio();
+    if(c.dataset.paso){aplicarZoom(zoom*(c.dataset.paso==='1'?1.25:.8));dibujar();terminarCambio();return;}
+    girandoPerilla=ev.pointerId;perilla.setPointerCapture?.(ev.pointerId);ponerIntensidad(ev);});
   perilla.addEventListener('pointermove',ev=>{if(girandoPerilla!==null)ponerIntensidad(ev);});
   const soltarPerilla=()=>{if(girandoPerilla===null)return;girandoPerilla=null;dibujar();terminarCambio();};perilla.addEventListener('pointerup',soltarPerilla);perilla.addEventListener('pointercancel',soltarPerilla);
-  perilla.addEventListener('keydown',ev=>{const d={ArrowUp:5,ArrowRight:5,ArrowDown:-5,ArrowLeft:-5}[ev.key];if(d===undefined&&!['Home','End'].includes(ev.key))return;ev.preventDefault();iniciarCambio();intensidad=ev.key==='Home'?0:ev.key==='End'?100:Math.max(0,Math.min(100,intensidad+d));dibujar();terminarCambio();perilla.querySelector('g')?.focus({preventScroll:true});});
+  perilla.addEventListener('keydown',ev=>{const d={ArrowUp:1.1,ArrowRight:1.1,ArrowDown:1/1.1,ArrowLeft:1/1.1}[ev.key];if(d===undefined&&!['Home','End'].includes(ev.key))return;ev.preventDefault();iniciarCambio();aplicarZoom(ev.key==='Home'?50:ev.key==='End'?200:zoom*d);dibujar();terminarCambio();perilla.querySelector('g')?.focus({preventScroll:true});});
 
   function pintarRecuerdo(){
     dibujar();const cv=document.createElement('canvas');cv.width=cv.height=1600;const c=cv.getContext('2d');c.fillStyle='#f2f0e8';c.fillRect(0,0,1600,1600);c.save();c.scale(1600/860,1600/860);c.translate(38,20);c.drawImage(aroCanvas,(784-ladoAro)/2,(784-ladoAro)/2,ladoAro,ladoAro);c.save();c.beginPath();c.arc(392,392,392,0,Math.PI*2);c.clip();
@@ -299,7 +293,7 @@ function prepararTuPlaca(){
   $('tpVolver').addEventListener('click',cerrarRecuerdo);pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('tpVistaRecuerdo').hidden)cerrarRecuerdo();});
   document.addEventListener('cerrar-tuplaca',()=>{cerrarMenus();cerrarReaccion();if(!$('tpVistaRecuerdo').hidden)cerrarRecuerdo();});
   try{const guardado=JSON.parse(localStorage.getItem(clave)||'null');if(guardado&&Array.isArray(guardado.items)){for(const it of guardado.items.slice(0,120))if((modelos.has(it.modelo)||it.estilo)&&[it.x,it.y,it.tamano,it.escala,it.rot,it.foco,it.seed].every(Number.isFinite))items.push(it);secuencia=Math.max(guardado.contador||0,...items.map(i=>i.id));
-      intensidad=Number.isFinite(guardado.intensidad)?guardado.intensidad:guardado.reacciones===false?0:85;if(ESTRUCTURAS.some(([id])=>id===guardado.estructura))estructura=guardado.estructura;}
+      intensidad=Number.isFinite(guardado.intensidad)?guardado.intensidad:guardado.reacciones===false?0:85;zoom=Number.isFinite(guardado.zoom)?guardado.zoom:100;if(ESTRUCTURAS.some(([id])=>id===guardado.estructura))estructura=guardado.estructura;}
     else{const viejo=JSON.parse(localStorage.getItem('micromundos-tuplaca-v1')||'[]');if(Array.isArray(viejo))for(const it of viejo.slice(0,60)){const grupo=['B','L','M'][Math.floor(it.estilo/4)],estado=it.estilo%4===3?'R':it.estilo%4===2?'C':'A',m=modelos.get(grupo+'-'+estado+'-01');if(m&&[it.x,it.y,it.tamano].every(Number.isFinite))crear(m,it.x*784/720,it.y*784/720,it.tamano);}}
   }catch{}
   dibujar();actualizar();guardar();
