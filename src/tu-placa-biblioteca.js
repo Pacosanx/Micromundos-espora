@@ -47,11 +47,11 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
   host.classList.add('tp-biblioteca');
   const top = document.createElement('div'); top.className='tp-biblioteca__top';
   const heading = document.createElement('h2'); heading.textContent='BIBLIOTECA DE COLONIAS';
-  const subtitle = document.createElement('p'); subtitle.textContent='Arrastrá una forma al interior de la placa.';
+  const subtitle = document.createElement('p'); subtitle.textContent='Arrastrá una colonia al interior de la placa.';
   top.append(heading,subtitle);
   const modes = document.createElement('div'); modes.className='tp-biblioteca__modes';
   // 18/11/2026: sin modos de siembra (se quitaron «En estría» y «En grupo»): tocar la placa siembra una, arrastrar elige varias.
-  const modeLabel = document.createElement('span'); modeLabel.className='tp-biblioteca__mode-label'; modeLabel.textContent='ARRASTRÁ UNA FORMA A LA PLACA PARA SEMBRARLA'; modes.appendChild(modeLabel);
+  const modeLabel = document.createElement('span'); modeLabel.className='tp-biblioteca__mode-label'; modeLabel.textContent='ARRASTRÁ SOBRE LA PLACA PARA ELEGIR VARIAS'; modes.appendChild(modeLabel);
   const tabs=document.createElement('div');tabs.className='tp-biblioteca__tabs';tabs.setAttribute('role','tablist');
   const content=document.createElement('div');content.className='tp-biblioteca__content';
   const labels=document.createElement('div');labels.className='tp-biblioteca__labels';
