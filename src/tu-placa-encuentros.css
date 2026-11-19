@@ -130,12 +130,14 @@
 /* Menú contextual (19/11/2026, Paco):
    · los botones se mueven por el aro desde JS (tu-placa-menu.js), así que la transición de posición se quita;
    · TRANSFORMAR, en vez de relleno negro y flecha, lleva un marco propio: un segundo anillo fino separado del botón;
-   · los nombres llevan el mismo halo blanco que los años del esquema de la placa en MUESTRAS (píldora blanca al 80 % desenfocada 5 px);
    · GIRAR apagado cuando la forma es simétrica. */
 .tp-menu-boton{transition:filter .4s}
 .tp-menu-boton[data-accion="transformar"]::before{content:'';position:absolute;inset:-5px;border-radius:50%;border:1.2px solid #212121e6;pointer-events:none}
-.tp-menu-boton span{isolation:isolate}
-.tp-menu-boton span::before{content:'';position:absolute;inset:-1px -9px;border-radius:999px;background:#ffffffcc;filter:blur(5px);z-index:-1}
 .tp-menu-boton.tp-menu-inactivo{opacity:.32;cursor:default}
 /* Pestañas de TRANSFORMAR: aparecen cuando GIRAR terminó de irse (650 ms). */
 #tuPlaca .tp-editor-pestanas button{animation-delay:.65s}
+/* Con el menú contextual abierto, las líneas y los nombres de las reacciones quedan tenues para no competir con él (19/11/2026). */
+#tpLineas,#tpRotulos{transition:opacity .3s}
+#tuPlaca:has(#tpMenu:not([hidden]),#tpEditor:not([hidden])) :is(#tpLineas,#tpRotulos){opacity:.15}
+/* TRANSFORMAR: textos sin el borde claro (19/11/2026). */
+.tp-editor-etiqueta,.tp-editor-valor{stroke:none}

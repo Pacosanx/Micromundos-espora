@@ -70,9 +70,10 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
   };
 
   // Dónde van los nombres (19/11/2026, igual en las tres ventanas):
-  //  · arcos (diales y grupos de opciones): el nombre afuera, en el centro del arco y curvado con él (así nunca sale del
-  //    contenedor); el valor adentro, junto a la perilla;
-  //  · líneas que salen del centro: el nombre en la punta; el valor junto a la perilla;
+  //  · diales: el nombre curvado por dentro del arco, en su centro; el valor por fuera, junto a la perilla (así no cae sobre
+  //    la colonia, el recorte ni otras líneas);
+  //  · grupos de opciones: el nombre curvado por fuera, en el centro del grupo;
+  //  · líneas que salen del centro (y EXPANSIÓN): nombre y valor juntos en la punta, el valor del lado de afuera;
   //  · lo que se arrastra suelto (expansión, color medio, recorte): el nombre junto a su perilla.
   // Los pares de arcos van espejados respecto del eje vertical.
   const el=(tag,attrs,padre=svg)=>{const n=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,v);padre.appendChild(n);return n;};
@@ -117,23 +118,23 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
         if(t>0)el('path',{d:arcoD(c.a0,a,RD),class:'tp-editor-lleno'});
         if(c.paso>=1&&c.max-c.min<=20)for(let n=0;n<=c.max-c.min;n++){const b=c.a0+(c.a1-c.a0)*n/(c.max-c.min),[x0,y0]=pt(b,RD-5),[x1,y1]=pt(b,RD+5);el('line',{x1:x0,y1:y0,x2:x1,y2:y1,class:'tp-editor-muesca'});}
         const toque=el('path',{d:arcoD(c.a0,c.a1,RD),class:'tp-editor-carril-toque','data-control':id});toque.dataset.parte='carril';
-        textoArco((c.a0+c.a1)/2,RD+26,c.etiqueta.toUpperCase());
-        const [x,y]=pt(a,RD);tirador(x,y,id,'',activo);const [vx,vy]=pt(a,RD-26);texto(vx,vy,c.mostrar(v),'tp-editor-valor');
+        textoArco((c.a0+c.a1)/2,RD-20,c.etiqueta.toUpperCase());
+        const [x,y]=pt(a,RD);tirador(x,y,id,'',activo);const [vx,vy]=pt(a,RD+28);texto(vx,vy,c.mostrar(v),'tp-editor-valor');
       }else if(c.tipo==='radial'){
         const v=valor(c.key),a=c.angulo(),t=(v-c.min)/(c.max-c.min),r=c.r0+(c.r1-c.r0)*(c.invertido?1-t:t);
         const [x0,y0]=pt(a,c.r0),[x1,y1]=pt(a,c.r1),[x,y]=pt(a,r);
         el('line',{x1:x0,y1:y0,x2:x1,y2:y1,class:'tp-editor-carril'});
         if(c.key==='filaments')for(let n=-3;n<=3;n++){const b=a+n*5,[p0x,p0y]=pt(b,R0-4),[p1x,p1y]=pt(b,R0-4+(r-R0+4)*(1-Math.abs(n)*.18));el('line',{x1:p0x,y1:p0y,x2:p1x,y2:p1y,class:'tp-editor-lleno'});}
         if(c.key==='ringThickness')el('circle',{cx:C,cy:C,r:Math.max(1,R0*(1-v/100)),class:'tp-editor-borde-interior'});
-        tirador(x,y,id,'',activo);const [lx,ly]=pt(a,c.r1+22);texto(lx,ly,c.etiqueta.toUpperCase(),'tp-editor-etiqueta',ladoEtiqueta(a));
-        const [vx,vy]=pt(a+(Math.cos(rad(a))>0?-9:9),r);texto(vx,vy,c.mostrar(v),'tp-editor-valor');
+        tirador(x,y,id,'',activo);const [lx,ly]=pt(a,c.r1+22),abajo=Math.sin(rad(a))>.3;texto(lx,ly,c.etiqueta.toUpperCase(),'tp-editor-etiqueta',ladoEtiqueta(a));
+        texto(lx,ly+(abajo?20:-20),c.mostrar(v),'tp-editor-valor',ladoEtiqueta(a));
       }else if(c.tipo==='vector'){
         // Expansión (forma «abanico» del motor): la colonia crece hacia un lado. Distancia = cuánto, ángulo = hacia dónde.
         const e=valor('shape')==='fan'?valor('detail')||0:0,a=giroMarco(),r=R0+26+e/200*R0*.75,[x,y]=pt(a,r),[x0,y0]=pt(a,R0*.6);
         el('circle',{cx:C,cy:C,r:R0+26,class:'tp-editor-carril'});
         el('line',{x1:x0,y1:y0,x2:x,y2:y,class:'tp-editor-lleno'});
         const ux=Math.cos(rad(a)),uy=Math.sin(rad(a)),[ax,ay]=pt(a,r-16),bx=ax-ux*9-uy*6,by=ay-uy*9+ux*6,cx=ax-ux*9+uy*6,cy=ay-uy*9-ux*6;el('path',{d:`M${bx},${by}L${ax},${ay}L${cx},${cy}`,class:'tp-editor-lleno'});
-        tirador(x,y,id,'',activo);if(activo||!e){const [lx,ly]=pt(a,r+30);texto(lx,ly,'EXPANSIÓN','tp-editor-etiqueta',ladoEtiqueta(a));if(e){const [vx,vy]=pt(a+(Math.cos(rad(a))>0?-1:1)*26/r*180/Math.PI,r);texto(vx,vy,c.mostrar(e),'tp-editor-valor');}}
+        tirador(x,y,id,'',activo);if(activo||!e){const [lx,ly]=pt(a,r+30);texto(lx,ly,'EXPANSIÓN','tp-editor-etiqueta',ladoEtiqueta(a));if(e){texto(lx,ly+(Math.sin(rad(a))>.3?20:-20),c.mostrar(e),'tp-editor-valor',ladoEtiqueta(a));}}
       }else if(c.tipo==='corte'){
         // Recorte del motor (softCut): «Dirección del recorte» = dónde empieza, «Parte visible» = cuánto se ve.
         const rc=R0+122,a0=giroMarco()-90+(valor('cutAngle')||0),arc=valor('cutOpening');
