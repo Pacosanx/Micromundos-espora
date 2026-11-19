@@ -65,7 +65,7 @@
 .tp-editor-pestanas,.tp-editor-opciones{position:absolute;left:0;top:0;width:784px;height:784px;pointer-events:none}
 /* Títulos de TRANSFORMAR (19/11/2026): afuera, a la izquierda de la placa, con su ícono en la superficie redonda del aro.
    El nombre va a la izquierda del ícono, alineado a la derecha. El elegido: superficie rellena (como TRANSFORMAR en el aro) y nombre en 700. */
-#tuPlaca .tp-editor-pestanas button{all:unset;position:absolute;right:calc(100% + 32px);translate:0 -50%;display:flex;align-items:center;gap:14px;pointer-events:auto;cursor:pointer;white-space:nowrap;animation:tp-aparecer .35s ease both}
+#tuPlaca .tp-editor-pestanas button{all:unset;position:absolute;translate:calc(-100% + 24px) -50%;display:flex;align-items:center;gap:14px;pointer-events:auto;cursor:pointer;white-space:nowrap;animation:tp-aparecer .35s ease both}
 .tp-editor-pestana-texto{font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;color:#0d0f17;opacity:.7;transition:opacity .2s}
 .tp-editor-pestana-icono{position:relative;display:grid;place-items:center;width:48px;height:48px;flex:none}
 .tp-editor-pestana-superficie{position:absolute;left:-.8px;top:-.8px;width:49.6px;height:49.6px;filter:blur(1px);pointer-events:none}
@@ -74,7 +74,7 @@
 #tuPlaca .tp-editor-pestanas button[aria-selected="true"] .tp-editor-pestana-icono::before{content:'';position:absolute;inset:0;border-radius:50%;background:#212121;filter:blur(.6px);box-shadow:0 2px 6px #0003}
 #tuPlaca .tp-editor-pestanas button[aria-selected="true"] .tp-editor-pestana-superficie{display:none}
 #tuPlaca .tp-editor-pestanas button[aria-selected="true"] svg{stroke:#f2f0e8}
-#tuPlaca .tp-editor-pestanas button[aria-selected="true"] svg circle[fill]{fill:#f2f0e8}
+#tuPlaca .tp-editor-pestanas button[aria-selected="true"] svg circle[fill],#tuPlaca .tp-editor-pestanas button[aria-selected="true"] svg path[fill]{fill:#f2f0e8}
 #tuPlaca .tp-editor-listo{all:unset;position:absolute;left:392px;top:744px;translate:-50% -50%;padding:12px 18px;cursor:pointer;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;filter:blur(.5px)}
 #tuPlaca .tp-editor-listo:focus-visible{background:#ed74a018;border-radius:10px}
 #tuPlaca .tp-editor-pestanas button:focus-visible .tp-editor-pestana-icono{outline:2px solid #0d0f17;outline-offset:3px;border-radius:50%}
