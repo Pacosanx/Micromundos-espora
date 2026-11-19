@@ -19,12 +19,15 @@ $t = $t.Replace('<script defer src="src/assets/lupa-figma.js"></script>', ('<scr
 $t = $t.Replace('/*ESTILOS_DETALLES*/', ((Leer 'pantallas-detalle.css') + [Environment]::NewLine + (Leer 'ficha-galeria.css')))
 $t = $t.Replace('/*PANTALLAS_DETALLE*/', ('const RECETA_PIE_FICHA = ' + (Leer 'assets/detalles/ficha-footer.receta.json') + ';' + [Environment]::NewLine + (Leer 'ficha-galeria.js') + [Environment]::NewLine + '/*PANTALLAS_DETALLE*/'))
 $t = $t.Replace('/*PANTALLAS_DETALLE*/', ('const CELULAS_FICHA = ' + (Leer 'ficha-colonias.json') + ';const ENTORNOS_DETALLE = ' + [IO.File]::ReadAllText((Join-Path $base 'base/entornos.json'), $utf8) + ';const ENTORNOS_MUESTRAS = ' + $jsonEntMuestras + ';const DISENOS_DETALLE = ' + (Leer 'pantallas-detalle.json') + ';' + [Environment]::NewLine + ('const FONDOS_UNIVERSOS = ' + (Leer 'fondos-universos.json') + ';' + [Environment]::NewLine + (Leer 'fondos-universos.js') + [Environment]::NewLine + (Leer 'pantallas-detalle.js')) + [Environment]::NewLine + ((Leer 'tu-placa-estructuras.js') + [Environment]::NewLine + (Leer 'tu-placa-generador.js') + [Environment]::NewLine + (Leer 'tu-placa-motor.js') + [Environment]::NewLine + (Leer 'tu-placa-biblioteca.js') + [Environment]::NewLine + (Leer 'tu-placa-menu.js') + [Environment]::NewLine + (Leer 'tu-placa-editor.js') + [Environment]::NewLine + (Leer 'tu-placa-v12.js'))))
-$t = $t.Replace('/*ESTILOS_GLOSARIO*/', ((Leer 'glosario.css') + [Environment]::NewLine + (Leer 'que-es.css') + [Environment]::NewLine + (Leer 'bienvenida.css')))
+$t = $t.Replace('/*ESTILOS_GLOSARIO*/', ((Leer 'glosario.css') + [Environment]::NewLine + (Leer 'que-es.css')))
 $terminosGlosario = @(Import-Csv -LiteralPath (Join-Path $base 'base/glosario.csv') -Delimiter ';' -Encoding UTF8)
 $vinculosGlosario = @(Import-Csv -LiteralPath (Join-Path $base 'base/glosario_muestras.csv') -Delimiter ';' -Encoding UTF8)
 $t = $t.Replace('/*GLOSARIO*/', ('const TERMINOS_GLOSARIO = ' + (ConvertTo-Json -InputObject $terminosGlosario -Depth 5 -Compress) + ';const VINCULOS_GLOSARIO = ' + (ConvertTo-Json -InputObject $vinculosGlosario -Depth 5 -Compress) + ';' + [Environment]::NewLine + (Leer 'glosario.js')))
 $t = $t.Replace('/*APERTURA*/', ('const RECETA_APERTURA = ' + (Leer 'apertura-palabra.json') + ';const RECETA_FONDO_APERTURA = ' + (Leer 'apertura-fondo.json') + ';' + [Environment]::NewLine + (Leer 'apertura.js')))
 $t = $t.Replace('/*LISTADO*/', (Leer 'listado.js'))
+# Bienvenida de primera visita (ver src/bienvenida.js): estilo y script al final del body.
+$finBienvenida = $t.LastIndexOf('</body>')
+$t = $t.Substring(0, $finBienvenida) + '<style id="bienvenidaEstilos">' + (Leer 'bienvenida.css') + '</style><script id="bienvenidaScript">' + (Leer 'bienvenida.js') + '</script>' + [Environment]::NewLine + $t.Substring($finBienvenida)
 $t = $t.Replace('/*MUESTRARIO*/', ('const GUIA_MUESTRARIO = ' + (Leer 'muestrario.json') + ';' + [Environment]::NewLine + (Leer 'muestrario.js')))
 $especies = @{}
 $gruposEspecies = @{}
@@ -84,8 +87,5 @@ $mascaraCampo = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $sr
 $t = $t.Replace('__MASCARA_CAMPO_SUAVE__', ('data:image/png;base64,' + $mascaraCampo))
 $mascaraTransformacion = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $src 'assets/detalles/mascara-transformacion.png')))
 $t = $t.Replace('__MASCARA_FICHA_TRANSFORMACION__', ('data:image/png;base64,' + $mascaraTransformacion))
-# Bienvenida de primera visita: script aparte, al final del body (no depende de la carga diferida).
-$fin = $t.LastIndexOf('</body>')
-$t = $t.Substring(0, $fin) + '<script id="bienvenidaScript">' + (Leer 'bienvenida.js') + '</script>' + [Environment]::NewLine + $t.Substring($fin)
 [IO.File]::WriteAllText((Join-Path $base 'placa.html'), $t, $utf8)
 Write-Host "placa.html listo ($($t.Length) caracteres)"
