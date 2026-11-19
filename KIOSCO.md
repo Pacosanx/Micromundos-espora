@@ -30,5 +30,5 @@ Crear un acceso directo con:
 ## Pendiente de definir con el museo
 
 - Tiempo de inactividad real (hoy 120 s) y si el aviso se ve bien a la distancia de uso.
-- Fuente Arimo sin conexión (hoy se carga de Google Fonts).
+- ~~Fuente Arimo sin conexión~~: resuelto. Arimo va incrustada en placa.html (ver src/assets/fuentes/LEEME.md).
 - Quién enciende y apaga la pantalla, y si conviene reiniciar el navegador una vez por día.
