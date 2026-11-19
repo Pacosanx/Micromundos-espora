@@ -136,3 +136,11 @@
 .tp-aviso-generar button img{flex:none;transform:rotate(180deg);filter:brightness(0);opacity:.92}
 .tp-aviso-generar button:focus-visible{outline:2px solid #13151b;outline-offset:4px;border-radius:8px}
 @media(prefers-reduced-motion:reduce){.tp-aviso-generar{transition:none}}
+/* Interruptor de REACCIONES (19/11/2026), arriba a la derecha, sobre DENSIDAD. */
+#tpInterruptorReacciones{all:unset;position:absolute;right:40px;top:226px;display:flex;align-items:center;gap:10px;min-height:var(--area-tactil);cursor:pointer;
+  font:400 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#0d0f17;opacity:.55;transition:opacity .25s}
+#tpInterruptorReacciones i{width:14px;height:14px;border-radius:50%;box-sizing:border-box;border:1.5px solid currentColor;background:transparent;transition:background .25s}
+#tpInterruptorReacciones.activas{opacity:1;font-weight:700}
+#tpInterruptorReacciones.activas i{background:currentColor}
+#tpInterruptorReacciones:focus-visible{outline:0;text-decoration:underline;text-underline-offset:4px}
+
