@@ -30,6 +30,9 @@ $t = $t.Replace('/*APERTURA*/', ('const RECETA_APERTURA = ' + (Leer 'apertura-pa
 $finTpPropuesta = $t.LastIndexOf('</body>')
 $t = $t.Substring(0, $finTpPropuesta) + '<style id="tpPropuestaEstilos">' + (Leer 'tu-placa-propuesta.css') + '</style><script id="tpPropuestaScript">' + (Leer 'tu-placa-propuesta.js') + '</script>' + [Environment]::NewLine + $t.Substring($finTpPropuesta)
 $t = $t.Replace('/*LISTADO*/', (Leer 'listado.js'))
+# Bienvenida de primera visita y pistas (ver src/bienvenida.js y src/pistas.js): estilo y script al final del body.
+$finBienvenida = $t.LastIndexOf('</body>')
+$t = $t.Substring(0, $finBienvenida) + '<style id="bienvenidaEstilos">' + (Leer 'bienvenida.css') + '</style><script id="bienvenidaScript">' + (Leer 'bienvenida.js') + '</script><script id="pistasScript">' + (Leer 'pistas.js') + '</script>' + [Environment]::NewLine + $t.Substring($finBienvenida)
 $t = $t.Replace('/*MUESTRARIO*/', ('const GUIA_MUESTRARIO = ' + (Leer 'muestrario.json') + ';' + [Environment]::NewLine + (Leer 'muestrario.js')))
 # Modo dedo (solo con ?dedo): el mouse se comporta como un dedo. Ver src/dedo.js.
 $finDedo = $t.LastIndexOf('</body>')
