@@ -77,8 +77,8 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 
 /* buscador: oculto por pedido (el código queda inactivo) */
 #buscador{display:none!important}
-#buscador{left:1677px;top:214px;width:203px;height:20px;display:flex;align-items:center;gap:10px}
-#alternarListado{position:absolute;left:1490px;top:122px;width:390px;min-height:var(--area-tactil);padding:0;border:0;background:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:400 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#fff;mix-blend-mode:difference;filter:blur(.5px);cursor:pointer}
+#buscador{left:1677px;top:362px;width:203px;height:20px;display:flex;align-items:center;gap:10px}
+#alternarListado{position:absolute;left:1490px;top:270px;width:390px;min-height:var(--area-tactil);padding:0;border:0;background:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:400 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#fff;mix-blend-mode:difference;filter:blur(.5px);cursor:pointer}
 #alternarListado svg{transition:transform .3s;flex:none}
 #alternarListado[aria-expanded="true"] svg{transform:rotate(180deg)}
 #alternarListado:focus-visible{outline:0;background:rgba(146,170,104,.18);border-radius:8px}
@@ -93,8 +93,9 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
    Sin opacidad ni transformaciones en contenedores: aislarían el modo «diferencia» de los textos y los harían destellar en blanco. */
 #guiaBoton{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;min-height:48px;margin:-14px 0 -10px;cursor:pointer;color:#0d0f17;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);letter-spacing:.08em;text-transform:uppercase}
 #guiaBoton .guia-flecha{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgb(13 15 23 / 35%);transition:box-shadow .3s}
-#guiaBoton .guia-flecha img{display:block;filter:brightness(0);rotate:-90deg;transition:rotate .35s}
-#leyenda.cerrada #guiaBoton .guia-flecha img{rotate:90deg}
+/* Chevron (la punta de la flecha del sistema): abajo para abrir, arriba para cerrar. Mismo chevron en LISTADO COMPLETO. */
+#guiaBoton .guia-flecha svg{display:block;rotate:180deg;transition:rotate .35s}
+#leyenda.cerrada #guiaBoton .guia-flecha svg{rotate:0deg}
 #guiaBoton .guia-titulo{white-space:nowrap;opacity:.7}
 #guiaBoton:active .guia-flecha,#guiaBoton:focus-visible .guia-flecha{box-shadow:inset 0 0 0 1.5px #0d0f17}
 #guiaBoton:focus-visible{outline:0}
@@ -110,7 +111,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #leyenda.cerrada :is(.rotulo,.guia-uso,.tam){opacity:0;max-height:0;margin:0;pointer-events:none}
 #leyenda.cerrada .item span{opacity:0!important;pointer-events:none}
 #leyenda.cerrada .items{gap:8px}
-@media(prefers-reduced-motion:reduce){#guiaCuerpo,.bloque,#leyenda :is(.rotulo,.guia-uso,.tam,.item span),#guiaBoton .guia-flecha img{transition:none}}
+@media(prefers-reduced-motion:reduce){#guiaCuerpo,.bloque,#leyenda :is(.rotulo,.guia-uso,.tam,.item span),#guiaBoton .guia-flecha svg{transition:none}}
 .rotulo{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#fff;mix-blend-mode:difference;opacity:.7;filter:blur(.5px)}
 .items{display:flex;flex-direction:column;gap:12px}
 .item{display:flex;align-items:center;height:40px;cursor:pointer}
@@ -127,11 +128,11 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 .tam span{white-space:nowrap;margin-left:14px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);color:#fff;mix-blend-mode:difference;filter:blur(.5px)}
 
 /* lista */
-#listaCab{left:1438px;top:284px;width:442px;display:flex;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
+#listaCab{left:1438px;top:432px;width:442px;display:flex;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
 #listaCab span{color:#fff;mix-blend-mode:difference;opacity:.7}
 #listaCab span:first-child{width:155px}
 /* la caja es más grande que la zona de lectura (80 px de aire arriba, 40 a cada costado) para que el desenfoque no se corte */
-#lista{left:1398px;top:245px;width:522px;height:855px;padding:0 40px;box-sizing:border-box;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;touch-action:pan-y}
+#lista{left:1398px;top:393px;width:522px;height:707px;padding:0 40px;box-sizing:border-box;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;touch-action:pan-y}
 #lista::-webkit-scrollbar{display:none}
 #lista .pad{height:240px}
 .fila{display:flex;align-items:center;height:24px;cursor:pointer;color:#fff;mix-blend-mode:difference;text-transform:uppercase}
@@ -421,7 +422,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
   </div>
 
   <div id="derecha" class="ancla">
-  <button id="alternarListado" type="button" data-ui aria-expanded="false" aria-controls="lista listaCab buscador" aria-label="Abrir listado completo"><span>LISTADO COMPLETO</span><svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0H10L5 6Z" fill="currentColor"/></svg></button>
+  <button id="alternarListado" type="button" data-ui aria-expanded="false" aria-controls="lista listaCab buscador" aria-label="Abrir listado completo"><span>LISTADO COMPLETO</span><svg class="chevron" width="11.04" height="6.27" viewBox="0 0 11.04 6.27" aria-hidden="true"><path d="M.75 .75 5.52 5.52 10.29 .75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <label id="buscador" class="abs" data-ui>
     <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
     <input id="q" type="text" placeholder="Buscar una muestra…" autocomplete="off" spellcheck="false">
@@ -432,7 +433,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 
   <!-- leyenda -->
   <div id="leyenda" class="abs cerrada" data-ui>
-    <button id="guiaBoton" type="button" aria-expanded="false" aria-controls="guiaCuerpo" aria-label="Cómo leer la placa: abrir la guía"><span class="guia-flecha" aria-hidden="true"><img src="__CARTEL_FLECHA__" width="11.3995" height="11.0459" alt=""></span><span class="guia-titulo">Cómo leer la placa</span></button>
+    <button id="guiaBoton" type="button" aria-expanded="false" aria-controls="guiaCuerpo" aria-label="Cómo leer la placa: abrir la guía"><span class="guia-flecha" aria-hidden="true"><svg class="chevron" width="11.04" height="6.27" viewBox="0 0 11.04 6.27" aria-hidden="true"><path d="M.75 .75 5.52 5.52 10.29 .75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="guia-titulo">Cómo leer la placa</span></button>
     <div id="guiaCuerpo">
     <div class="bloque" id="bGrupo">
       <div class="rotulo">COLOR</div>

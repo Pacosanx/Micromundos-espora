@@ -138,7 +138,7 @@ function ajustar(){
   $('derecha').style.left = DX + 'px';
   $('derAbajo').style.top = DY + 'px';   $('izqAbajo').style.top = DY + 'px';
   $('cabecera').style.width = (1841 + DX) + 'px';
-  $('lista').style.height = (855 + DY) + 'px';
+  $('lista').style.height = (707 + DY) + 'px';
 }
 ajustar();
 
