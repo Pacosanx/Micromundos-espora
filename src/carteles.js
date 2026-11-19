@@ -3,6 +3,7 @@ const RECURSOS_CARTEL={coloresBL:'__CARTEL_COLORES__',flecha:'__CARTEL_FLECHA__'
 // 19/11/2026 (Paco): todas las flechas de «ir a» son la de «Ver ficha de muestra» (cartel-flecha.svg, girada 45°).
 // 19/11/2026 (Paco): la cantidad de fichas (especies y Glosario) va con el chevron de LISTADO COMPLETO: abajo cerrado, arriba abierto.
 const CHEVRON_FICHAS='<svg class="chevron chevron-fichas" width="11.04" height="6.27" viewBox="0 0 11.04 6.27" aria-hidden="true"><path d="M.75 .75 5.52 5.52 10.29 .75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const FLECHA_ABAJO='<img class="flecha-diagonal flecha-abajo" src="__CARTEL_FLECHA__" width="11.3995" height="11.0459" alt="">'; // desplegar: abajo cerrado, arriba abierto
 const FLECHA_DIAGONAL='<img class="flecha-diagonal" src="__CARTEL_FLECHA__" width="11.3995" height="11.0459" alt="">',FLECHA_ARRIBA='<img class="flecha-diagonal flecha-arriba" src="__CARTEL_FLECHA__" width="11.3995" height="11.0459" alt="">';
 const PALETA_CARTEL={B:'#e57dab',L:'#f2c75e',M:'#92aa68'};
 const escaparCartel=valor=>String(valor??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

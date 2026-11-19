@@ -375,6 +375,10 @@ function prepararTuPlaca(){
     const inicio=new Date(ahora);inicio.setHours(9,30,0,0);const fin=Math.max(inicio.getTime()+60e3*NOMBRES_OTRAS.length,ahora.getTime()-5*60e3);
     return NOMBRES_OTRAS.map((nombre,i)=>({nombre,semilla:i,fecha:inicio.getTime()+azar()*(fin-inicio.getTime())})).sort((a,b)=>b.fecha-a.fecha);
   }
+  // 19/11/2026 (Paco): se sacan una vez las placas de prueba guardadas a nombre de PACO; las que se guarden después quedan.
+  try{if(!localStorage.getItem('micromundos-limpieza-paco-2026-11-19')){const l=JSON.parse(localStorage.getItem(CLAVE_PROPIAS)||'[]');
+    if(Array.isArray(l))localStorage.setItem(CLAVE_PROPIAS,JSON.stringify(l.filter(p=>String(p?.nombre||'').trim().toUpperCase()!=='PACO')));
+    localStorage.setItem('micromundos-limpieza-paco-2026-11-19','1');}}catch{}
   const leerPropias=()=>{try{const l=JSON.parse(localStorage.getItem(CLAVE_PROPIAS)||'[]');return Array.isArray(l)?l.filter(p=>typeof p?.img==='string'):[];}catch{return [];}};
   const simuladas=new Map();
   function placaSimulada(n,lado){
