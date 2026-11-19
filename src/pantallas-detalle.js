@@ -663,6 +663,10 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     if(!simulada){prepararLupa(raiz,ev=>compuesto(nodo('500:7153').querySelector('img'),ev,'placa'));
     const colonias=nodo('500:7198');colonias.classList.add('ficha-colonias');
     interactivo(colonias,ev=>compuesto(colonias.querySelector('img'),ev,'especies'),'Tocar cada colonia para ver las células de su especie');}
+    // Simuladas con imagen de colonias (19/11/2026): no hay mapa de qué colonia es cada especie, así que cada toque muestra
+    // la siguiente especie de la muestra (con una sola especie, siempre esa).
+    else if(PLACAS_FIGURATIVAS.has(muestra.codigo)){const colonias=nodo('500:7198');colonias.classList.add('ficha-colonias');
+      interactivo(colonias,ev=>{const e=muestra.vinculosDatos.especies;if(e.length)cartelComposicion(muestra,ev,e[siguienteEspecie++%e.length]);},'Tocar las colonias para ver las células de sus especies');}
     for(const nombre of muestra.vinculosDatos.especies){
       const p=[...raiz.querySelectorAll('p')].find(p=>texto(p)===nombre);if(!p)continue;
       interactivo(p,ev=>cartelEspecie(nombre,'','B',imagenCelulaEspecie(nombre),ev),nombre);
@@ -694,7 +698,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   // Ficha simulada (19/11/2026): exactamente la pantalla del yogur, con el mismo fondo. Se cambia lo que la base tiene para
   // la muestra (título, código, grupo, estado, colonias, especies, fecha, contexto, «Qué es», especies con su definición) y todo
   // lo que no tenemos queda marcado EN PROCESO: dónde se tomó, la curiosidad, el esquema de «Qué produce o transforma» y
-  // «Se ayudan», la imagen de colonias y el microscopio. La placa figurativa es la de cada muestra (19/11/2026).
+  // «Se ayudan» y el microscopio. La placa figurativa y la de colonias (abstracta) son las de cada muestra (19/11/2026).
   function adaptarFichaSimulada(raiz,muestra,f,nodo,cambiar){
     const enProceso=(id,t='En proceso')=>{const e=nodo(id);if(!e)return;e.textContent=t;e.classList.add('ficha-en-proceso');};
     const imagenEnProceso=(id,rotulo)=>{const e=nodo(id);if(!e)return;const caja=document.createElement('div');caja.className='ficha-imagen-en-proceso';caja.innerHTML=`<span>${esc(rotulo)}</span><span>EN PROCESO</span>`;
@@ -715,7 +719,10 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     cambiar('500:7239',CATALOGO_ESPECIES[especies[0]]?.definicion||'En proceso');
     // Placa figurativa (19/11/2026): la que Paco armó con Codex para esta muestra (ficha-galeria.js); si no hay, en proceso.
     const placa=placaFigurativa(muestra.codigo),imgPlaca=nodo('500:7153')?.querySelector('img');
-    if(placa&&imgPlaca){imgPlaca.src=placa;imgPlaca.alt='Placa figurativa de '+(f.titulo||muestra.origen);}else imagenEnProceso('500:7153','PLACA FIGURATIVA');imagenEnProceso('500:7198','COLONIAS');
+    if(placa&&imgPlaca){imgPlaca.src=placa;imgPlaca.alt='Placa figurativa de '+(f.titulo||muestra.origen);}else imagenEnProceso('500:7153','PLACA FIGURATIVA');
+    // Colonias (19/11/2026): la traducción abstracta de su placa (rosa, como la del yogur); si no hay, en proceso.
+    const imgColonias=nodo('500:7198')?.querySelector('img');
+    if(PLACAS_FIGURATIVAS.has(muestra.codigo)&&imgColonias){imgColonias.src=`src/assets/placas-abstractas/${muestra.codigo}.png`;}else imagenEnProceso('500:7198','COLONIAS');
     cambiar('500:7160','El microscopio de esta muestra está en proceso.');
     raiz.classList.add('ficha-simulada');
   }
@@ -735,7 +742,8 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   }
   function cartelComposicion(muestra,evento,nombre){
     if(!muestra.vinculosDatos.especies.includes(nombre))return;
-    cartelEspecie(nombre,'',CATALOGO_ESPECIES[nombre]?.grupo||muestra.grupo,imagenCelulaEspecie(nombre),evento);
+    // El grupo es el de la especie (colonias.csv), no el de la muestra: en las mixtas (BL) el cartel necesita B, L o M.
+    cartelEspecie(nombre,'',CATALOGO_ESPECIES[nombre]?.grupo||GRUPOS_ESPECIES[nombre]||muestra.grupo[0],imagenCelulaEspecie(nombre),evento);
   }
   function prepararLupa(raiz,alTocar){
     const placa=raiz.querySelector('.ficha-placa');if(!placa)return;
