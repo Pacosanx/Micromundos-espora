@@ -40,34 +40,38 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
   const controles={
     forma:[
       {tipo:'vector',etiqueta:'Expansión',mostrar:v=>porcentaje(v/2)},
-      {tipo:'dial',key:'studyLobes',etiqueta:'Lóbulos',min:0,max:16,paso:1,a0:194,a1:236,mostrar:v=>String(v)},
+      {tipo:'dial',key:'studyLobes',etiqueta:'Lóbulos',min:0,max:16,paso:1,a0:196,a1:236,mostrar:v=>String(v)},
       {tipo:'radial',key:'studyDepth',etiqueta:'Profundidad',min:10,max:100,angulo:()=>135,r0:R0*.72,r1:R0*1.38,visible:()=>valor('studyLobes')>0,mostrar:porcentaje},
-      {tipo:'dial',key:'irregularity',etiqueta:'Irregularidad',min:0,max:100,paso:1,a0:-36,a1:14,mostrar:porcentaje},
+      {tipo:'dial',key:'irregularity',etiqueta:'Irregularidad',min:0,max:100,paso:1,a0:-56,a1:-16,mostrar:porcentaje},
     ],
     borde:[
       {tipo:'radial',key:'filaments',etiqueta:'Filamentos',min:0,max:100,angulo:()=>158,r0:R0+14,r1:R0+104,mostrar:porcentaje},
       {tipo:'dial',key:'filamentCount',etiqueta:'Cantidad',min:10,max:180,paso:1,a0:194,a1:236,visible:()=>valor('filaments')>0,mostrar:v=>String(v)},
-      {tipo:'dial',key:'filamentSpacing',etiqueta:'Separación',min:0,max:100,paso:1,a0:112,a1:140,visible:()=>valor('filaments')>0,mostrar:porcentaje},
-      {tipo:'dial',key:'filamentWidth',etiqueta:'Grosor',min:0,max:100,paso:1,a0:62,a1:88,visible:()=>valor('filaments')>0,mostrar:porcentaje},
+      {tipo:'dial',key:'filamentSpacing',etiqueta:'Separación',min:0,max:100,paso:1,a0:100,a1:124,visible:()=>valor('filaments')>0,mostrar:porcentaje},
+      {tipo:'dial',key:'filamentWidth',etiqueta:'Grosor',min:0,max:100,paso:1,a0:56,a1:80,visible:()=>valor('filaments')>0,mostrar:porcentaje},
       {tipo:'corte',etiqueta:'Recorte',visible:recortable},
       {tipo:'radial',key:'ringThickness',etiqueta:'Anillo',min:1,max:100,invertido:true,angulo:()=>giroMarco()-90+(valor('cutAngle')||0)+valor('cutOpening')/2,r0:0,r1:R0*.94,visible:recortable,mostrar:porcentaje},
     ],
     materia:[
-      {tipo:'miniaturas',key:'gradient',etiqueta:'Distribución',opciones:[['radial','Radial'],['linear','Lineal'],['rings','Anillos'],['solid','Un color']],a0:178,paso:18,lado:'end',etiquetaAl:'final',separacion:16},
-      {tipo:'miniaturas',key:'colorTreatment',etiqueta:'Tratamiento',opciones:TRATAMIENTOS,a0:-62,paso:17,lado:'start'},
+      {tipo:'miniaturas',key:'gradient',etiqueta:'Distribución',opciones:[['radial','Radial'],['linear','Lineal'],['rings','Anillos'],['solid','Un color']],a0:199.5,paso:17},
+      {tipo:'miniaturas',key:'colorTreatment',etiqueta:'Tratamiento',opciones:TRATAMIENTOS,a0:-79,paso:17},
       {tipo:'medio',etiqueta:'Color medio',visible:()=>valor('gradient')!=='solid'||conTratamiento('zoned','patchy')()},
-      {tipo:'dial',key:'pigmentIntensity',etiqueta:'Intensidad',min:0,max:100,paso:1,a0:22,a1:50,visible:()=>tratamiento()!=='none',mostrar:porcentaje},
-      {tipo:'dial',key:'zoneCount',etiqueta:'Zonas',min:1,max:8,paso:1,a0:148,a1:170,visible:conTratamiento('zoned'),mostrar:v=>String(v)},
-      {tipo:'dial',key:'rimSize',etiqueta:'Borde',min:40,max:180,paso:1,a0:148,a1:170,visible:conTratamiento('rimmed'),mostrar:porcentaje},
-      {tipo:'dial',key:'spotCount',etiqueta:'Manchas',min:1,max:8,paso:1,a0:148,a1:170,visible:conTratamiento('spotted'),mostrar:v=>String(v)},
+      {tipo:'dial',key:'pigmentIntensity',etiqueta:'Intensidad',min:0,max:100,paso:1,a0:20,a1:46,visible:()=>tratamiento()!=='none',mostrar:porcentaje},
+      {tipo:'dial',key:'zoneCount',etiqueta:'Zonas',min:1,max:8,paso:1,a0:134,a1:160,visible:conTratamiento('zoned'),mostrar:v=>String(v)},
+      {tipo:'dial',key:'rimSize',etiqueta:'Borde',min:40,max:180,paso:1,a0:134,a1:160,visible:conTratamiento('rimmed'),mostrar:porcentaje},
+      {tipo:'dial',key:'spotCount',etiqueta:'Manchas',min:1,max:8,paso:1,a0:134,a1:160,visible:conTratamiento('spotted'),mostrar:v=>String(v)},
       {tipo:'radial',key:'spotSize',etiqueta:'Tamaño de manchas',min:40,max:180,angulo:()=>110,r0:R0*.3,r1:R0*1.05,visible:conTratamiento('spotted'),mostrar:porcentaje},
-      {tipo:'dado',key:'pigmentSeed',etiqueta:'Variante',angulo:64,radio:240,visible:conTratamiento('spotted','patchy')},
-    
-      {tipo:'dial',key:'grain',etiqueta:'Grano',min:0,max:70,paso:1,a0:66,a1:88,mostrar:porcentaje},
-      {tipo:'dial',key:'porosity',etiqueta:'Porosidad',min:0,max:100,paso:1,a0:112,a1:134,mostrar:porcentaje},
+      {tipo:'dado',key:'pigmentSeed',etiqueta:'Variante',angulo:68,radio:205,visible:conTratamiento('spotted','patchy')},
+      {tipo:'dial',key:'grain',etiqueta:'Grano',min:0,max:70,paso:1,a0:56,a1:80,mostrar:porcentaje},
+      {tipo:'dial',key:'porosity',etiqueta:'Porosidad',min:0,max:100,paso:1,a0:100,a1:124,mostrar:porcentaje},
     ],
   };
 
+  // Dónde van los nombres (19/11/2026, igual en las tres ventanas):
+  //  · arcos (diales y grupos de opciones): el nombre afuera, en el centro del arco; el valor adentro, junto a la perilla;
+  //  · líneas que salen del centro: el nombre en la punta; el valor junto a la perilla;
+  //  · lo que se arrastra suelto (expansión, color medio, recorte): el nombre junto a su perilla.
+  // Los pares de arcos van espejados respecto del eje vertical.
   const el=(tag,attrs,padre=svg)=>{const n=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,v);padre.appendChild(n);return n;};
   const arcoD=(a0,a1,r)=>{const [x0,y0]=pt(a0,r),[x1,y1]=pt(a1,r);return `M${x0},${y0}A${r},${r} 0 ${Math.abs(a1-a0)>180?1:0} 1 ${x1},${y1}`;};
   function texto(x,y,t,clase='tp-editor-texto',ancla='middle'){const n=el('text',{x,y,class:clase,'text-anchor':ancla,'dominant-baseline':'middle'});n.textContent=t;return n;}
@@ -101,8 +105,8 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
         if(t>0)el('path',{d:arcoD(c.a0,a,RD),class:'tp-editor-lleno'});
         if(c.paso>=1&&c.max-c.min<=20)for(let n=0;n<=c.max-c.min;n++){const b=c.a0+(c.a1-c.a0)*n/(c.max-c.min),[x0,y0]=pt(b,RD-5),[x1,y1]=pt(b,RD+5);el('line',{x1:x0,y1:y0,x2:x1,y2:y1,class:'tp-editor-muesca'});}
         const toque=el('path',{d:arcoD(c.a0,c.a1,RD),class:'tp-editor-carril-toque','data-control':id});toque.dataset.parte='carril';
-        const ae=c.a0-7,[lx,ly]=pt(ae,RD);texto(lx,ly,c.etiqueta.toUpperCase(),'tp-editor-etiqueta',ladoEtiqueta(ae));
-        const [x,y]=pt(a,RD);tirador(x,y,id,'',activo);const [vx,vy]=pt(a,RD+30);texto(vx,vy,c.mostrar(v),'tp-editor-valor');
+        const am=(c.a0+c.a1)/2,[lx,ly]=pt(am,RD+30);texto(lx,ly,c.etiqueta.toUpperCase(),'tp-editor-etiqueta',ladoEtiqueta(am));
+        const [x,y]=pt(a,RD);tirador(x,y,id,'',activo);const [vx,vy]=pt(a,RD-26);texto(vx,vy,c.mostrar(v),'tp-editor-valor');
       }else if(c.tipo==='radial'){
         const v=valor(c.key),a=c.angulo(),t=(v-c.min)/(c.max-c.min),r=c.r0+(c.r1-c.r0)*(c.invertido?1-t:t);
         const [x0,y0]=pt(a,c.r0),[x1,y1]=pt(a,c.r1),[x,y]=pt(a,r);
@@ -116,7 +120,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
         const e=valor('shape')==='fan'?valor('detail')||0:0,a=giroMarco(),r=R0+26+e/200*R0*.75,[x,y]=pt(a,r),[x0,y0]=pt(a,R0*.6);
         el('circle',{cx:C,cy:C,r:R0+26,class:'tp-editor-carril'});
         el('line',{x1:x0,y1:y0,x2:x,y2:y,class:'tp-editor-lleno'});
-        const [ax,ay]=pt(a,r-16),[bx,by]=pt(a-4,r-24),[cx,cy]=pt(a+4,r-24);el('path',{d:`M${bx},${by}L${ax},${ay}L${cx},${cy}`,class:'tp-editor-lleno'});
+        const ux=Math.cos(rad(a)),uy=Math.sin(rad(a)),[ax,ay]=pt(a,r-16),bx=ax-ux*9-uy*6,by=ay-uy*9+ux*6,cx=ax-ux*9+uy*6,cy=ay-uy*9-ux*6;el('path',{d:`M${bx},${by}L${ax},${ay}L${cx},${cy}`,class:'tp-editor-lleno'});
         tirador(x,y,id,'',activo);if(activo||!e){const [lx,ly]=pt(a,r+30);texto(lx,ly,'EXPANSIÓN','tp-editor-etiqueta',ladoEtiqueta(a));if(e){const [vx,vy]=pt(a,r+48);texto(vx,vy,c.mostrar(e),'tp-editor-valor',ladoEtiqueta(a));}}
       }else if(c.tipo==='corte'){
         // Recorte del motor (softCut): «Dirección del recorte» = dónde empieza, «Parte visible» = cuánto se ve.
@@ -125,7 +129,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
         if(arc<360)el('path',{d:arcoD(a0,a0+arc,rc),class:'tp-editor-lleno'});else el('circle',{cx:C,cy:C,r:rc,class:'tp-editor-lleno'});
         const [x0,y0]=pt(a0,rc),[x1,y1]=pt(a0+arc-(arc>=360?8:0),rc);
         tirador(x0,y0,id,'inicio',activo&&arrastre.parte==='inicio');tirador(x1,y1,id,'fin',activo&&arrastre.parte==='fin');
-        const [lx,ly]=pt(a0+arc/2,rc+26);texto(lx,ly,arc>=360?'RECORTE · ARRASTRÁ UN EXTREMO':'PARTE VISIBLE '+Math.round(arc)+'°','tp-editor-etiqueta',ladoEtiqueta(a0+arc/2));
+        const af=a0+arc-(arc>=360?8:0),[lx,ly]=pt(af,rc+28);texto(lx,ly,arc>=360?'RECORTE':'RECORTE · '+Math.round(arc)+'°','tp-editor-etiqueta',ladoEtiqueta(af));
       }else if(c.tipo==='medio'){
         const lineal=valor('gradient')==='linear',v=valor('midpoint'),a=lineal?valor('angle')+giroMarco():-40,r=v/100*R0,[x,y]=pt(a,r);
         if(lineal){const [p0x,p0y]=pt(a+180,R0),[p1x,p1y]=pt(a,R0);el('line',{x1:p0x,y1:p0y,x2:p1x,y2:p1y,class:'tp-editor-carril'});}
@@ -135,7 +139,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
         const actual=valor(c.key)??'none';
         c.opciones.forEach(([op,nombre],n)=>{const [x,y]=pt(c.a0+n*c.paso,RD);
           boton(x,y,`<i style="background:${fondoMiniatura(op)}"></i><span>${nombre}</span>`,c.etiqueta+': '+nombre,()=>{if(op!==valor(c.key))elegir({[c.key]:op});},op===actual);});
-        const ae=c.etiquetaAl==='final'?c.a0+(c.opciones.length-1)*c.paso+(c.separacion||13):c.a0-12,[lx,ly]=pt(ae,RD);texto(lx,ly,c.etiqueta.toUpperCase(),'tp-editor-etiqueta',c.lado);
+        const am=c.a0+(c.opciones.length-1)*c.paso/2,[lx,ly]=pt(am,RD+52);texto(lx,ly,c.etiqueta.toUpperCase(),'tp-editor-etiqueta',ladoEtiqueta(am));
       }else if(c.tipo==='dado'){
         const [x,y]=pt(c.angulo,c.radio??RD);
         const b=boton(x,y,`<i class="tp-editor-dado"><img src="src/assets/tu-placa/tp-variacion.svg" alt=""></i><span>${c.etiqueta}</span>`,c.etiqueta+' del patrón: tocar para otra',()=>{elegir({[c.key]:Math.floor(Math.random()*1000)});
