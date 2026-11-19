@@ -49,16 +49,21 @@
 
 /* GENERAR: tocar / mantener apretado (abanico de estructuras). */
 .tp-generar-ayuda{position:absolute;left:40px;top:978px;margin:0;font:400 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;opacity:.5;filter:blur(.4px);pointer-events:none}
-.tp-estructuras{position:absolute;left:24px;top:832px;width:480px;height:110px;z-index:12}
-.tp-estructuras::before{content:"";position:absolute;left:-18px;top:-44px;width:490px;height:150px;border-radius:40px;background:#f2f0e8e8;filter:blur(6px);pointer-events:none}
-.tp-estructuras[hidden]{display:none}
-#tuPlaca .tp-estructuras button{all:unset;position:absolute;width:84px;display:grid;justify-items:center;gap:6px;cursor:pointer;animation:tp-abanico .35s cubic-bezier(.3,.9,.3,1) both}
-.tp-estructuras button:nth-child(2){animation-delay:.03s}.tp-estructuras button:nth-child(3){animation-delay:.06s}.tp-estructuras button:nth-child(4){animation-delay:.09s}.tp-estructuras button:nth-child(5){animation-delay:.12s}
-.tp-estructuras svg{width:56px;height:56px;border-radius:50%;background:#ffffffcc;box-shadow:0 0 0 1px #212121e6;fill:#212121;filter:blur(.4px)}
-.tp-estructuras button[aria-checked="true"] svg{box-shadow:0 0 0 2.5px #212121;background:#fff}
-.tp-estructuras span{font:700 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;text-transform:uppercase;text-align:center;filter:blur(.3px)}
-.tp-estructuras button:focus-visible svg{box-shadow:0 0 0 2.5px #ed74a0}
-@keyframes tp-abanico{from{opacity:0;transform:translateY(24px) scale(.6)}to{opacity:1;transform:none}}
+/* Estructura (19/11/2026): el aro del menú contextual, alrededor de GENERAR. Cinco botones redondos con el ícono de cada
+   estructura y su nombre afuera; la que está en uso va rellena, como TRANSFORMAR en el aro de las colonias. */
+#tuPlaca .tp-menu-estructuras{left:330px;top:868px;z-index:12;pointer-events:none}
+.tp-menu-estructuras[hidden]{display:none}
+.tp-menu-estructuras .tp-menu-boton{animation:tp-aro-entra .4s cubic-bezier(.3,.9,.3,1) both;animation-delay:calc(var(--i) * 40ms)}
+.tp-menu-estructuras .tp-menu-icono{left:10px;top:10px;width:28px;height:28px;fill:#212121;filter:blur(.25px)}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"] .tp-menu-superficie{display:none}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"]::before{content:'';position:absolute;inset:0;border-radius:50%;background:#212121;filter:blur(.6px);box-shadow:0 2px 6px #0003}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"] .tp-menu-icono{fill:#f2f0e8}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"] span{opacity:1}
+.tp-menu-estructuras .tp-menu-boton:focus-visible .tp-menu-superficie{filter:none;outline:2px solid #0d0f17;border-radius:50%}
+#tuPlaca .tp-estructuras-titulo{position:absolute;left:0;top:-6px;translate:-50% 0;margin:0;white-space:nowrap;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.7}
+@keyframes tp-aro-entra{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+@media(prefers-reduced-motion:reduce){.tp-menu-estructuras .tp-menu-boton{animation:none}}
+@keyframes tp-abanico{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* Nivel 2 · Transformar: la colonia se agranda en el centro y se edita con tiradores. */
 .tp-editor{position:absolute;left:0;top:0;width:784px;height:784px;z-index:9;touch-action:none}
@@ -90,7 +95,7 @@
 .tp-editor-miniatura span{font:700 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;text-transform:uppercase}
 @keyframes tp-aparecer{from{opacity:0}to{opacity:1}}
 @keyframes tp-crecer{from{opacity:0;transform:scale(.5)}to{opacity:1}}
-@media(prefers-reduced-motion:reduce){.tp-editor-velo,.tp-editor-colonia,.tp-editor-guias,.tp-estructuras button{animation:none}}
+@media(prefers-reduced-motion:reduce){.tp-editor-velo,.tp-editor-colonia,.tp-editor-guias,.tp-estructuras-lista button{animation:none}}
 
 /* TRANSFORMAR en el aro: relleno, con la flecha de abrir. Es el único botón que no se gira: abre el editor. */
 .tp-menu-boton[data-accion="transformar"] .tp-menu-superficie{display:none}
