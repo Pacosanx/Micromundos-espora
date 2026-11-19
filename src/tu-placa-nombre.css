@@ -22,6 +22,8 @@
 #tpNombre .tpn-por{top:316px;font:400 24px/24px Arimo,Arial,sans-serif}
 /* El nombre, más grande y apoyado cerca de la línea (que está en y = 447). */
 #tpNombre .tpn-nombre{top:362px;font:400 88px/88px Arimo,Arial,sans-serif;text-transform:uppercase}
+/* 19/11/2026: el nombre es un campo (se puede escribir); se ve igual que el texto. */
+#tpNombre input.tpn-nombre{all:unset;position:absolute;box-sizing:border-box;width:1400px;height:88px;top:362px;left:50%;translate:-50% 0;text-align:center;font:400 88px/88px Arimo,Arial,sans-serif;text-transform:uppercase;color:#0d0f17;caret-color:#0d0f17;filter:blur(.6px);cursor:text;-webkit-user-select:text;user-select:text;touch-action:manipulation}
 .tpn-linea{left:calc(50% - 307px);top:447px;width:614px;height:10px}
 #tpNombre .tpn-indicacion{top:999px;font:400 24px/24px Arimo,Arial,sans-serif}
 .tpn-indicacion[hidden]{display:none}

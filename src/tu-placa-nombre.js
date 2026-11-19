@@ -1,20 +1,17 @@
 // ───────── Propuesta: el nombre de la placa, dictado (diseño de Paco, Figma 621:863 «DICTADO DE NOMBRE») ─────────
 // Al tocar GUARDAR PLACA, antes del recuerdo aparece esta pantalla, con lo mínimo:
 //   «Placa creada por» · el nombre sobre una línea · el micrófono · «MANTENÉ APRETADO PARA DICTAR TU NOMBRE».
-// 19/11/2026 (segunda ronda de Paco):
-//  · SIMULACIÓN: mantener apretado el micrófono NO usa el micrófono. Se simula que la persona dice «Paco»: las manchas de atrás
-//    se van poniendo de color al ritmo de la voz y el nombre aparece en dos golpes, primero «PA» y después «PACO».
-//    El dictado real (reconocimiento de voz del navegador) queda solo con ?dictado en la dirección.
-//  · Con el nombre, pregunta si está bien (SÍ, ES MI NOMBRE / DICTAR DE NUEVO).
+// 19/11/2026 (tercera ronda de Paco): el micrófono escucha de verdad (reconocimiento de voz del navegador, es-AR) y el nombre
+// también se puede escribir con el teclado. Ya no se simula «Paco».
+//  · Con el nombre, pregunta si está bien (SÍ, ES MI NOMBRE / DICTAR DE NUEVO o BORRAR).
 //  · Después, la página del recuerdo: tu placa con tu nombre, la fecha y la hora, IMPRIMIR RECUERDO (simulado) y la placa
-//    se suma a las de los demás (queda guardada en este equipo y aparece primera en VER PLACAS DE OTRAS PERSONAS).
+//    se suma a las de los demás (Supabase; ver window.MicromundosPlacas).
 (() => {
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
-  const DICTADO_REAL = params.has('dictado');
   const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const INDICACION = 'MANTENÉ APRETADO PARA DICTAR TU NOMBRE';
-  const NOMBRE_SIMULADO = 'Paco';
+  const PUEDE_ESCUCHAR = !!(Reconocimiento && navigator.mediaDevices?.getUserMedia);
+  const INDICACION = PUEDE_ESCUCHAR ? 'MANTENÉ APRETADO PARA DICTAR TU NOMBRE · O ESCRIBILO' : 'ESCRIBÍ TU NOMBRE';
   let dejarPasar = false, nombre = '';
 
   // Micrófono del sistema: una cápsula de trazo fino y, debajo, un arco, todo en trazo continuo; el contenedor lleva el contorno punteado.
@@ -53,10 +50,10 @@
     <i class="tpn-mancha tpn-mancha-a" aria-hidden="true"></i>
     <i class="tpn-mancha tpn-mancha-b" aria-hidden="true"></i>
     <p class="tpn-por">Placa creada por</p>
-    <p class="tpn-nombre" aria-live="polite"></p>
+    <input class="tpn-nombre" type="text" maxlength="24" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="done" aria-label="Tu nombre">
     <img class="tpn-linea" src="__TPN_LINEA__" width="614" height="10" alt="">
     <div class="tpn-confirmar" hidden><p>¿Está bien así?</p><div><button type="button" class="tpn-si">SÍ, ES MI NOMBRE</button><i></i><button type="button" class="tpn-otra">DICTAR DE NUEVO</button></div></div>
-    <button type="button" class="tpn-mic" aria-label="Mantené apretado para dictar tu nombre"><span class="tpn-mic-superficie"></span>${MIC}</button>
+    <button type="button" class="tpn-mic"${PUEDE_ESCUCHAR ? '' : ' hidden'} aria-label="Mantené apretado para dictar tu nombre"><span class="tpn-mic-superficie"></span>${MIC}</button>
     <p class="tpn-indicacion" aria-live="polite">${INDICACION}</p>
     <p class="tpn-aviso">Tu placa y tu nombre se van a ver en PLACAS DE OTRAS PERSONAS.</p>
     <button type="button" class="tpn-omitir" hidden>GUARDAR SIN NOMBRE</button>`;
@@ -65,9 +62,17 @@
   const confirmar = capa.querySelector('.tpn-confirmar'), omitir = capa.querySelector('.tpn-omitir');
   const manchas = [...capa.querySelectorAll('.tpn-mancha')];
   const decir = t => { indicacion.textContent = t; };
-  const fijar = t => { nombre = t.replace(/\s+/g, ' ').trim().slice(0, 24); salida.textContent = nombre.toUpperCase(); };
+  const limpiar = t => String(t).replace(/[^\p{L}\s'.-]/gu, '').replace(/\s+/g, ' ').slice(0, 24);
+  const fijar = t => { nombre = limpiar(t).trim(); salida.value = nombre; };
+  const mostrar = t => { salida.value = limpiar(t); };
   const avisar = t => { decir(t); omitir.hidden = false; };
-  const preguntar = () => { confirmar.hidden = !nombre; mic.hidden = !!nombre; indicacion.hidden = !!nombre; if (nombre) confirmar.querySelector('.tpn-si').focus({ preventScroll: true }); };
+  const otra = confirmar.querySelector('.tpn-otra');
+  // escrito: el foco queda en el campo (se puede seguir escribiendo y confirmar con Enter).
+  const preguntar = (escrito = false) => {
+    confirmar.hidden = !nombre; mic.hidden = !!nombre || !PUEDE_ESCUCHAR; indicacion.hidden = !!nombre;
+    otra.textContent = escrito || !PUEDE_ESCUCHAR ? 'BORRAR' : 'DICTAR DE NUEVO';
+    if (nombre && !escrito) confirmar.querySelector('.tpn-si').focus({ preventScroll: true });
+  };
   // Las manchas: grises en reposo; con la voz se ponen de color y crecen.
   const pintarManchas = (nivel, t = performance.now()) => manchas.forEach((m, i) => {
     m.style.scale = String(1 + Math.min(.3, nivel * .7) * (1 + .25 * Math.sin(t / 380 + i * 2)));
@@ -75,31 +80,7 @@
   });
   const reposarManchas = () => manchas.forEach(m => { m.style.scale = ''; m.style.filter = ''; m.style.opacity = ''; });
 
-  // ── Simulación: «Pa-co». Nivel de voz en el tiempo (ms) y cuándo aparece cada parte del nombre. ──
-  let simulando = 0, inicioSim = 0, apretado = false;
-  const nivelSimulado = t => {
-    const silaba = (c, a) => Math.exp(-(((t - c) / a) ** 2));
-    return .05 + .5 * silaba(700, 170) + .42 * silaba(1180, 200) + .03 * Math.sin(t / 37);
-  };
-  function simular() {
-    capa.classList.add('escuchando'); decir('TE ESCUCHO…'); fijar(''); confirmar.hidden = true;
-    inicioSim = performance.now();
-    const paso = ahora => {
-      const t = ahora - inicioSim;
-      pintarManchas(Math.max(0, nivelSimulado(t)), ahora);
-      if (t > 760 && !salida.textContent) salida.textContent = NOMBRE_SIMULADO.slice(0, 2).toUpperCase();
-      if (t > 1260 && salida.textContent.length < NOMBRE_SIMULADO.length) fijar(NOMBRE_SIMULADO);
-      if (t < 1700 || apretado) { simulando = requestAnimationFrame(paso); return; }
-      terminarSim();
-    };
-    simulando = requestAnimationFrame(paso);
-  }
-  function terminarSim() {
-    cancelAnimationFrame(simulando); simulando = 0; capa.classList.remove('escuchando'); reposarManchas();
-    fijar(NOMBRE_SIMULADO); decir(INDICACION); preguntar();
-  }
-
-  // ── Dictado real (solo con ?dictado): mantener apretado = escuchar; las manchas crecen con el volumen ──
+  // ── Dictado: mantener apretado = escuchar; las manchas crecen con el volumen ──
   let rec = null, flujo = null, contexto = null, cuadro = 0, parcial = '';
   const pararAudio = () => {
     cancelAnimationFrame(cuadro); cuadro = 0;
@@ -107,9 +88,10 @@
     contexto?.close().catch(() => {}); contexto = null;
     reposarManchas();
   };
-  const pararTodo = () => { try { rec?.abort(); } catch {} rec = null; pararAudio(); cancelAnimationFrame(simulando); simulando = 0; capa.classList.remove('escuchando'); };
+  let apretado = false;
+  const pararTodo = () => { try { rec?.abort(); } catch {} rec = null; pararAudio(); capa.classList.remove('escuchando'); };
   async function empezarReal() {
-    if (!Reconocimiento || !navigator.mediaDevices?.getUserMedia) { apretado = false; avisar('ESTE NAVEGADOR NO PUEDE ESCUCHAR'); return; }
+    if (!PUEDE_ESCUCHAR) { apretado = false; avisar('ESTE NAVEGADOR NO PUEDE ESCUCHAR · ESCRIBÍ TU NOMBRE'); salida.focus(); return; }
     capa.classList.add('escuchando'); parcial = ''; decir('TE ESCUCHO · SOLTÁ AL TERMINAR');
     try {
       flujo = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -120,10 +102,10 @@
       const datos = new Uint8Array(analizador.fftSize); let nivel = 0;
       const paso = t => { analizador.getByteTimeDomainData(datos); let s = 0; for (const v of datos) s += ((v - 128) / 128) ** 2; nivel = nivel * .8 + Math.sqrt(s / datos.length) * .2; pintarManchas(nivel * 2.5, t); cuadro = requestAnimationFrame(paso); };
       cuadro = requestAnimationFrame(paso);
-    } catch { apretado = false; pararTodo(); avisar('NO HAY MICRÓFONO O NO SE DIO PERMISO'); return; }
+    } catch { apretado = false; pararTodo(); avisar('NO HAY MICRÓFONO O NO SE DIO PERMISO · ESCRIBÍ TU NOMBRE'); return; }
     rec = new Reconocimiento(); rec.lang = 'es-AR'; rec.interimResults = true; rec.maxAlternatives = 1;
-    rec.onresult = e => { parcial = [...e.results].map(x => x[0].transcript).join(' ').replace(/[^\p{L}\s'-]/gu, ''); salida.textContent = parcial.toUpperCase(); };
-    rec.onerror = e => { if (e.error === 'aborted') return; if (e.error === 'network') avisar('SIN CONEXIÓN NO SE PUEDE DICTAR'); else if (e.error === 'not-allowed') avisar('NO SE DIO PERMISO PARA EL MICRÓFONO'); };
+    rec.onresult = e => { parcial = [...e.results].map(x => x[0].transcript).join(' ').replace(/[^\p{L}\s'-]/gu, ''); mostrar(parcial); };
+    rec.onerror = e => { if (e.error === 'aborted') return; if (e.error === 'network') avisar('SIN CONEXIÓN NO SE PUEDE DICTAR · ESCRIBÍ TU NOMBRE'); else if (e.error === 'not-allowed' || e.error === 'service-not-allowed') avisar('NO SE DIO PERMISO PARA EL MICRÓFONO · ESCRIBÍ TU NOMBRE'); };
     rec.onend = () => { rec = null; pararAudio(); capa.classList.remove('escuchando'); if (parcial.trim()) { fijar(parcial); decir(INDICACION); preguntar(); } else { fijar(nombre); if (omitir.hidden) decir('NO TE ESCUCHÉ · ' + INDICACION); } };
     try { rec.start(); } catch { apretado = false; pararTodo(); decir(INDICACION); }
   }
@@ -131,9 +113,9 @@
     if (apretado) return;
     apretado = true; if (ev.pointerId != null) try { mic.setPointerCapture(ev.pointerId); } catch {}
     omitir.hidden = true;
-    if (DICTADO_REAL) empezarReal(); else simular();
+    empezarReal();
   }
-  const soltar = () => { if (!apretado) return; apretado = false; if (DICTADO_REAL) { try { rec?.stop(); } catch {} if (!rec) { pararAudio(); capa.classList.remove('escuchando'); } } };
+  const soltar = () => { if (!apretado) return; apretado = false; try { rec?.stop(); } catch {} if (!rec) { pararAudio(); capa.classList.remove('escuchando'); } };
   mic.addEventListener('pointerdown', ev => { if (ev.button > 0) return; ev.preventDefault(); empezar(ev); });
   for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) mic.addEventListener(t, soltar);
   mic.addEventListener('contextmenu', ev => ev.preventDefault());
@@ -148,7 +130,12 @@
     setTimeout(() => despuesDelRecuerdo(fecha), 50);
   };
   confirmar.querySelector('.tpn-si').addEventListener('click', () => guardar(true));
-  confirmar.querySelector('.tpn-otra').addEventListener('click', () => { fijar(''); confirmar.hidden = true; mic.hidden = false; indicacion.hidden = false; decir(INDICACION); mic.focus({ preventScroll: true }); });
+  otra.addEventListener('click', () => { fijar(''); confirmar.hidden = true; mic.hidden = !PUEDE_ESCUCHAR; indicacion.hidden = false; decir(INDICACION); (PUEDE_ESCUCHAR ? mic : salida).focus({ preventScroll: true }); });
+  // Escribir: el nombre se edita en el mismo renglón; Enter confirma.
+  salida.addEventListener('input', () => { const v = limpiar(salida.value); if (v !== salida.value) salida.value = v; nombre = v.trim(); omitir.hidden = true; if (!nombre) decir(INDICACION); preguntar(true); });
+  salida.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); if (nombre) guardar(true); } });
+  // Con el foco en otro lado (el micrófono), una letra lleva al campo y se escribe ahí.
+  document.addEventListener('keydown', ev => { if (!capa.hidden && capa.isConnected && ev.target !== salida && ev.key.length === 1 && ev.key !== ' ' && !ev.ctrlKey && !ev.metaKey && !ev.altKey && /\p{L}/u.test(ev.key)) salida.focus({ preventScroll: true }); }, true);
   omitir.addEventListener('click', () => guardar(false));
   capa.addEventListener('keydown', ev => { if (ev.key === 'Escape') cerrarNombre(); });
 
@@ -159,7 +146,7 @@
     ev.preventDefault(); ev.stopImmediatePropagation();
     $('tuPlaca').dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); // cierra menús y carteles de reacción
     fijar(''); decir(INDICACION); omitir.hidden = true; confirmar.hidden = true; mic.hidden = false; indicacion.hidden = false; capa.hidden = false;
-    mic.focus({ preventScroll: true });
+    (PUEDE_ESCUCHAR ? mic : salida).focus({ preventScroll: true });
   }, true);
 
   // ── La página del recuerdo: tu placa, tu nombre, fecha y hora, IMPRIMIR RECUERDO y la placa se suma a las de los demás ──
@@ -177,8 +164,7 @@
       // Sin fondo (19/11/2026, Paco): WebP con transparencia; si el navegador no lo arma, PNG.
       let dato = c.toDataURL('image/webp', .86); if (!dato.startsWith('data:image/webp')) dato = c.toDataURL('image/png');
       lista.push({ img: dato, nombre: nombre.trim(), fecha: fecha.getTime() });
-      // A la nube: con el dictado simulado el nombre siempre es «Paco», así que sin ?dictado la placa sube sin nombre.
-      window.MicromundosPlacas?.guardar(dato, DICTADO_REAL ? nombre : '');
+      window.MicromundosPlacas?.guardar(dato, nombre);
       try { localStorage.setItem(CLAVE_PLACAS, JSON.stringify(lista.slice(-4))); } catch {}
     };
     img.src = url;
