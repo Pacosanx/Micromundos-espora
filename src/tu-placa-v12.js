@@ -10,7 +10,8 @@ function prepararTuPlaca(){
   pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones"><p class="tp-encuentros-titulo">ENCUENTROS</p><div id="tpLeyenda" class="tp-encuentros" role="group" aria-label="Reacción según el tipo de colonia"></div><p>Una interpretación gráfica. Acercá dos colonias para que se encuentren.</p></div></div><aside id="tpBiblioteca"></aside>
     <div id="tpBoard" class="tp-board" aria-label="Tu placa. Arrastrá una forma de la biblioteca para sembrarla; arrastrá sobre la placa para elegir varias" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><canvas id="tpEscena" class="tp-escena" aria-hidden="true"></canvas><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><svg id="tpPerilla" class="tp-perilla" width="784" height="784" viewBox="0 0 784 784"></svg><p id="tpVacia">ARRASTRÁ UNA COLONIA\nHASTA LA PLACA</p><div id="tpMenu"></div><div id="tpEditor"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
     <button id="tpGenerar" class="tp-generar" type="button" aria-haspopup="true">GENERAR COMPOSICIÓN ↻</button><p class="tp-generar-ayuda" id="tpGenerarAyuda">MANTENÉ APRETADO PARA ELEGIR LA ESTRUCTURA</p><div id="tpEstructuras" class="tp-estructuras" hidden role="menu" aria-label="Estructuras de composición"></div><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA →</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
-    <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a></div></div></div>`;
+    <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a><button id="tpVerOtras" type="button">VER PLACAS DE OTRAS PERSONAS →</button></div></div></div>
+    <section class="tp-otras" id="tpOtras" hidden role="dialog" aria-modal="true" aria-labelledby="tpOtrasTitulo"><header class="tp-otras-cabeza"><span>[04.2]</span><h2 id="tpOtrasTitulo">Placas de otras personas</h2><p>Simulación: las placas que no son tuyas se generan acá. Todavía no se guardan las de otras visitas.</p></header><ol class="tp-otras-grilla"></ol><div class="tp-otras-acciones"><button id="tpOtrasVolver" type="button">VOLVER A COMPONER</button></div></section>`;
   const board=$('tpBoard'),capa=$('tpColonias'),items=[],elementos=new Map(),historico=[],futuro=[];
   let secuencia=0,seleccionado=null,seleccion=[],arrastre=null,siembra=null,lazo=null,antes=null,frame=0,pedido=false,intensidad=85,estructura='propuesta';
   const punto=ev=>{const r=board.getBoundingClientRect();return{x:(ev.clientX-r.left)*784/r.width,y:(ev.clientY-r.top)*784/r.height};};
@@ -277,8 +278,43 @@ function prepararTuPlaca(){
     c.drawImage(escenaCv,0,0,784,784);
     c.restore();c.restore();c.fillStyle='#26312d';c.font='26px Arimo,Arial,sans-serif';c.fillText('MICROMUNDOS · TU PLACA',70,1550);return cv.toDataURL('image/png');
   }
-  $('tpRecuerdo').addEventListener('click',()=>{cerrarMenus();cerrarReaccion();const url=pintarRecuerdo();$('tpImagenRecuerdo').src=url;$('tpGuardar').href=url;$('tpVistaRecuerdo').hidden=false;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=true;$('tpVolver').focus();});
+  $('tpRecuerdo').addEventListener('click',()=>{cerrarMenus();cerrarReaccion();const url=pintarRecuerdo();$('tpImagenRecuerdo').src=url;$('tpGuardar').href=url;guardarPropia(url);$('tpVistaRecuerdo').hidden=false;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=true;$('tpVolver').focus();});
   function cerrarRecuerdo(){$('tpVistaRecuerdo').hidden=true;for(const el of [board,$('tpBiblioteca'),pagina.querySelector('.tp-acciones'),$('tpRecuerdo'),$('tpGenerar'),$('tpReacciones')])el.inert=false;$('tpRecuerdo').focus();}
+  // ── Placas de otras personas (19/11/2026, simulada) ──
+  // Las placas guardadas en este equipo (GUARDAR PLACA) quedan en el navegador y aparecen primero: para quien viene después,
+  // son placas de otra persona. El reinicio del kiosco no las borra. El resto se genera con GENERAR (misma composición y motor).
+  const CLAVE_PROPIAS='micromundos-placas-guardadas',MAX_PROPIAS=4,TOTAL_OTRAS=10;
+  const leerPropias=()=>{try{const l=JSON.parse(localStorage.getItem(CLAVE_PROPIAS)||'[]');return Array.isArray(l)?l.filter(p=>typeof p?.img==='string'):[];}catch{return [];}};
+  function guardarPropia(url){if(typeof Image!=='function')return;const img=new Image();img.onload=()=>{const s=1600/860,c=document.createElement('canvas');c.width=c.height=360;c.getContext('2d').drawImage(img,20*s,2*s,820*s,820*s,0,0,360,360);
+    const l=leerPropias();l.push({img:c.toDataURL('image/jpeg',.84),fecha:Date.now()});try{localStorage.setItem(CLAVE_PROPIAS,JSON.stringify(l.slice(-MAX_PROPIAS)));}catch{}};img.src=url;}
+  const simuladas=new Map();
+  function placaSimulada(n,lado){
+    const comp=generarComposicionTuPlaca(7919*(n+1)),dim=784/comp.diametroAro,L=lado*860/784,K=lado/784,m=(L-lado)/2;
+    const lista=comp.map((e,i)=>{const grupo={green:'M',yellow:'L',rose:'B'}[e.familia],st=e.style;
+      return {id:(n+1)*100000+i,modelo:'simulada',x:392+(e.x-.5)*dim,y:392+(e.y-.5)*dim,tamano:e.w*dim,escala:100,rot:0,foco:100,opacidad:100,seed:st.seed%1000,estilo:{...st},grupo:grupo||'BL',
+        sinReacciones:!grupo||['ring','arc','band','pair'].includes(st.shape)||st.opacity<50||st.blur>=30};});
+    const colonias=lista.map(it=>MotorMuestrario.miembro({id:it.id,type:tipoDe(it),x:it.x*K,y:it.y*K,width:2*it.tamano*K,style:estiloItem(it),giro:0,desenfoque:0,entry:it,sourceStyle:true}));
+    const {imagen}=MotorMuestrario.escena(lado,lado,colonias,{strength:85,gapWidth:7*K,blur:10,contactBlur:3,grain:24},1,Infinity,[]);
+    const cv=document.createElement('canvas');cv.width=cv.height=Math.round(L);const c=cv.getContext('2d');c.translate(m,m);
+    c.drawImage(aroCanvas,(784-ladoAro)/2*K,(784-ladoAro)/2*K,ladoAro*K,ladoAro*K);c.save();c.beginPath();c.arc(lado/2,lado/2,lado/2,0,Math.PI*2);c.clip();c.drawImage(imagen,0,0);c.restore();return cv;
+  }
+  const hora=f=>{const d=new Date(f);return 'Guardada a las '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
+  function armarOtras(){
+    const ol=$('tpOtras').querySelector('.tp-otras-grilla');ol.replaceChildren();
+    const propias=leerPropias().slice().reverse(),pendientes=[];
+    propias.forEach(p=>{const li=document.createElement('li');li.className='tp-otras-propia';const im=document.createElement('img');im.src=p.img;im.alt='Placa guardada en esta pantalla';
+      const t=document.createElement('p');t.textContent=hora(p.fecha);li.append(im,t);ol.appendChild(li);});
+    for(let n=0;n<TOTAL_OTRAS-propias.length;n++){const li=document.createElement('li');const caja=document.createElement('div');caja.className='tp-otras-lienzo';
+      const t=document.createElement('p');t.textContent='Placa '+String(n+1).padStart(2,'0');li.append(caja,t);li.setAttribute('aria-label','Placa '+(n+1)+', simulada');ol.appendChild(li);pendientes.push([n,caja]);}
+    // Se dibujan de a una para no trabar la pantalla.
+    const siguiente=()=>{const p=pendientes.shift();if(!p||$('tpOtras').hidden)return;const [n,caja]=p;let cv=simuladas.get(n);if(!cv){cv=placaSimulada(n,400);simuladas.set(n,cv);}caja.appendChild(cv);setTimeout(siguiente,30);};
+    setTimeout(siguiente,60);
+  }
+  function abrirOtras(){$('tpVistaRecuerdo').hidden=true;$('tpOtras').hidden=false;armarOtras();$('tpOtrasVolver').focus({preventScroll:true});}
+  function cerrarOtras(){if($('tpOtras').hidden)return;$('tpOtras').hidden=true;cerrarRecuerdo();}
+  $('tpVerOtras').addEventListener('click',abrirOtras);$('tpOtrasVolver').addEventListener('click',cerrarOtras);
+  pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('tpOtras').hidden)cerrarOtras();});
+  document.addEventListener('cerrar-tuplaca',()=>{if(!$('tpOtras').hidden){$('tpOtras').hidden=true;}});
   $('tpVolver').addEventListener('click',cerrarRecuerdo);pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('tpVistaRecuerdo').hidden)cerrarRecuerdo();});
   document.addEventListener('cerrar-tuplaca',()=>{cerrarMenus();cerrarReaccion();if(!$('tpVistaRecuerdo').hidden)cerrarRecuerdo();});
   try{const guardado=JSON.parse(localStorage.getItem(clave)||'null');if(guardado&&Array.isArray(guardado.items)){for(const it of guardado.items.slice(0,120))if((modelos.has(it.modelo)||it.estilo)&&[it.x,it.y,it.tamano,it.escala,it.rot,it.foco,it.seed].every(Number.isFinite))items.push(it);secuencia=Math.max(guardado.contador||0,...items.map(i=>i.id));
