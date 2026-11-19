@@ -33,16 +33,30 @@
 
 /* GENERAR: tocar / mantener apretado (abanico de estructuras). */
 .tp-generar-ayuda{position:absolute;left:40px;top:978px;margin:0;font:400 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;opacity:.5;filter:blur(.4px);pointer-events:none}
-.tp-estructuras{position:absolute;left:24px;top:832px;width:480px;height:110px;z-index:12}
-.tp-estructuras::before{content:"";position:absolute;left:-18px;top:-44px;width:490px;height:150px;border-radius:40px;background:#f2f0e8e8;filter:blur(6px);pointer-events:none}
+/* Cartel «Estructura» (19/11/2026): el abanico pasa a ser un cartel del sistema, con el material de los carteles
+   (vidrio con borde desenfocado y grano) en versión neutra, sin color de universo. Sale de GENERAR y queda sobre la biblioteca.
+   Cada estructura es una fila: ícono y nombre; la que está en uso va marcada. Tocar una genera la placa con ella. */
+#tuPlaca .tp-estructuras{--cartel-fondo:rgb(226 221 210 / 82%);--cartel-background-blur:14px;position:absolute;left:24px;bottom:calc(1100px - 940px);width:402px;z-index:12;color:#13151b;opacity:0;translate:0 12px;transition:opacity .3s,translate .35s cubic-bezier(.3,.9,.3,1)}
+#tuPlaca .tp-estructuras.vis{opacity:1;translate:0 0}
 .tp-estructuras[hidden]{display:none}
-#tuPlaca .tp-estructuras button{all:unset;position:absolute;width:84px;display:grid;justify-items:center;gap:6px;cursor:pointer;animation:tp-abanico .35s cubic-bezier(.3,.9,.3,1) both}
-.tp-estructuras button:nth-child(2){animation-delay:.03s}.tp-estructuras button:nth-child(3){animation-delay:.06s}.tp-estructuras button:nth-child(4){animation-delay:.09s}.tp-estructuras button:nth-child(5){animation-delay:.12s}
-.tp-estructuras svg{width:56px;height:56px;border-radius:50%;background:#ffffffcc;box-shadow:0 0 0 1px #212121e6;fill:#212121;filter:blur(.4px)}
-.tp-estructuras button[aria-checked="true"] svg{box-shadow:0 0 0 2.5px #212121;background:#fff}
-.tp-estructuras span{font:700 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;text-transform:uppercase;text-align:center;filter:blur(.3px)}
-.tp-estructuras button:focus-visible svg{box-shadow:0 0 0 2.5px #ed74a0}
-@keyframes tp-abanico{from{opacity:0;transform:translateY(24px) scale(.6)}to{opacity:1;transform:none}}
+.tp-estructuras .fi{max-height:none;overflow:visible;padding:28px 24px 18px}
+.tp-estructuras .cabCartel{margin-bottom:24px}
+.tp-estructuras .nom{font-size:var(--t-titulo);line-height:var(--l-titulo);text-transform:uppercase;filter:blur(.75px)}
+.tp-estructuras .cod{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);white-space:nowrap;padding-top:3px;filter:blur(.5px)}
+.tp-estructuras .reglaCartel{margin-bottom:10px}
+.tp-estructuras-lista{display:flex;flex-direction:column}
+#tuPlaca .tp-estructuras-lista button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:20px;min-height:56px;cursor:pointer;animation:tp-abanico .35s cubic-bezier(.3,.9,.3,1) both}
+#tuPlaca .tp-estructuras-lista button+button{border-top:1px solid rgb(19 21 27 / 14%)}
+.tp-estructuras-lista button:nth-child(2){animation-delay:.03s}.tp-estructuras-lista button:nth-child(3){animation-delay:.06s}.tp-estructuras-lista button:nth-child(4){animation-delay:.09s}.tp-estructuras-lista button:nth-child(5){animation-delay:.12s}
+.tp-estructuras-lista svg{flex:none;width:40px;height:40px;border-radius:50%;box-shadow:inset 0 0 0 1px rgb(19 21 27 / 45%);fill:#13151b;filter:blur(.4px)}
+.tp-estructuras-lista button[aria-checked="true"] svg{box-shadow:inset 0 0 0 2px #13151b}
+.tp-estructuras-lista span{font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif}
+.tp-estructuras-lista button[aria-checked="true"] span{font-weight:700}
+.tp-estructuras-lista button[aria-checked="true"]::after{content:'EN USO';margin-left:auto;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.6}
+#tuPlaca .tp-estructuras-lista button:focus-visible{outline:2px solid #13151b;outline-offset:2px;border-radius:8px}
+#tuPlaca .tp-estructuras p.tp-estructuras-uso{margin:10px 0 0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.6}
+@media(prefers-reduced-motion:reduce){#tuPlaca .tp-estructuras{transition:none}}
+@keyframes tp-abanico{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* Nivel 2 · Transformar: la colonia se agranda en el centro y se edita con tiradores. */
 .tp-editor{position:absolute;left:0;top:0;width:784px;height:784px;z-index:9;touch-action:none}
@@ -74,7 +88,7 @@
 .tp-editor-miniatura span{font:700 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;text-transform:uppercase}
 @keyframes tp-aparecer{from{opacity:0}to{opacity:1}}
 @keyframes tp-crecer{from{opacity:0;transform:scale(.5)}to{opacity:1}}
-@media(prefers-reduced-motion:reduce){.tp-editor-velo,.tp-editor-colonia,.tp-editor-guias,.tp-estructuras button{animation:none}}
+@media(prefers-reduced-motion:reduce){.tp-editor-velo,.tp-editor-colonia,.tp-editor-guias,.tp-estructuras-lista button{animation:none}}
 
 /* TRANSFORMAR en el aro: relleno, con la flecha de abrir. Es el único botón que no se gira: abre el editor. */
 .tp-menu-boton[data-accion="transformar"] .tp-menu-superficie{display:none}
