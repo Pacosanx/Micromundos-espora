@@ -7,7 +7,7 @@
 // Dibujo y encuentros: MotorMuestrario (tu-placa-motor.js), el mismo código del muestrario.
 function prepararTuPlaca(){
   const pagina=$('tuPlaca'),ruta='src/assets/tu-placa/',clave='micromundos-tuplaca-v2',ns='http://www.w3.org/2000/svg';
-  pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones"><p class="tp-encuentros-titulo">ENCUENTROS</p><div id="tpLeyenda" class="tp-encuentros" role="group" aria-label="Reacción según el tipo de colonia"></div><p>Una interpretación gráfica. Acercá dos colonias para que se encuentren.</p></div></div><aside id="tpBiblioteca"></aside>
+  pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones" hidden></div></div><aside id="tpBiblioteca"></aside>
     <div id="tpBoard" class="tp-board" aria-label="Tu placa. Arrastrá una forma de la biblioteca para sembrarla; arrastrá sobre la placa para elegir varias" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><canvas id="tpEscena" class="tp-escena" aria-hidden="true"></canvas><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><svg id="tpPerilla" class="tp-perilla" width="784" height="784" viewBox="0 0 784 784"></svg><p id="tpVacia">ARRASTRÁ UNA COLONIA\nHASTA LA PLACA</p><div id="tpMenu"></div><div id="tpEditor"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
     <button id="tpGenerar" class="tp-generar" type="button" aria-haspopup="true">GENERAR COMPOSICIÓN ↻</button><p class="tp-generar-ayuda" id="tpGenerarAyuda">MANTENÉ APRETADO PARA ELEGIR LA ESTRUCTURA</p><div id="tpEstructuras" class="tp-estructuras" hidden role="menu" aria-label="Estructuras de composición"></div><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA →</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
     <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a></div></div></div>`;
@@ -218,11 +218,12 @@ function prepararTuPlaca(){
   };
   const tipoDe=it=>reacciona(it)?TIPOS[modelo(it).g]||null:null;
   const radioDibujo=it=>it.tamano*it.escala/200*(estiloBase(it).size??100)/100;
-  let popup=null,cancelarPopup=()=>{},relaciones=[],escalaEscena=1;
-  function cerrarReaccion(){cancelarPopup();cancelarPopup=()=>{};popup?.remove();popup=null;}
-  function abrirReaccion(modo){cerrarReaccion();const datos=REACCIONES[modo];
+  let popup=null,cancelarPopup=()=>{},relaciones=[],escalaEscena=1,leyendo=null;
+  function marcarLeida(modo){leyendo=modo;dibujarReacciones();}
+  function cerrarReaccion(){cancelarPopup();cancelarPopup=()=>{};popup?.remove();popup=null;if(leyendo)marcarLeida(null);}
+  function abrirReaccion(modo){cerrarReaccion();marcarLeida(modo);const datos=REACCIONES[modo];
     popup=$('plantillaCartelGlosario').content.firstElementChild.cloneNode(true);popup.classList.remove('cartel-glosario');popup.classList.add('cartel-especie','cartel-reaccion');popup.style.width='402px';popup.querySelector('.nom').textContent=datos.nombre;popup.querySelector('.nom').style.textTransform='none';popup.querySelector('.cod').textContent='';popup.querySelector('.definicionGlosario').textContent=datos.texto;popup.querySelector('.masCartel')?.remove();popup.querySelector('.detalleCartel')?.remove();
-    const p=document.createElement('p');p.className='tp-reaccion-combinacion';p.textContent=datos.pareja+(datos.detalle?' · '+datos.detalle:'');popup.querySelector('.co').appendChild(p);$('anclaCarteles').appendChild(popup);universoCartel(popup,'B');ubicarCartelFlotante(popup);
+    const figura=figuraReaccion(modo);if(figura){const def=popup.querySelector('.definicionGlosario');def.parentNode.insertBefore(figura,def);}const p=document.createElement('p');p.className='tp-reaccion-combinacion';p.textContent=datos.pareja+(datos.detalle?' · '+datos.detalle:'');popup.querySelector('.co').appendChild(p);$('anclaCarteles').appendChild(popup);universoCartel(popup,letrasReaccion(modo));ubicarCartelFlotante(popup);
     const el=popup;cancelarPopup=activarArrastreCartel(el,p=>{el.style.transform=`translate(${p.x}px,${p.y}px)`;},cerrarReaccion);requestAnimationFrame(()=>el.isConnected&&el.classList.add('vis'));
   }
   // La placa entera se dibuja en un solo lienzo: cada colonia es un sprite del motor y los encuentros operan sobre sus píxeles.
@@ -248,25 +249,27 @@ function prepararTuPlaca(){
     for(const r of relaciones){
       // Un rótulo por tipo de reacción, y nunca encimado con otro.
       if(!r.modo||vistos.has(r.modo)||lugares.some(p=>Math.hypot(p.x-r.cx,p.y-r.cy)<90))continue;vistos.add(r.modo);lugares.push({x:r.cx,y:r.cy});const radioAro=Math.max(r.ra,r.rb)+35;
-      const ring=document.createElementNS(ns,'circle');for(const [k,v]of Object.entries({cx:r.cx,cy:r.cy,r:radioAro,class:'tp-reaccion-aro'}))ring.setAttribute(k,v);svg.appendChild(ring);
-      const bton=document.createElement('button');bton.type='button';bton.textContent=REACCIONES[r.modo].nombre.toUpperCase();bton.style.left=clamp(r.cx-radioAro,12,620)+'px';bton.style.top=clamp(r.cy-radioAro*.65,12,740)+'px';bton.setAttribute('aria-label','Acerca de '+REACCIONES[r.modo].nombre+', '+REACCIONES[r.modo].detalle);bton.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(r.modo);});rotulos.appendChild(bton);
+      const otra=leyendo&&leyendo!==r.modo?' tp-reaccion-otra':leyendo?' tp-reaccion-leida':'';const ring=document.createElementNS(ns,'circle');for(const [k,v]of Object.entries({cx:r.cx,cy:r.cy,r:radioAro,class:'tp-reaccion-aro'+otra}))ring.setAttribute(k,v);svg.appendChild(ring);
+      const bton=document.createElement('button');bton.type='button';bton.textContent=REACCIONES[r.modo].nombre.toUpperCase();if(otra)bton.className=otra.trim();bton.style.left=clamp(r.cx-radioAro,12,620)+'px';bton.style.top=clamp(r.cy-radioAro*.65,12,740)+'px';bton.setAttribute('aria-label','Acerca de '+REACCIONES[r.modo].nombre+', '+REACCIONES[r.modo].detalle);bton.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(r.modo);});rotulos.appendChild(bton);
     }
   }
 
-  // Leyenda fija: qué pasa cuando se encuentran dos tipos. Cada celda abre su explicación.
-  {const glifos={
-      fusion:(a,b)=>`<circle cx="9" cy="10" r="6" fill="${a}"/><circle cx="21" cy="10" r="6" fill="${b}"/><rect x="9" y="6.5" width="12" height="7" fill="${a}"/>`,
-      barrera:(a,b)=>`<circle cx="9" cy="10" r="6" fill="${a}"/><circle cx="21" cy="10" r="6" fill="${b}"/><rect x="13.6" y="2" width="2.8" height="16" fill="#f2f0e8"/>`,
-      separacion:(a,b)=>`<circle cx="9" cy="10" r="6.5" fill="${a}"/><circle cx="20" cy="10" r="8" fill="#f2f0e8"/><circle cx="21" cy="10" r="5" fill="${b}"/>`,
-      intercambio:(a,b)=>`<circle cx="9" cy="10" r="6" fill="${a}"/><circle cx="21" cy="10" r="6" fill="${b}"/><circle cx="12.5" cy="8" r="1.2" fill="${b}"/><circle cx="11.6" cy="12.4" r="1" fill="${b}"/><circle cx="17.6" cy="9" r="1.2" fill="${a}"/><circle cx="18.4" cy="13" r="1" fill="${a}"/>`,
-      comprimida:(a,b)=>`<circle cx="10" cy="10" r="6" fill="${a}"/><circle cx="20" cy="10" r="6" fill="${b}"/><rect x="14.4" y="2" width="1.2" height="16" fill="#f2f0e8"/>`,
-      ninguna:(a,b)=>`<circle cx="7" cy="10" r="5" fill="${a}" opacity=".75"/><circle cx="23" cy="10" r="5" fill="${b}" opacity=".75"/>`,
-    },nombre={moho:'MOHO',bacteria:'BACTERIA',levadura:'LEVADURA'},caja=$('tpLeyenda');
-    caja.appendChild(document.createElement('span'));
-    for(const t of ORDEN){const h=document.createElement('span');h.className='tp-encuentros-cabeza';h.innerHTML=`<i style="background:${COLOR_TIPO[t]}"></i>${nombre[t]}`;caja.appendChild(h);}
-    ORDEN.forEach((fila,i)=>{const h=document.createElement('span');h.className='tp-encuentros-cabeza tp-encuentros-fila';h.innerHTML=`<i style="background:${COLOR_TIPO[fila]}"></i>${nombre[fila]}`;caja.appendChild(h);
-      ORDEN.forEach((col,j)=>{if(j<i){caja.appendChild(document.createElement('span'));return;}const modo=REGLAS[par(fila,col)],b=document.createElement('button');b.type='button';b.className='tp-encuentros-celda';b.setAttribute('aria-label',REACCIONES[modo].pareja+': '+REACCIONES[modo].nombre+(REACCIONES[modo].detalle?', '+REACCIONES[modo].detalle:''));
-        b.innerHTML=`<svg viewBox="0 0 30 20" aria-hidden="true">${glifos[modo](COLOR_TIPO[fila],COLOR_TIPO[col])}</svg><span>${REACCIONES[modo].nombre.toUpperCase()}</span>`;b.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(modo);});caja.appendChild(b);});});}
+  // 19/11/2026: sin leyenda fija (Paco: los nombres de las reacciones ya aparecen en la placa). El cartel de cada reacción
+  // la muestra: dos colonias de la pareja que la produce, dibujadas y encontrándose con el mismo motor de la placa.
+  // Color del cartel de cada reacción: el de los universos de la pareja que la produce (moho = M, bacteria = B, levadura = L).
+  function letrasReaccion(modo){const letra={moho:'M',bacteria:'B',levadura:'L'};for(const a of ORDEN)for(const b of ORDEN)if(REGLAS[par(a,b)]===modo)return [...new Set([letra[a],letra[b]])].join('');return 'B';}
+  function figuraReaccion(modo){
+    const letra={moho:'M',bacteria:'B',levadura:'L'};let pareja=null;
+    for(const a of ORDEN)for(const b of ORDEN)if(!pareja&&REGLAS[par(a,b)]===modo)pareja=[a,b];
+    if(!pareja)return null;
+    const W=354,H=200,base=Date.now()%100000*10;
+    const its=pareja.map((t,i)=>({id:-(base+i+1),modelo:letra[t]+'-A-01',tamano:150,escala:100,rot:0,foco:100,opacidad:100,seed:(i*37+11)%1000}));
+    const pos=[[W/2-58,H/2],[W/2+58,H/2]];
+    const col=its.map((it,i)=>MotorMuestrario.miembro({id:it.id,type:pareja[i],x:pos[i][0],y:pos[i][1],width:2*it.tamano,style:estiloItem(it),giro:0,desenfoque:0,entry:it}));
+    const {imagen}=MotorMuestrario.escena(W,H,col,{strength:100,gapWidth:7,blur:10,contactBlur:3,grain:24},1,Infinity,[]);
+    const cv=document.createElement('canvas');cv.width=W;cv.height=H;cv.className='tp-reaccion-figura';cv.setAttribute('role','img');cv.setAttribute('aria-label',REACCIONES[modo].pareja+': '+REACCIONES[modo].nombre);
+    cv.getContext('2d').drawImage(imagen,0,0);return cv;
+  }
 
   // Perilla de reacciones sobre el borde de la placa: 0 = sin reacciones (reemplaza a "Mostrar reacciones").
   const perilla=$('tpPerilla'),P={a0:8,a1:68,r:414};let girandoPerilla=null;
