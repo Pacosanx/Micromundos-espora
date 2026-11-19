@@ -21,7 +21,7 @@ Sitio: https://pacosanx.github.io/Micromundos-espora/ · Repositorio: https://gi
 
 - [x] **Flechas dentro del círculo y scroll sobre la imagen.** Mover las flechas ← → a los costados del círculo de la ilustración, como en el diseño de Paco, y que la persona pase a la ilustración siguiente haciendo scroll sobre la imagen. Probar con rueda del mouse, trackpad y deslizamiento táctil. *(En main el 19/11.)*
 - [ ] **Alturas fijas en los textos.** Medidos desde los títulos, los paquetes de texto de la izquierda y la derecha tienen que quedar siempre a la misma altura al pasar de una ilustración a otra: todos los títulos («Dónde están», «En el pan», «Al hornearlo», etc.) y «Ver muestras de …» no se mueven aunque cambie el largo de los párrafos.
-- [ ] En «Ver muestras de …», usar la flecha ↗ del diseño en lugar de la actual →.
+- [x] En «Ver muestras de …», usar la flecha ↗ del diseño en lugar de la actual →. *(Ya en main: la flecha de «Ver ficha de muestra» girada 45°, rama 01.)*
 - [x] Aplicarlo a los tres universos (bacterias, levaduras y mohos). *(En main el 19/11.)*
 
 ## Ficha de muestra
