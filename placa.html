@@ -47149,6 +47149,11 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     // quedaba en blanco (19/11/2026): se copian de cada elemento original.
     const originales=[...original.querySelectorAll('*')],copias=[...copia.querySelectorAll('*')];
     originales.forEach((o,i)=>{const c=copias[i];if(!c)return;const s=getComputedStyle(o);c.style.color=s.color;c.style.mixBlendMode=s.mixBlendMode;});
+    // La flecha (SVG blanco con «difference») tampoco tiene contra qué mezclarse: se pinta del color del texto.
+    const tinta=[...originales].find(o=>o.tagName==='P'),rgb=tinta?String(getComputedStyle(tinta).color||'').match(/\d+(\.\d+)?/g)?.map(Number):null;
+    const oscura=!rgb||(rgb[0]*.299+rgb[1]*.587+rgb[2]*.114)<128;
+    for(const el of copia.querySelectorAll('img,svg')){el.style.filter=oscura?'brightness(0)':'brightness(0) invert(1)';el.style.mixBlendMode='normal';}
+    for(const el of copia.querySelectorAll('*'))if(el.style.mixBlendMode==='difference')el.style.mixBlendMode='normal';
     for(const [k,v] of Object.entries(datos))copia.dataset[k]=v;fijos.appendChild(copia);return copia;};
   function prepararFijos(raiz,volver){
     fijos.replaceChildren();rotulosFijos=[];
