@@ -1,7 +1,7 @@
 // ───────── Pistas en el momento de actuar ─────────
 // Un cartelito por vez, junto al control, con una sola acción y un verbo concreto. Se retira cuando la persona hace
 // la acción o lo cierra con ×, y no vuelve a aparecer (localStorage; en ?kiosco, solo durante la visita).
-// Esperan a que se cierre la bienvenida. ?pistas las vuelve a mostrar todas. «VER LA INTRODUCCIÓN» también las reinicia.
+// Esperan a que se cierre la bienvenida (y no aparecen en el instante entre la apertura y el cartel). ?pistas las vuelve a mostrar todas.
 (() => {
   const CLAVE = 'micromundos-pistas-vistas';
   const params = new URLSearchParams(location.search);
@@ -20,7 +20,7 @@
     const r = el.getBoundingClientRect();
     if (r.width < 2 || r.height < 2) return false;
     if (typeof el.tagName !== 'string') return true; // caja calculada (ver union)
-    for (let p = el; p && p !== document.body; p = p.parentElement) {
+    for (let p = el._el || el; p && p !== document.body; p = p.parentElement) {
       if (p.hidden || p.inert) return false;
       const c = getComputedStyle(p);
       if (c.display === 'none' || c.visibility === 'hidden' || +c.opacity < .3) return false;
@@ -38,6 +38,9 @@
     for (const el of document.querySelectorAll('#tuPlaca .tp-colonia')) { const w = el.getBoundingClientRect().width; if (w >= 40 && w < ancho && visible(el)) { ancho = w; mejor = el; } }
     return mejor;
   };
+  // Las colonias y las muestras se dibujan con halo y desenfoque: su caja es bastante más grande que el círculo que se ve.
+  // Para que la pista apunte al círculo y no al aire, se usa una caja reducida alrededor de su centro.
+  const nucleo = (el, f) => el && { tagName: el.tagName, getBoundingClientRect: () => { const r = el.getBoundingClientRect(), w = r.width * f, h = r.height * f, x = r.left + (r.width - w) / 2, y = r.top + (r.height - h) / 2; return { left: x, top: y, right: x + w, bottom: y + h, width: w, height: h }; }, _el: el };
   const primeraVisible = s => [...document.querySelectorAll(s)].find(visible);
   const conFicha = () => document.body.classList.contains('con-cartel');
   const enCentro = () => { // la muestra visible más cercana al centro de la placa
@@ -76,7 +79,7 @@
   const PISTAS = [
     // MUESTRAS
     { id: 'm-muestra', texto: 'Tocá un círculo para abrir su muestra.', donde: 'abajo',
-      cuando: () => seccion() === 'navMuestras' && !conFicha(), blanco: enCentro, hecha: conFicha },
+      cuando: () => seccion() === 'navMuestras' && !conFicha(), blanco: () => nucleo(enCentro(), .45), hecha: conFicha },
     { id: 'm-mover', texto: 'Arrastrá la ficha para moverla.', donde: 'izquierda',
       cuando: () => seccion() === 'navMuestras' && conFicha(), blanco: () => $('ficha'), hecha: () => señal.has('ficha-movida') },
     { id: 'm-cerrar', texto: 'Tocá fuera de la ficha para cerrarla.', donde: 'izquierda',
@@ -89,14 +92,14 @@
       cuando: () => seccion() === 'navMuestras' && !conFicha() && pantalla.classList.contains('listado-cerrado'), blanco: () => $('alternarListado'), hecha: () => señal.has('listado') || !pantalla.classList.contains('listado-cerrado') },
     // GLOSARIO
     { id: 'g-universo', texto: 'Elegí un círculo para conocer a su grupo.', donde: 'abajo',
-      cuando: () => seccion() === 'navGlosario', blanco: () => primeraVisible('.g-colonia'), hecha: () => señal.has('universo') },
+      cuando: () => seccion() === 'navGlosario', blanco: () => nucleo(primeraVisible('.g-colonia'), .6), hecha: () => señal.has('universo') },
     { id: 'g-entorno', texto: 'Tocá «Ver muestras de…» para verlas en la placa.', donde: 'arriba',
       cuando: () => seccion() === 'navGlosario', blanco: enlaceEntorno, hecha: () => señal.has('entorno') },
     // TU PLACA
     { id: 't-sembrar', texto: 'Arrastrá una forma al interior de la placa.', donde: 'derecha',
       cuando: () => seccion() === 'navTuPlaca' && !q('#tuPlaca .tp-colonia'), blanco: () => primeraVisible('#tuPlaca .tp-paleta-colonia')?.parentElement, hecha: () => !!q('#tuPlaca .tp-colonia') },
     { id: 't-editar', texto: 'Tocá una colonia para editarla.', donde: 'arriba',
-      cuando: () => seccion() === 'navTuPlaca' && $('tpMenu')?.hidden, blanco: coloniaChica, hecha: () => $('tpMenu') && !$('tpMenu').hidden },
+      cuando: () => seccion() === 'navTuPlaca' && $('tpMenu')?.hidden, blanco: () => nucleo(coloniaChica(), .6), hecha: () => $('tpMenu') && !$('tpMenu').hidden },
     { id: 't-funcion', texto: 'Tocá una función y arrastrá para cambiar su valor.', donde: 'derecha',
       cuando: () => seccion() === 'navTuPlaca' && $('tpMenu') && !$('tpMenu').hidden, blanco: () => union('#tpMenu .tp-menu-boton'), hecha: () => señal.has('funcion') },
     { id: 't-deshacer', texto: 'Tocá DESHACER para volver un paso atrás.', donde: 'arriba',
@@ -119,16 +122,18 @@
   globo.querySelector('button').addEventListener('click', ev => { ev.stopPropagation(); if (actual) terminar(actual.id); });
 
   const ubicar = (p, el) => {
-    const s = pantalla.getBoundingClientRect(), k = s.width / 1920;
+    // La escena puede ser más ancha o más alta que 1920 × 1100 (pantallas de otra proporción): se mide con su tamaño real.
+    // Antes se suponía 1920 de ancho y en esas pantallas el globo quedaba corrido respecto del control.
+    const s = pantalla.getBoundingClientRect(), W = pantalla.offsetWidth || 1920, H = pantalla.offsetHeight || 1100, k = s.width / W;
     const r = el.getBoundingClientRect();
     const b = { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
-    const g = { w: globo.offsetWidth, h: globo.offsetHeight }, M = 16, A = 18; // margen y largo de la flecha
+    const g = { w: globo.offsetWidth, h: globo.offsetHeight }, M = 16, A = 28; // margen y distancia hasta el control (punto + trazo)
     let donde = p.donde, x, y;
-    const cabe = d => d === 'abajo' ? b.y + b.h + A + g.h < 1100 - M : d === 'arriba' ? b.y - A - g.h > M : d === 'izquierda' ? b.x - A - g.w > M : b.x + b.w + A + g.w < 1920 - M;
+    const cabe = d => d === 'abajo' ? b.y + b.h + A + g.h < H - M : d === 'arriba' ? b.y - A - g.h > M : d === 'izquierda' ? b.x - A - g.w > M : b.x + b.w + A + g.w < W - M;
     if (!cabe(donde)) donde = ['abajo', 'arriba', 'izquierda', 'derecha'].find(cabe) || 'abajo';
     if (donde === 'abajo' || donde === 'arriba') { x = b.x + b.w / 2 - g.w / 2; y = donde === 'abajo' ? b.y + b.h + A : b.y - A - g.h; }
     else { y = b.y + b.h / 2 - g.h / 2; x = donde === 'izquierda' ? b.x - A - g.w : b.x + b.w + A; }
-    const xc = Math.min(Math.max(x, M), 1920 - M - g.w), yc = Math.min(Math.max(y, M), 1100 - M - g.h);
+    const xc = Math.min(Math.max(x, M), W - M - g.w), yc = Math.min(Math.max(y, M), H - M - g.h);
     globo.dataset.donde = donde;
     // la flecha sigue apuntando al control aunque el globo se haya corrido para no salirse
     globo.style.setProperty('--flecha-x', `${Math.min(Math.max(b.x + b.w / 2 - xc, 24), g.w - 24)}px`);
@@ -136,9 +141,10 @@
     globo.style.transform = `translate(${Math.round(xc)}px,${Math.round(yc)}px)`;
   };
 
-  const bienvenidaAbierta = () => { const b = $('bienvenida'); return b && !b.hidden; };
+  const bienvenidaAbierta = () => ['pendiente', 'abierta'].includes(pantalla.dataset.bienvenida);
   const paso = () => {
-    if (pantalla.classList.contains('en-apertura') || bienvenidaAbierta() || document.hidden) return ocultar();
+    // Mientras dura la apertura o la bienvenida, y un momento después, no hay pistas.
+    if (pantalla.classList.contains('en-apertura') || bienvenidaAbierta() || document.hidden) { pausa = performance.now() + 1200; return ocultar(); }
     if (actual) {
       if (seccion() !== actual.seccion) return ocultar(); // cambió de sección: queda pendiente
       if (actual.hecha()) return terminar(actual.id);
@@ -161,8 +167,4 @@
   const ciclo = () => { paso(); setTimeout(ciclo, 300); };
   ciclo();
 
-  // «VER LA INTRODUCCIÓN» (en MICROMUNDOS) también vuelve a mostrar las pistas.
-  document.addEventListener('click', ev => {
-    if (ev.target.closest?.('.qe-ver-bienvenida')) { hechas.clear(); señal.clear(); guardar(); ocultar(); }
-  }, true);
 })();
