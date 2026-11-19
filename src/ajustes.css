@@ -1,0 +1,16 @@
+/* Panel de ajustes de BLUR y GRANO (solo con ?ajustes). Fuera del escenario escalado, arriba a la derecha. */
+#panelAjustes{position:fixed;right:12px;top:12px;z-index:2147483000;width:300px;max-height:calc(100vh - 24px);overflow:auto;box-sizing:border-box;
+  padding:12px 14px;border-radius:14px;background:rgb(242 240 232 / 94%);box-shadow:0 6px 30px rgb(0 0 0 / 22%);color:#0d0f17;
+  font:400 12px/1.35 Arimo,Arial,sans-serif;filter:none!important;-webkit-user-select:none;user-select:none;touch-action:none}
+#panelAjustes header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;letter-spacing:.08em}
+#panelAjustes button{all:unset;cursor:pointer;padding:6px 8px;border-radius:8px;border:1px solid rgb(13 15 23 / 25%);font-size:11px;letter-spacing:.04em}
+#panelAjustes button:focus-visible{background:rgb(13 15 23 / 8%)}
+#panelAjustes header button{border:0;font-size:16px;padding:0 6px}
+#panelAjustes.plegado .pa-cuerpo,#panelAjustes.plegado footer,#panelAjustes.plegado .pa-nota{display:none}
+#panelAjustes .pa-fila{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:6px 0;border-top:1px solid rgb(13 15 23 / 10%)}
+#panelAjustes .pa-fila input{grid-column:1/-1;width:100%;accent-color:#0d0f17;margin:2px 0 0}
+#panelAjustes .pa-nombre i{font-style:normal;opacity:.5}
+#panelAjustes .pa-valor{font-variant-numeric:tabular-nums;opacity:.6}
+#panelAjustes .pa-cambiado .pa-valor{opacity:1;font-weight:700}
+#panelAjustes footer{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+#panelAjustes .pa-nota{margin:8px 0 0;opacity:.75;word-break:break-word}

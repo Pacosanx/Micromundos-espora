@@ -118,10 +118,10 @@ function render(target,n,padding=0){
    data[i+3]=clamp(alpha)*255;
   }
   lc.putImageData(im,0,0);let finished=layer;
-  if(state.blur){finished=document.createElement('canvas');finished.width=finished.height=full;const bc=finished.getContext('2d',{willReadFrequently:true});bc.filter=`blur(${state.blur*scale}px)`;bc.drawImage(layer,0,0);bc.filter='none'}
+  if(state.blur){finished=document.createElement('canvas');finished.width=finished.height=full;const bc=finished.getContext('2d',{willReadFrequently:true});bc.filter=`blur(${state.blur*scale*(window.MicromundosAjustes?.valor('colonias')??1)}px)`;bc.drawImage(layer,0,0);bc.filter='none'}
   let coreData=data,edgeData=null;
-  if(state.blur&&state.core&&(state.coreBlur??0)>0){const c=document.createElement('canvas');c.width=c.height=full;const cc=c.getContext('2d');cc.filter=`blur(${state.coreBlur*scale}px)`;cc.drawImage(layer,0,0);cc.filter='none';coreData=cc.getImageData(0,0,full,full).data}
-  if((state.edgeBlur??0)>0){const c=document.createElement('canvas');c.width=c.height=full;const cc=c.getContext('2d');cc.filter=`blur(${state.edgeBlur*scale}px)`;cc.drawImage(layer,0,0);cc.filter='none';edgeData=cc.getImageData(0,0,full,full).data}
+  if(state.blur&&state.core&&(state.coreBlur??0)>0){const c=document.createElement('canvas');c.width=c.height=full;const cc=c.getContext('2d');cc.filter=`blur(${state.coreBlur*scale*(window.MicromundosAjustes?.valor('colonias')??1)}px)`;cc.drawImage(layer,0,0);cc.filter='none';coreData=cc.getImageData(0,0,full,full).data}
+  if((state.edgeBlur??0)>0){const c=document.createElement('canvas');c.width=c.height=full;const cc=c.getContext('2d');cc.filter=`blur(${state.edgeBlur*scale*(window.MicromundosAjustes?.valor('colonias')??1)}px)`;cc.drawImage(layer,0,0);cc.filter='none';edgeData=cc.getImageData(0,0,full,full).data}
   if(state.grain||state.porosity||state.blur&&state.core||edgeData||['cotton','hairy','branching'].includes(state.shape)||pigment==='rimmed'&&pigmentStrength>0){
    const fc=finished.getContext('2d'),pixels=fc.getImageData(0,0,full,full),rgba=pixels.data;
    for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
@@ -153,7 +153,7 @@ function render(target,n,padding=0){
      for(let k=0;k<3;k++)rgba[i+k]=clamp(rgba[i+k]*(1-rim)+colors[2][k]*rim,0,255);
     }
     const gx=Math.floor((x-padding)/Math.max(.5,state.grainSize*scale)),gy=Math.floor((y-padding)/Math.max(.5,state.grainSize*scale));
-    const radius=Math.min(1,Math.hypot(x-cx,y-cy)/r),distribution=clamp(1+(state.grainCenter??0)/100*(radius*2-1),0,2),fine=hash(gx,gy,state.seed),grain=(fine-.5)*state.grain/100*175*distribution;
+    const radius=Math.min(1,Math.hypot(x-cx,y-cy)/r),distribution=clamp(1+(state.grainCenter??0)/100*(radius*2-1),0,2),fine=hash(gx,gy,state.seed),grain=(fine-.5)*state.grain*(window.MicromundosAjustes?.valor('grano-colonias')??1)/100*175*distribution;
     for(let k=0;k<3;k++)rgba[i+k]=clamp(rgba[i+k]+grain,0,255);
     if(state.porosity){const cell=Math.max(2,scale*22),patch=noiseField((x-padding)/cell,(y-padding)/cell,state.seed+91);const coverage=clamp((fine-.25)*1.8)*(.25+patch*.9),radius=Math.hypot(x-cx,y-cy)/r,distribution=state.studyDensity===undefined?1:clamp(1+(state.studyDensity/100)*(radius*2-1),0,2),p=clamp(state.porosity/100*distribution);rgba[i+3]*=(1-p)+p*coverage}
    }

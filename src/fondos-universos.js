@@ -27,7 +27,7 @@ function prepararFondoUniverso(raiz,id){
     const copia=lienzo(origen.width/escalaFondo,origen.height/escalaFondo),c=copia.getContext('2d');
     const largo=eje==='x'?salida.width:salida.height;
     puntos.forEach(([pos,radio],i)=>{
-      c.clearRect(0,0,copia.width,copia.height);c.globalCompositeOperation='source-over';c.filter=`blur(${radio*escalaFondo}px)`;c.drawImage(origen,0,0);c.filter='none';
+      c.clearRect(0,0,copia.width,copia.height);c.globalCompositeOperation='source-over';c.filter=`blur(${radio*escalaFondo*(window.MicromundosAjustes?.valor('fondo')??1)}px)`;c.drawImage(origen,0,0);c.filter='none';
       const grad=c.createLinearGradient(0,0,eje==='x'?largo:0,eje==='y'?largo:0);
       if(i===0){grad.addColorStop(0,'white');grad.addColorStop(pos,'white');}else{grad.addColorStop(0,'transparent');grad.addColorStop(puntos[i-1][0],'transparent');grad.addColorStop(pos,'white');}
       if(i===puntos.length-1){grad.addColorStop(1,'white');}else{grad.addColorStop(puntos[i+1][0],'transparent');grad.addColorStop(1,'transparent');}

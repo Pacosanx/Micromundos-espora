@@ -31,6 +31,9 @@ $t = $t.Replace('/*PANTALLAS_DETALLE*/', ('const CELULAS_FICHA = ' + (Leer 'fich
 $t = $t.Replace('/*ESTILOS_GLOSARIO*/', ((Leer 'glosario.css') + [Environment]::NewLine + (Leer 'que-es.css')))
 # Legibilidad: última hoja de estilos, quita el desenfoque de textos y controles (ver src/legibilidad.css).
 $t = $t.Replace('</head>', ('<style id="legibilidad">' + (Leer 'legibilidad.css') + '</style>' + [Environment]::NewLine + '</head>'))
+# Niveles de BLUR y GRANO (19/11/2026): la hoja de niveles va después de legibilidad y el script de niveles y panel (?ajustes)
+# en el head, antes de que los motores de canvas dibujen. Ver src/ajustes.js.
+$t = $t.Replace('</head>', ('<style id="nivelesBlurGrano">' + (Leer 'niveles-blur-grano.css') + (Leer 'ajustes.css') + '</style>' + [Environment]::NewLine + '<script>' + (Leer 'ajustes.js') + '</script>' + [Environment]::NewLine + '</head>'))
 $terminosGlosario = @(Import-Csv -LiteralPath (Join-Path $base 'base/glosario.csv') -Delimiter ';' -Encoding UTF8)
 $vinculosGlosario = @(Import-Csv -LiteralPath (Join-Path $base 'base/glosario_muestras.csv') -Delimiter ';' -Encoding UTF8)
 $t = $t.Replace('/*GLOSARIO*/', ('const TERMINOS_GLOSARIO = ' + (ConvertTo-Json -InputObject $terminosGlosario -Depth 5 -Compress) + ';const VINCULOS_GLOSARIO = ' + (ConvertTo-Json -InputObject $vinculosGlosario -Depth 5 -Compress) + ';' + [Environment]::NewLine + (Leer 'glosario.js')))
