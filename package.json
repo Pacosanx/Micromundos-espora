@@ -7,6 +7,11 @@
   },
   "private": true,
   "scripts": {
-    "build:lupa": "node compilar-lupa.cjs"
+    "build:lupa": "node compilar-lupa.cjs",
+    "verificar:flujos": "node src/verificar-flujos.cjs",
+    "verificar:referencias": "node src/verificar-referencias.cjs"
+  },
+  "devDependencies": {
+    "linkedom": "0.18.15"
   }
 }

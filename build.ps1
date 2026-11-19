@@ -1,5 +1,7 @@
-# Arma placa.html uniendo los archivos de src/ (no necesita Python).
+# Arma placa.html uniendo los archivos de src/ (no necesita Python). Es el único comando de armado vigente.
 # Uso: doble clic en armar.bat, o en PowerShell:  powershell -ExecutionPolicy Bypass -File build.ps1
+# -Salida otro.html escribe en otro archivo (lo usa verificar-armado.ps1 para comparar sin pisar placa.html).
+param([string]$Salida = 'placa.html')
 $base = Split-Path -Parent $MyInvocation.MyCommand.Path
 $src  = Join-Path $base 'src'
 $utf8 = New-Object System.Text.UTF8Encoding($false)
@@ -106,5 +108,6 @@ $mascaraCampo = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $sr
 $t = $t.Replace('__MASCARA_CAMPO_SUAVE__', ('data:image/png;base64,' + $mascaraCampo))
 $mascaraTransformacion = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $src 'assets/detalles/mascara-transformacion.png')))
 $t = $t.Replace('__MASCARA_FICHA_TRANSFORMACION__', ('data:image/png;base64,' + $mascaraTransformacion))
-[IO.File]::WriteAllText((Join-Path $base 'placa.html'), $t, $utf8)
-Write-Host "placa.html listo ($($t.Length) caracteres)"
+$destino = if ([IO.Path]::IsPathRooted($Salida)) { $Salida } else { Join-Path $base $Salida }
+[IO.File]::WriteAllText($destino, $t, $utf8)
+Write-Host "$Salida listo ($($t.Length) caracteres)"
