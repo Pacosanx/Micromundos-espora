@@ -103,6 +103,25 @@
 #tuPlaca{overflow:clip}
 
 #tpBiblioteca .tp-biblioteca__labels{grid-template-rows:none;grid-auto-rows:100px;align-content:start}
+/* Placas de otras personas (19/11/2026, simulada): pantalla propia dentro de TU PLACA. Diez placas en dos filas,
+   con su epígrafe abajo; las guardadas en esta pantalla van primero. Sin hover. */
+.tp-otras{position:absolute;inset:0;z-index:22;background:rgb(242 240 232 / 88%);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:#0d0f17}
+.tp-otras[hidden]{display:none}
+.tp-otras-cabeza{position:absolute;left:40px;top:134px;width:1840px;display:grid;grid-template-columns:110px 1fr;column-gap:0;row-gap:8px}
+.tp-otras-cabeza span{grid-row:1 / span 2;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif}
+#tuPlaca .tp-otras-cabeza h2{margin:0;font:400 var(--t-titulo)/var(--l-titulo) Arimo,Arial,sans-serif;text-transform:uppercase}
+#tuPlaca .tp-otras-cabeza p{margin:0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.6}
+.tp-otras-grilla{position:absolute;left:150px;top:282px;width:1620px;margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(5,260px);column-gap:80px;row-gap:36px}
+.tp-otras-grilla li{display:flex;flex-direction:column;align-items:center;gap:10px;animation:tp-aparecer .4s ease both}
+.tp-otras-grilla img,.tp-otras-lienzo{display:block;width:285px;height:285px;margin:-12px}
+.tp-otras-lienzo canvas{display:block;width:100%;height:100%}
+#tuPlaca .tp-otras-grilla p{margin:0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.04em;opacity:.7}
+#tuPlaca .tp-otras-propia p{font-weight:700;opacity:1}
+.tp-otras-acciones{position:absolute;left:0;right:0;top:990px;display:flex;justify-content:center}
+#tuPlaca .tp-otras-acciones button{all:unset;display:inline-flex;align-items:center;min-height:var(--area-tactil);font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;text-transform:uppercase;cursor:pointer}
+#tuPlaca .tp-otras-acciones button:focus-visible{outline:2px solid #0d0f17;outline-offset:4px;border-radius:8px}
+@media(prefers-reduced-motion:reduce){.tp-otras-grilla li{animation:none}}
+.tp-otras-propia img{mix-blend-mode:multiply}
 
 /* Aviso al generar sobre una placa armada (propuesta, rama tuplaca-generar).
    Va sobre la propia placa, abajo y centrado: es lo que cambió. Material de los carteles (vidrio con borde desenfocado y grano),

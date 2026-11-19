@@ -7,7 +7,7 @@
 //    El dictado real (reconocimiento de voz del navegador) queda solo con ?dictado en la dirección.
 //  · Con el nombre, pregunta si está bien (SÍ, ES MI NOMBRE / DICTAR DE NUEVO).
 //  · Después, la página del recuerdo: tu placa con tu nombre, la fecha y la hora, IMPRIMIR RECUERDO (simulado) y la placa
-//    se suma a las de los demás (queda guardada en este equipo; la pantalla con todas las placas todavía no está pensada).
+//    se suma a las de los demás (queda guardada en este equipo y aparece primera en VER PLACAS DE OTRAS PERSONAS).
 (() => {
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
@@ -153,7 +153,9 @@
       const s = 1600 / 860, c = document.createElement('canvas'); c.width = c.height = 360;
       c.getContext('2d').drawImage(img, 20 * s, 2 * s, 820 * s, 820 * s, 0, 0, 360, 360);
       let lista = []; try { lista = JSON.parse(localStorage.getItem(CLAVE_PLACAS) || '[]'); if (!Array.isArray(lista)) lista = []; } catch {}
-      lista.push({ img: c.toDataURL('image/jpeg', .84), nombre: nombre.trim(), fecha: fecha.getTime() });
+      // Sin fondo (19/11/2026, Paco): WebP con transparencia; si el navegador no lo arma, PNG.
+      let dato = c.toDataURL('image/webp', .86); if (!dato.startsWith('data:image/webp')) dato = c.toDataURL('image/png');
+      lista.push({ img: dato, nombre: nombre.trim(), fecha: fecha.getTime() });
       try { localStorage.setItem(CLAVE_PLACAS, JSON.stringify(lista.slice(-4))); } catch {}
     };
     img.src = url;
@@ -171,6 +173,7 @@
       vista.querySelector('.tp-recuerdo-interior')?.appendChild(ficha);
       const acciones = ficha.querySelector('.tpn-ficha-acciones'), volver = $('tpVolver');
       if (volver) acciones.appendChild(volver);
+      const otras = $('tpVerOtras'); if (otras) acciones.appendChild(otras); // «Placas de otras personas» (rama otras-placas)
       const imprimir = ficha.querySelector('.tpn-imprimir');
       imprimir.addEventListener('click', () => {
         // Simulado: en el museo la imprime la impresora de la pantalla. Acá solo cambia el estado del botón.
@@ -182,6 +185,6 @@
     const imprimir = ficha.querySelector('.tpn-imprimir'); delete imprimir.dataset.estado; imprimir.textContent = 'IMPRIMIR RECUERDO';
     ficha.querySelector('.tpn-ficha-nombre').textContent = (nombre.trim() || 'Sin nombre').toUpperCase();
     ficha.querySelector('.tpn-ficha-fecha').textContent = `${dos(fecha.getDate())}/${dos(fecha.getMonth() + 1)}/${fecha.getFullYear()} · ${dos(fecha.getHours())}:${dos(fecha.getMinutes())}`;
-    const url = $('tpGuardar')?.href; if (url) sumarALasDemas(url, fecha);
+    const url = $('tpImagenRecuerdo')?.dataset.sinFondo || $('tpGuardar')?.href; if (url) sumarALasDemas(url, fecha);
   }
 })();
