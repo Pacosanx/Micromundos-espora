@@ -79,8 +79,8 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 
 /* buscador: oculto por pedido (el código queda inactivo) */
 #buscador{display:none!important}
-#buscador{left:1677px;top:214px;width:203px;height:20px;display:flex;align-items:center;gap:10px}
-#alternarListado{position:absolute;left:1490px;top:122px;width:390px;min-height:var(--area-tactil);padding:0;border:0;background:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:400 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#fff;mix-blend-mode:difference;filter:blur(.5px);cursor:pointer}
+#buscador{left:1677px;top:362px;width:203px;height:20px;display:flex;align-items:center;gap:10px}
+#alternarListado{position:absolute;left:1490px;top:270px;width:390px;min-height:var(--area-tactil);padding:0;border:0;background:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:400 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#fff;mix-blend-mode:difference;filter:blur(.5px);cursor:pointer}
 #alternarListado svg{transition:transform .3s;flex:none}
 #alternarListado[aria-expanded="true"] svg{transform:rotate(180deg)}
 #alternarListado:focus-visible{outline:0;background:rgba(146,170,104,.18);border-radius:8px}
@@ -89,29 +89,52 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #buscador input::placeholder{color:#fff;opacity:1}
 
 /* leyenda */
-#leyenda{left:39px;top:284px;width:281px;display:flex;flex-direction:column;gap:32px}
-.bloque{display:flex;flex-direction:column;gap:24px}
+#leyenda{left:39px;top:284px;width:281px;display:flex;flex-direction:column;gap:28px}
+/* Guía «Cómo leer la placa». Cerrada (estado inicial) queda solo la columna de ejemplos: las colonias de color y de forma,
+   que siguen sirviendo de filtro. Abierta suma los rótulos, los nombres, el tamaño y la indicación de uso.
+   Sin opacidad ni transformaciones en contenedores: aislarían el modo «diferencia» de los textos y los harían destellar en blanco. */
+#guiaBoton{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;min-height:48px;margin:-14px 0 -10px;cursor:pointer;color:#0d0f17;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);letter-spacing:.08em;text-transform:uppercase}
+#guiaBoton .guia-flecha{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgb(13 15 23 / 35%);transition:box-shadow .3s}
+/* Chevron (la punta de la flecha del sistema): abajo para abrir, arriba para cerrar. Mismo chevron en LISTADO COMPLETO. */
+#guiaBoton .guia-flecha svg{display:block;rotate:180deg;transition:rotate .35s}
+#leyenda.cerrada #guiaBoton .guia-flecha svg{rotate:0deg}
+#guiaBoton .guia-titulo{white-space:nowrap;opacity:.7}
+#guiaBoton:active .guia-flecha,#guiaBoton:focus-visible .guia-flecha{box-shadow:inset 0 0 0 1.5px #0d0f17}
+#guiaBoton:focus-visible{outline:0}
+#guiaCuerpo{display:flex;flex-direction:column;gap:28px;transition:gap .35s}
+#leyenda.cerrada #guiaCuerpo{gap:12px}
+.guia-uso{margin:-8px 0 0;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#0d0f17;opacity:.6}
+.bloque{display:flex;flex-direction:column;gap:16px;transition:gap .35s}
+.rotulo{letter-spacing:.08em}
+/* Lo que se pliega: cada pieza se desvanece por separado (la opacidad va en el propio elemento, no en un contenedor). */
+#leyenda .rotulo,#leyenda .guia-uso,#leyenda .tam{max-height:40px;overflow:hidden;transition:opacity .3s,max-height .35s,margin .35s}
+#leyenda .item span{transition:opacity .3s,filter .35s}
+#leyenda.cerrada .bloque{gap:0}
+#leyenda.cerrada :is(.rotulo,.guia-uso,.tam){opacity:0;max-height:0;margin:0;pointer-events:none}
+#leyenda.cerrada .item span{opacity:0!important;pointer-events:none}
+#leyenda.cerrada .items{gap:8px}
+@media(prefers-reduced-motion:reduce){#guiaCuerpo,.bloque,#leyenda :is(.rotulo,.guia-uso,.tam,.item span),#guiaBoton .guia-flecha svg{transition:none}}
 .rotulo{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#fff;mix-blend-mode:difference;opacity:.7;filter:blur(.5px)}
 .items{display:flex;flex-direction:column;gap:12px}
 .item{display:flex;align-items:center;height:40px;cursor:pointer}
 .item .ic{width:40px;height:40px;flex:none;transition:opacity .35s,filter .35s}
 .item .ic canvas{display:block}
 .item.estado .ic{mix-blend-mode:darken}
-.item span{white-space:nowrap;margin-left:116px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);color:#fff;mix-blend-mode:difference;filter:blur(.5px);transition:opacity .35s,filter .35s}
+.item span{white-space:nowrap;margin-left:24px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);color:#fff;mix-blend-mode:difference;filter:blur(.5px);transition:opacity .35s,filter .35s}
 /* deseleccionados: la opacidad va en cada pieza (no en .item) para que el texto conserve el modo "diferencia" y no se vuelva blanco */
 .bloque.filtrando .item:not(.activo) .ic{opacity:.35;filter:blur(1.5px)}
 .bloque.filtrando .item:not(.activo) span{opacity:.35;filter:blur(2.5px)}
 .tam{display:flex;align-items:center;height:26px}
 .tam .circs{position:relative;width:50px;height:26px;flex:none}
 .tam .circs i{position:absolute;border:1.5px solid #9C8889;border-radius:50%;box-sizing:border-box}
-.tam span{white-space:nowrap;margin-left:105px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);color:#fff;mix-blend-mode:difference;filter:blur(.5px)}
+.tam span{white-space:nowrap;margin-left:14px;font-size:var(--t-cuerpo);line-height:var(--l-cuerpo);color:#fff;mix-blend-mode:difference;filter:blur(.5px)}
 
 /* lista */
-#listaCab{left:1438px;top:284px;width:442px;display:flex;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
+#listaCab{left:1438px;top:432px;width:442px;display:flex;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
 #listaCab span{color:#fff;mix-blend-mode:difference;opacity:.7}
 #listaCab span:first-child{width:155px}
 /* la caja es más grande que la zona de lectura (80 px de aire arriba, 40 a cada costado) para que el desenfoque no se corte */
-#lista{left:1398px;top:245px;width:522px;height:855px;padding:0 40px;box-sizing:border-box;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;touch-action:pan-y}
+#lista{left:1398px;top:393px;width:522px;height:707px;padding:0 40px;box-sizing:border-box;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;touch-action:pan-y}
 #lista::-webkit-scrollbar{display:none}
 #lista .pad{height:240px}
 .fila{display:flex;align-items:center;height:24px;cursor:pointer;color:#fff;mix-blend-mode:difference;text-transform:uppercase}
@@ -407,7 +430,7 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
   </div>
 
   <div id="derecha" class="ancla">
-  <button id="alternarListado" type="button" data-ui aria-expanded="false" aria-controls="lista listaCab buscador" aria-label="Abrir listado completo"><span>LISTADO COMPLETO</span><svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0H10L5 6Z" fill="currentColor"/></svg></button>
+  <button id="alternarListado" type="button" data-ui aria-expanded="false" aria-controls="lista listaCab buscador" aria-label="Abrir listado completo"><span>LISTADO COMPLETO</span><svg class="chevron" width="11.04" height="6.27" viewBox="0 0 11.04 6.27" aria-hidden="true"><path d="M.75 .75 5.52 5.52 10.29 .75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <label id="buscador" class="abs" data-ui>
     <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
     <input id="q" type="text" placeholder="Buscar una muestra…" autocomplete="off" spellcheck="false">
@@ -417,7 +440,9 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
   </div>
 
   <!-- leyenda -->
-  <div id="leyenda" class="abs" data-ui>
+  <div id="leyenda" class="abs cerrada" data-ui>
+    <button id="guiaBoton" type="button" aria-expanded="false" aria-controls="guiaCuerpo" aria-label="Cómo leer la placa: abrir la guía"><span class="guia-flecha" aria-hidden="true"><svg class="chevron" width="11.04" height="6.27" viewBox="0 0 11.04 6.27" aria-hidden="true"><path d="M.75 .75 5.52 5.52 10.29 .75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="guia-titulo">Cómo leer la placa</span></button>
+    <div id="guiaCuerpo">
     <div class="bloque" id="bGrupo">
       <div class="rotulo">COLOR</div>
       <div class="items">
@@ -438,6 +463,8 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
     <div class="bloque">
       <div class="rotulo">TAMAÑO</div>
       <div class="tam"><div class="circs"><i style="width:10px;height:10px;left:0;top:8px"></i><i style="width:26px;height:26px;left:24px;top:0"></i></div><span>1 a 300+ colonias</span></div>
+    </div>
+    <p class="guia-uso" id="guiaUso">Tocá uno o varios ejemplos para ver solo esas muestras.</p>
     </div>
   </div>
 
