@@ -33,17 +33,19 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
       codigo.textContent = otra.codigo;
       encabezado.append(origen, codigo);
 
-      // Pendiente (CHECKLIST): acá va la placa figurativa de cada muestra. Todavía no existen; mientras tanto, la forma de la muestra en la PLACA.
+      // Placa figurativa de cada muestra (placa-figurativa.js). La del yogur es la imagen real; las otras, una simulación con sus datos.
       const marco = document.createElement('div');
       marco.className = 'ficha-galeria__marco';
-      const fuente = otra.el?.querySelector('canvas');
-      if (fuente) {
+      if (otra.codigo === 'B-083-YNA') {
+        const img = document.createElement('img');
+        img.className = 'ficha-galeria__canvas'; img.src = 'src/assets/detalles/ficha-yogur-crema.png'; img.alt = `Placa figurativa de la muestra ${otra.codigo}`; img.loading = 'lazy';
+        marco.appendChild(img);
+      } else {
         const canvas = document.createElement('canvas');
-        canvas.width = canvas.height = 354;
         canvas.className = 'ficha-galeria__canvas';
         canvas.setAttribute('role', 'img');
-        canvas.setAttribute('aria-label', `Ilustración de la muestra ${otra.codigo}`);
-        canvas.getContext('2d')?.drawImage(fuente, 0, 0, 354, 354);
+        canvas.setAttribute('aria-label', `Placa figurativa de la muestra ${otra.codigo} (simulada)`);
+        if (canvas.getContext('2d')) placaFigurativa(canvas, otra, 354);
         marco.appendChild(canvas);
       }
 
