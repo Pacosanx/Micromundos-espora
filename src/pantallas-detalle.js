@@ -388,7 +388,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       boton.addEventListener('click',()=>{detalle.hidden=!detalle.hidden;boton.setAttribute('aria-expanded',String(!detalle.hidden));boton.innerHTML=detalle.hidden?'LEER MÁS AL RESPECTO <img src="src/assets/detalles/c46dc.svg" alt="">':'CERRAR INFORMACIÓN '+FLECHA_ARRIBA;});co.append(boton,detalle);
     }else{
       const boton=document.createElement('button');boton.type='button';boton.className='masCartel';boton.setAttribute('aria-expanded','false');
-      boton.innerHTML='VER MUESTRAS VINCULADAS '+FLECHA_ABAJO;lista.hidden=true;
+      boton.innerHTML='VER MUESTRAS VINCULADAS '+CHEVRON_FICHAS;lista.hidden=true;
       boton.addEventListener('click',()=>{lista.hidden=!lista.hidden;boton.setAttribute('aria-expanded',String(!lista.hidden));});co.append(boton,lista);
     }
     montarCartelDetalle(el,nombre,evento,limpiarGrafico);

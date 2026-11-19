@@ -96,7 +96,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #guiaBoton .guia-flecha{display:grid;place-items:center;flex:none} /* 19/11/2026: sin el círculo alrededor del chevron (Paco), como en LISTADO COMPLETO */
 /* Chevron (la punta de la flecha del sistema): abajo para abrir, arriba para cerrar. Mismo chevron en LISTADO COMPLETO. */
 #guiaBoton .guia-flecha svg{display:block;rotate:180deg;transition:rotate .35s}
-.chevron-fichas{display:inline-block;vertical-align:middle;margin-left:8px;transition:rotate .35s}[aria-expanded="true"] .chevron-fichas{rotate:180deg}
+.chevron-fichas{display:inline-block;vertical-align:middle;margin-left:8px;rotate:0deg;transition:rotate .35s}[aria-expanded="true"] .chevron-fichas{rotate:180deg}.masCartel .chevron-fichas{margin-left:0}
 #leyenda.cerrada #guiaBoton .guia-flecha svg{rotate:0deg}
 #guiaBoton .guia-titulo{white-space:nowrap;opacity:.7}
 #guiaBoton:focus-visible .guia-titulo{text-decoration:underline;text-underline-offset:4px}
