@@ -43,7 +43,7 @@ Import-Csv -LiteralPath (Join-Path $base 'base/especies.csv') -Delimiter ';' -En
   $catalogo[$_.especie] = @{ definicion = $_.definicion; donde_esta = $_.donde_esta; que_produce_o_transforma = $_.que_produce_o_transforma }
 }
 $t = $t.Replace('/*CARTELES*/', ('const CATALOGO_ESPECIES = ' + (ConvertTo-Json -InputObject $catalogo -Depth 4 -Compress) + ';' + [Environment]::NewLine + (Leer 'carteles.js')))
-# Propuesta: nombre de la placa (voz o teclado) y galería de placas (src/tu-placa-nombre.js y .css).
+# Propuesta: nombre de la placa dictado (src/tu-placa-nombre.js y .css; diseño de Paco, Figma 621:863).
 $finNombre = $t.LastIndexOf('</body>')
 $t = $t.Substring(0, $finNombre) + '<style id="tpNombreEstilos">' + (Leer 'tu-placa-nombre.css') + '</style><script id="tpNombreScript">' + (Leer 'tu-placa-nombre.js') + '</script>' + [Environment]::NewLine + $t.Substring($finNombre)
 $t = $t.Replace('/*VINCULOS*/', ('const DATOS_VINCULOS = ' + $jsonVinculos + ';' + [Environment]::NewLine + 'const GRUPOS_ESPECIES = ' + $jsonGrupos + ';' + [Environment]::NewLine + (Leer 'vinculos.js')))
@@ -73,6 +73,9 @@ $recursos = @{
   '__CARTEL_LINEA__' = @('cartel-linea.svg','image/svg+xml')
   '__CARTEL_COLORES__' = @('cartel-colores-bl.svg','image/svg+xml')
   '__CARTEL_FLECHA__' = @('cartel-flecha.svg','image/svg+xml')
+  '__TPN_ELIPSE__' = @('nombre/elipse.svg','image/svg+xml')
+  '__TPN_LINEA__' = @('nombre/linea.svg','image/svg+xml')
+  '__TPN_MICROFONO__' = @('nombre/microfono.svg','image/svg+xml')
 }
 foreach($marca in $recursos.Keys){
   $recurso = $recursos[$marca]
