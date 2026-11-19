@@ -63,7 +63,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
       {tipo:'dial',key:'zoneCount',etiqueta:'Zonas',min:1,max:8,paso:1,a0:134,a1:160,visible:conTratamiento('zoned'),mostrar:v=>String(v)},
       {tipo:'dial',key:'rimSize',etiqueta:'Borde',min:40,max:180,paso:1,a0:134,a1:160,visible:conTratamiento('rimmed'),mostrar:porcentaje},
       {tipo:'dial',key:'spotCount',etiqueta:'Manchas',min:1,max:8,paso:1,a0:134,a1:160,visible:conTratamiento('spotted'),mostrar:v=>String(v)},
-      {tipo:'radial',key:'spotSize',etiqueta:'Tamaño de manchas',min:40,max:180,angulo:()=>110,r0:R0*.3,r1:R0*1.05,visible:conTratamiento('spotted'),mostrar:porcentaje},
+      {tipo:'radial',key:'spotSize',etiqueta:'Tamaño de manchas',min:40,max:180,angulo:()=>90,r0:R0*.3,r1:R0*1.05,visible:conTratamiento('spotted'),mostrar:porcentaje},
       {tipo:'dial',key:'grain',etiqueta:'Grano',min:0,max:70,paso:1,a0:56,a1:80,mostrar:porcentaje},
       {tipo:'dial',key:'porosity',etiqueta:'Porosidad',min:0,max:100,paso:1,a0:100,a1:124,mostrar:porcentaje},
     ],
