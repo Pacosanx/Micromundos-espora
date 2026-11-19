@@ -92,7 +92,7 @@
 .tp-contemplando .tp-leyenda,.tp-contemplando .tp-paleta{opacity:0;visibility:hidden;pointer-events:none}
 .tp-leyenda,.tp-paleta{transition:opacity .5s,visibility .5s}
 .tp-contemplando .tp-board{transform:translateX(-50%) scale(1.08)}
-.tp-recuerdo{position:absolute;inset:120px 40px 40px;background:rgba(242,240,232,.72);backdrop-filter:blur(12px);z-index:20;display:flex;align-items:center;justify-content:center}
+.tp-recuerdo{position:absolute;inset:120px 40px 40px;background:rgb(243 236 208 / 80%);backdrop-filter:blur(12px);z-index:20;display:flex;align-items:center;justify-content:center}
 .tp-recuerdo[hidden]{display:none}
 .tp-recuerdo-interior{height:100%;display:flex;flex-direction:column;align-items:center;gap:24px}
 #tpImagenRecuerdo{height:calc(100% - 60px);max-width:100%;object-fit:contain;border-radius:24px}
