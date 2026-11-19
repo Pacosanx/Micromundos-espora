@@ -133,6 +133,33 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   const marco=document.createElement('section');marco.id='pantallasDetalle';marco.hidden=true;marco.inert=true;marco.dataset.ui='';
   marco.innerHTML='<div id="detalleScroll"><div id="detalleLienzo"></div></div>';
   pantalla.appendChild(marco);
+  // Lo que queda fijo sobre el desenfoque de la barra (19/11/2026, Paco): VOLVER y el rótulo de la sección actual.
+  const fijos=document.createElement('div');fijos.id='detalleFijos';pantalla.appendChild(fijos);
+  let rotulosFijos=[];
+  const copiaFija=(original,datos={})=>{
+    const r=original.getBoundingClientRect(),caja=pantalla.getBoundingClientRect(),css=getComputedStyle(original),copia=original.cloneNode(true);
+    copia.removeAttribute('data-node-id');for(const el of copia.querySelectorAll('[data-node-id]'))el.removeAttribute('data-node-id');
+    Object.assign(copia.style,{position:'absolute',left:((r.left-caja.left)/escala)+'px',top:((r.top-caja.top)/escala)+'px',width:(r.width/escala)+'px',height:(r.height/escala)+'px',margin:'0',right:'auto',bottom:'auto',transform:'none',translate:'none',
+      color:css.color,fontFamily:css.fontFamily,fontSize:css.fontSize,fontWeight:css.fontWeight,letterSpacing:css.letterSpacing,textTransform:css.textTransform,lineHeight:css.lineHeight,mixBlendMode:css.mixBlendMode,opacity:css.opacity,filter:'none'});
+    for(const [k,v] of Object.entries(datos))copia.dataset[k]=v;fijos.appendChild(copia);return copia;};
+  function prepararFijos(raiz,volver){
+    fijos.replaceChildren();rotulosFijos=[];
+    if(volver){const copia=copiaFija(volver,{fijoVolver:''});copia.removeAttribute('aria-hidden');copia.addEventListener('click',ev=>{ev.stopPropagation();volver.click();});
+      copia.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();volver.click();}});volver.style.visibility='hidden';volver.tabIndex=-1;}
+    // Rótulos «[03.1] …»: cada uno se fija a la altura del primero hasta que el siguiente lo alcanza y lo reemplaza.
+    const rotulos=[...raiz.querySelectorAll('p')].filter(p=>/^\[\d\d\.\d\]/.test(texto(p))).sort((a,b)=>a.getBoundingClientRect().top-b.getBoundingClientRect().top); // por altura: en la ficha el orden del documento no es el visual
+    const linea=rotulos[0]?.getBoundingClientRect().top;
+    for(const el of rotulos){const copia=copiaFija(el,{fijoRotulo:''});copia.setAttribute('aria-hidden','true');copia.hidden=true;
+      const caja=pantalla.getBoundingClientRect();copia.style.top=((linea-caja.top)/escala)+'px';rotulosFijos.push({el,copia,linea,clave:texto(el)});}
+  }
+  function actualizarFijos(){
+    if(!rotulosFijos.length)return;const linea=rotulosFijos[0].linea+2;let activo=-1;
+    // Si la ficha reemplazó el rótulo después de fijarlo (queda suelto, con altura 0), se lo vuelve a buscar por su texto.
+    for(const r of rotulosFijos)if(!r.el.isConnected)r.el=[...lienzo.querySelectorAll('p')].find(p=>texto(p)===r.clave)||r.el;
+    const arriba=rotulosFijos.map(({el},i)=>{const si=el.isConnected&&el.getBoundingClientRect().top<=linea;if(si)activo=i;return si;});
+    // El texto se toma del original al activarse: la ficha reescribe sus rótulos después de abrirse.
+    rotulosFijos.forEach(({el,copia},i)=>{el.style.visibility=arriba[i]?'hidden':'';if(i===activo&&copia.innerHTML!==el.innerHTML)copia.innerHTML=el.innerHTML;copia.hidden=i!==activo;});
+  }
   const scroll=marco.firstElementChild,lienzo=scroll.firstElementChild,carteles=new Map(),limpiezasVista=new Set();
   let actual=null,retorno='glosario',animacion=0,limpiarLupa=()=>{},limpiarObjetivo=()=>{},muestraFicha=null;
   const esc=escaparCartel;
@@ -148,7 +175,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     limpiarLupa();limpiarLupa=()=>{};
     for(const {el,cancelar,agua,limpiarGrafico}of carteles.values()){cancelar();agua.detener();limpiarGrafico();el.remove();}carteles.clear();
     for(const limpiar of limpiezasVista)limpiar();limpiezasVista.clear();
-    actual=null;marco.hidden=true;marco.inert=true;cancelAnimationFrame(animacion);
+    actual=null;marco.hidden=true;marco.inert=true;cancelAnimationFrame(animacion);fijos.replaceChildren();rotulosFijos=[];
     pantalla.classList.remove('en-detalle','en-universo','entrando-universo');
     $('glosario').inert=!pantalla.classList.contains('en-glosario');
     for(const nombre of ['centro','derecha','leyenda','izqAbajo'])$(nombre).inert=pantalla.classList.contains('en-glosario')||pantalla.classList.contains('en-tuplaca')||pantalla.classList.contains('en-quees');
@@ -185,9 +212,10 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     prepararReferenciasGlosario(raiz,abrirTermino);
     if(id==='ficha'&&!fichaArchivo)enlazarConceptosFicha(raiz);
     adaptarMargenesDetalle(raiz);
+    if(id!=='ficha'&&desliza?.parentElement)desliza.parentElement.classList.add('ficha-aviso-desliza'); // se apaga al empezar a deslizar, como en la ficha
     if(id!=='ficha')limpiezasVista.add(prepararFondoUniverso(raiz,id));
     if(id==='ficha')ajustarFinFicha(raiz);
-    scroll.scrollTop=0;ultimaY=0;actualizarParalajeDetalle();
+    scroll.scrollTop=0;ultimaY=0;prepararFijos(raiz,volver?.parentElement);actualizarParalajeDetalle();
     if(!movimientoReducido()){
       if(id!=='ficha')cambiarObjetivo(id,raiz,anterior);
       else {
@@ -333,9 +361,8 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     if(imagen?.html){figura.innerHTML=imagen.html;}
     else if(imagen){const img=document.createElement('img');img.src=imagen;img.alt='Células de '+nombre;if(imagen.endsWith('/micro-47710.png'))img.className='celula-bacilo';figura.appendChild(img);}
     else{
-      const cv=document.createElement('canvas');figura.appendChild(cv);
-      const estilo={...BASE,shape:nombre.startsWith('Lactobacillus')?'capsule':'disk',elongation:65,c1:grupo==='B'?'#ed74a0':grupo==='L'?'#efcc6d':'#92aa68',c2:grupo==='B'?'#f06779':grupo==='L'?'#ffc21c':'#6a983a',c3:'#fffbee',seed:nombre.length*17};
-      limpiarGrafico=dibujoProcedural(cv,pieza(estilo),350);
+      // La célula de la especie (celulas-especies.js), no la colonia (19/11/2026, Paco).
+      const cv=document.createElement('canvas');cv.className='celula-especie';cv.setAttribute('role','img');cv.setAttribute('aria-label','Células de '+nombre);figura.appendChild(cv);dibujarCelulaEspecie(cv,nombre,grupo);
     }
     co.insertBefore(figura,el.querySelector('.reglaCartel'));p.textContent=datos?.definicion||'Contenido en preparación.';
     const relacionadas=muestras.filter(s=>s.vinculosDatos.especies.includes(nombre));
@@ -429,7 +456,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
       const relacionadas=muestras.filter(s=>s.vinculosDatos.especies.includes(nombre));
       if(cuenta)cuenta.textContent=String(relacionadas.length).padStart(2,'0');
       const ilustrada=['Streptococcus thermophilus','Saccharomyces cerevisiae','Penicillium roqueforti'].includes(nombre);
-      interactivo(fila,ev=>cartelEspecie(nombre,n,grupo,ilustrada?imagen:null,ev),nombre);
+      interactivo(fila,ev=>cartelEspecie(nombre,n,grupo,ilustrada?imagen:imagenCelulaEspecie(nombre),ev),nombre);
       const celda=fila.querySelector('[data-name="Fichas"]');
       if(celda){
         const desp=document.createElement('div');desp.className='u-desplegable';desp.inert=true;
@@ -770,6 +797,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   }
   function actualizarParalajeDetalle(){
     const aviso=lienzo.querySelector('.ficha-aviso-desliza');if(aviso){aviso.style.opacity=String(1-clamp(scroll.scrollTop/90));aviso.style.visibility=scroll.scrollTop>=90?'hidden':'visible';}
+    actualizarFijos();
     const y=movimientoReducido()?0:scroll.scrollTop;
     for(const capa of lienzo.querySelectorAll('[data-velocidad]')){
       // El scroll ya desplaza el lienzo a velocidad 1; esta compensación conserva la velocidad absoluta de cada plano.

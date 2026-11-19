@@ -170,3 +170,4 @@
 .entorno-enlace img{flex:none;transform:rotate(-45deg)}
 .entorno-desliza{cursor:grab;-webkit-user-select:none;user-select:none}
 .entorno-desliza img{-webkit-user-drag:none;pointer-events:none}
+.detalle-especie-figura .celula-especie{display:block;width:100%;height:100%;object-fit:contain}

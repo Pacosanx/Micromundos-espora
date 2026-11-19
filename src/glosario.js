@@ -4,6 +4,25 @@ function muestrasDeTermino(termino, catalogo=muestras, relaciones=VINCULOS_GLOSA
   return catalogo.filter(s=>ids.has(s.capa+':'+s.it.id)||
     (termino.criterio_grupo&&s.grupo.includes(termino.criterio_grupo)));
 }
+// Índice del Glosario, columna FICHAS (19/11/2026, Paco): en cuántas fichas aparece cada concepto. Se buscan en lo que cada
+// ficha cuenta (base/fichas.csv: título, descripción y contexto) y en lo que dicen sus especies (especies.csv). Sin tildes.
+const PATRONES_FICHA={
+  bacilo:/\bbacilos?\b/,coco:/\bcocos?\b/,espiral:/\bespiral(es)?\b/,flagelo:/\bflagelos?\b/,'fision-binaria':/\bfision binaria\b|\b(se parte|se divide) en dos\b/,
+  gemacion:/\bgemacion\b|\bbrot(e|es|a|an)\b/,saccharomyces:/\bsaccharomyces\b/,hifa:/\bhifas?\b/,micelio:/\bmicelios?\b/,esporangio:/\besporangios?\b/,
+  penicilina:/\bpenicilina\b/,biofilm:/\bbiofilms?\b|\bbiopelicula/,fermentacion:/\bferment\w*/,'masa-madre':/\bmasa madre\b/,espora:/\besporas?\b/,
+  colonia:/\bcolonias?\b/,agar:/\bagar\b/,crecimiento:/\bcrec(e|en|er|imiento)\b/
+};
+function textoDeFicha(s){
+  const f=typeof FICHAS_BASE!=='undefined'?FICHAS_BASE.find(f=>f.codigo===s.codigo):null,especies=s.vinculosDatos?.especies||[];
+  // La del yogur muestra el texto del diseño (Figma), no el de fichas.csv: se lee ese.
+  const disenio=typeof esFichaPreparada==='function'&&esFichaPreparada(s)&&typeof DISENOS_DETALLE!=='undefined'?(DISENOS_DETALLE.ficha?.html||'').replace(/<[^>]+>/g,' '):'';
+  const partes=[disenio,f?.titulo,f?.descripcion,f?.contexto,s.origen,...especies,...especies.flatMap(e=>[CATALOGO_ESPECIES[e]?.definicion,CATALOGO_ESPECIES[e]?.que_produce_o_transforma])];
+  return partes.filter(Boolean).join(' ').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+}
+function fichasDeTermino(termino,catalogo=muestras){
+  const patron=PATRONES_FICHA[termino.id];if(!patron||typeof tieneFicha!=='function')return [];
+  return catalogo.filter(s=>tieneFicha(s)&&patron.test(textoDeFicha(s)));
+}
 function prepararNavegacionPrincipal(cambiar){
   const contenedor=$('navegacionPrincipal');
   const botones={muestras:$('navMuestras'),glosario:$('navGlosario'),tuplaca:$('navTuPlaca'),quees:$('navQueEs')};
@@ -72,14 +91,14 @@ function prepararGlosario(){
   const colorGrupo=g=>`<span class="g-chips" aria-label="${esc(GRUPO_NOMBRE[g]||g)}">${[...g].map(c=>`<i style="background:${PALETA_CARTEL[c]}"></i>`).join('')}</span>`;
   function crearFila(t,primera){
     const caja=document.createElement('section');caja.className='g-entrada';caja.dataset.termino=t.id;
-    const relacionadas=muestrasDeTermino(t);
+    const relacionadas=fichasDeTermino(t);
     caja.innerHTML=`<button type="button" class="g-fila" aria-expanded="false" aria-controls="g-detalle-${esc(t.id)}"><span class="g-bloque">${primera?esc(t.bloque):''}</span><span class="g-numero">${numero(t)}</span><span class="g-termino">${esc(t.termino)}</span><span class="g-cuenta">${String(relacionadas.length).padStart(2,'0')} <span class="g-indicador">+</span></span>${colorGrupo(t.grupo)}</button><div class="g-desplegable" id="g-detalle-${esc(t.id)}" inert><div class="g-desplegable-interior"><div class="g-muestras"></div></div></div>`;
     const lista=caja.querySelector('.g-muestras');
-    if(!relacionadas.length){const p=document.createElement('p');p.className='g-vacio';p.textContent='Todavía no hay muestras vinculadas a este término.';lista.appendChild(p);}
+    if(!relacionadas.length){const p=document.createElement('p');p.className='g-vacio';p.textContent='Todavía no aparece en ninguna ficha.';lista.appendChild(p);}
     for(const s of relacionadas){
       const b=document.createElement('button');b.type='button';b.className='g-muestra';
       b.innerHTML=`<span>${esc(s.codigo)}</span><span>${esc(s.origen)} <img src="__G_ENLACE__" alt=""/></span>`;
-      b.addEventListener('click',()=>{cambiarSeccion('muestras');seleccionar(s);});lista.appendChild(b);
+      b.addEventListener('click',()=>document.dispatchEvent(new CustomEvent('abrir-ficha-muestra',{detail:s})));lista.appendChild(b); // abre su ficha
     }
     caja.querySelector('.g-fila').addEventListener('click',()=>abrirTermino(t.id));
     filas.set(t.id,{caja,t});return caja;
@@ -165,6 +184,8 @@ function prepararGlosario(){
   }
   document.querySelectorAll('[data-ir-seccion]').forEach(b=>b.addEventListener('click',()=>cambiarSeccion(b.dataset.irSeccion)));
   $('glosarioVolver').addEventListener('click',()=>cambiarSeccion('muestras'));
+  // VOLVER queda sobre el desenfoque de la barra (19/11/2026): sale de la página del Glosario, que va por debajo (z 4 < 9).
+  pantalla.appendChild($('glosarioVolver'));
   $('glosarioBajar').addEventListener('click',()=>scroll.scrollTo({top:$('glosarioIndice').offsetTop-96-200,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
   document.querySelectorAll('[data-glosario-grupo]').forEach(b=>{
     b.innerHTML=contenidoUniverso(b.dataset.glosarioGrupo);b.classList.add('universo-enlace','universo-'+b.dataset.glosarioGrupo);
