@@ -474,16 +474,16 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
         if(!relacionadas.length){const vacio=document.createElement('p');vacio.className='g-vacio';vacio.textContent='Todavía no hay muestras vinculadas a esta especie.';listaU.appendChild(vacio);}
         for(const s of relacionadas){
           const b=document.createElement('button');b.type='button';b.className='g-muestra';
-          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+' '+FLECHA_DIAGONAL+'</span>';
+          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+'</span>';
           b.addEventListener('click',ev=>{ev.stopPropagation();if(tieneFicha(s))abrir('ficha',s);else{irSeccion('muestras');seleccionar(s);}});listaU.appendChild(b);
         }
         fila.after(desp);
-        const indicador=[...celda.querySelectorAll('p')].pop();
+        const indicador=[...celda.querySelectorAll('p')].pop();if(indicador)indicador.innerHTML=CHEVRON_FICHAS;
         celda.classList.add('u-fichas');celda.tabIndex=0;celda.setAttribute('role','button');celda.setAttribute('aria-expanded','false');celda.setAttribute('aria-label','Muestras de '+nombre);
         const alternar=ev=>{
           ev.stopPropagation();const abre=!desp.classList.contains('abierta');
           desp.classList.toggle('abierta',abre);desp.inert=!abre;celda.setAttribute('aria-expanded',String(abre));
-          if(indicador)indicador.textContent=abre?'↑':'+';
+          if(indicador)indicador.innerHTML=CHEVRON_FICHAS;
           if(abre)abiertasU.add(desp);else abiertasU.delete(desp);reacomodarU();
         };
         celda.addEventListener('click',alternar);

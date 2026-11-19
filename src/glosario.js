@@ -102,12 +102,12 @@ function prepararGlosario(){
   function crearFila(t,primera){
     const caja=document.createElement('section');caja.className='g-entrada';caja.dataset.termino=t.id;
     const relacionadas=fichasSimuladasDeTermino(t);
-    caja.innerHTML=`<button type="button" class="g-fila" aria-expanded="false" aria-controls="g-detalle-${esc(t.id)}"><span class="g-bloque">${primera?esc(t.bloque):''}</span><span class="g-numero">${numero(t)}</span><span class="g-termino">${esc(t.termino)}</span><span class="g-cuenta">${String(relacionadas.cantidad??relacionadas.length).padStart(2,'0')} <span class="g-indicador">+</span></span>${colorGrupo(t.grupo)}</button><div class="g-desplegable" id="g-detalle-${esc(t.id)}" inert><div class="g-desplegable-interior"><div class="g-muestras"></div></div></div>`;
+    caja.innerHTML=`<button type="button" class="g-fila" aria-expanded="false" aria-controls="g-detalle-${esc(t.id)}"><span class="g-bloque">${primera?esc(t.bloque):''}</span><span class="g-numero">${numero(t)}</span><span class="g-termino">${esc(t.termino)}</span><span class="g-cuenta">${String(relacionadas.cantidad??relacionadas.length).padStart(2,'0')} <span class="g-indicador">${CHEVRON_FICHAS}</span></span>${colorGrupo(t.grupo)}</button><div class="g-desplegable" id="g-detalle-${esc(t.id)}" inert><div class="g-desplegable-interior"><div class="g-muestras"></div></div></div>`;
     const lista=caja.querySelector('.g-muestras');
     if(!relacionadas.length){const p=document.createElement('p');p.className='g-vacio';p.textContent='Todavía no aparece en ninguna ficha.';lista.appendChild(p);}
     for(const s of relacionadas){
       const b=document.createElement('button');b.type='button';b.className='g-muestra';
-      b.innerHTML=`<span>${esc(s.codigo)}</span><span>${esc(s.origen)} <img src="__G_ENLACE__" alt=""/></span>`;
+      b.innerHTML=`<span>${esc(s.codigo)}</span><span>${esc(s.origen)}</span>`;
       b.addEventListener('click',()=>document.dispatchEvent(new CustomEvent('abrir-ficha-muestra',{detail:s})));lista.appendChild(b); // abre su ficha
     }
     caja.querySelector('.g-fila').addEventListener('click',()=>abrirTermino(t.id));
@@ -126,7 +126,7 @@ function prepararGlosario(){
     for(const [id,{caja}]of filas){
       const abierto=abiertos.has(id);caja.classList.toggle('g-abierta',abierto);
       caja.querySelector('.g-fila').setAttribute('aria-expanded',String(abierto));
-      caja.querySelector('.g-indicador').textContent=abierto?'↑':'+';
+      
       caja.querySelector('.g-desplegable').inert=!abierto;
     }
   }

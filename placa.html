@@ -96,6 +96,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-user-sele
 #guiaBoton .guia-flecha{display:grid;place-items:center;flex:none} /* 19/11/2026: sin el círculo alrededor del chevron (Paco), como en LISTADO COMPLETO */
 /* Chevron (la punta de la flecha del sistema): abajo para abrir, arriba para cerrar. Mismo chevron en LISTADO COMPLETO. */
 #guiaBoton .guia-flecha svg{display:block;rotate:180deg;transition:rotate .35s}
+.chevron-fichas{display:inline-block;vertical-align:middle;margin-left:8px;transition:rotate .35s}[aria-expanded="true"] .chevron-fichas{rotate:180deg}
 #leyenda.cerrada #guiaBoton .guia-flecha svg{rotate:0deg}
 #guiaBoton .guia-titulo{white-space:nowrap;opacity:.7}
 #guiaBoton:focus-visible .guia-titulo{text-decoration:underline;text-underline-offset:4px}
@@ -2862,6 +2863,8 @@ const CATALOGO_ESPECIES = {"Rhodotorula mucilaginosa":{"definicion":"Levadura am
 // Cartel de muestra: referencia Figma 396:8047, con datos y universo cromático propios.
 const RECURSOS_CARTEL={coloresBL:'src/assets/cartel-colores-bl.svg',flecha:'src/assets/cartel-flecha.svg'};
 // 19/11/2026 (Paco): todas las flechas de «ir a» son la de «Ver ficha de muestra» (cartel-flecha.svg, girada 45°).
+// 19/11/2026 (Paco): la cantidad de fichas (especies y Glosario) va con el chevron de LISTADO COMPLETO: abajo cerrado, arriba abierto.
+const CHEVRON_FICHAS='<svg class="chevron chevron-fichas" width="11.04" height="6.27" viewBox="0 0 11.04 6.27" aria-hidden="true"><path d="M.75 .75 5.52 5.52 10.29 .75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const FLECHA_DIAGONAL='<img class="flecha-diagonal" src="src/assets/cartel-flecha.svg" width="11.3995" height="11.0459" alt="">',FLECHA_ARRIBA='<img class="flecha-diagonal flecha-arriba" src="src/assets/cartel-flecha.svg" width="11.3995" height="11.0459" alt="">';
 const PALETA_CARTEL={B:'#e57dab',L:'#f2c75e',M:'#92aa68'};
 const escaparCartel=valor=>String(valor??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -47478,16 +47481,16 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
         if(!relacionadas.length){const vacio=document.createElement('p');vacio.className='g-vacio';vacio.textContent='Todavía no hay muestras vinculadas a esta especie.';listaU.appendChild(vacio);}
         for(const s of relacionadas){
           const b=document.createElement('button');b.type='button';b.className='g-muestra';
-          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+' '+FLECHA_DIAGONAL+'</span>';
+          b.innerHTML='<span>'+esc(s.codigo)+'</span><span>'+esc(s.origen)+'</span>';
           b.addEventListener('click',ev=>{ev.stopPropagation();if(tieneFicha(s))abrir('ficha',s);else{irSeccion('muestras');seleccionar(s);}});listaU.appendChild(b);
         }
         fila.after(desp);
-        const indicador=[...celda.querySelectorAll('p')].pop();
+        const indicador=[...celda.querySelectorAll('p')].pop();if(indicador)indicador.innerHTML=CHEVRON_FICHAS;
         celda.classList.add('u-fichas');celda.tabIndex=0;celda.setAttribute('role','button');celda.setAttribute('aria-expanded','false');celda.setAttribute('aria-label','Muestras de '+nombre);
         const alternar=ev=>{
           ev.stopPropagation();const abre=!desp.classList.contains('abierta');
           desp.classList.toggle('abierta',abre);desp.inert=!abre;celda.setAttribute('aria-expanded',String(abre));
-          if(indicador)indicador.textContent=abre?'↑':'+';
+          if(indicador)indicador.innerHTML=CHEVRON_FICHAS;
           if(abre)abiertasU.add(desp);else abiertasU.delete(desp);reacomodarU();
         };
         celda.addEventListener('click',alternar);
@@ -49960,12 +49963,12 @@ function prepararGlosario(){
   function crearFila(t,primera){
     const caja=document.createElement('section');caja.className='g-entrada';caja.dataset.termino=t.id;
     const relacionadas=fichasSimuladasDeTermino(t);
-    caja.innerHTML=`<button type="button" class="g-fila" aria-expanded="false" aria-controls="g-detalle-${esc(t.id)}"><span class="g-bloque">${primera?esc(t.bloque):''}</span><span class="g-numero">${numero(t)}</span><span class="g-termino">${esc(t.termino)}</span><span class="g-cuenta">${String(relacionadas.cantidad??relacionadas.length).padStart(2,'0')} <span class="g-indicador">+</span></span>${colorGrupo(t.grupo)}</button><div class="g-desplegable" id="g-detalle-${esc(t.id)}" inert><div class="g-desplegable-interior"><div class="g-muestras"></div></div></div>`;
+    caja.innerHTML=`<button type="button" class="g-fila" aria-expanded="false" aria-controls="g-detalle-${esc(t.id)}"><span class="g-bloque">${primera?esc(t.bloque):''}</span><span class="g-numero">${numero(t)}</span><span class="g-termino">${esc(t.termino)}</span><span class="g-cuenta">${String(relacionadas.cantidad??relacionadas.length).padStart(2,'0')} <span class="g-indicador">${CHEVRON_FICHAS}</span></span>${colorGrupo(t.grupo)}</button><div class="g-desplegable" id="g-detalle-${esc(t.id)}" inert><div class="g-desplegable-interior"><div class="g-muestras"></div></div></div>`;
     const lista=caja.querySelector('.g-muestras');
     if(!relacionadas.length){const p=document.createElement('p');p.className='g-vacio';p.textContent='Todavía no aparece en ninguna ficha.';lista.appendChild(p);}
     for(const s of relacionadas){
       const b=document.createElement('button');b.type='button';b.className='g-muestra';
-      b.innerHTML=`<span>${esc(s.codigo)}</span><span>${esc(s.origen)} <img src="src/assets/glosario-enlace.svg" alt=""/></span>`;
+      b.innerHTML=`<span>${esc(s.codigo)}</span><span>${esc(s.origen)}</span>`;
       b.addEventListener('click',()=>document.dispatchEvent(new CustomEvent('abrir-ficha-muestra',{detail:s})));lista.appendChild(b); // abre su ficha
     }
     caja.querySelector('.g-fila').addEventListener('click',()=>abrirTermino(t.id));
@@ -49984,7 +49987,7 @@ function prepararGlosario(){
     for(const [id,{caja}]of filas){
       const abierto=abiertos.has(id);caja.classList.toggle('g-abierta',abierto);
       caja.querySelector('.g-fila').setAttribute('aria-expanded',String(abierto));
-      caja.querySelector('.g-indicador').textContent=abierto?'↑':'+';
+      
       caja.querySelector('.g-desplegable').inert=!abierto;
     }
   }
