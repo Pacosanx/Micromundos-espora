@@ -10,7 +10,7 @@ function prepararTuPlaca(){
   pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones" hidden></div></div><aside id="tpBiblioteca"></aside>
     <div id="tpBoard" class="tp-board" aria-label="Tu placa. Arrastrá una forma de la biblioteca para sembrarla; arrastrá sobre la placa para elegir varias" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><canvas id="tpEscena" class="tp-escena" aria-hidden="true"></canvas><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><svg id="tpPerilla" class="tp-perilla" width="784" height="784" viewBox="0 0 784 784"></svg><p id="tpVacia">ARRASTRÁ UNA COLONIA\nHASTA LA PLACA</p><div id="tpMenu"></div><div id="tpEditor"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
     <button id="tpGenerar" class="tp-generar" type="button" aria-haspopup="true">GENERAR COMPOSICIÓN ↻</button><p class="tp-generar-ayuda" id="tpGenerarAyuda">MANTENÉ APRETADO PARA ELEGIR LA ESTRUCTURA</p><div id="tpEstructuras" class="tp-menu tp-menu-estructuras tp-estructuras" hidden role="menu" aria-label="Estructura de la composición"><i class="tp-estructuras-eje" aria-hidden="true"></i></div><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA →</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
-    <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a><button id="tpVerOtras" type="button">VER PLACAS DE OTRAS PERSONAS →</button></div></div></div><section class="tp-otras" id="tpOtras" hidden role="dialog" aria-modal="true" aria-labelledby="tpOtrasTitulo"><header class="tp-otras-cabeza"><span>[04.2]</span><h2 id="tpOtrasTitulo">Placas de otras personas</h2><p>Simulación: las placas que no son tuyas se generan acá. Todavía no se guardan las de otras visitas.</p></header><ol class="tp-otras-grilla"></ol><div class="tp-otras-acciones"><button id="tpOtrasVolver" type="button">VOLVER A COMPONER</button></div></section>`;
+    <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a><button id="tpVerOtras" type="button">VER PLACAS DE OTRAS PERSONAS →</button></div></div></div><section class="tp-otras" id="tpOtras" hidden role="dialog" aria-modal="true" aria-labelledby="tpOtrasTitulo"><header class="tp-otras-cabeza"><span>[04.2]</span><h2 id="tpOtrasTitulo">Placas de otras personas</h2><p>Las placas que armaron hoy otras personas que pasaron por Micromundos.</p></header><ol class="tp-otras-grilla"></ol><div class="tp-otras-acciones"><button id="tpOtrasVolver" type="button">VOLVER A COMPONER</button></div></section>`;
   const board=$('tpBoard'),capa=$('tpColonias'),items=[],elementos=new Map(),historico=[],futuro=[];
   let zoom=100,giro=0,secuencia=0,seleccionado=null,seleccion=[],arrastre=null,siembra=null,lazo=null,antes=null,frame=0,pedido=false,intensidad=85,estructura='propuesta';
   const punto=ev=>{const r=board.getBoundingClientRect();return{x:(ev.clientX-r.left)*784/r.width,y:(ev.clientY-r.top)*784/r.height};};
@@ -31,6 +31,14 @@ function prepararTuPlaca(){
   const snapshot=()=>JSON.stringify({items,contador:secuencia,intensidad,estructura,zoom,giro});
   function guardar(){try{localStorage.setItem(clave,snapshot());}catch{}}
   function iniciarCambio(){if(antes===null)antes=snapshot();}
+  // Interruptor de REACCIONES (19/11/2026, Paco): círculo negro y palabra en negrita = activas; círculo en trazo y palabra
+  // regular más clara = apagadas. Apagadas, las colonias no reaccionan entre sí (intensidad 0). Entra en el historial.
+  const INTENSIDAD_REACCIONES=85;
+  const interruptor=document.createElement('button');interruptor.type='button';interruptor.id='tpInterruptorReacciones';
+  interruptor.innerHTML='<i aria-hidden="true"></i><span>REACCIONES</span>';pagina.appendChild(interruptor);
+  const pintarInterruptor=()=>{const activas=intensidad>0;interruptor.classList.toggle('activas',activas);interruptor.setAttribute('aria-pressed',String(activas));
+    interruptor.setAttribute('aria-label','Reacciones '+(activas?'activas: tocar para apagarlas':'apagadas: tocar para activarlas'));};
+  interruptor.addEventListener('click',()=>{iniciarCambio();intensidad=intensidad>0?0:INTENSIDAD_REACCIONES;dibujar();terminarCambio();});
   function terminarCambio(){if(antes!==null&&antes!==snapshot()){historico.push(antes);if(historico.length>60)historico.shift();futuro.length=0;}antes=null;actualizar();guardar();}
   function restaurar(texto){const s=JSON.parse(texto);zoom=Number.isFinite(s.zoom)?s.zoom:100;giro=Number.isFinite(s.giro)?s.giro:0;items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);intensidad=Number.isFinite(s.intensidad)?s.intensidad:85;estructura=s.estructura||estructura;seleccionado=null;seleccion=[];cerrarMenus();dibujar();actualizar();guardar();}
   function deshacer(){if(historico.length){futuro.push(snapshot());restaurar(historico.pop());}}
@@ -90,7 +98,7 @@ function prepararTuPlaca(){
   }
   function solicitarDibujo(){if(!pedido){pedido=true;frame=requestAnimationFrame(dibujar);}}
   let ayudaLazo=false;try{ayudaLazo=sessionStorage.getItem('micromundos-ayuda-lazo')==='1';}catch{}
-  function actualizar(){const n=items.length;if(n>=2&&!ayudaLazo&&!lazo){ayudaLazo=true;try{sessionStorage.setItem('micromundos-ayuda-lazo','1');}catch{}setTimeout(()=>{if(!$('tpVistaRecuerdo').hidden)return;ayudaTuPlaca([['','Arrastrá sobre la placa para elegir varias colonias a la vez.']],{x:1320-190,y:952,ancho:380,donde:'arriba',flecha:190,duracion:7000});},700);}$('tpCuenta').textContent=n+(n===1?' colonia':' colonias');$('tpVacia').hidden=!!n;$('tpRecuerdo').disabled=!n;$('tpDeshacer').disabled=!historico.length;$('tpRehacer').disabled=!futuro.length;$('tpReiniciar').disabled=!n;}
+  function actualizar(){pintarInterruptor();const n=items.length;if(n>=2&&!ayudaLazo&&!lazo){ayudaLazo=true;try{sessionStorage.setItem('micromundos-ayuda-lazo','1');}catch{}setTimeout(()=>{if(!$('tpVistaRecuerdo').hidden)return;ayudaTuPlaca([['','Arrastrá sobre la placa para elegir varias colonias a la vez.']],{x:1320-190,y:952,ancho:380,donde:'arriba',flecha:190,duracion:7000});},700);}$('tpCuenta').textContent=n+(n===1?' colonia':' colonias');$('tpVacia').hidden=!!n;$('tpRecuerdo').disabled=!n;$('tpDeshacer').disabled=!historico.length;$('tpRehacer').disabled=!futuro.length;$('tpReiniciar').disabled=!n;}
   function abrirMenu(it){
     const enGrupo=seleccion.length>1&&seleccion.includes(it);
     if(seleccionado===it&&!$('tpMenu').hidden){menu.cerrar();if(!enGrupo)seleccion=[];dibujar();return;}
@@ -360,6 +368,13 @@ function prepararTuPlaca(){
   // Las placas guardadas en este equipo (las guarda la página del recuerdo, tu-placa-nombre.js, con el nombre) aparecen primero: para quien viene después,
   // son placas de otra persona. El reinicio del kiosco no las borra. El resto se genera con GENERAR (misma composición y motor).
   const CLAVE_PROPIAS='micromundos-placas-guardadas',MAX_PROPIAS=4,TOTAL_OTRAS=10;
+  const NOMBRES_OTRAS=['Cami','Nacho','Mili','Juani','Agus','Abril','Flor','Franco','Marcelo'];
+  function otrasDeHoy(){
+    const ahora=new Date(),dia=ahora.getFullYear()*10000+(ahora.getMonth()+1)*100+ahora.getDate();
+    let semilla=dia;const azar=()=>((semilla=(Math.imul(1664525,semilla)+1013904223)>>>0)/4294967296);
+    const inicio=new Date(ahora);inicio.setHours(9,30,0,0);const fin=Math.max(inicio.getTime()+60e3*NOMBRES_OTRAS.length,ahora.getTime()-5*60e3);
+    return NOMBRES_OTRAS.map((nombre,i)=>({nombre,semilla:i,fecha:inicio.getTime()+azar()*(fin-inicio.getTime())})).sort((a,b)=>b.fecha-a.fecha);
+  }
   const leerPropias=()=>{try{const l=JSON.parse(localStorage.getItem(CLAVE_PROPIAS)||'[]');return Array.isArray(l)?l.filter(p=>typeof p?.img==='string'):[];}catch{return [];}};
   const simuladas=new Map();
   function placaSimulada(n,lado){
@@ -379,8 +394,11 @@ function prepararTuPlaca(){
     const propias=leerPropias().slice().reverse(),pendientes=[];
     propias.forEach(p=>{const li=document.createElement('li');li.className='tp-otras-propia';const im=document.createElement('img');im.src=p.img;im.alt='Placa guardada en esta pantalla';
       const t=document.createElement('p');t.textContent=hora(p.fecha,p.nombre);li.append(im,t);ol.appendChild(li);});
-    for(let n=0;n<TOTAL_OTRAS-propias.length;n++){const li=document.createElement('li');const caja=document.createElement('div');caja.className='tp-otras-lienzo';
-      const t=document.createElement('p');t.textContent='Placa '+String(n+1).padStart(2,'0');li.append(caja,t);li.setAttribute('aria-label','Placa '+(n+1)+', simulada');ol.appendChild(li);pendientes.push([n,caja]);}
+    // 19/11/2026 (Paco): las de otras personas llevan nombre y una hora de hoy (al azar, fija durante el día y anterior a ahora),
+    // de la más reciente a la más vieja. Siguen siendo composiciones generadas (todas distintas, con las reacciones activas).
+    const otras=otrasDeHoy().slice(0,Math.max(0,TOTAL_OTRAS-propias.length));
+    for(let n=0;n<otras.length;n++){const li=document.createElement('li');const caja=document.createElement('div');caja.className='tp-otras-lienzo';
+      const t=document.createElement('p');t.textContent=hora(otras[n].fecha,otras[n].nombre);li.append(caja,t);li.setAttribute('aria-label','Placa de '+otras[n].nombre);ol.appendChild(li);pendientes.push([otras[n].semilla,caja]);}
     // Se dibujan de a una para no trabar la pantalla.
     const siguiente=()=>{const p=pendientes.shift();if(!p||$('tpOtras').hidden)return;const [n,caja]=p;let cv=simuladas.get(n);if(!cv){cv=placaSimulada(n,400);simuladas.set(n,cv);}caja.appendChild(cv);setTimeout(siguiente,30);};
     setTimeout(siguiente,60);
