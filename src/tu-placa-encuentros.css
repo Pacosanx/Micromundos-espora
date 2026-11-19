@@ -101,3 +101,5 @@
 
 /* La zona táctil de cada colonia es su círculo (la colonia ocupa el 60 % de su caja): el resto de la caja deja pasar el lazo y la siembra. */
 #tpColonias .tp-colonia{clip-path:circle(31% at 50% 50%)}
+/* La reacción, dibujada en su cartel (19/11/2026). */
+.cartel-reaccion .tp-reaccion-figura{display:block;width:354px;height:200px;margin:-8px 0 16px}
