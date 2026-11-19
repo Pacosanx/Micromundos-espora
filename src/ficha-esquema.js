@@ -47,7 +47,7 @@
     for (const v of viejos) v.style.visibility = 'hidden';
     conexiones.dataset.esquema = '1';
 
-    const W = cont.offsetWidth || 1920, H = Math.max(420, abajo - arriba), cy = cajaCome.y + cajaCome.h / 2 - arriba; // a la altura del COME original
+    const W = cont.offsetWidth || 1920, H = Math.max(420, abajo - arriba), cy = cajaCome.y + cajaCome.h / 2 - arriba + 96; // 96 px más abajo que el COME original (Paco, 19/11: estaba muy arriba)
     const caja = document.createElement('div');
     caja.className = 'ficha-esquema';
     caja.style.cssText = `position:absolute;left:0;top:${arriba}px;width:${W}px;height:${H}px`;
@@ -71,7 +71,11 @@
       circulo(x, RE);
       // El dibujo original de la especie, movido al centro de su círculo.
       const dib = propios[i], c = cajasPropias[i];
-      if (dib && c) { const dx = x - (c.x + c.w / 2), dy = (arriba + cy) - (c.y + c.h / 2); dib.style.visibility = 'visible'; dib.style.translate = `${dx}px ${dy}px`; }
+      if (dib && c) { const dx = x - (c.x + c.w / 2), dy = (arriba + cy) - (c.y + c.h / 2); dib.style.visibility = 'visible'; dib.style.translate = `${dx}px ${dy}px`;
+        // Más chico, para que entre holgado en su círculo (Paco, 19/11).
+        const esc = Math.min(1, RE * 1.3 / Math.max(c.w, c.h)); dib.style.transformOrigin = 'center'; dib.style.transformBox = 'fill-box'; dib.style.scale = esc;
+        // Recentrar después de achicar (el origen del escalado no siempre cae en el centro del dibujo).
+        const n = rel(dib), ex = x - (n.x + n.w / 2), ey = (arriba + cy) - (n.y + n.h / 2); dib.style.translate = `${dx + ex}px ${dy + ey}px`; }
       const d = document.createElement('div'); d.className = 'fe-especie'; d.style.cssText = `left:${x - 80}px;top:${cy + RE + 6}px;width:160px`; d.textContent = e.textContent.trim(); caja.appendChild(d);
     });
     flecha(xCome + R + 12, xPar - sep - RE - 10, rotCome);
