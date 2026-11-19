@@ -189,5 +189,5 @@ function prepararGlosario(){
   renderizar();
   detalles=prepararPantallasDetalle({irSeccion:cambiarSeccion,abrirTermino,
     impulsarReferencias:delta=>{for(const {agua}of carteles.values())agua.impulsar(delta);}});
-  document.addEventListener('abrir-ficha-muestra',()=>detalles.abrirFicha());
+  document.addEventListener('abrir-ficha-muestra',ev=>detalles.abrirFicha(ev.detail));
 }

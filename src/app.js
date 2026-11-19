@@ -505,7 +505,7 @@ $('fichaX').addEventListener('click', ev => { ev.stopPropagation(); seleccionar(
 cancelarDeslizamientoFicha=activarArrastreCartel(ficha,pos=>{fichaManual=pos;ubicarFicha();},()=>seleccionar(null));
 
 fichaCo.addEventListener('click',ev=>{
-  if(ev.target.closest('[data-ficha-completa]')){document.dispatchEvent(new Event('abrir-ficha-muestra'));return;}
+  if(ev.target.closest('[data-ficha-completa]')){document.dispatchEvent(new CustomEvent('abrir-ficha-muestra',{detail:seleccion}));return;}
   const boton=ev.target.closest('#fichaMas');if(!boton)return;
   const abrir=boton.getAttribute('aria-expanded')!=='true';
   boton.setAttribute('aria-expanded',String(abrir));
