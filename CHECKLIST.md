@@ -128,6 +128,7 @@ El diseño final se monta en una pantalla táctil de uso público, para visitant
 - [ ] Quitar «LISTADO COMPLETO» en el momento MUESTRARIO (pedido de Paco, 19/11).
 - [ ] Probar si en MUESTRARIO queda bien el código de cada muestra debajo de su colonia (pedido de Paco, 19/11).
 - [ ] Cartelitos de ayuda: que también floten un poco; se quitan arrastrándolos y no llevan X para cerrar (pedido de Paco, 19/11).
+- [ ] Revisar el término de cada reacción de TU PLACA: hoy hay dos «Simbiosis» (moho + moho; bacteria + levadura) y dos «Rechazo» (moho + levadura; bacteria + bacteria). Que ninguno se repita (pedido de Paco, 19/11).
 
 ## Cómo actualizar el sitio
 1. Rearmar `placa.html` con `armar.bat`.
