@@ -37,3 +37,10 @@
 .tp-perilla-carril,.tp-perilla-lleno,.tp-perilla-titulo,.tp-estructuras svg,.tp-estructuras span,
 #tuPlaca .tp-editor-pestanas button,#tuPlaca .tp-editor-pestanas button[aria-selected="true"]::after,#tuPlaca .tp-editor-listo,
 #tuPlaca .tp-pie h1,.tp-pie button{filter:none!important}
+
+/* Contraste (medido el 18/11 sobre el fondo crema #F2F0E8; ver CONTRASTE en REVISION_RAMAS).
+   Los estados inactivos siguen viéndose apagados, pero se leen. Las indicaciones llegan a 4,5:1. */
+#tuPlaca button:disabled,.tp-pie button:disabled{opacity:.55!important}                      /* antes .30 → 1,98:1; ahora ≈ 4:1 */
+.tp-biblioteca__tab[aria-selected="false"],#tpBiblioteca .tp-biblioteca__mode[aria-pressed="false"]{opacity:.6!important} /* antes .45 → 3:1 */
+#tpVacia,.tp-generar-ayuda,#tpGenerarAyuda{opacity:.75!important}                              /* indicaciones: antes .50–.55 → 3,5–4:1 */
+.bloque.filtrando .item:not(.activo) span,.bloque.filtrando .item:not(.activo) .ic{opacity:.55!important} /* leyenda: antes .35 → 2,3:1 */
