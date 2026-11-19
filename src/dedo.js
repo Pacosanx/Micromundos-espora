@@ -13,7 +13,7 @@
     .modo-dedo, .modo-dedo * { cursor: none !important; }
     .modo-dedo, .modo-dedo body { -webkit-user-select: none; user-select: none; }
     #dedoYema, .dedo-rastro { position: fixed; left: 0; top: 0; z-index: 2147483600; pointer-events: none; border-radius: 50%; }
-    #dedoYema { width: 44px; height: 44px; margin: -22px 0 0 -22px; background: rgb(13 15 23 / 14%); box-shadow: 0 0 0 1.5px rgb(255 255 255 / 70%), 0 0 0 3px rgb(13 15 23 / 18%);
+    #dedoYema { width: 36px; height: 36px; margin: -18px 0 0 -18px; background: rgb(13 15 23 / 14%); box-shadow: 0 0 0 1.5px rgb(255 255 255 / 70%), 0 0 0 3px rgb(13 15 23 / 18%);
       transition: transform .12s, background-color .12s, opacity .25s; opacity: 0; }
     #dedoYema.visible { opacity: 1; }
     #dedoYema.apretado { transform: scale(.82); background: rgb(13 15 23 / 32%); }
