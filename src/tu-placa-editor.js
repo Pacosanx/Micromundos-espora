@@ -91,7 +91,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
     const n=el('text',{class:clase,'dominant-baseline':'middle'}),tp=document.createElementNS(ns,'textPath');
     tp.setAttribute('href','#'+id);tp.setAttribute('startOffset','50%');tp.setAttribute('text-anchor','middle');tp.textContent=t;n.appendChild(tp);return n;
   }
-  const ladoEtiqueta=a=>{const c=Math.cos(rad(a));return c>.3?'start':c<-.3?'end':'middle';};
+  const ladoEtiqueta=a=>{const c=Math.cos(rad(a));return c>.5?'start':c<-.5?'end':'middle';}; // 19/11: TAMAÑO DE MANCHAS centrado
   function boton(x,y,html,etiqueta,alTocar,presionado){
     const b=document.createElement('button');b.type='button';b.className='tp-editor-miniatura';b.setAttribute('aria-label',etiqueta);if(presionado!==undefined)b.setAttribute('aria-pressed',String(presionado));
     b.style.left=x+'px';b.style.top=y+'px';b.innerHTML=html;b.addEventListener('pointerdown',ev=>{ev.stopPropagation();alTocar();});
@@ -133,7 +133,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
         el('circle',{cx:C,cy:C,r:R0+26,class:'tp-editor-carril'});
         el('line',{x1:x0,y1:y0,x2:x,y2:y,class:'tp-editor-lleno'});
         const ux=Math.cos(rad(a)),uy=Math.sin(rad(a)),[ax,ay]=pt(a,r-16),bx=ax-ux*9-uy*6,by=ay-uy*9+ux*6,cx=ax-ux*9+uy*6,cy=ay-uy*9-ux*6;el('path',{d:`M${bx},${by}L${ax},${ay}L${cx},${cy}`,class:'tp-editor-lleno'});
-        tirador(x,y,id,'',activo);if(activo||!e){const [lx,ly]=pt(a,r+30);texto(lx,ly,'EXPANSIÓN','tp-editor-etiqueta',ladoEtiqueta(a));if(e){const [vx,vy]=pt(a,r+48);texto(vx,vy,c.mostrar(e),'tp-editor-valor',ladoEtiqueta(a));}}
+        tirador(x,y,id,'',activo);if(activo||!e){const [lx,ly]=pt(a,r+30);texto(lx,ly,'EXPANSIÓN','tp-editor-etiqueta',ladoEtiqueta(a));if(e){const [vx,vy]=pt(a+(Math.cos(rad(a))>0?-1:1)*26/r*180/Math.PI,r);texto(vx,vy,c.mostrar(e),'tp-editor-valor');}}
       }else if(c.tipo==='corte'){
         // Recorte del motor (softCut): «Dirección del recorte» = dónde empieza, «Parte visible» = cuánto se ve.
         const rc=R0+122,a0=giroMarco()-90+(valor('cutAngle')||0),arc=valor('cutOpening');
@@ -146,7 +146,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
         const lineal=valor('gradient')==='linear',v=valor('midpoint'),a=lineal?valor('angle')+giroMarco():-40,r=v/100*R0,[x,y]=pt(a,r);
         if(lineal){const [p0x,p0y]=pt(a+180,R0),[p1x,p1y]=pt(a,R0);el('line',{x1:p0x,y1:p0y,x2:p1x,y2:p1y,class:'tp-editor-carril'});}
         else{const [p1x,p1y]=pt(a,R0);el('line',{x1:C,y1:C,x2:p1x,y2:p1y,class:'tp-editor-carril'});el('circle',{cx:C,cy:C,r:Math.max(1,r),class:'tp-editor-borde-interior'});}
-        tirador(x,y,id,'',activo);const [lx,ly]=pt(a,r+24);texto(lx,ly,lineal?'COLOR MEDIO · DIRECCIÓN':'COLOR MEDIO','tp-editor-etiqueta',ladoEtiqueta(a));
+        tirador(x,y,id,'',activo);const [lx,ly]=pt(a,r+24);texto(lx,ly,'COLOR MEDIO','tp-editor-etiqueta',ladoEtiqueta(a));
       }else if(c.tipo==='miniaturas'){
         const actual=valor(c.key)??'none';
         c.opciones.forEach(([op,nombre],n)=>{const [x,y]=pt(c.a0+n*c.paso,RD);

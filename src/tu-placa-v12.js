@@ -56,6 +56,10 @@ function prepararTuPlaca(){
     quitar:()=>{iniciarCambio();quitar(seleccionado);terminarCambio();},
     variar:()=>{for(const it of elegidas()){it.seed=Math.floor(Math.random()*1000);sincronizarHijos(it);}dibujar();},
     transformar:()=>{if(!seleccionado)return;menu.cerrar();editor.abrir();animarPerilla(false);},
+    // 19/11/2026: GIRAR solo cuando la forma no es simétrica: más de 50 % de irregularidad, dos lóbulos o más, recorte o expansión (Paco).
+    girable:()=>{if(!seleccionado)return false;const st=MotorMuestrario.estiloColonia(estiloBase(seleccionado),migrarAjustes(seleccionado.ajustes)||{},familiaDe(seleccionado));
+      const recortable=!['pair','band','capsule'].includes(st.shape);
+      return st.irregularity>50||st.studyLobes>=2||(recortable&&st.cutOpening<360)||(st.shape==='fan'&&(st.detail||0)>0);},
     cambiar:(k,v)=>{
       for(const it of elegidas()){
         if(k==='duplicar'){let hs=hijos(it);while(hs.length<v&&items.length<120){const h=crear(modelo(it),it.x,it.y,it.tamano,it.id);if(!h)break;if(it.estilo){h.estilo={...it.estilo};h.grupo=it.grupo;}h.sinReacciones=it.sinReacciones;hs.push(h);}while(hs.length>v){const h=hs.pop();items.splice(items.indexOf(h),1);}}

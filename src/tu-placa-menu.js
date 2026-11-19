@@ -1,8 +1,8 @@
 // Lógica circular del boceto de Claude; superficies e iconos de Figma 560:20341.
 // Nivel 1 del menú contextual (18/11/2026): cómo está la colonia en la placa.
 // Tamaño, Girar, Foco, Opacidad y Multiplicar se ajustan girando sobre el aro; Variación se toca (tira el dado).
-// TRANSFORMAR (cómo es la colonia) abre el nivel 2: va relleno y con la flecha de abrir para que se lea distinto.
-function montarMenuTuPlaca(host,{obtener,cambiar,quitar,empezar,terminar,variar=()=>{},transformar=()=>{}}){
+// TRANSFORMAR (cómo es la colonia) abre el nivel 2: lleva un marco propio (doble anillo) para que se lea distinto.
+function montarMenuTuPlaca(host,{obtener,cambiar,quitar,empezar,terminar,variar=()=>{},transformar=()=>{},girable=()=>true}){
   // 19/11/2026: sin VARIACIÓN (Paco).
   const nombres={transformar:'Transformar',duplicar:'Multiplicar',tamano:'Tamaño',girar:'Girar',foco:'Foco',opacidad:'Opacidad'};
   const orden=Object.keys(nombres),n=orden.length,angulos=Object.fromEntries(orden.map((k,i)=>[k,90+i*360/n]));
@@ -12,7 +12,8 @@ function montarMenuTuPlaca(host,{obtener,cambiar,quitar,empezar,terminar,variar=
   host.innerHTML=`<img class="tp-menu-circunferencia" src="${ruta}tp-menu-ring.svg" alt=""><svg class="tp-menu-guia" viewBox="-140 -140 280 280" aria-hidden="true"><path class="tp-menu-arco"/><path class="tp-menu-compacto"/><path class="tp-menu-flechas"/><path class="tp-menu-toque"/></svg>`;
   const svg=host.querySelector('svg'),arco=svg.querySelector('.tp-menu-arco'),compacto=svg.querySelector('.tp-menu-compacto'),flechas=svg.querySelector('.tp-menu-flechas'),toque=svg.querySelector('.tp-menu-toque');
   const botones=new Map();
-  const icono=k=>k==='opacidad'?'tp-orden.svg':'tp-'+k+'.svg';
+  // 19/11/2026: OPACIDAD y MULTIPLICAR tenían los íconos cruzados (Paco). Todos los botones usan la misma superficie.
+  const icono=k=>k==='opacidad'?'tp-duplicar.svg':k==='duplicar'?'tp-orden.svg':'tp-'+k+'.svg';
   function tocar(k){
     if(k==='transformar'){activo=null;transformar();return;}
     empezar();variar();terminar();
@@ -22,7 +23,7 @@ function montarMenuTuPlaca(host,{obtener,cambiar,quitar,empezar,terminar,variar=
   }
   for(const k of orden){
     const b=document.createElement('button');b.type='button';b.dataset.accion=k;b.className='tp-menu-boton';
-    b.innerHTML=`<img class="tp-menu-superficie" alt="" src="${ruta}tp-boton${k==='tamano'?'-tamano':k==='duplicar'?'-duplicar':''}.svg"><img class="tp-menu-icono" alt="" src="${ruta}${icono(k)}"><span>${nombres[k]}</span><output hidden></output>`;
+    b.innerHTML=`<img class="tp-menu-superficie" alt="" src="${ruta}tp-boton.svg"><img class="tp-menu-icono" alt="" src="${ruta}${icono(k)}"><span>${nombres[k]}</span><output hidden></output>`;
     b.setAttribute('aria-label',k==='variacion'?'Variación: tocar para otra versión':k==='transformar'?'Transformar: abre el editor de forma, borde, color y materia':nombres[k]);host.appendChild(b);botones.set(k,b);
     b.addEventListener('pointerdown',ev=>{ev.stopPropagation();if(b.disabled)return;
       if(deToque.has(k)){ev.preventDefault();if(activo){activo=null;dibujar();}tocar(k);return;}
@@ -39,6 +40,25 @@ function montarMenuTuPlaca(host,{obtener,cambiar,quitar,empezar,terminar,variar=
   const punto=a=>[Math.cos(a*Math.PI/180)*R,Math.sin(a*Math.PI/180)*R];
   const segmento=(a,b)=>{const p=punto(a),q=punto(b);return `M${p[0]},${p[1]}A${R},${R} 0 ${b-a>180?1:0} 1 ${q[0]},${q[1]}`;};
   function activar(k){activo=k;const a0=angulos[k]-normalizado(k)*180;geometria={a0,comp:a0+270};dibujar();}
+  // 19/11/2026: los botones se mueven siempre por el aro (se anima el ángulo, no la posición en línea recta) y vuelven
+  // por el mismo camino. Mientras se arrastra, van directo.
+  let anim=0;
+  function ubicar(b,a,s){
+    const [x,y]=punto(a);b.style.transform=`translate(${x}px,${y}px) scale(${s})`;
+    // 9: nombre afuera del aro, en la dirección del botón, con un ancla que gira de a poco (sin saltos al moverse).
+    const r=a*Math.PI/180,ux=Math.cos(r),uy=Math.sin(r),f=v=>Math.max(-1,Math.min(1,v*2.2));
+    const texto=b.querySelector('span');texto.style.left=(24+ux*36)+'px';texto.style.top=(24+uy*36)+'px';texto.style.right='auto';
+    texto.style.transform=`translate(${-50+50*f(ux)}%,${-50+50*f(uy)}%)`;
+  }
+  function moverBotones(directo){
+    cancelAnimationFrame(anim);anim=0;
+    const quieto=directo||matchMedia('(prefers-reduced-motion: reduce)').matches;const t0=performance.now(),D=480;
+    for(const b of botones.values()){if(b._a===undefined||quieto){b._a=b._destino.a;b._s=b._destino.s;}b._desde={a:b._a,s:b._s};}
+    const paso=ahora=>{const t=Math.min(1,(ahora-t0)/D),e=1-Math.pow(1-t,3);
+      for(const b of botones.values()){const d=((b._destino.a-b._desde.a)%360+540)%360-180;b._a=b._desde.a+d*e;b._s=b._desde.s+(b._destino.s-b._desde.s)*e;ubicar(b,b._a,b._s);}
+      anim=t<1?requestAnimationFrame(paso):0;};
+    paso(quieto?t0+D:t0);
+  }
   function dibujar(){
     if(!obtener())return;
     host.classList.toggle('tp-menu-activo',!!activo);host.querySelector('.tp-menu-circunferencia').hidden=!!activo;
@@ -47,20 +67,21 @@ function montarMenuTuPlaca(host,{obtener,cambiar,quitar,empezar,terminar,variar=
       flechas.setAttribute('d',[0,180].map((v,i)=>{const a=geometria.a0+v,p=punto(a),rad=(a+(i?90:-90))*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad);return `M${p[0]-dx*10-dy*5},${p[1]-dy*10+dx*5}L${p[0]},${p[1]}L${p[0]-dx*10+dy*5},${p[1]-dy*10-dx*5}`;}).join(''));
     }
     for(const [k,b]of botones){
-      b.disabled=false;b.title='';
+      const sinGiro=k==='girar'&&!girable();b.disabled=sinGiro;b.classList.toggle('tp-menu-inactivo',sinGiro);
+      b.title=sinGiro?'Girar: disponible con más de 50 % de irregularidad, dos lóbulos o más, recorte o expansión':'';
       let a=angulos[k];if(activo){const j=(orden.indexOf(k)-orden.indexOf(activo)+n)%n;a=k===activo?geometria.a0+normalizado(k)*180:geometria.comp-75+(j-1)*30;}
-      const [x,y]=punto(a),replegado=!!activo&&k!==activo;b.style.transform=`translate(${x}px,${y}px) scale(${replegado?.72:1})`;b.classList.toggle('tp-menu-secundario',replegado);
+      const replegado=!!activo&&k!==activo;b._destino={a,s:replegado?.72:1};b.classList.toggle('tp-menu-secundario',replegado);
       b.classList.toggle('tp-menu-elegido',k===activo);b.setAttribute('aria-pressed',String(k===activo));
-      const texto=b.querySelector('span');texto.style.left=x>23?'55px':x< -23?'auto':'24px';texto.style.right=x< -23?'55px':'auto';texto.style.top=y< -23?'-19px':y>23?'48px':'15px';texto.style.transform=Math.abs(x)<=23?'translateX(-50%)':'none';
       const valor=b.querySelector('output');if(!deToque.has(k))valor.hidden=k!==activo;
       if(k===activo){const s=obtener();valor.textContent=k==='tamano'?Math.round(s.escala)+'%':k==='girar'?Math.round(s.rot)+'°':k==='foco'?s.foco:k==='opacidad'?Math.round(s.opacidad??100)+'%':'+'+s.duplicados;b.setAttribute('aria-label',nombres[k]+': '+valor.textContent);}
     }
+    moverBotones(!!arrastre);
   }
   function mover(ev){if(!arrastre)return;const r=host.getBoundingClientRect(),a=Math.atan2(ev.clientY-r.top,ev.clientX-r.left)*180/Math.PI,c=geometria.a0+90,delta=((a-c+540)%360+360)%360-180;
     if(Math.hypot(ev.clientX-arrastre.x,ev.clientY-arrastre.y)>5)arrastre.movido=true;asignar(activo,(delta+90)/180);dibujar();}
   function iniciar(ev,saltar){ev.preventDefault();ev.stopPropagation();empezar();arrastre={x:ev.clientX,y:ev.clientY,movido:false};host.classList.add('tp-menu-ajustando');if(saltar){mover(ev);arrastre.movido=true;}host.setPointerCapture?.(ev.pointerId);}
   function soltar(){if(!arrastre)return;const movido=arrastre.movido,nuevo=arrastre.recienActivado;arrastre=null;host.classList.remove('tp-menu-ajustando');terminar();if(!movido&&!nuevo)activo=null;dibujar();}
   toque.addEventListener('pointerdown',ev=>iniciar(ev,true));host.addEventListener('pointermove',mover);host.addEventListener('pointerup',soltar);host.addEventListener('pointercancel',soltar);
-  function cerrar(){host.hidden=true;activo=null;arrastre=null;host.classList.remove('tp-menu-ajustando');}
+  function cerrar(){host.hidden=true;activo=null;arrastre=null;host.classList.remove('tp-menu-ajustando');cancelAnimationFrame(anim);anim=0;for(const b of botones.values())b._a=undefined;}
   return {abrir(x,y){activo=null;host.hidden=false;this.situar(x,y);dibujar();},situar(x,y){host.style.left=x+'px';host.style.top=y+'px';},cerrar,actualizar:dibujar};
 }
