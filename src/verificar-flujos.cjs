@@ -81,8 +81,8 @@ async function avanzar(ms=600){for(let t=0;t<ms;t+=20){reloj+=20;const lote=[...
       click(raiz.querySelector('[data-name="siguiente"]'));await avanzar();
     }
     assert.equal(ilustracion.querySelector('img').getAttribute('src'),entornos[0].imagen,'El carrusel no vuelve al primer entorno');
-    click($('detalleLienzo').querySelector('[data-name="siguiente"]'));await avanzar();assert.equal($('detalleLienzo').querySelector('[data-name="Carrusel · contador"] p').textContent,'02 / 05');
-    click($('detalleLienzo').querySelector('[data-name="anterior"]'));await avanzar();assert.equal($('detalleLienzo').querySelector('[data-name="Carrusel · contador"] p').textContent,'01 / 05');
+    click($('detalleLienzo').querySelector('[data-name="siguiente"]'));await avanzar();assert.equal([...$('detalleLienzo').querySelectorAll('[data-name="Carrusel · contador"] p button')].findIndex(b=>b.getAttribute('aria-current')==='true'),1,'El circulito actual no corresponde al lugar');
+    click($('detalleLienzo').querySelector('[data-name="anterior"]'));await avanzar();assert.equal([...$('detalleLienzo').querySelectorAll('[data-name="Carrusel · contador"] p button')].findIndex(b=>b.getAttribute('aria-current')==='true'),0,'El circulito actual no corresponde al lugar');
     if(id==='bacterias'){
       const yogur=[...document.querySelectorAll('.detalle-fichas-especie button')].find(b=>b.textContent.includes('B-083-YNA'));assert(yogur,'El yogur no está vinculado a S. thermophilus');click(yogur);await avanzar();
       assert.equal($('detalleLienzo').firstElementChild.dataset.nodeId,'500:7020');assert.equal(document.querySelector('[data-node-id="500:7170"]').textContent,'B-083-YNA');assert.equal(document.querySelector('[data-node-id="500:7179"]').textContent,'8 aprox.');
