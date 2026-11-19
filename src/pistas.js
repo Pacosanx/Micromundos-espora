@@ -128,12 +128,12 @@
     const s = pantalla.getBoundingClientRect(), W = pantalla.offsetWidth || 1920, H = pantalla.offsetHeight || 1100, k = s.width / W;
     const r = el.getBoundingClientRect();
     const b = { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
-    const g = { w: globo.offsetWidth, h: globo.offsetHeight }, M = 16, A = 72; // margen y largo de la línea hasta el control
+    const g = { w: globo.offsetWidth, h: globo.offsetHeight }, M = 16, A = 96; // margen y largo de la línea hasta el control
     const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
-    // Direcciones posibles: primero la pedida y sus diagonales, después las demás. El cartelito queda lejos y la línea es larga y libre.
+    // Direcciones posibles: primero las diagonales de la pedida (la línea queda libre, no siempre vertical), después la pedida y las demás. El cartelito queda lejos y la línea es larga y libre.
     const DIR = { abajo: [0, 1], arriba: [0, -1], izquierda: [-1, 0], derecha: [1, 0] };
     const [dx0, dy0] = DIR[p.donde] || DIR.abajo;
-    const giros = [0, 40, -40, 90, -90, 135, -135, 180].map(a => { const t = a * Math.PI / 180; return [dx0 * Math.cos(t) - dy0 * Math.sin(t), dx0 * Math.sin(t) + dy0 * Math.cos(t)]; });
+    const giros = [40, -40, 0, 75, -75, 135, -135, 180].map(a => { const t = a * Math.PI / 180; return [dx0 * Math.cos(t) - dy0 * Math.sin(t), dx0 * Math.sin(t) + dy0 * Math.cos(t)]; });
     const posicion = ([dx, dy]) => {
       // Centro del cartelito: fuera de la caja del control, a A de distancia, en la dirección (dx, dy).
       const sx = Math.abs(dx) > 1e-6 ? (b.w / 2 + g.w / 2) / Math.abs(dx) : Infinity, sy = Math.abs(dy) > 1e-6 ? (b.h / 2 + g.h / 2) / Math.abs(dy) : Infinity;
@@ -148,7 +148,8 @@
     // Línea: del borde del cartelito al borde del control (punto), sobre la recta entre los dos centros.
     const gx = q.x + g.w / 2, gy = q.y + g.h / 2, vx = cx - gx, vy = cy - gy, d = Math.hypot(vx, vy) || 1, ux = vx / d, uy = vy / d;
     const borde = (w, h) => Math.min(Math.abs(ux) > 1e-6 ? w / 2 / Math.abs(ux) : Infinity, Math.abs(uy) > 1e-6 ? h / 2 / Math.abs(uy) : Infinity);
-    const desde = borde(g.w, g.h) + 6, hasta = d - borde(b.w, b.h) + 2;
+    const elipse = 1 / Math.hypot(ux / (b.w / 2 || 1), uy / (b.h / 2 || 1)); // los controles redondos: el punto cae sobre su contorno
+    const desde = borde(g.w, g.h) + 6, hasta = d - elipse + 2;
     const [x1, y1, x2, y2] = [gx + ux * desde, gy + uy * desde, gx + ux * Math.max(desde, hasta), gy + uy * Math.max(desde, hasta)];
     const l = linea.querySelector('line'); l.setAttribute('x1', x1); l.setAttribute('y1', y1); l.setAttribute('x2', x2); l.setAttribute('y2', y2);
     const c = linea.querySelector('circle'); c.setAttribute('cx', x2); c.setAttribute('cy', y2);
