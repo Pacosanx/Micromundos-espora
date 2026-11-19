@@ -1,3 +1,18 @@
+// Cartelito de ayuda de TU PLACA (19/11/2026): material de los carteles en versión neutra, con un punto que señala a qué se refiere.
+// Se va solo, o al tocar en cualquier lado. Uno por vez.
+function ayudaTuPlaca(partes,{x,y,ancho=360,donde='abajo',flecha=24,duracion=6000}={}){
+  const tp=document.getElementById('tuPlaca');if(!tp)return null;
+  ayudaTuPlaca.cerrar?.();
+  const el=document.createElement('div');el.className='cartel cartel-neutro tp-ayuda';el.dataset.donde=donde;el.setAttribute('role','status');
+  el.style.cssText=`left:${x}px;top:${y}px;max-width:${ancho}px;--flecha-x:${flecha}px`;
+  el.innerHTML='<div class="vidrio"></div><div class="flota"><div class="grano"></div><div class="fi"><div class="co"></div></div></div>';
+  const co=el.querySelector('.co');for(const [clase,texto] of partes){const p=document.createElement('p');if(clase)p.className=clase;p.textContent=texto;co.appendChild(p);}
+  tp.appendChild(el);requestAnimationFrame(()=>el.classList.add('visible'));
+  let reloj=0;const cerrar=()=>{clearTimeout(reloj);removeEventListener('pointerdown',alTocar,true);el.classList.remove('visible');setTimeout(()=>el.remove(),300);if(ayudaTuPlaca.cerrar===cerrar)ayudaTuPlaca.cerrar=null;};
+  const alTocar=ev=>{if(!el.contains(ev.target))cerrar();};
+  setTimeout(()=>addEventListener('pointerdown',alTocar,true),0);reloj=setTimeout(cerrar,duracion);
+  ayudaTuPlaca.cerrar=cerrar;return el;
+}
 function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () => {}, alModo = () => {} } = {}) {
   const grupos = [
     { id:'B', nombre:'BACTERIAS', colores:['#ff4c52','#f58bc3','#fffbee'], seed:31 },
@@ -47,11 +62,12 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
   host.classList.add('tp-biblioteca');
   const top = document.createElement('div'); top.className='tp-biblioteca__top';
   const heading = document.createElement('h2'); heading.textContent='BIBLIOTECA DE COLONIAS';
-  const subtitle = document.createElement('p'); subtitle.textContent='Arrastrá una forma al interior de la placa.';
-  top.append(heading,subtitle);
+  // 19/11/2026 · Qué va fijo y qué como cartelito de ayuda:
+  //  fijo: el título y las pestañas por grupo; debajo, solo las colonias (sin rótulos ni nombres de fila: Paco, 19/11);
+  //  cartelito: «arrastrá sobre la placa para elegir varias» (tu-placa-v12.js).
+  //  «Arrastrá una colonia al interior de la placa» se quita: lo dice la placa vacía.
+  top.append(heading);
   const modes = document.createElement('div'); modes.className='tp-biblioteca__modes';
-  // 18/11/2026: sin modos de siembra (se quitaron «En estría» y «En grupo»): tocar la placa siembra una, arrastrar elige varias.
-  const modeLabel = document.createElement('span'); modeLabel.className='tp-biblioteca__mode-label'; modeLabel.textContent='TOCÁ LA PLACA PARA SEMBRAR · ARRASTRÁ PARA ELEGIR VARIAS'; modes.appendChild(modeLabel);
   const tabs=document.createElement('div');tabs.className='tp-biblioteca__tabs';tabs.setAttribute('role','tablist');
   const content=document.createElement('div');content.className='tp-biblioteca__content';
   const labels=document.createElement('div');labels.className='tp-biblioteca__labels';
@@ -81,14 +97,13 @@ function montarBibliotecaTuPlaca(host, { alPresionar = () => {}, alElegir = () =
     const scrolled=()=>{labels.style.transform=`translateY(${-viewport.scrollTop}px)`;host.style.setProperty('--tp-last-fade',String(Math.min(1,viewport.scrollTop/40)));};
     viewport.onscroll=scrolled;scrolled();
     for(const estado of estadosVisibles){
-      const label=document.createElement('div');label.className='tp-biblioteca__state';label.textContent=estado.nombre;labels.appendChild(label);
       for(const variante of variantes){
         const estilo=estilos.find(s=>s.g===grupoActual&&s.estado===estado.id&&s.variante===variante.id);
         const button=document.createElement('button');button.type='button';button.className='tp-paleta-colonia';button.dataset.styleId=estilo.id;button.dataset.codigo=estilo.codigo;
         button.setAttribute('aria-label',`${estilo.g} · ${estado.nombre} · ${variante.nombre} · ${estilo.codigo}`);
         const canvas=document.createElement('canvas');canvas.width=canvas.height=100;canvas.setAttribute('aria-hidden','true');button.appendChild(canvas);
-        button.setAttribute('aria-pressed',estilo.id===elegido.id?'true':'false');
-        const seleccionar=(teclado,notificar=true)=>{elegido=estilo;track.querySelectorAll('.tp-paleta-colonia').forEach(b=>b.setAttribute('aria-pressed',b.dataset.styleId===estilo.id?'true':'false'));if(notificar)alElegir(estilo,teclado)};
+        // Ya no queda una forma «elegida» a la vista: se siembra arrastrando. «elegido» solo sirve para Enter con teclado.
+        const seleccionar=(teclado,notificar=true)=>{elegido=estilo;if(notificar)alElegir(estilo,teclado)};
         button.addEventListener('pointerdown',ev=>{seleccionar(false,false);alPresionar(ev,estilo)});
         button.addEventListener('click',()=>seleccionar(false));
         button.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();seleccionar(true)}});

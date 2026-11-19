@@ -33,7 +33,7 @@
 #tpBiblioteca .tp-paleta-colonia{all:unset;display:grid;place-items:center;width:110px;height:100px;position:relative;cursor:pointer;touch-action:pan-y}
 #tpBiblioteca .tp-paleta-colonia::after{content:attr(data-codigo);position:absolute;top:80px;left:0;right:0;text-align:center;font:400 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;opacity:.55;filter:blur(.4px)}
 #tpBiblioteca .tp-paleta-colonia[aria-pressed="true"]::after{font-weight:700;opacity:1}
-#tpBiblioteca .tp-paleta-colonia:focus-visible{background:#ed74a018;border-radius:12px;outline:0}
+#tpBiblioteca .tp-paleta-colonia:focus-visible{outline:2px solid #0d0f17;outline-offset:-3px;border-radius:12px}
 #tpBiblioteca .tp-paleta-colonia canvas{width:100px;height:100px;pointer-events:none}
 #tpBoard.tp-board{width:784px;height:784px;left:calc(50% - 31.6px);top:156.4px;transform:none;transition:none;overflow:visible;outline:0}
 .tp-superficies{position:absolute;inset:0;pointer-events:none}
@@ -103,3 +103,17 @@
 #tuPlaca{overflow:clip}
 
 #tpBiblioteca .tp-biblioteca__labels{grid-template-rows:none;grid-auto-rows:100px;align-content:start}
+
+/* Aviso al generar sobre una placa armada (propuesta, rama tuplaca-generar).
+   Va sobre la propia placa, abajo y centrado: es lo que cambió. Material de los carteles (vidrio con borde desenfocado y grano),
+   sin color de universo porque no remite a ninguno. La acción, como los textos-botón del sistema. */
+.cartel-neutro{--cartel-fondo:rgb(240 236 226 / 62%);--cartel-noise-opacity:.14} /* igual que los cartelitos de ayuda (bienvenida.css) */
+.tp-aviso-generar{position:absolute;left:calc(50% + 360.4px);top:812px;z-index:6;max-width:520px;color:#13151b;text-align:center;opacity:0;translate:-50% 8px;transition:opacity .3s,translate .3s}
+.tp-aviso-generar .fi{padding:16px 28px 6px;max-height:none;overflow:visible}
+.tp-aviso-generar .co{display:flex;flex-direction:column;align-items:center;gap:4px}
+.tp-aviso-generar[hidden]{display:none}.tp-aviso-generar.visible{opacity:1;translate:-50% 0}
+.tp-aviso-generar p{margin:0;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif}
+.tp-aviso-generar button{all:unset;display:inline-flex;align-items:center;gap:12px;min-height:var(--area-tactil);font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;text-transform:uppercase;cursor:pointer}
+.tp-aviso-generar button img{flex:none;transform:rotate(180deg);filter:brightness(0);opacity:.92}
+.tp-aviso-generar button:focus-visible{outline:2px solid #13151b;outline-offset:4px;border-radius:8px}
+@media(prefers-reduced-motion:reduce){.tp-aviso-generar{transition:none}}

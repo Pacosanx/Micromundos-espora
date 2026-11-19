@@ -39,5 +39,5 @@ Casos sin muestra propia: «Mano» (bacterias) no tiene una muestra de bacterias
 
 1. Agregar una fila a `glosario.csv` con un `id` nuevo, `grupo`, `bloque` y `tipo=termino`.
 2. Para asociarlo a muestras, agregar filas en `glosario_muestras.csv`.
-3. Ejecutar `armar.bat` (o `build.ps1`) para regenerar `placa.html`. También se mantiene `build.py`.
+3. Ejecutar `armar.bat` (o `build.ps1`) para regenerar `placa.html`. `build.py` quedó retirado: solo llama a `build.ps1`.
 4. Correr `python base/validar_base.py`: debe terminar en `BASE OK`.

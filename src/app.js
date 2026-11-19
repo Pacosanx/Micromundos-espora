@@ -138,7 +138,7 @@ function ajustar(){
   $('derecha').style.left = DX + 'px';
   $('derAbajo').style.top = DY + 'px';   $('izqAbajo').style.top = DY + 'px';
   $('cabecera').style.width = (1841 + DX) + 'px';
-  $('lista').style.height = (855 + DY) + 'px';
+  $('lista').style.height = (707 + DY) + 'px';
 }
 ajustar();
 
@@ -316,8 +316,11 @@ function zoomDisponible(){return vista==='placa'&&progresoArco===1&&!animVista;}
 let seleccion = null, filtroG = null, filtroE = null, busqueda = '';
 let filtroCodigos = null;   // Set de códigos: lo usa el botón «Ver muestras de este entorno» del Glosario (tabla base/entornos_muestras.csv)
 let vista = 'placa';
-const coincide = s => (!filtroG || s.grupo.includes(filtroG)) && (!filtroE || s.estado === filtroE) &&
-  (!busqueda || quitarTildes(s.codigo + ' ' + s.origen).includes(busqueda)) && (!filtroCodigos || filtroCodigos.has(s.codigo));
+// filtroG y filtroE pueden ser null, un valor ('B') o un Set de valores: la guía permite elegir varios a la vez
+// (por ejemplo mohos y levaduras, o activas y en conservación). Otras pantallas siguen asignando un solo valor.
+const conjuntoFiltro = v => !v ? null : v instanceof Set ? (v.size ? v : null) : new Set([v]);
+const coincide = s => { const g = conjuntoFiltro(filtroG), e = conjuntoFiltro(filtroE); return (!g || [...g].some(x => s.grupo.includes(x))) && (!e || e.has(s.estado)) &&
+  (!busqueda || quitarTildes(s.codigo + ' ' + s.origen).includes(busqueda)) && (!filtroCodigos || filtroCodigos.has(s.codigo)); };
 prepararVinculos();
 
 // Al hacer zoom, los centros se alejan del centro de la placa en proporción (r = K · ln(1 + edad/TAU)).
@@ -529,16 +532,32 @@ pantalla.addEventListener('click', ev => { if (!ev.target.closest('[data-ui]')) 
 // ───────── filtros (leyenda y buscador) ─────────
 function aplicarFiltros(){
   for (const s of muestras) { const ok = coincide(s); s.el.classList.toggle('apagada', !ok); for (const fila of s.filas) fila.classList.toggle('apagada', !ok); }
-  pantalla.classList.toggle('filtrando', !!(filtroG || filtroE || busqueda || filtroCodigos));
-  $('bGrupo').classList.toggle('filtrando', !!filtroG);
-  $('bEstado').classList.toggle('filtrando', !!filtroE);
-  document.querySelectorAll('.item.grupo').forEach(i => i.classList.toggle('activo', i.dataset.g === filtroG));
-  document.querySelectorAll('.item.estado').forEach(i => i.classList.toggle('activo', i.dataset.e === filtroE));
+  const g = conjuntoFiltro(filtroG), e = conjuntoFiltro(filtroE);
+  pantalla.classList.toggle('filtrando', !!(g || e || busqueda || filtroCodigos));
+  $('bGrupo').classList.toggle('filtrando', !!g);
+  $('bEstado').classList.toggle('filtrando', !!e);
+  document.querySelectorAll('.item.grupo').forEach(i => { const on = !!g?.has(i.dataset.g); i.classList.toggle('activo', on); i.setAttribute('aria-pressed', String(on)); });
+  document.querySelectorAll('.item.estado').forEach(i => { const on = !!e?.has(i.dataset.e); i.classList.toggle('activo', on); i.setAttribute('aria-pressed', String(on)); });
+  actualizarGuia();
   desenfocarLista();
   dibujarVinculos();
 }
-document.querySelectorAll('.item.grupo').forEach(i => i.addEventListener('click', ev => { ev.stopPropagation(); filtroG = filtroG === i.dataset.g ? null : i.dataset.g; aplicarFiltros(); }));
-document.querySelectorAll('.item.estado').forEach(i => i.addEventListener('click', ev => { ev.stopPropagation(); filtroE = filtroE === i.dataset.e ? null : i.dataset.e; aplicarFiltros(); }));
+// Guía «Cómo leer la placa»: empieza cerrada (solo los ejemplos, que siguen filtrando) y se abre o cierra sin tocar los filtros.
+function actualizarGuia(){
+  const hay = document.querySelector('#leyenda .item.activo');
+  $('guiaUso').textContent = hay ? 'Tocá de nuevo un ejemplo para quitarlo del filtro.' : 'Tocá uno o varios ejemplos para ver solo esas muestras.';
+}
+function abrirGuia(abre){
+  $('leyenda').classList.toggle('cerrada', !abre);
+  $('guiaBoton').setAttribute('aria-expanded', String(abre));
+  $('guiaBoton').setAttribute('aria-label', 'Cómo leer la placa: ' + (abre ? 'cerrar' : 'abrir') + ' la guía');
+  actualizarGuia();
+}
+$('guiaBoton').addEventListener('click', ev => { ev.stopPropagation(); abrirGuia($('leyenda').classList.contains('cerrada')); });
+// Cada ejemplo se suma o se quita del filtro (selección múltiple).
+const alternarFiltro = (actual, valor) => { const c = new Set(conjuntoFiltro(actual) || []); c.has(valor) ? c.delete(valor) : c.add(valor); return c.size ? c : null; };
+document.querySelectorAll('.item.grupo').forEach(i => i.addEventListener('click', ev => { ev.stopPropagation(); filtroG = alternarFiltro(filtroG, i.dataset.g); aplicarFiltros(); }));
+document.querySelectorAll('.item.estado').forEach(i => i.addEventListener('click', ev => { ev.stopPropagation(); filtroE = alternarFiltro(filtroE, i.dataset.e); aplicarFiltros(); }));
 $('q').addEventListener('input', e => { busqueda = quitarTildes(e.target.value.trim()); filtroCodigos = null; aplicarFiltros(); });
 $('buscador').addEventListener('click', ev => ev.stopPropagation());
 
