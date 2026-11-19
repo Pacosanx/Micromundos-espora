@@ -694,7 +694,7 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
   // Ficha simulada (19/11/2026): exactamente la pantalla del yogur, con el mismo fondo. Se cambia lo que la base tiene para
   // la muestra (título, código, grupo, estado, colonias, especies, fecha, contexto, «Qué es», especies con su definición) y todo
   // lo que no tenemos queda marcado EN PROCESO: dónde se tomó, la curiosidad, el esquema de «Qué produce o transforma» y
-  // «Se ayudan», la placa figurativa, la imagen de colonias y el microscopio.
+  // «Se ayudan», la imagen de colonias y el microscopio. La placa figurativa es la de cada muestra (19/11/2026).
   function adaptarFichaSimulada(raiz,muestra,f,nodo,cambiar){
     const enProceso=(id,t='En proceso')=>{const e=nodo(id);if(!e)return;e.textContent=t;e.classList.add('ficha-en-proceso');};
     const imagenEnProceso=(id,rotulo)=>{const e=nodo(id);if(!e)return;const caja=document.createElement('div');caja.className='ficha-imagen-en-proceso';caja.innerHTML=`<span>${esc(rotulo)}</span><span>EN PROCESO</span>`;
@@ -713,7 +713,9 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     // Si falta una especie se oculta su renglón entero (con el circulito) y la línea que lo separa (19/11/2026, Paco: LECHE CRUDA).
     [['500:7214','500:7215',['500:7210']],['500:7222','500:7223',['500:7217','500:7216']]].forEach(([n,g,fila],i)=>{const e=especies[i];if(e){cambiar(n,e);cambiar(g,grupoDe(e));}else{for(const id of fila)nodo(id)?.style.setProperty('visibility','hidden');}});
     cambiar('500:7239',CATALOGO_ESPECIES[especies[0]]?.definicion||'En proceso');
-    imagenEnProceso('500:7153','PLACA FIGURATIVA');imagenEnProceso('500:7198','COLONIAS');
+    // Placa figurativa (19/11/2026): la que Paco armó con Codex para esta muestra (ficha-galeria.js); si no hay, en proceso.
+    const placa=placaFigurativa(muestra.codigo),imgPlaca=nodo('500:7153')?.querySelector('img');
+    if(placa&&imgPlaca){imgPlaca.src=placa;imgPlaca.alt='Placa figurativa de '+(f.titulo||muestra.origen);}else imagenEnProceso('500:7153','PLACA FIGURATIVA');imagenEnProceso('500:7198','COLONIAS');
     cambiar('500:7160','El microscopio de esta muestra está en proceso.');
     raiz.classList.add('ficha-simulada');
   }
