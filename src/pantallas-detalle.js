@@ -635,7 +635,10 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     const nodo=id=>raiz.querySelector('[data-node-id="'+id+'"]');
     const cambiar=(id,t)=>{const e=nodo(id);if(e)e.textContent=t;};
     cambiar('500:7170',muestra.codigo);cambiar('500:7179',muestra.colonias+' aprox.');cambiar('500:7182',String(muestra.vinculosDatos.especies.length));
-    cambiar('500:7160','Tocá una colonia para ver sus células. Mantené el dedo para usar el microscopio.');
+    // 19/11/2026 (Paco): la pista de QUÉ ES queda como en el diseño («Mantené el dedo sobre la placa para usar el microscopio»).
+    // ESPECIES suma su pista con el mismo estilo, a la izquierda y a la altura de la cabecera de la tabla.
+    {const tabla=nodo('500:7205'),modelo=nodo('500:7160');if(tabla&&modelo){const p=document.createElement('p');p.className='ficha-pista-especies';p.style.cssText=modelo.style.cssText;
+      Object.assign(p.style,{left:'39px',top:tabla.style.top});p.textContent='Tocá una colonia para ver a qué bacteria corresponde';tabla.parentElement.appendChild(p);}}
     cambiar('500:7191',fechaTexto(muestra));cambiar('500:7173',GRUPO_NOMBRE[muestra.grupo]);cambiar('500:7176',ESTADO_NOMBRE[muestra.estado]);
     nodo('500:7158').style.mixBlendMode='normal';nodo('500:7158').style.color='#0d0f17';nodo('500:7158').parentElement.style.mixBlendMode='normal';
     const aviso=nodo('500:7158').parentElement;aviso.classList.add('ficha-aviso-desliza');
