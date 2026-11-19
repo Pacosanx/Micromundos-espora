@@ -5,10 +5,10 @@ Sitio: https://pacosanx.github.io/Micromundos-espora/ · Repositorio: https://gi
 
 ## Primera visita y ayudas durante el recorrido
 
-- [ ] **Onboarding en la primera visita.** Diseñar una capa breve al salir de la portada que explique qué es Micromundos, qué se puede hacer en MUESTRAS, GLOSARIO y TU PLACA, y cómo empezar. Revisar qué reutilizar del borrador local de «¿Qué es Micromundos?».
+- [x] **Onboarding en la primera visita.** Diseñar una capa breve al salir de la portada que explique qué es Micromundos, qué se puede hacer en MUESTRAS, GLOSARIO y TU PLACA, y cómo empezar. Revisar qué reutilizar del borrador local de «¿Qué es Micromundos?». *(En main el 19/11.)*
 - [ ] Definir cómo saltar la introducción y volver a consultarla. Recordar que ya se vio y comprobar el recorrido en una primera visita, al volver y al abrir la ayuda manualmente.
-- [ ] **Pistas en el momento de actuar.** En MUESTRAS, señalar cómo elegir una muestra, usar el zoom, mover y cerrar una ficha, cambiar de vista y abrir el listado. En GLOSARIO, indicar qué círculos se pueden elegir y cómo volver a las muestras de un entorno. En TU PLACA, mostrar cómo sembrar, editar una colonia, mantener y girar, deshacer y guardar.
-- [ ] Escribir los cartelitos con una acción por vez y verbos concretos («Arrastrá», «Elegí», «Mantené apretado y girá»). Mostrarlos cerca del control, retirarlos al completar la acción o cerrarlos, y hacer que se entiendan con mouse y tacto.
+- [x] **Pistas en el momento de actuar.** En MUESTRAS, señalar cómo elegir una muestra, usar el zoom, mover y cerrar una ficha, cambiar de vista y abrir el listado. En GLOSARIO, indicar qué círculos se pueden elegir y cómo volver a las muestras de un entorno. En TU PLACA, mostrar cómo sembrar, editar una colonia, mantener y girar, deshacer y guardar. *(En main el 19/11.)*
+- [x] Escribir los cartelitos con una acción por vez y verbos concretos («Arrastrá», «Elegí», «Mantené apretado y girá»). Mostrarlos cerca del control, retirarlos al completar la acción o cerrarlos, y hacer que se entiendan con mouse y tacto. *(En main el 19/11.)*
 - [ ] Probar la primera visita con alguien que no conozca el Atlas. Observar si entiende qué está viendo, logra abrir una muestra y puede empezar una placa propia sin explicación externa.
 
 ## MUESTRAS · Lectura de la placa
@@ -19,10 +19,10 @@ Sitio: https://pacosanx.github.io/Micromundos-espora/ · Repositorio: https://gi
 
 ## Pantallas de universo · «Dónde están»
 
-- [ ] **Flechas dentro del círculo y scroll sobre la imagen.** Mover las flechas ← → a los costados del círculo de la ilustración, como en el diseño de Paco, y que la persona pase a la ilustración siguiente haciendo scroll sobre la imagen. Probar con rueda del mouse, trackpad y deslizamiento táctil.
+- [x] **Flechas dentro del círculo y scroll sobre la imagen.** Mover las flechas ← → a los costados del círculo de la ilustración, como en el diseño de Paco, y que la persona pase a la ilustración siguiente haciendo scroll sobre la imagen. Probar con rueda del mouse, trackpad y deslizamiento táctil. *(En main el 19/11.)*
 - [ ] **Alturas fijas en los textos.** Medidos desde los títulos, los paquetes de texto de la izquierda y la derecha tienen que quedar siempre a la misma altura al pasar de una ilustración a otra: todos los títulos («Dónde están», «En el pan», «Al hornearlo», etc.) y «Ver muestras de …» no se mueven aunque cambie el largo de los párrafos.
 - [ ] En «Ver muestras de …», usar la flecha ↗ del diseño en lugar de la actual →.
-- [ ] Aplicarlo a los tres universos (bacterias, levaduras y mohos).
+- [x] Aplicarlo a los tres universos (bacterias, levaduras y mohos). *(En main el 19/11.)*
 
 ## Ficha de muestra
 
@@ -58,7 +58,7 @@ El muestrario de prueba permite comparar variantes. Queda pendiente elegir cuál
   - Las placas de otros usuarios las comparten todos los visitantes: decidir cuántas se muestran, por cuánto tiempo y cómo se evita que se llene o se desordene.
 - [x] Darle más protagonismo a TU PLACA. Revisar el título, la presencia del borde de la placa vacía, el peso de la biblioteca y la indicación de dónde soltar la primera colonia. *(En main el 19/11.)* Borde punteado que late con la placa vacía (tenue con colonias), resaltado del color del grupo al arrastrar y «ARRASTRÁ UNA COLONIA HASTA LA PLACA». Se siembra solo arrastrando.
 - [ ] **Leyendas de reacciones en TU PLACA.** Diseñarlas con la lógica de la guía de MUESTRAS («Cómo leer la placa»).
-- [ ] **Menú de colonias de TU PLACA.** Revisar su estructura y decidir qué información va fija y cuál como cartelito de ayuda.
+- [x] **Menú de colonias de TU PLACA.** Revisar su estructura y decidir qué información va fija y cuál como cartelito de ayuda. *(En main el 19/11.)*
 - [ ] **Menús contextuales y «reacciones en la placa».** Revisar su diseño y sumar opciones de edición de la placa entera, como girar o hacer zoom.
 - [ ] **Menú de edición de la colonia individual.** Los títulos no funcionan adentro del círculo: ponerlos afuera, a la izquierda, con un iconito cada uno, como en el menú contextual. Verificar el uso tipográfico.
 - [ ] **Pantalla con las placas de otras personas.** Diseñarla; por ahora puede ser simulada (no hace falta guardarlas de verdad).
@@ -70,9 +70,9 @@ El muestrario de prueba permite comparar variantes. Queda pendiente elegir cuál
 - [ ] Definir si habrá un momento opcional de «Diseñá tu colonia». Elegir pocos controles de COLONIAS, decidir si el diseño puede volver a la biblioteca y si queda guardado para otra visita.
 - [ ] Hacer más legible el encuentro entre colonias, en particular entre bacterias y levaduras. Comparar las variantes gráficas del muestrario a tamaño real, con distintos tamaños y separaciones, y resolver cuáles pasan a TU PLACA, cómo aparecen y cómo se comportan cuando coinciden varios encuentros.
 - [ ] Definir **UNIR** como acción explícita sobre dos colonias. Probar una silueta mayor o en forma de 8 con pigmentos mezclados y decidir qué resultado corresponde a cada caso. Permitir deshacer y decidir si se retira MEZCLAS una vez que UNIR funcione. La simbiosis durante el contacto conserva la huella de las colonias.
-- [ ] Aclarar qué pasa al generar otra composición sobre una placa ya armada y cómo recuperar la anterior.
+- [x] Aclarar qué pasa al generar otra composición sobre una placa ya armada y cómo recuperar la anterior. *(En main el 19/11.)*
 - [ ] Verificar selección, movimiento, deshacer y recuperación tras recargar, incluidos los ajustes de toda la placa. Revisar que el PNG conserve la composición, el borde y las reacciones visibles al guardar.
-- [ ] Sustituir el texto provisional «Este espacio está en preparación» por una indicación útil si TU PLACA falla al cargar.
+- [ ] Sustituir el texto provisional «Este espacio está en preparación» por una indicación útil si TU PLACA falla al cargar. *(La rama 07 se descartó el 19/11: queda pendiente.)*
 
 ## Uso en el kiosco del museo
 
@@ -104,7 +104,7 @@ El diseño final se monta en una pantalla táctil de uso público, para visitant
 
 ## Contenido
 - [ ] **Más fichas de muestras.** Hoy solo está la del yogur: simular otras, empezando por las que ya estaban planeadas.
-- [ ] **Pantalla MICROMUNDOS.** Ponerle más esfuerzo de diseño.
+- [x] **Pantalla MICROMUNDOS.** Ponerle más esfuerzo de diseño. *(En main el 19/11.)*
 - [ ] Glosario: cinco términos siguen en borrador, sin definición: Flagelo, Biofilm, Masa madre, Agar, Crecimiento.
 - [ ] Más conceptos del glosario en la ficha (por ejemplo Coco y Bacilo para las dos especies del yogur): hay que redactar frases nuevas.
 - [ ] Decidir cuáles fichas sumar después de Yogur. Para cada una, preparar los textos, sus imágenes de placa, colonias y microscopio, y el esquema que explica qué sucede en esa muestra. Evaluar la plantilla común alimentada desde las tablas.
