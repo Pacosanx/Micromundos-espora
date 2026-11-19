@@ -761,12 +761,14 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     const dentro=(x,y)=>{const d=disco(),lim=Math.max(0,d.r-RADIO_LENTE),dx=x-d.x,dy=y-d.y,k=Math.hypot(dx,dy);
       return k<=lim?{x,y}:{x:d.x+dx/k*lim,y:d.y+dy/k*lim};};
     const actualizar=()=>{lupa.style.left=(posicion.x-RADIO_LENTE)+'px';lupa.style.top=(posicion.y-RADIO_LENTE)+'px';
-      const d=disco();desmontar?.actualizar?.({...medida(),x:clamp(d.x+(posicion.x-d.x)*2,0,placa.offsetWidth),y:clamp(d.y+(posicion.y-d.y)*2,0,placa.offsetHeight)});};
+      // mapa: la lente sobre la imagen de la placa (para la concentración de células según las colonias).
+      const d=disco(),lado=d.r/.445,mapa={u:(posicion.x-(d.x-lado/2))/lado,v:(posicion.y-(d.y-lado/2))/lado,radio:RADIO_LENTE/lado};
+      desmontar?.actualizar?.({...medida(),x:clamp(d.x+(posicion.x-d.x)*2,0,placa.offsetWidth),y:clamp(d.y+(posicion.y-d.y)*2,0,placa.offsetHeight),mapa});};
     const seguir=()=>{animacion=0;if(lupa.hidden)return;const k=movimientoReducido()?1:RETARDO;
       posicion={...medida(),x:posicion.x+(objetivo.x-posicion.x)*k,y:posicion.y+(objetivo.y-posicion.y)*k};actualizar();
       if(Math.hypot(objetivo.x-posicion.x,objetivo.y-posicion.y)>.3||presionando)animacion=requestAnimationFrame(seguir);};
     const apuntar=(x,y)=>{objetivo={...medida(),...dentro(x,y)};if(lupa.hidden){posicion={...objetivo};actualizar();}else if(!animacion)animacion=requestAnimationFrame(seguir);};
-    const mostrar=()=>{if(!presionando)return;lupa.hidden=false;placa.setAttribute('aria-expanded','true');if(!desmontar&&window.MicromundosLupa)desmontar=window.MicromundosLupa.montarLupaFigma(lupa);posicion={...objetivo};actualizar();if(!animacion)animacion=requestAnimationFrame(seguir);};
+    const mostrar=()=>{if(!presionando)return;lupa.hidden=false;placa.setAttribute('aria-expanded','true');if(!desmontar&&window.MicromundosLupa)desmontar=window.MicromundosLupa.montarLupaFigma(lupa,{placa:raiz.querySelector('[data-node-id="500:7153"] img')});posicion={...objetivo};actualizar();if(!animacion)animacion=requestAnimationFrame(seguir);};
     const ocultar=()=>{clearTimeout(espera);cancelAnimationFrame(animacion);animacion=0;presionando=false;desplazando=null;lupa.hidden=true;placa.setAttribute('aria-expanded','false');};
     // Aparece donde está el dedo (si el dedo se mueve más de 10 px antes de tiempo, aparece enseguida) y desde ahí lo sigue.
     // 19/11/2026 (Paco): arrastrar sobre la placa desplaza la ficha (no abre el microscopio); solo mantener el dedo quieto lo abre.
