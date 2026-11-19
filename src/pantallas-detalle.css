@@ -155,4 +155,4 @@
 /* «Dónde están»: flechas dentro del círculo de la ilustración, en tinta oscura sobre el fondo claro. */
 .entorno-flecha{z-index:2}
 .entorno-flecha img{filter:brightness(0);opacity:.62;transition:opacity .2s}
-.entorno-flecha:hover img,.entorno-flecha:focus-visible img{opacity:.9}
+.entorno-flecha:active img,.entorno-flecha:focus-visible img{opacity:.9}
