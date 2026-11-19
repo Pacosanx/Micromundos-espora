@@ -94,7 +94,7 @@
     // GLOSARIO: sin pistas (se quitaron «Elegí un círculo…» y «Tocá «Ver muestras de…»…», 19/11).
     // TU PLACA
     { id: 't-sembrar', texto: 'Arrastrá una forma al interior de la placa.', donde: 'derecha',
-      cuando: () => seccion() === 'navTuPlaca' && !q('#tuPlaca .tp-colonia'), blanco: () => primeraVisible('#tuPlaca .tp-paleta-colonia')?.parentElement, hecha: () => !!q('#tuPlaca .tp-colonia') },
+      cuando: () => seccion() === 'navTuPlaca' && !q('#tuPlaca .tp-colonia'), blanco: () => nucleo([...document.querySelectorAll('#tuPlaca .tp-paleta-colonia')].filter(visible)[3] || primeraVisible('#tuPlaca .tp-paleta-colonia'), .8) /* la colonia del extremo derecho de la primera fila: el cartelito queda libre, hacia la placa */, hecha: () => !!q('#tuPlaca .tp-colonia') },
     { id: 't-editar', texto: 'Tocá una colonia para editarla.', donde: 'arriba',
       cuando: () => seccion() === 'navTuPlaca' && $('tpMenu')?.hidden, blanco: () => nucleo(coloniaChica(), .6), hecha: () => $('tpMenu') && !$('tpMenu').hidden },
     { id: 't-funcion', texto: 'Tocá una función y arrastrá para cambiar su valor.', donde: 'derecha',
@@ -148,7 +148,8 @@
     // Línea: del borde del cartelito al borde del control (punto), sobre la recta entre los dos centros.
     const gx = q.x + g.w / 2, gy = q.y + g.h / 2, vx = cx - gx, vy = cy - gy, d = Math.hypot(vx, vy) || 1, ux = vx / d, uy = vy / d;
     const borde = (w, h) => Math.min(Math.abs(ux) > 1e-6 ? w / 2 / Math.abs(ux) : Infinity, Math.abs(uy) > 1e-6 ? h / 2 / Math.abs(uy) : Infinity);
-    const elipse = 1 / Math.hypot(ux / (b.w / 2 || 1), uy / (b.h / 2 || 1)); // los controles redondos: el punto cae sobre su contorno
+    const redondo = b.w < 240 && b.w / (b.h || 1) > .7 && b.w / (b.h || 1) < 1.4;
+    const elipse = redondo ? 1 / Math.hypot(ux / (b.w / 2 || 1), uy / (b.h / 2 || 1)) : borde(b.w, b.h); // en lo redondo el punto cae sobre su contorno; en lo demás, sobre el borde de la caja
     const desde = borde(g.w, g.h) + 6, hasta = d - elipse + 2;
     const [x1, y1, x2, y2] = [gx + ux * desde, gy + uy * desde, gx + ux * Math.max(desde, hasta), gy + uy * Math.max(desde, hasta)];
     const l = linea.querySelector('line'); l.setAttribute('x1', x1); l.setAttribute('y1', y1); l.setAttribute('x2', x2); l.setAttribute('y2', y2);
