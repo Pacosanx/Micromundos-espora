@@ -138,7 +138,7 @@ function ajustar(){
   $('derecha').style.left = DX + 'px';
   $('derAbajo').style.top = DY + 'px';   $('izqAbajo').style.top = DY + 'px';
   $('cabecera').style.width = (1841 + DX) + 'px';
-  $('lista').style.height = (707 + DY) + 'px';
+  $('lista').style.height = '614px';   // fijo: termina a la altura de CÓMO LEER LA PLACA (no crece con la pantalla)
 }
 ajustar();
 
