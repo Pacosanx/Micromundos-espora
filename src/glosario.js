@@ -111,7 +111,7 @@ function prepararGlosario(){
     if(origen)el.classList.add('cartel-referencia');
     el.querySelector('.nom').textContent=t.termino;
     el.querySelector('.cod').textContent=numero(t);
-    el.querySelector('.definicionGlosario').textContent=t.definicion||'Contenido en preparación.';
+    el.querySelector('.definicionGlosario').textContent=t.definicion||TERMINOS_SIMULADOS[t.id]||'Contenido en preparación.'; // SIMULADO si viene de TERMINOS_SIMULADOS
     el.setAttribute('aria-label',t.termino);universoCartel(el,t.grupo);
     $('anclaCarteles').appendChild(el);
     const r=caja.getBoundingClientRect(),marco=pantalla.getBoundingClientRect();
