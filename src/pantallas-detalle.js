@@ -710,7 +710,8 @@ function prepararPantallasDetalle({irSeccion,abrirTermino,impulsarReferencias=()
     enProceso('500:7077','En proceso: cómo se relacionan las especies de esta muestra.');
     // Especies: nombre, grupo y la definición de la primera (especies.csv).
     const grupoDe=n=>({B:'Bacteria',L:'Levadura',M:'Moho'}[GRUPOS_ESPECIES[n]]||'');
-    [['500:7214','500:7215'],['500:7222','500:7223']].forEach(([n,g],i)=>{const e=especies[i];if(e){cambiar(n,e);cambiar(g,grupoDe(e));}else{for(const id of [n,g])nodo(id)?.style.setProperty('visibility','hidden');}});
+    // Si falta una especie se oculta su renglón entero (con el circulito) y la línea que lo separa (19/11/2026, Paco: LECHE CRUDA).
+    [['500:7214','500:7215',['500:7210']],['500:7222','500:7223',['500:7217','500:7216']]].forEach(([n,g,fila],i)=>{const e=especies[i];if(e){cambiar(n,e);cambiar(g,grupoDe(e));}else{for(const id of fila)nodo(id)?.style.setProperty('visibility','hidden');}});
     cambiar('500:7239',CATALOGO_ESPECIES[especies[0]]?.definicion||'En proceso');
     imagenEnProceso('500:7153','PLACA FIGURATIVA');imagenEnProceso('500:7198','COLONIAS');
     cambiar('500:7160','El microscopio de esta muestra está en proceso.');
