@@ -9,7 +9,11 @@
 (() => {
   const CLAVE = 'micromundos-bienvenida-vista';
   const params = new URLSearchParams(location.search);
-  const almacen = (() => { try { return params.has('kiosco') ? sessionStorage : localStorage; } catch { return null; } })();
+  // 19/11/2026: en el servidor local (revisión de ramas) lo visto se recuerda solo en memoria, así cada recarga vuelve a
+  // mostrarlo. Todas las ramas comparten localhost:5530: si no, lo visto en una rama quedaba visto en todas.
+  const enLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:';
+  const memoria = new Map(), almacenMemoria = { getItem: k => memoria.has(k) ? memoria.get(k) : null, setItem: (k, v) => memoria.set(k, String(v)), removeItem: k => memoria.delete(k) };
+  const almacen = (() => { try { return enLocal ? almacenMemoria : params.has('kiosco') ? sessionStorage : localStorage; } catch { return null; } })();
   const yaVista = () => { try { return almacen?.getItem(CLAVE) === '1'; } catch { return false; } };
   const marcarVista = () => { try { almacen?.setItem(CLAVE, '1'); } catch {} };
   const pantalla = document.getElementById('screen');
