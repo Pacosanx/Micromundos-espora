@@ -1,34 +1,56 @@
-/* Propuesta: pantalla del nombre y galería de placas (src/tu-placa-nombre.js). Sin hover: pantalla táctil. */
-#tpNombre{position:absolute;inset:0;z-index:30;display:grid;place-items:center;background:rgb(242 240 232 / 88%);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);color:#0d0f17;font-family:Arimo,Arial,sans-serif}
+/* Propuesta: pantalla del nombre y galería de placas (src/tu-placa-nombre.js). Sin hover: pantalla táctil.
+   Misma composición que TU PLACA: textos en la columna izquierda y la placa en su lugar, a la derecha.
+   La placa es el botón: se mantiene apretada para hablar. */
+#tpNombre{position:absolute;inset:0;z-index:30;background:rgb(242 240 232 / 86%);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);color:#0d0f17;font-family:Arimo,Arial,sans-serif;touch-action:none;-webkit-user-select:none;user-select:none}
 #tpNombre[hidden]{display:none}
-.tpn-voz{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s;pointer-events:none;filter:blur(30px)}
-#tpNombre.escuchando .tpn-voz{opacity:1}
-.tpn-caja{position:relative;display:flex;flex-direction:column;align-items:center;gap:20px;width:1100px;text-align:center}
+.tpn-texto{position:absolute;left:40px;top:284px;width:520px;display:flex;flex-direction:column;gap:20px}
+.tpn-rotulo{margin:0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.6}
 #tpNombre h2{margin:0;font:400 var(--t-display)/var(--l-display) Arimo,Arial,sans-serif}
-.tpn-bajada{margin:0;font:400 var(--t-titulo)/var(--l-titulo) Arimo,Arial,sans-serif}
-.tpn-nombre{display:block;min-height:96px;margin-top:12px;font:400 88px/96px Arimo,Arial,sans-serif;border-bottom:2px solid rgb(13 15 23 / 25%);min-width:640px}
-.tpn-estado{margin:0;min-height:28px;font:400 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif;opacity:.8}
-.tpn-teclado{display:flex;flex-direction:column;gap:10px;align-items:center}
-.tpn-teclado[hidden]{display:none}
-.tpn-teclado div{display:flex;gap:10px}
-.tpn-teclado button{all:unset;display:grid;place-items:center;width:72px;height:64px;border-radius:14px;background:rgb(13 15 23 / 7%);font:400 26px/1 Arimo,Arial,sans-serif;cursor:pointer}
-.tpn-teclado button:active{background:rgb(13 15 23 / 20%)}
-.tpn-teclado .tpn-ancha{width:420px;font-size:var(--t-boton);font-weight:700}
-.tpn-teclado .tpn-media{width:180px;font-size:var(--t-boton);font-weight:700}
-.tpn-acciones{display:flex;gap:20px;margin-top:8px}
-.tpn-acciones button,.tpn-omitir{all:unset;box-sizing:border-box;min-height:64px;padding:0 44px;display:grid;place-items:center;border-radius:999px;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;cursor:pointer;box-shadow:inset 0 0 0 1.5px #0d0f17}
-.tpn-acciones .tpn-hablar{background:#0d0f17;color:#f2f0e8}
-#tpNombre.escuchando .tpn-hablar{background:#ed74a0;box-shadow:none;color:#0d0f17}
-.tpn-acciones .tpn-ok:disabled{opacity:.4;cursor:default}
-.tpn-omitir{box-shadow:none;text-decoration:underline;text-underline-offset:4px;min-height:48px}
-.tpn-privacidad{margin:0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.7}
-/* Recuerdo con nombre y galería */
+.tpn-bajada{margin:0;font:400 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif}
+.tpn-privacidad{margin:0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.6}
+.tpn-estado{position:absolute;left:40px;top:640px;width:520px;margin:0;min-height:28px;font:400 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif}
+.tpn-acciones{position:absolute;left:40px;top:720px;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.tpn-acciones button{all:unset;display:inline-flex;align-items:center;gap:12px;min-height:var(--area-tactil);font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;text-transform:uppercase;cursor:pointer}
+.tpn-acciones button[hidden]{display:none}
+.tpn-acciones button img{flex:none;transform:rotate(-45deg);filter:brightness(0);opacity:.92}
+.tpn-acciones .tpn-omitir{opacity:.6}
+.tpn-acciones button:active{opacity:.5}
+.tpn-acciones button:focus-visible,.tpn-placa:focus-visible .tpn-anillo{outline:2px solid #0d0f17;outline-offset:4px}
+
+/* La placa: protagonista. Borde de placa, latido suave mientras espera; al apretar se hunde y se llena de color con la voz. */
+.tpn-placa{all:unset;position:absolute;left:calc(50% - 31.6px);top:156.4px;width:784px;height:784px;border-radius:50%;cursor:pointer;-webkit-touch-callout:none;
+  display:grid;place-items:center;transition:transform .25s}
+.tpn-voz{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;filter:blur(24px);opacity:0;transition:opacity .4s;pointer-events:none}
+.tpn-anillo{position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 2px rgb(13 15 23 / 22%),inset 0 0 80px rgb(13 15 23 / 6%);pointer-events:none}
+.tpn-anillo::after{content:"";position:absolute;inset:18px;border-radius:50%;outline:2px dashed rgb(13 15 23 / 30%);animation:tpnLatido 2.6s ease-in-out infinite}
+@keyframes tpnLatido{0%,100%{outline-color:rgb(13 15 23 / 15%)}50%{outline-color:rgb(13 15 23 / 42%)}}
+.tpn-centro{position:relative;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center;pointer-events:none}
+.tpn-nombre{font:400 88px/96px Arimo,Arial,sans-serif;min-height:0;max-width:640px;overflow-wrap:anywhere}
+.tpn-nombre:empty{display:none}
+.tpn-indicacion{font:700 var(--t-sub)/var(--l-sub) Arimo,Arial,sans-serif;letter-spacing:.04em}
+/* Yema en el centro: un punto que se aprieta y un anillo que se expande, el mismo gesto que la invitación de la portada. */
+.tpn-centro::before{content:"";width:72px;height:72px;border-radius:50%;background:rgb(13 15 23 / 14%);box-shadow:0 0 0 1.5px rgb(13 15 23 / 45%);animation:tpnYema 2.6s ease-in-out infinite}
+@keyframes tpnYema{0%,100%{transform:scale(1);box-shadow:0 0 0 1.5px rgb(13 15 23 / 45%),0 0 0 0 rgb(13 15 23 / 18%)}40%{transform:scale(.86);box-shadow:0 0 0 1.5px rgb(13 15 23 / 60%),0 0 0 0 rgb(13 15 23 / 18%)}80%{transform:scale(1);box-shadow:0 0 0 1.5px rgb(13 15 23 / 45%),0 0 0 36px rgb(13 15 23 / 0%)}}
+#tpNombre.escuchando .tpn-centro::before{animation:none;transform:scale(.86);background:rgb(13 15 23 / 26%)}
+#tpNombre.con-nombre .tpn-centro::before,#tpNombre.cargando .tpn-centro::before{display:none}
+#tpNombre.con-nombre .tpn-indicacion{opacity:.55;font-weight:400;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta)}
+#tpNombre.escuchando .tpn-placa{transform:scale(.97)}
+#tpNombre.escuchando .tpn-voz{opacity:1}
+#tpNombre.escuchando .tpn-anillo::after{animation:none;outline-color:rgb(13 15 23 / 0%)}
+#tpNombre.escuchando .tpn-indicacion{opacity:.55;font-weight:400}
+/* «Carga» de un segundo antes de mostrar el nombre: tres puntos de los colores de los grupos. */
+#tpNombre.cargando .tpn-indicacion{font-size:0}
+#tpNombre.cargando .tpn-indicacion::before{content:"";display:block;width:64px;height:14px;background:radial-gradient(circle,#e57dab 6px,transparent 7px) 0 0/22px 14px no-repeat,radial-gradient(circle,#f2c75e 6px,transparent 7px) 21px 0/22px 14px no-repeat,radial-gradient(circle,#92aa68 6px,transparent 7px) 42px 0/22px 14px no-repeat;animation:tpnCarga .9s ease-in-out infinite}
+@keyframes tpnCarga{50%{opacity:.35}}
+@media(prefers-reduced-motion:reduce){.tpn-voz,.tpn-placa{transition:none}.tpn-centro::before,.tpn-anillo::after,#tpNombre.cargando .tpn-indicacion::before{animation:none}}
+
+/* Recuerdo con nombre y galería: rótulos de etiqueta, nombre en título, placas circulares sin aros de color propios. */
 .tpn-pie{margin:0;font:400 var(--t-titulo)/var(--l-titulo) Arimo,Arial,sans-serif;color:#0d0f17}
 .tp-recuerdo.con-galeria{padding-right:560px;box-sizing:border-box}
-.tpn-galeria{position:absolute;right:40px;top:40px;bottom:40px;width:500px;overflow:auto;color:#0d0f17}
-.tpn-galeria h3{margin:0 0 20px;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.7}
-.tpn-galeria ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.tpn-galeria li{display:flex;flex-direction:column;align-items:center;gap:8px;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif}
-.tpn-galeria img{width:140px;height:140px;border-radius:50%;object-fit:cover;background:#f2f0e8}
-.tpn-galeria .tpn-nueva img{box-shadow:0 0 0 3px #ed74a0}
-@media(prefers-reduced-motion:reduce){.tpn-voz{transition:none}}
+.tpn-galeria{position:absolute;right:40px;top:156px;bottom:40px;width:500px;overflow:auto;color:#0d0f17;scrollbar-width:none}
+.tpn-galeria h3{margin:0 0 24px;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.6}
+.tpn-galeria ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:24px 20px}
+.tpn-galeria li{display:flex;flex-direction:column;align-items:center;gap:10px;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif}
+.tpn-galeria img{width:140px;height:140px;border-radius:50%;object-fit:cover;background:#f2f0e8;box-shadow:inset 0 0 0 1.5px rgb(13 15 23 / 14%)}
+.tpn-galeria .tpn-nueva img{box-shadow:0 0 0 2px #0d0f17}
+.tpn-galeria .tpn-nueva span{font-weight:700}
