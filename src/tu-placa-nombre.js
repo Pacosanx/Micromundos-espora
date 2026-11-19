@@ -17,10 +17,10 @@
   const NOMBRE_SIMULADO = 'Paco';
   let dejarPasar = false, nombre = '';
 
-  // Micrófono del sistema: una cápsula de trazo fino y, debajo, un arco punteado (el mismo lenguaje que los arcos de la placa).
+  // Micrófono del sistema: una cápsula de trazo fino y, debajo, un arco, todo en trazo continuo; el contenedor lleva el contorno punteado.
   const MIC = `<svg class="tpn-mic-glifo" viewBox="0 0 96 96" width="132" height="132" aria-hidden="true">
       <rect x="37" y="18" width="22" height="40" rx="11" fill="none" stroke="#13151b" stroke-width="2"/>
-      <path d="M27 50a21 21 0 0 0 42 0" fill="none" stroke="#13151b" stroke-width="2" stroke-dasharray="1 6" stroke-linecap="round"/>
+      <path d="M27 50a21 21 0 0 0 42 0" fill="none" stroke="#13151b" stroke-width="2" stroke-linecap="round"/>
       <path d="M48 71v8" stroke="#13151b" stroke-width="2" stroke-linecap="round"/></svg>`;
 
   const capa = document.createElement('div');

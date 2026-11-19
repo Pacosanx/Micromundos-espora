@@ -19,23 +19,24 @@
 /* Sobre el fondo claro, el blanco en «diferencia» quedaba casi invisible: tinta oscura con un desenfoque leve. */
 .tpn-por,.tpn-nombre,.tpn-indicacion{left:50%;translate:-50% 0;white-space:nowrap;text-align:center;color:#0d0f17;filter:blur(.6px)}
 .tpn-por{opacity:.7}
-.tpn-por{top:331px;font:400 24px/24px Arimo,Arial,sans-serif}
-.tpn-nombre{top:388px;font:400 64px/64px Arimo,Arial,sans-serif;text-transform:uppercase}
+#tpNombre .tpn-por{top:316px;font:400 24px/24px Arimo,Arial,sans-serif}
+/* El nombre, más grande y apoyado cerca de la línea (que está en y = 447). */
+#tpNombre .tpn-nombre{top:362px;font:400 88px/88px Arimo,Arial,sans-serif;text-transform:uppercase}
 .tpn-linea{left:calc(50% - 307px);top:447px;width:614px;height:10px}
-.tpn-indicacion{top:999px;font:400 24px/24px Arimo,Arial,sans-serif}
+#tpNombre .tpn-indicacion{top:999px;font:400 24px/24px Arimo,Arial,sans-serif}
 .tpn-indicacion[hidden]{display:none}
 /* El micrófono: la superficie redonda de los botones del sistema (vidrio con borde desenfocado) y un glifo sintético */
 .tpn-mic{all:unset;left:calc(50% - 116.5px);top:655px;width:233px;height:233px;border-radius:50%;cursor:pointer;-webkit-touch-callout:none;transition:scale .2s;display:grid;place-items:center}
 #tpNombre .tpn-mic[hidden]{display:none}
-.tpn-mic-superficie{position:absolute;inset:0;border-radius:50%;background:rgb(242 240 232 / 55%);box-shadow:inset 0 0 0 1.5px rgb(19 21 27 / 22%);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);filter:blur(.6px)}
-.tpn-mic-superficie::after{content:'';position:absolute;inset:14px;border-radius:50%;border:1px dashed rgb(19 21 27 / 22%)}
+/* Contenedor del micrófono: vidrio con el contorno punteado (Paco, 19/11); el glifo, en trazo continuo. */
+.tpn-mic-superficie{position:absolute;inset:0;border-radius:50%;background:rgb(242 240 232 / 55%);border:1.5px dashed rgb(19 21 27 / 35%);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .tpn-mic-glifo{position:relative;filter:blur(.3px)}
 #tpNombre.escuchando .tpn-mic{scale:.94}
 .tpn-mic:focus-visible{outline:2px solid #0d0f17;outline-offset:6px}
 /* ¿Está bien así? */
 .tpn-confirmar{left:50%;top:520px;translate:-50% 0;display:flex;flex-direction:column;align-items:center;gap:18px;color:#0d0f17}
 .tpn-confirmar[hidden]{display:none}
-.tpn-confirmar p{margin:0;font:400 var(--t-titulo)/var(--l-titulo) Arimo,Arial,sans-serif}
+#tpNombre .tpn-confirmar p{margin:0;font:400 var(--t-titulo)/var(--l-titulo) Arimo,Arial,sans-serif}
 .tpn-confirmar div{display:flex;align-items:center;gap:24px}
 .tpn-confirmar i{width:1px;height:22px;background:rgb(13 15 23 / 25%)}
 #tpNombre .tpn-confirmar button,.tpn-omitir{all:unset;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#0d0f17;text-transform:uppercase;min-height:var(--area-tactil);display:grid;place-items:center;cursor:pointer}
