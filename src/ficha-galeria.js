@@ -1,5 +1,13 @@
+// Placas figurativas (19/11/2026): las que Paco armó con Codex (outputs/micromundos/placas-figurativas, una por muestra con
+// ficha, achicadas a 1024 px en src/assets/placas-figurativas). La del yogur es la de siempre. Sin imagen → null (en proceso).
+const PLACAS_FIGURATIVAS = new Set(['B-150-LCR','B-302-SDC','BL-043-CDN','BL-163-CHI','BL-183-KOM','M-048-MAB','M-189-BDH','L-108-PDA','L-115-CAR','L-230-SID','M-259-SDG']);
+function placaFigurativa(codigo) {
+  if (codigo === 'B-083-YNA') return 'src/assets/detalles/ficha-yogur-crema.png';
+  return PLACAS_FIGURATIVAS.has(codigo) ? `src/assets/placas-figurativas/${codigo}.png` : null;
+}
 function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
-  const originales = [...relacionadas];
+  // Las que ya tienen placa figurativa van primero (orden estable: el resto queda como venía).
+  const originales = [...relacionadas].sort((a, b) => !!placaFigurativa(b.codigo) - !!placaFigurativa(a.codigo));
   if (!galeria || !originales.length) return () => {};
 
   galeria.replaceChildren();
@@ -33,18 +41,22 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
       codigo.textContent = otra.codigo;
       encabezado.append(origen, codigo);
 
-      // Pendiente (CHECKLIST): acá va la placa figurativa de cada muestra. Todavía no existen; mientras tanto, la forma de la muestra en la PLACA.
+      // Placa figurativa de cada muestra; las que todavía no existen quedan en proceso.
       const marco = document.createElement('div');
       marco.className = 'ficha-galeria__marco';
-      const fuente = otra.el?.querySelector('canvas');
-      if (fuente) {
-        const canvas = document.createElement('canvas');
-        canvas.width = canvas.height = 354;
-        canvas.className = 'ficha-galeria__canvas';
-        canvas.setAttribute('role', 'img');
-        canvas.setAttribute('aria-label', `Ilustración de la muestra ${otra.codigo}`);
-        canvas.getContext('2d')?.drawImage(fuente, 0, 0, 354, 354);
-        marco.appendChild(canvas);
+      const placa = placaFigurativa(otra.codigo);
+      if (placa) {
+        const img = document.createElement('img');
+        img.className = 'ficha-galeria__canvas'; img.src = placa; img.alt = `Placa figurativa de la muestra ${otra.codigo}`; img.loading = 'lazy';
+        marco.appendChild(img);
+      } else {
+        // En proceso: Paco arma las placas figurativas de cada muestra (con ChatGPT). Hasta entonces, el lugar queda marcado.
+        const proceso = document.createElement('div');
+        proceso.className = 'ficha-galeria__en-proceso';
+        proceso.setAttribute('role', 'img');
+        proceso.setAttribute('aria-label', `Placa figurativa de la muestra ${otra.codigo}: en proceso`);
+        proceso.innerHTML = '<span>PLACA FIGURATIVA</span><span>EN PROCESO</span>';
+        marco.appendChild(proceso);
       }
 
       // GRUPO y COMPARTE como pares rótulo / valor en una misma grilla, con la misma jerarquía y alineación.
