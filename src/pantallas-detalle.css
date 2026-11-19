@@ -151,6 +151,9 @@
 .u-muestras{padding:2px 0 16px}
 .u-fichas{cursor:pointer;align-self:stretch;height:auto!important;display:flex;align-items:center}
 .u-fichas:focus-visible{outline:0;color:#c9e7a4}
+/* Fichas simuladas (19/11/2026): la pantalla del yogur con los datos de la muestra; lo que falta, marcado EN PROCESO. */
+.ficha-simulada .ficha-en-proceso{font-style:italic;opacity:.55}
+.ficha-imagen-en-proceso{position:absolute;inset:8%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:50%;border:1px dashed rgb(13 15 23 / 30%);color:#0d0f17;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.7;mix-blend-mode:normal}
 
 /* «Dónde están»: flechas dentro del círculo de la ilustración, en tinta oscura sobre el fondo claro. */
 .entorno-flecha{z-index:2}

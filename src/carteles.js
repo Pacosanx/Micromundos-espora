@@ -37,7 +37,7 @@ function contenidoCartel(s){
     <dt>Recolección</dt><dd>${esc(fechaTexto(s))}</dd>
     <dt>Colonias</dt><dd>${s.colonias>N_MAX?'Más de 300':s.colonias}</dd>
     <dt>Especies</dt><dd>${especies.map(e=>`<small>${esc(e)}</small>`).join('')}</dd></dl>
-    ${esFichaPreparada(s)?`<button class="masCartel" data-ficha-completa><span>Ver ficha de muestra</span><img src="${RECURSOS_CARTEL.flecha}" width="11.3995" height="11.0459" alt=""></button>`:''}`;
+    ${tieneFicha(s)?`<button class="masCartel" data-ficha-completa><span>Ver ficha de muestra</span><img src="${RECURSOS_CARTEL.flecha}" width="11.3995" height="11.0459" alt=""></button>`:''}`;
 }
 
 // Arrastre común para muestras y términos: blur de borde, retorno e inercia.
