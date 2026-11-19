@@ -20,13 +20,18 @@
     .modo-kiosco, .modo-kiosco body { touch-action: pan-x pan-y; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
     .modo-kiosco input, .modo-kiosco textarea { -webkit-user-select: text; user-select: text; }
     .modo-kiosco img { -webkit-user-drag: none; }
-    #kioscoAviso { position: fixed; inset: 0; z-index: 2147483000; display: grid; place-items: center; background: rgb(242 240 232 / 72%); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); opacity: 0; transition: opacity .4s; pointer-events: none; }
+    /* Aviso con el material de los carteles (vidrio con borde desenfocado y grano), sin color de universo; la acción como texto-botón. */
+    #kioscoAviso { position: fixed; inset: 0; z-index: 2147483000; display: grid; place-items: center; background: rgb(242 240 232 / 45%); opacity: 0; transition: opacity .4s; pointer-events: none; }
     #kioscoAviso.visible { opacity: 1; pointer-events: auto; }
-    #kioscoAviso div { display: flex; flex-direction: column; align-items: center; gap: 16px; color: #0d0f17; text-align: center; font-family: Arimo, Arial, sans-serif; }
-    #kioscoAviso strong { font: 400 var(--t-titulo, 32px)/var(--l-titulo, 36px) Arimo, Arial, sans-serif; text-transform: uppercase; }
-    #kioscoAviso p { margin: 0; font: 400 var(--t-lectura, 20px)/var(--l-lectura, 28px) Arimo, Arial, sans-serif; }
-    #kioscoAviso button { all: unset; margin-top: 16px; padding: 18px 40px; border-radius: 999px; background: #0d0f17; color: #f2f0e8; font: 700 var(--t-boton, 17px)/var(--l-boton, 20px) Arimo, Arial, sans-serif; cursor: pointer; }
-    #kioscoAviso .kiosco-cuenta { font-variant-numeric: tabular-nums; }
+    #kioscoAviso .cartel { --cartel-fondo: rgb(205 198 186 / 42%); --cartel-noise-opacity: .35; position: relative; width: 520px; color: #13151b; font-family: Arimo, Arial, sans-serif; }
+    #kioscoAviso .fi { padding: 32px 36px 20px; max-height: none; overflow: visible; }
+    #kioscoAviso .cabCartel { margin-bottom: 20px; }
+    #kioscoAviso .reglaCartel::before { width: calc(100% + 4px); -webkit-mask-size: 100% 5px; mask-size: 100% 5px; }
+    #kioscoAviso .nom { font: 400 var(--t-titulo, 32px)/var(--l-titulo, 36px) Arimo, Arial, sans-serif; text-transform: uppercase; }
+    #kioscoAviso .cod { font: 400 var(--t-etiqueta, 14.67px)/var(--l-etiqueta, 18px) Arimo, Arial, sans-serif; padding-top: 3px; font-variant-numeric: tabular-nums; }
+    #kioscoAviso p { margin: 18px 0 0; font: 400 var(--t-lectura, 20px)/var(--l-lectura, 28px) Arimo, Arial, sans-serif; }
+    #kioscoAviso button { all: unset; display: inline-flex; align-items: center; min-height: var(--area-tactil, 48px); margin-top: 16px; font: 700 var(--t-boton, 17px)/var(--l-boton, 20px) Arimo, Arial, sans-serif; text-transform: uppercase; cursor: pointer; }
+    #kioscoAviso button:focus-visible { outline: 2px solid #13151b; outline-offset: 4px; border-radius: 8px; }
     @media (prefers-reduced-motion: reduce) { #kioscoAviso { transition: none; } }`;
   document.head.appendChild(estilo);
 
@@ -35,7 +40,9 @@
   aviso.id = 'kioscoAviso';
   aviso.setAttribute('role', 'alertdialog');
   aviso.setAttribute('aria-live', 'assertive');
-  aviso.innerHTML = '<div><strong>¿Seguís ahí?</strong><p>En <span class="kiosco-cuenta"></span> segundos el Atlas vuelve al inicio<br>para la próxima persona.</p><button type="button">SEGUIR EXPLORANDO</button></div>';
+  aviso.innerHTML = '<div class="cartel"><div class="vidrio"></div><div class="flota"><div class="grano"></div><div class="fi"><div class="co">'
+    + '<header class="cabCartel"><div class="nom">¿Seguís ahí?</div><div class="cod"><span class="kiosco-cuenta"></span> s</div></header><div class="reglaCartel"></div>'
+    + '<p>En unos segundos el Atlas vuelve al inicio para la próxima persona.</p><button type="button">SEGUIR EXPLORANDO</button></div></div></div></div>';
   document.body.appendChild(aviso);
   const cuenta = aviso.querySelector('.kiosco-cuenta');
   let espera = 0, reloj = 0, restan = 0;
