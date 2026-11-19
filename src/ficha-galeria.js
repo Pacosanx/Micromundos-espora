@@ -33,7 +33,7 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
       codigo.textContent = otra.codigo;
       encabezado.append(origen, codigo);
 
-      // Placa figurativa de cada muestra (placa-figurativa.js). La del yogur es la imagen real; las otras, una simulación con sus datos.
+      // Placa figurativa de cada muestra. La del yogur es la imagen real; las otras están en proceso.
       const marco = document.createElement('div');
       marco.className = 'ficha-galeria__marco';
       if (otra.codigo === 'B-083-YNA') {
@@ -41,12 +41,13 @@ function prepararGaleriaFicha(galeria, relacionadas, muestra, alAbrir) {
         img.className = 'ficha-galeria__canvas'; img.src = 'src/assets/detalles/ficha-yogur-crema.png'; img.alt = `Placa figurativa de la muestra ${otra.codigo}`; img.loading = 'lazy';
         marco.appendChild(img);
       } else {
-        const canvas = document.createElement('canvas');
-        canvas.className = 'ficha-galeria__canvas';
-        canvas.setAttribute('role', 'img');
-        canvas.setAttribute('aria-label', `Placa figurativa de la muestra ${otra.codigo} (simulada)`);
-        if (canvas.getContext('2d')) placaFigurativa(canvas, otra, 354);
-        marco.appendChild(canvas);
+        // En proceso: Paco arma las placas figurativas de cada muestra (con ChatGPT). Hasta entonces, el lugar queda marcado.
+        const proceso = document.createElement('div');
+        proceso.className = 'ficha-galeria__en-proceso';
+        proceso.setAttribute('role', 'img');
+        proceso.setAttribute('aria-label', `Placa figurativa de la muestra ${otra.codigo}: en proceso`);
+        proceso.innerHTML = '<span>PLACA FIGURATIVA</span><span>EN PROCESO</span>';
+        marco.appendChild(proceso);
       }
 
       // GRUPO y COMPARTE como pares rótulo / valor en una misma grilla, con la misma jerarquía y alineación.
