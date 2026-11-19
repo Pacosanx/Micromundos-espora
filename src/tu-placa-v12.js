@@ -38,11 +38,15 @@ function prepararTuPlaca(){
   function crear(e,x,y,tamano=e.tamano,parent=null){if(items.length>=120)return null;const it={id:++secuencia,modelo:e.id,x,y,tamano,escala:100,rot:0,foco:100,opacidad:100,seed:e.style.seed%1000,parent,manual:false,org:0,sinReacciones:!!e.composicion&&e.estado!=='AF'};items.push(it);return it;}
   function quitar(it){if(!it)return;const ids=new Set([it.id]);for(const a of items)if(ids.has(a.parent))ids.add(a.id);for(let i=items.length-1;i>=0;i--)if(ids.has(items[i].id))items.splice(i,1);if(ids.has(seleccionado?.id))seleccionado=null;seleccion=seleccion.filter(s=>!ids.has(s.id));cerrarMenus();dibujar();}
   const hijos=it=>items.filter(i=>i.parent===it.id);
-  function sincronizarHijos(it){const hs=hijos(it),t=(it.org||0)/100,s=it.escala/100;hs.forEach((h,i)=>{
-    const ang=hash(h.id*17)*Math.PI*2,dist=(70+hash(h.id*23)*150)*s;let n=i,k=0;const caps=[8,14,20],radios=[95,165,235];while(n>=caps[k]&&k<2){n-=caps[k++];}const oa=2*Math.PI*n/caps[k]+(k%2?Math.PI/caps[k]:0)-Math.PI/2;
-    h.seed=it.seed;h.foco=it.foco;h.opacidad=it.opacidad??100;h.ajustes=it.ajustes?{...it.ajustes}:undefined;h.rot=it.rot+(hash(h.id*13)-.5)*160*(1-t);h.escala=it.escala*((.5+hash(h.id*37)*.4)*.9*(1-t)+.6*t);
-    if(!h.manual){h.x=it.x+Math.cos(ang)*dist*(1-t)+Math.cos(oa)*radios[k]*s*t;h.y=it.y+Math.sin(ang)*dist*(1-t)+Math.sin(oa)*radios[k]*s*t;const d=Math.hypot(h.x-392,h.y-392);if(d>340){h.x=392+(h.x-392)*340/d;h.y=392+(h.y-392)*340/d;}}
-  });}
+  // MULTIPLICAR (19/11/2026): las copias van pegadas a la colonia madre, en anillos que se tocan (uno alrededor del otro),
+  // todas del mismo tamaño aproximado. Antes quedaban dispersas lejos de la madre.
+  function sincronizarHijos(it){const hs=hijos(it);if(!hs.length)return;const s=it.escala/100,fs=(estiloBase(it).size??100)/100,ESC=.6;
+    const rp=it.tamano*s/2*fs,rc=it.tamano*s*ESC/2*fs;let k=0,n=0,cap=0,r=0;
+    const anillo=()=>{r=rp+rc*(1+2*k)*.92;cap=Math.max(6,Math.floor(2*Math.PI*r/(2*rc*.96)));};anillo();
+    hs.forEach(h=>{if(n>=cap){k++;n=0;anillo();}const a=2*Math.PI*n/cap+(k%2?Math.PI/cap:0)-Math.PI/2;n++;
+      h.seed=it.seed;h.foco=it.foco;h.opacidad=it.opacidad??100;h.ajustes=it.ajustes?{...it.ajustes}:undefined;h.rot=it.rot+(hash(h.id*13)-.5)*40;h.escala=it.escala*ESC*(.94+hash(h.id*37)*.12);
+      if(!h.manual){h.x=it.x+Math.cos(a)*r;h.y=it.y+Math.sin(a)*r;const d=Math.hypot(h.x-392,h.y-392);if(d>340){h.x=392+(h.x-392)*340/d;h.y=392+(h.y-392)*340/d;}}
+    });}
 
   // Selección: una colonia (tocar) o varias (lazo). El menú y el editor actúan sobre todas.
   const elegidas=()=>seleccion.length?seleccion.filter(s=>items.includes(s)):seleccionado?[seleccionado]:[];
@@ -51,7 +55,11 @@ function prepararTuPlaca(){
   const menu=montarMenuTuPlaca($('tpMenu'),{obtener:()=>seleccionado?{...seleccionado,duplicados:hijos(seleccionado).length}:null,empezar:iniciarCambio,terminar:terminarCambio,
     quitar:()=>{iniciarCambio();quitar(seleccionado);terminarCambio();},
     variar:()=>{for(const it of elegidas()){it.seed=Math.floor(Math.random()*1000);sincronizarHijos(it);}dibujar();},
-    transformar:()=>{if(!seleccionado)return;menu.cerrar();editor.abrir();},
+    transformar:()=>{if(!seleccionado)return;menu.cerrar();editor.abrir();animarPerilla(false);},
+    // 19/11/2026: GIRAR solo cuando la forma no es simétrica: más de 50 % de irregularidad, dos lóbulos o más, recorte o expansión (Paco).
+    girable:()=>{if(!seleccionado)return false;const st=MotorMuestrario.estiloColonia(estiloBase(seleccionado),migrarAjustes(seleccionado.ajustes)||{},familiaDe(seleccionado));
+      const recortable=!['pair','band','capsule'].includes(st.shape);
+      return st.irregularity>50||st.studyLobes>=2||(recortable&&st.cutOpening<360)||(st.shape==='fan'&&(st.detail||0)>0);},
     cambiar:(k,v)=>{
       for(const it of elegidas()){
         if(k==='duplicar'){let hs=hijos(it);while(hs.length<v&&items.length<120){const h=crear(modelo(it),it.x,it.y,it.tamano,it.id);if(!h)break;if(it.estilo){h.estilo={...it.estilo};h.grupo=it.grupo;}h.sinReacciones=it.sinReacciones;hs.push(h);}while(hs.length>v){const h=hs.pop();items.splice(items.indexOf(h),1);}}
@@ -64,7 +72,7 @@ function prepararTuPlaca(){
     base:()=>({fuente:estiloBase(seleccionado),ajustes:migrarAjustes(seleccionado.ajustes),familia:familiaDe(seleccionado),rot:seleccionado.rot,foco:seleccionado.foco,opacidad:seleccionado.opacidad??100,radio:radioDibujo(seleccionado)}),
     cambiar:parcial=>{for(const it of elegidas()){it.ajustes={...migrarAjustes(it.ajustes),...parcial};sincronizarHijos(it);}},
     empezar:iniciarCambio,terminar:()=>{dibujar();terminarCambio();},
-    alCerrar:()=>{if(seleccionado&&items.includes(seleccionado)){const c=centro();menu.abrir(c.x,c.y);}dibujar();},
+    alCerrar:()=>{animarPerilla(true);if(seleccionado&&items.includes(seleccionado)){const c=centro();menu.abrir(c.x,c.y);}dibujar();},
   });
 
   function dibujar(){
@@ -203,12 +211,13 @@ function prepararTuPlaca(){
   const par=MotorMuestrario.meetingTypePair;
   const MODO={fusion:'fusion',barrier:'barrera',repel:'separacion',bridge:'intercambio',crush:'comprimida'};
   const REGLAS=Object.fromEntries(Object.entries(MotorMuestrario.meetingRules).map(([k,m])=>[k,MODO[m]||'ninguna']));
+  // 19/11/2026: ningún término se repite (antes había dos Simbiosis y dos Rechazo): moho + moho es Fusión y bacteria + bacteria, Compresión.
   const REACCIONES={
-    fusion:{nombre:'Simbiosis',detalle:'forma combinada',pareja:'Moho + moho',texto:'En esta representación, dos mohos que se tocan forman un solo cuerpo: sus bordes se funden en una transición amplia entre los dos núcleos.'},
+    fusion:{nombre:'Fusión',detalle:'forma combinada',pareja:'Moho + moho',texto:'En esta representación, dos mohos que se tocan forman un solo cuerpo: sus bordes se funden en una transición amplia entre los dos núcleos.'},
     barrera:{nombre:'Barrera',detalle:'frente compartido',pareja:'Moho + bacteria',texto:'En esta representación, los dos frentes de crecimiento se frenan donde se encuentran. La frontera queda más cerca de la colonia más chica.'},
     separacion:{nombre:'Rechazo',detalle:'separación suave',pareja:'Moho + levadura',texto:'En esta representación, el moho interrumpe su borde antes de llegar a la levadura y deja una franja libre alrededor.'},
     intercambio:{nombre:'Simbiosis',detalle:'intercambio',pareja:'Bacteria + levadura',texto:'Bacterias lácticas y levaduras viven juntas, cada una aprovecha un alimento distinto y, entre las dos, fermentan la masa madre. En la placa, fragmentos de color pasan de una colonia a la otra.'},
-    comprimida:{nombre:'Rechazo',detalle:'colonia comprimida',pareja:'Bacteria + bacteria',texto:'En esta representación, dos colonias de bacterias sólo se deforman cuando se empujan: se aplastan contra la cara de encuentro.'},
+    comprimida:{nombre:'Compresión',detalle:'colonia comprimida',pareja:'Bacteria + bacteria',texto:'En esta representación, dos colonias de bacterias sólo se deforman cuando se empujan: se aplastan contra la cara de encuentro.'},
     ninguna:{nombre:'Sin reacción',detalle:'',pareja:'Levadura + levadura',texto:'En esta representación, dos levaduras pueden tocarse sin cambiar su forma.'},
   };
   // Qué colonias reaccionan (Paco, 18/11/2026):
@@ -289,18 +298,35 @@ function prepararTuPlaca(){
   const arco=(a0,a1)=>{const [x0,y0]=pp(a0),[x1,y1]=pp(a1);return `M${x0},${y0}A${R_ARCO},${R_ARCO} 0 0 ${a1>a0?1:0} ${x1},${y1}`;};
   const tDe=k=>k==='zoom'?Math.max(0,Math.min(1,Math.log(zoom/50)/Math.log(4))):(giro+180)/360; // 1 = arriba
   const angDe=(k,t)=>{const A=ARCOS[k];return A.a1+(A.a0-A.a1)*t;};
+  // 19/11/2026: al abrir TRANSFORMAR, GIRAR y DENSIDAD se van con la misma transición que el arco de zoom de MUESTRAS:
+  // primero se apagan manija, remates, signos y nombres; después cada arco se recoge hacia su centro y queda un punto que se apaga.
+  let progresoPerilla=1,animPerilla=0;
+  const suaveP=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
+  function animarPerilla(mostrar){
+    cancelAnimationFrame(animPerilla);animPerilla=0;const desde=progresoPerilla,hasta=mostrar?1:0;
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches||desde===hasta){progresoPerilla=hasta;dibujarPerilla();return;}
+    const inicio=performance.now(),duracion=(mostrar?950:650)*Math.abs(hasta-desde);
+    const paso=ahora=>{const t=Math.max(0,Math.min(1,(ahora-inicio)/duracion));progresoPerilla=desde+(hasta-desde)*t;dibujarPerilla();animPerilla=t<1?requestAnimationFrame(paso):0;};
+    animPerilla=requestAnimationFrame(paso);
+  }
   function dibujarPerilla(){
+    const P=progresoPerilla;if(P<=0){perilla.innerHTML='';return;}
+    const abrir=suaveP((P-.1)/.6),detalle=suaveP((P-.7)/.1).toFixed(3),signos=suaveP((P-.8)/.2).toFixed(3),punto=(1-suaveP((P-.22)/.25)).toFixed(3),listo=P===1;
+    perilla.style.opacity=suaveP(P/.1).toFixed(3);
     const remate=a=>{const [x0,y0]=pp(a,R_ARCO-9),[x1,y1]=pp(a,R_ARCO+9);return `M${x0},${y0}L${x1},${y1}`;};
     const signo=(a,mas)=>{const [cx,cy]=pp(a),r=a*Math.PI/180,rx=Math.cos(r),ry=Math.sin(r),tx=-ry,ty=rx,L=6;
       return `M${cx-rx*L},${cy-ry*L}L${cx+rx*L},${cy+ry*L}`+(mas?`M${cx-tx*L},${cy-ty*L}L${cx+tx*L},${cy+ty*L}`:'');};
     let h='';
     for(const k of ['zoom','giro']){const A=ARCOS[k],[x,y]=pp(angDe(k,tDe(k))),[lx,ly]=pp((A.a0+A.a1)/2,R_ARCO+36); // rótulo y valor a la altura del centro del arco (Paco, 19/11)
-      h+=`<path class="tp-zoom-linea" d="${arco(Math.min(A.a0,A.a1),Math.max(A.a0,A.a1))}"/><path class="tp-zoom-linea" d="${remate(A.a0)+remate(A.a1)}"/>`;
-      if(k==='zoom'){const [mx,my]=pp(A.a0-SEP),[nx,ny]=pp(A.a1+SEP);h+=`<path class="tp-zoom-linea" d="${signo(A.a0-SEP,true)+signo(A.a1+SEP,false)}"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="1" cx="${mx}" cy="${my}" r="18"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="-1" cx="${nx}" cy="${ny}" r="18"/>`;}
+      const am=(A.a0+A.a1)/2,semi=Math.abs(A.a1-A.a0)/2*abrir,[cx0,cy0]=pp(am);
+      h+=`<g style="pointer-events:${listo?'auto':'none'}">`;
+      if(abrir>0)h+=`<path class="tp-zoom-linea" d="${arco(am-semi,am+semi)}"/>`;
+      h+=`<circle cx="${cx0}" cy="${cy0}" r="2" class="tp-zoom-manija" opacity="${punto}"/><path class="tp-zoom-linea" opacity="${detalle}" d="${remate(A.a0)+remate(A.a1)}"/>`;
+      if(k==='zoom'){const [mx,my]=pp(A.a0-SEP),[nx,ny]=pp(A.a1+SEP);h+=`<path class="tp-zoom-linea" opacity="${signos}" d="${signo(A.a0-SEP,true)+signo(A.a1+SEP,false)}"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="1" cx="${mx}" cy="${my}" r="18"/><circle class="tp-perilla-control tp-zoom-paso" data-arco="zoom" data-paso="-1" cx="${nx}" cy="${ny}" r="18"/>`;}
       const valor=k==='zoom'?Math.round(zoom)+' %':Math.round(giro)+'°';
-      h+=`<text class="tp-zoom-rotulo" x="${lx}" y="${ly-4}" text-anchor="${A.lado>0?'start':'end'}">${k==='zoom'?'DENSIDAD':'GIRAR'}</text><text class="tp-zoom-valor" x="${lx}" y="${ly+16}" text-anchor="${A.lado>0?'start':'end'}">${valor}</text>
+      h+=`<g opacity="${detalle}"><text class="tp-zoom-rotulo" x="${lx}" y="${ly-4}" text-anchor="${A.lado>0?'start':'end'}">${k==='zoom'?'DENSIDAD':'GIRAR'}</text><text class="tp-zoom-valor" x="${lx}" y="${ly+16}" text-anchor="${A.lado>0?'start':'end'}">${valor}</text>
         <path class="tp-perilla-control tp-perilla-toque" data-arco="${k}" d="${arco(Math.min(A.a0,A.a1),Math.max(A.a0,A.a1))}"/>
-        <g class="tp-perilla-control" data-arco="${k}" role="slider" tabindex="0" aria-label="${k==='zoom'?'Densidad de la composición':'Girar la placa'}" aria-valuemin="${k==='zoom'?50:-180}" aria-valuemax="${k==='zoom'?200:180}" aria-valuenow="${Math.round(k==='zoom'?zoom:giro)}" aria-valuetext="${valor}"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="8" class="tp-zoom-manija"/></g>`;}
+        <g class="tp-perilla-control" data-arco="${k}" role="slider" tabindex="0" aria-label="${k==='zoom'?'Densidad de la composición':'Girar la placa'}" aria-valuemin="${k==='zoom'?50:-180}" aria-valuemax="${k==='zoom'?200:180}" aria-valuenow="${Math.round(k==='zoom'?zoom:giro)}" aria-valuetext="${valor}"><circle cx="${x}" cy="${y}" r="24" class="tp-perilla-zona"/><circle cx="${x}" cy="${y}" r="8" class="tp-zoom-manija"/></g></g></g>`;}
     perilla.innerHTML=h;
     if(girandoPerilla!==null)perilla.querySelector(`g[data-arco="${arcoActivo}"]`)?.focus?.({preventScroll:true});
   }
