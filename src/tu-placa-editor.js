@@ -12,17 +12,18 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
   const C=392,R0=140,RD=300,ns='http://www.w3.org/2000/svg';
   const rad=a=>a*Math.PI/180,norm=a=>((a%360)+540)%360-180,clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
   const pt=(a,r)=>[C+Math.cos(rad(a))*r,C+Math.sin(rad(a))*r];
-  const pestanas=[['forma','FORMA'],['borde','BORDE Y CORTE'],['color','COLOR'],['materia','MATERIA']];
+  // 19/11/2026: COLOR y MATERIA son una sola, MATERIA, con el ícono de color (Paco).
+  const pestanas=[['forma','FORMA'],['borde','BORDE Y CORTE'],['materia','MATERIA']];
   host.className='tp-editor';host.hidden=true;
   host.innerHTML=`<div class="tp-editor-velo"></div><div class="tp-editor-colonia"><canvas></canvas></div><svg class="tp-editor-guias" viewBox="0 0 784 784" aria-hidden="true"></svg><div class="tp-editor-pestanas" role="tablist" aria-label="Transformar"></div><div class="tp-editor-opciones"></div><button type="button" class="tp-editor-listo">LISTO</button>`;
   const caja=host.querySelector('.tp-editor-colonia'),svg=host.querySelector('svg'),tabs=host.querySelector('.tp-editor-pestanas'),opciones=host.querySelector('.tp-editor-opciones');
   let pestana='forma',arrastre=null,pedido=0,estado=null,estilo=null;
   // 19/11/2026: los títulos salen del círculo. Van afuera, a la izquierda de la placa, uno debajo del otro,
   // cada uno con su ícono en la misma superficie redonda que los botones del aro (menú contextual).
-  const ICONOS_PESTANA={forma:'<path d="M12 4.2c1.6 0 2.2 1.6 3.6 1.9 1.5.3 3-.4 3.6 1 .6 1.4-.7 2.4-.5 3.9.2 1.5 1.6 2.4.9 3.8-.7 1.4-2.3.9-3.6 1.7-1.3.8-1.4 2.6-3 2.8-1.5.2-2.1-1.4-3.5-1.9-1.4-.5-3 .3-3.7-1-.7-1.4.6-2.5.4-4-.2-1.5-1.6-2.4-.9-3.8.7-1.4 2.3-.8 3.6-1.6C10.1 6.2 10.4 4.2 12 4.2Z"/>',borde:'<path d="M18.2 15.6A7.2 7.2 0 1 1 18.6 9"/><path d="M15 12a3 3 0 1 1-.9-2.1" stroke-dasharray="1.2 2.2"/>',color:'<circle cx="12" cy="12" r="7.2"/><path d="M12 4.8a7.2 7.2 0 0 0 0 14.4Z" fill="#212121"/>',materia:'<circle cx="12" cy="12" r="7.2"/><circle cx="9.4" cy="9.6" r=".7" fill="#212121"/><circle cx="13.6" cy="8.8" r=".7" fill="#212121"/><circle cx="14.8" cy="13.2" r=".7" fill="#212121"/><circle cx="10.6" cy="14.6" r=".7" fill="#212121"/><circle cx="12.2" cy="11.6" r=".7" fill="#212121"/>'};
+  const ICONOS_PESTANA={forma:'<path d="M12 4.2c1.6 0 2.2 1.6 3.6 1.9 1.5.3 3-.4 3.6 1 .6 1.4-.7 2.4-.5 3.9.2 1.5 1.6 2.4.9 3.8-.7 1.4-2.3.9-3.6 1.7-1.3.8-1.4 2.6-3 2.8-1.5.2-2.1-1.4-3.5-1.9-1.4-.5-3 .3-3.7-1-.7-1.4.6-2.5.4-4-.2-1.5-1.6-2.4-.9-3.8.7-1.4 2.3-.8 3.6-1.6C10.1 6.2 10.4 4.2 12 4.2Z"/>',borde:'<path d="M18.2 15.6A7.2 7.2 0 1 1 18.6 9"/><path d="M15 12a3 3 0 1 1-.9-2.1" stroke-dasharray="1.2 2.2"/>',materia:'<circle cx="12" cy="12" r="7.2"/><path d="M12 4.8a7.2 7.2 0 0 0 0 14.4Z" fill="#212121"/>'};
   pestanas.forEach(([id,texto],i)=>{const b=document.createElement('button');b.type='button';b.role='tab';b.dataset.pestana=id;b.setAttribute('aria-label',texto);
     b.innerHTML=`<span class="tp-editor-pestana-texto">${texto}</span><span class="tp-editor-pestana-icono"><img class="tp-editor-pestana-superficie" src="src/assets/tu-placa/tp-boton.svg" alt=""><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#212121" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONOS_PESTANA[id]||''}</svg></span>`;
-    { const a=(180-(i-1.5)*13)*Math.PI/180; b.style.left=(C+Math.cos(a)*452)+'px'; b.style.top=(C+Math.sin(a)*452)+'px'; } // siguen el arco del círculo mayor
+    { const a=(180-(i-(pestanas.length-1)/2)*13)*Math.PI/180; b.style.left=(C+Math.cos(a)*452)+'px'; b.style.top=(C+Math.sin(a)*452)+'px'; } // siguen el arco del círculo mayor
     b.addEventListener('pointerdown',ev=>{ev.stopPropagation();pestana=id;dibujar();});b.addEventListener('keydown',ev=>{if(['Enter',' '].includes(ev.key)){ev.preventDefault();pestana=id;dibujar();}const d={ArrowDown:1,ArrowUp:-1}[ev.key];if(d){ev.preventDefault();const ids=pestanas.map(p=>p[0]);pestana=ids[(ids.indexOf(id)+d+ids.length)%ids.length];dibujar();tabs.querySelector('[aria-selected="true"]')?.focus({preventScroll:true});}});tabs.appendChild(b);});
   host.querySelector('.tp-editor-listo').addEventListener('click',ev=>{ev.stopPropagation();cerrar();});
   host.querySelector('.tp-editor-velo').addEventListener('pointerdown',ev=>{ev.stopPropagation();if(!arrastre)cerrar();});
@@ -51,20 +52,19 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
       {tipo:'corte',etiqueta:'Recorte',visible:recortable},
       {tipo:'radial',key:'ringThickness',etiqueta:'Anillo',min:1,max:100,invertido:true,angulo:()=>giroMarco()-90+(valor('cutAngle')||0)+valor('cutOpening')/2,r0:0,r1:R0*.94,visible:recortable,mostrar:porcentaje},
     ],
-    color:[
+    materia:[
       {tipo:'miniaturas',key:'gradient',etiqueta:'Distribución',opciones:[['radial','Radial'],['linear','Lineal'],['rings','Anillos'],['solid','Un color']],a0:178,paso:18,lado:'end',etiquetaAl:'final',separacion:16},
       {tipo:'miniaturas',key:'colorTreatment',etiqueta:'Tratamiento',opciones:TRATAMIENTOS,a0:-62,paso:17,lado:'start'},
       {tipo:'medio',etiqueta:'Color medio',visible:()=>valor('gradient')!=='solid'||conTratamiento('zoned','patchy')()},
       {tipo:'dial',key:'pigmentIntensity',etiqueta:'Intensidad',min:0,max:100,paso:1,a0:22,a1:50,visible:()=>tratamiento()!=='none',mostrar:porcentaje},
-      {tipo:'dial',key:'zoneCount',etiqueta:'Zonas',min:1,max:8,paso:1,a0:130,a1:158,visible:conTratamiento('zoned'),mostrar:v=>String(v)},
-      {tipo:'dial',key:'rimSize',etiqueta:'Borde',min:40,max:180,paso:1,a0:130,a1:158,visible:conTratamiento('rimmed'),mostrar:porcentaje},
-      {tipo:'dial',key:'spotCount',etiqueta:'Manchas',min:1,max:8,paso:1,a0:130,a1:158,visible:conTratamiento('spotted'),mostrar:v=>String(v)},
+      {tipo:'dial',key:'zoneCount',etiqueta:'Zonas',min:1,max:8,paso:1,a0:148,a1:170,visible:conTratamiento('zoned'),mostrar:v=>String(v)},
+      {tipo:'dial',key:'rimSize',etiqueta:'Borde',min:40,max:180,paso:1,a0:148,a1:170,visible:conTratamiento('rimmed'),mostrar:porcentaje},
+      {tipo:'dial',key:'spotCount',etiqueta:'Manchas',min:1,max:8,paso:1,a0:148,a1:170,visible:conTratamiento('spotted'),mostrar:v=>String(v)},
       {tipo:'radial',key:'spotSize',etiqueta:'Tamaño de manchas',min:40,max:180,angulo:()=>110,r0:R0*.3,r1:R0*1.05,visible:conTratamiento('spotted'),mostrar:porcentaje},
       {tipo:'dado',key:'pigmentSeed',etiqueta:'Variante',angulo:64,radio:240,visible:conTratamiento('spotted','patchy')},
-    ],
-    materia:[
-      {tipo:'dial',key:'grain',etiqueta:'Grano',min:0,max:70,paso:1,a0:194,a1:236,mostrar:porcentaje},
-      {tipo:'dial',key:'porosity',etiqueta:'Porosidad',min:0,max:100,paso:1,a0:-36,a1:14,mostrar:porcentaje},
+    
+      {tipo:'dial',key:'grain',etiqueta:'Grano',min:0,max:70,paso:1,a0:66,a1:88,mostrar:porcentaje},
+      {tipo:'dial',key:'porosity',etiqueta:'Porosidad',min:0,max:100,paso:1,a0:112,a1:134,mostrar:porcentaje},
     ],
   };
 

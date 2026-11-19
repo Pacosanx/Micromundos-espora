@@ -38,11 +38,15 @@ function prepararTuPlaca(){
   function crear(e,x,y,tamano=e.tamano,parent=null){if(items.length>=120)return null;const it={id:++secuencia,modelo:e.id,x,y,tamano,escala:100,rot:0,foco:100,opacidad:100,seed:e.style.seed%1000,parent,manual:false,org:0,sinReacciones:!!e.composicion&&e.estado!=='AF'};items.push(it);return it;}
   function quitar(it){if(!it)return;const ids=new Set([it.id]);for(const a of items)if(ids.has(a.parent))ids.add(a.id);for(let i=items.length-1;i>=0;i--)if(ids.has(items[i].id))items.splice(i,1);if(ids.has(seleccionado?.id))seleccionado=null;seleccion=seleccion.filter(s=>!ids.has(s.id));cerrarMenus();dibujar();}
   const hijos=it=>items.filter(i=>i.parent===it.id);
-  function sincronizarHijos(it){const hs=hijos(it),t=(it.org||0)/100,s=it.escala/100;hs.forEach((h,i)=>{
-    const ang=hash(h.id*17)*Math.PI*2,dist=(70+hash(h.id*23)*150)*s;let n=i,k=0;const caps=[8,14,20],radios=[95,165,235];while(n>=caps[k]&&k<2){n-=caps[k++];}const oa=2*Math.PI*n/caps[k]+(k%2?Math.PI/caps[k]:0)-Math.PI/2;
-    h.seed=it.seed;h.foco=it.foco;h.opacidad=it.opacidad??100;h.ajustes=it.ajustes?{...it.ajustes}:undefined;h.rot=it.rot+(hash(h.id*13)-.5)*160*(1-t);h.escala=it.escala*((.5+hash(h.id*37)*.4)*.9*(1-t)+.6*t);
-    if(!h.manual){h.x=it.x+Math.cos(ang)*dist*(1-t)+Math.cos(oa)*radios[k]*s*t;h.y=it.y+Math.sin(ang)*dist*(1-t)+Math.sin(oa)*radios[k]*s*t;const d=Math.hypot(h.x-392,h.y-392);if(d>340){h.x=392+(h.x-392)*340/d;h.y=392+(h.y-392)*340/d;}}
-  });}
+  // MULTIPLICAR (19/11/2026): las copias van pegadas a la colonia madre, en anillos que se tocan (uno alrededor del otro),
+  // todas del mismo tamaño aproximado. Antes quedaban dispersas lejos de la madre.
+  function sincronizarHijos(it){const hs=hijos(it);if(!hs.length)return;const s=it.escala/100,fs=(estiloBase(it).size??100)/100,ESC=.6;
+    const rp=it.tamano*s/2*fs,rc=it.tamano*s*ESC/2*fs;let k=0,n=0,cap=0,r=0;
+    const anillo=()=>{r=rp+rc*(1+2*k)*.92;cap=Math.max(6,Math.floor(2*Math.PI*r/(2*rc*.96)));};anillo();
+    hs.forEach(h=>{if(n>=cap){k++;n=0;anillo();}const a=2*Math.PI*n/cap+(k%2?Math.PI/cap:0)-Math.PI/2;n++;
+      h.seed=it.seed;h.foco=it.foco;h.opacidad=it.opacidad??100;h.ajustes=it.ajustes?{...it.ajustes}:undefined;h.rot=it.rot+(hash(h.id*13)-.5)*40;h.escala=it.escala*ESC*(.94+hash(h.id*37)*.12);
+      if(!h.manual){h.x=it.x+Math.cos(a)*r;h.y=it.y+Math.sin(a)*r;const d=Math.hypot(h.x-392,h.y-392);if(d>340){h.x=392+(h.x-392)*340/d;h.y=392+(h.y-392)*340/d;}}
+    });}
 
   // Selección: una colonia (tocar) o varias (lazo). El menú y el editor actúan sobre todas.
   const elegidas=()=>seleccion.length?seleccion.filter(s=>items.includes(s)):seleccionado?[seleccionado]:[];

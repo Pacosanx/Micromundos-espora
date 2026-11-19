@@ -60,8 +60,8 @@
 .tp-editor-perilla{fill:#fffffff0;stroke:#212121;stroke-width:1.4;filter:drop-shadow(0 1px 3px #0003)}
 .tp-editor-tirador-activo .tp-editor-perilla{fill:#212121}
 .tp-editor-borde-interior{fill:none;stroke:#0d0f1799;stroke-width:1.2;stroke-dasharray:3 4}
-.tp-editor-etiqueta{font:400 var(--t-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;fill:#0d0f17;paint-order:stroke;stroke:#f2f0e8;stroke-width:4px;stroke-linejoin:round}
-.tp-editor-valor{font:400 var(--t-etiqueta) Arimo,Arial,sans-serif;fill:#0d0f17;paint-order:stroke;stroke:#f2f0e8;stroke-width:4px;stroke-linejoin:round}
+.tp-editor-etiqueta{font:400 var(--t-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;fill:#0d0f17;fill-opacity:.7;paint-order:stroke;stroke:#f2f0e8;stroke-opacity:.85;stroke-width:4px;stroke-linejoin:round}
+.tp-editor-valor{font:400 var(--t-cuerpo) Arimo,Arial,sans-serif;font-variant-numeric:tabular-nums;fill:#0d0f17;paint-order:stroke;stroke:#f2f0e8;stroke-opacity:.85;stroke-width:4px;stroke-linejoin:round}
 .tp-editor-pestanas,.tp-editor-opciones{position:absolute;left:0;top:0;width:784px;height:784px;pointer-events:none}
 /* Títulos de TRANSFORMAR (19/11/2026): afuera, a la izquierda de la placa, con su ícono en la superficie redonda del aro.
    El nombre va a la izquierda del ícono, alineado a la derecha. El elegido: superficie rellena (como TRANSFORMAR en el aro) y nombre en 700. */
@@ -81,7 +81,7 @@
 #tuPlaca .tp-editor-miniatura{all:unset;position:absolute;translate:-50% -50%;display:grid;justify-items:center;gap:3px;pointer-events:auto;cursor:pointer}
 .tp-editor-miniatura i{width:36px;height:36px;border-radius:50%;box-shadow:0 0 0 1px #21212199;filter:blur(.6px)}
 .tp-editor-miniatura[aria-pressed="true"] i{box-shadow:0 0 0 2.5px #212121}
-.tp-editor-miniatura span{font:400 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.tp-editor-miniatura span{font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;white-space:nowrap}
 .tp-editor-miniatura[aria-pressed="true"] span{font-weight:700}
 @keyframes tp-aparecer{from{opacity:0}to{opacity:1}}
 @keyframes tp-crecer{from{opacity:0;transform:scale(.5)}to{opacity:1}}
@@ -96,3 +96,5 @@
 
 /* La zona táctil de cada colonia es su círculo (la colonia ocupa el 60 % de su caja): el resto de la caja deja pasar el lazo y la siembra. */
 #tpColonias .tp-colonia{clip-path:circle(31% at 50% 50%)}
+/* Ventana de TRANSFORMAR: sin desenfoque en textos (como el resto del sistema). */
+#tuPlaca .tp-editor-pestanas button,#tuPlaca .tp-editor-listo,.tp-editor-miniatura i{filter:none}
