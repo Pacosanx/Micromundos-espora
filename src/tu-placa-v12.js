@@ -7,7 +7,7 @@
 // Dibujo y encuentros: MotorMuestrario (tu-placa-motor.js), el mismo código del muestrario.
 function prepararTuPlaca(){
   const pagina=$('tuPlaca'),ruta='src/assets/tu-placa/',clave='micromundos-tuplaca-v2',ns='http://www.w3.org/2000/svg';
-  pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones"><p class="tp-encuentros-titulo">ENCUENTROS</p><div id="tpLeyenda" class="tp-encuentros" role="group" aria-label="Reacción según el tipo de colonia"></div><p>Una interpretación gráfica. Acercá dos colonias para que se encuentren.</p></div></div><aside id="tpBiblioteca"></aside>
+  pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones" class="cerrada"><button id="tpGuiaEncuentros" type="button" aria-expanded="false" aria-controls="tpLeyenda" aria-label="Cómo leer los encuentros: abrir la guía"><span class="guia-flecha" aria-hidden="true"><svg class="chevron" width="11.04" height="6.27" viewBox="0 0 11.04 6.27" aria-hidden="true"><path d="M.75 .75 5.52 5.52 10.29 .75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="guia-titulo">Cómo leer los encuentros</span></button><p class="tp-encuentros-uso">Acercá dos colonias para que se encuentren. Tocá un ejemplo para leerlo.</p><div id="tpLeyenda" class="tp-encuentros" role="group" aria-label="Reacción según el tipo de colonia"></div></div></div><aside id="tpBiblioteca"></aside>
     <div id="tpBoard" class="tp-board" aria-label="Tu placa. Arrastrá una forma de la biblioteca para sembrarla; arrastrá sobre la placa para elegir varias" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><canvas id="tpEscena" class="tp-escena" aria-hidden="true"></canvas><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><svg id="tpPerilla" class="tp-perilla" width="784" height="784" viewBox="0 0 784 784"></svg><p id="tpVacia">ARRASTRÁ UNA COLONIA\nHASTA LA PLACA</p><div id="tpMenu"></div><div id="tpEditor"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
     <button id="tpGenerar" class="tp-generar" type="button" aria-haspopup="true">GENERAR COMPOSICIÓN ↻</button><p class="tp-generar-ayuda" id="tpGenerarAyuda">MANTENÉ APRETADO PARA ELEGIR LA ESTRUCTURA</p><div id="tpEstructuras" class="tp-estructuras" hidden role="menu" aria-label="Estructuras de composición"></div><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA →</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
     <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ↗</a></div></div></div>`;
@@ -204,9 +204,10 @@ function prepararTuPlaca(){
   };
   const tipoDe=it=>reacciona(it)?TIPOS[modelo(it).g]||null:null;
   const radioDibujo=it=>it.tamano*it.escala/200*(estiloBase(it).size??100)/100;
-  let popup=null,cancelarPopup=()=>{},relaciones=[],escalaEscena=1;
-  function cerrarReaccion(){cancelarPopup();cancelarPopup=()=>{};popup?.remove();popup=null;}
-  function abrirReaccion(modo){cerrarReaccion();const datos=REACCIONES[modo];
+  let popup=null,cancelarPopup=()=>{},relaciones=[],escalaEscena=1,leyendo=null;
+  function marcarLeida(modo){leyendo=modo;for(const b of $('tpLeyenda').querySelectorAll('[data-modo]'))b.classList.toggle('activo',b.dataset.modo===modo);$('tpLeyenda').classList.toggle('filtrando',!!modo);dibujarReacciones();}
+  function cerrarReaccion(){cancelarPopup();cancelarPopup=()=>{};popup?.remove();popup=null;if(leyendo)marcarLeida(null);}
+  function abrirReaccion(modo){cerrarReaccion();marcarLeida(modo);const datos=REACCIONES[modo];
     popup=$('plantillaCartelGlosario').content.firstElementChild.cloneNode(true);popup.classList.remove('cartel-glosario');popup.classList.add('cartel-especie','cartel-reaccion');popup.style.width='402px';popup.querySelector('.nom').textContent=datos.nombre;popup.querySelector('.nom').style.textTransform='none';popup.querySelector('.cod').textContent='';popup.querySelector('.definicionGlosario').textContent=datos.texto;popup.querySelector('.masCartel')?.remove();popup.querySelector('.detalleCartel')?.remove();
     const p=document.createElement('p');p.className='tp-reaccion-combinacion';p.textContent=datos.pareja+(datos.detalle?' · '+datos.detalle:'');popup.querySelector('.co').appendChild(p);$('anclaCarteles').appendChild(popup);universoCartel(popup,'B');ubicarCartelFlotante(popup);
     const el=popup;cancelarPopup=activarArrastreCartel(el,p=>{el.style.transform=`translate(${p.x}px,${p.y}px)`;},cerrarReaccion);requestAnimationFrame(()=>el.isConnected&&el.classList.add('vis'));
@@ -234,8 +235,8 @@ function prepararTuPlaca(){
     for(const r of relaciones){
       // Un rótulo por tipo de reacción, y nunca encimado con otro.
       if(!r.modo||vistos.has(r.modo)||lugares.some(p=>Math.hypot(p.x-r.cx,p.y-r.cy)<90))continue;vistos.add(r.modo);lugares.push({x:r.cx,y:r.cy});const radioAro=Math.max(r.ra,r.rb)+35;
-      const ring=document.createElementNS(ns,'circle');for(const [k,v]of Object.entries({cx:r.cx,cy:r.cy,r:radioAro,class:'tp-reaccion-aro'}))ring.setAttribute(k,v);svg.appendChild(ring);
-      const bton=document.createElement('button');bton.type='button';bton.textContent=REACCIONES[r.modo].nombre.toUpperCase();bton.style.left=clamp(r.cx-radioAro,12,620)+'px';bton.style.top=clamp(r.cy-radioAro*.65,12,740)+'px';bton.setAttribute('aria-label','Acerca de '+REACCIONES[r.modo].nombre+', '+REACCIONES[r.modo].detalle);bton.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(r.modo);});rotulos.appendChild(bton);
+      const otra=leyendo&&leyendo!==r.modo?' tp-reaccion-otra':leyendo?' tp-reaccion-leida':'';const ring=document.createElementNS(ns,'circle');for(const [k,v]of Object.entries({cx:r.cx,cy:r.cy,r:radioAro,class:'tp-reaccion-aro'+otra}))ring.setAttribute(k,v);svg.appendChild(ring);
+      const bton=document.createElement('button');bton.type='button';bton.textContent=REACCIONES[r.modo].nombre.toUpperCase();if(otra)bton.className=otra.trim();bton.style.left=clamp(r.cx-radioAro,12,620)+'px';bton.style.top=clamp(r.cy-radioAro*.65,12,740)+'px';bton.setAttribute('aria-label','Acerca de '+REACCIONES[r.modo].nombre+', '+REACCIONES[r.modo].detalle);bton.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(r.modo);});rotulos.appendChild(bton);
     }
   }
 
@@ -247,12 +248,18 @@ function prepararTuPlaca(){
       intercambio:(a,b)=>`<circle cx="9" cy="10" r="6" fill="${a}"/><circle cx="21" cy="10" r="6" fill="${b}"/><circle cx="12.5" cy="8" r="1.2" fill="${b}"/><circle cx="11.6" cy="12.4" r="1" fill="${b}"/><circle cx="17.6" cy="9" r="1.2" fill="${a}"/><circle cx="18.4" cy="13" r="1" fill="${a}"/>`,
       comprimida:(a,b)=>`<circle cx="10" cy="10" r="6" fill="${a}"/><circle cx="20" cy="10" r="6" fill="${b}"/><rect x="14.4" y="2" width="1.2" height="16" fill="#f2f0e8"/>`,
       ninguna:(a,b)=>`<circle cx="7" cy="10" r="5" fill="${a}" opacity=".75"/><circle cx="23" cy="10" r="5" fill="${b}" opacity=".75"/>`,
-    },nombre={moho:'MOHO',bacteria:'BACTERIA',levadura:'LEVADURA'},caja=$('tpLeyenda');
-    caja.appendChild(document.createElement('span'));
-    for(const t of ORDEN){const h=document.createElement('span');h.className='tp-encuentros-cabeza';h.innerHTML=`<i style="background:${COLOR_TIPO[t]}"></i>${nombre[t]}`;caja.appendChild(h);}
-    ORDEN.forEach((fila,i)=>{const h=document.createElement('span');h.className='tp-encuentros-cabeza tp-encuentros-fila';h.innerHTML=`<i style="background:${COLOR_TIPO[fila]}"></i>${nombre[fila]}`;caja.appendChild(h);
-      ORDEN.forEach((col,j)=>{if(j<i){caja.appendChild(document.createElement('span'));return;}const modo=REGLAS[par(fila,col)],b=document.createElement('button');b.type='button';b.className='tp-encuentros-celda';b.setAttribute('aria-label',REACCIONES[modo].pareja+': '+REACCIONES[modo].nombre+(REACCIONES[modo].detalle?', '+REACCIONES[modo].detalle:''));
-        b.innerHTML=`<svg viewBox="0 0 30 20" aria-hidden="true">${glifos[modo](COLOR_TIPO[fila],COLOR_TIPO[col])}</svg><span>${REACCIONES[modo].nombre.toUpperCase()}</span>`;b.addEventListener('click',ev=>{ev.stopPropagation();abrirReaccion(modo);});caja.appendChild(b);});});}
+    },caja=$('tpLeyenda');
+    // Como «Cómo leer la placa»: cerrada queda solo la columna de ejemplos (que se pueden tocar);
+    // abierta suma el nombre de cada reacción y qué colonias la producen. Agrupadas por reacción, sin repetir parejas.
+    const parejas=[];ORDEN.forEach((fila,i)=>ORDEN.forEach((col,j)=>{if(j>=i)parejas.push([fila,col,REGLAS[par(fila,col)]]);}));
+    const orden=['Simbiosis','Barrera','Rechazo','Sin reacción'];
+    parejas.sort((a,b)=>orden.indexOf(REACCIONES[a[2]].nombre)-orden.indexOf(REACCIONES[b[2]].nombre));
+    for(const [fila,col,modo] of parejas){const d=REACCIONES[modo],b=document.createElement('button');b.type='button';b.className='tp-encuentros-item';b.dataset.modo=modo;
+      b.setAttribute('aria-label',d.pareja+': '+d.nombre+(d.detalle?', '+d.detalle:''));
+      b.innerHTML=`<span class="ic"><svg viewBox="0 0 30 20" aria-hidden="true">${glifos[modo](COLOR_TIPO[fila],COLOR_TIPO[col])}</svg></span><span class="tx"><b>${d.nombre.toUpperCase()}${d.detalle?' · '+d.detalle.toUpperCase():''}</b><span>${d.pareja}</span></span>`;
+      b.addEventListener('click',ev=>{ev.stopPropagation();if(leyendo===modo){cerrarReaccion();return;}abrirReaccion(modo);});caja.appendChild(b);}
+    const caja2=$('tpReacciones'),boton=$('tpGuiaEncuentros');
+    boton.addEventListener('click',ev=>{ev.stopPropagation();const abrir=caja2.classList.contains('cerrada');caja2.classList.toggle('cerrada',!abrir);boton.setAttribute('aria-expanded',String(abrir));boton.setAttribute('aria-label','Cómo leer los encuentros: '+(abrir?'cerrar':'abrir')+' la guía');});}
 
   // Perilla de reacciones sobre el borde de la placa: 0 = sin reacciones (reemplaza a "Mostrar reacciones").
   const perilla=$('tpPerilla'),P={a0:8,a1:68,r:414};let girandoPerilla=null;

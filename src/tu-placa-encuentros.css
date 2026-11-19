@@ -1,17 +1,33 @@
 /* 18/11/2026 · Placa de encuentros como motor de TU PLACA. Se carga después de tu-placa-v12.css. */
 
-/* Leyenda fija de encuentros (reemplaza al checkbox "Mostrar reacciones"). */
+/* Guía «Cómo leer los encuentros»: la misma lógica que «Cómo leer la placa» de MUESTRAS (19/11/2026).
+   Cerrada: solo la columna de ejemplos (se pueden tocar). Abierta: el nombre de la reacción y qué colonias la producen.
+   Tocar un ejemplo abre su cartel y marca en la placa los encuentros de esa reacción. */
 .tp-indicacion{pointer-events:none}
-#tpReacciones{width:282px;pointer-events:auto}
-#tpReacciones .tp-encuentros-titulo{margin:0 0 8px;font-size:var(--t-etiqueta);opacity:.7;filter:blur(.4px)}
-.tp-encuentros{position:static;display:grid;grid-template-columns:62px repeat(3,72px);grid-auto-rows:auto;gap:0;align-items:center;margin-bottom:8px}
-.tp-encuentros-cabeza{display:flex;align-items:center;gap:4px;font:400 11px/13px Arimo,Arial,sans-serif;letter-spacing:.02em;opacity:.75;filter:blur(.3px);justify-content:center}
-.tp-encuentros-cabeza.tp-encuentros-fila{justify-content:flex-start}
-.tp-encuentros-cabeza i{flex:none;width:8px;height:8px;border-radius:50%;filter:blur(.6px)}
-#tuPlaca .tp-encuentros-celda{all:unset;display:grid;justify-items:center;gap:1px;min-height:36px;align-content:center;cursor:pointer;border-radius:10px;transition:background .2s}
-.tp-encuentros-celda svg{width:36px;height:24px;filter:blur(.5px)}
-.tp-encuentros-celda span{font:700 10px/12px Arimo,Arial,sans-serif;letter-spacing:.03em;opacity:.7}
-#tuPlaca .tp-encuentros-celda:focus-visible,#tuPlaca .tp-encuentros-celda:active{background:#ed74a018}
+#tpReacciones{width:282px;pointer-events:auto;display:flex;flex-direction:column;gap:20px;filter:none}
+#tuPlaca #tpGuiaEncuentros{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;min-height:48px;margin:-14px 0 -10px;cursor:pointer;color:#0d0f17;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);letter-spacing:.08em;text-transform:uppercase}
+#tpGuiaEncuentros .guia-flecha{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgb(13 15 23 / 35%);transition:box-shadow .3s}
+#tpGuiaEncuentros .guia-flecha svg{display:block;rotate:180deg;transition:rotate .35s}
+#tpReacciones.cerrada #tpGuiaEncuentros .guia-flecha svg{rotate:0deg}
+#tpGuiaEncuentros .guia-titulo{white-space:nowrap;opacity:.7}
+#tpGuiaEncuentros:active .guia-flecha,#tpGuiaEncuentros:focus-visible .guia-flecha{box-shadow:inset 0 0 0 1.5px #0d0f17}
+#tuPlaca #tpReacciones p.tp-encuentros-uso{max-width:270px;margin:-6px 0 0;font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);color:#0d0f17;opacity:.6;max-height:60px;overflow:hidden;transition:opacity .3s,max-height .35s,margin .35s}
+.tp-encuentros{position:static;display:flex;flex-direction:column;gap:6px}
+#tuPlaca .tp-encuentros-item{all:unset;display:flex;align-items:center;height:36px;cursor:pointer}
+.tp-encuentros-item .ic{display:grid;place-items:center;width:40px;height:36px;flex:none;transition:opacity .35s}
+.tp-encuentros-item svg{width:40px;height:27px;filter:blur(.5px)}
+.tp-encuentros-item .tx{display:flex;flex-direction:column;margin-left:20px;white-space:nowrap;color:#0d0f17;transition:opacity .35s}
+.tp-encuentros-item .tx b{font:400 11px/13px Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.7}
+.tp-encuentros-item .tx span{font-size:var(--t-etiqueta);line-height:18px}
+.tp-encuentros.filtrando .tp-encuentros-item:not(.activo) :is(.ic,.tx){opacity:.55}
+#tuPlaca .tp-encuentros-item:focus-visible{outline:2px solid #0d0f17;outline-offset:4px;border-radius:8px}
+#tuPlaca #tpReacciones.cerrada p.tp-encuentros-uso{opacity:0;max-height:0;margin:0!important;pointer-events:none}
+#tpReacciones.cerrada .tp-encuentros-item .tx{opacity:0!important;pointer-events:none}
+#tpReacciones.cerrada{gap:12px}
+/* En la placa: la reacción que se lee queda marcada; las otras bajan. */
+#tpLineas .tp-reaccion-otra,#tpRotulos .tp-reaccion-otra{opacity:.3}
+#tpLineas .tp-reaccion-leida{stroke-dasharray:none}
+@media(prefers-reduced-motion:reduce){#tpGuiaEncuentros .guia-flecha svg,.tp-encuentros-item :is(.ic,.tx),.tp-encuentros-uso{transition:none}}
 
 /* La placa se dibuja entera en un lienzo (motor del muestrario); los botones de colonia quedan encima, transparentes, para tocar y arrastrar. */
 .tp-escena{position:absolute;left:0;top:0;width:784px;height:784px;pointer-events:none}
