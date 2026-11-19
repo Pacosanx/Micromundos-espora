@@ -1,32 +1,62 @@
 /* Pantalla del nombre (src/tu-placa-nombre.js), según el diseño de Paco (Figma 621:863 «DICTADO DE NOMBRE»).
-   TU PLACA queda detrás, desenfocada, con un degradé que llega al papel abajo. Posiciones del marco de 1920. Sin hover. */
+   TU PLACA queda detrás, desenfocada, con un degradé que llega al papel abajo. Sin hover.
+   19/11/2026: todo se centra respecto del ancho real de la pantalla (antes el micrófono y las manchas quedaban corridos
+   en pantallas más anchas que 1920, porque tenían posiciones fijas). */
 #tpNombre{position:absolute;inset:0;z-index:30;overflow:hidden;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
   background:linear-gradient(180deg,rgb(241 239 231 / 0%),#f1efe7 1080px);color:#fff;font-family:Arimo,Arial,sans-serif;touch-action:none;-webkit-user-select:none;user-select:none}
 #tpNombre[hidden]{display:none}
 #tpNombre>*{position:absolute;margin:0}
-/* Dos manchas de color (las del diseño) que crecen con la voz mientras se dicta */
-.tpn-mancha{width:763px;height:763px;mix-blend-mode:difference;pointer-events:none;transition:scale .12s linear,opacity .4s;opacity:.6}
-.tpn-mancha-a{left:484px;top:521px}
-.tpn-mancha-b{left:768px;top:419px}
-#tpNombre.escuchando .tpn-mancha{opacity:1}
+/* Dos manchas de color (las del diseño): grises en reposo, se ponen de color y crecen con la voz */
+/* Las manchas de la voz: misma forma y lugar que las elipses del diseño, con los colores de los universos
+   (la elipse de Figma es casi negra y no podía «ponerse de color»). Grano como el de los carteles. */
+.tpn-mancha{display:block;width:763px;height:763px;border-radius:50%;mix-blend-mode:multiply;pointer-events:none;transition:scale .12s linear,opacity .4s,filter .2s;opacity:.18;filter:grayscale(1)}
+.tpn-mancha-a{background:radial-gradient(circle closest-side at 50% 50%,#e57dab 0,#f2c75e 45%,rgb(242 199 94 / 0%) 100%)}
+.tpn-mancha-b{background:radial-gradient(circle closest-side at 50% 50%,#92aa68 0,#dce642 42%,rgb(220 230 66 / 0%) 100%)}
+.tpn-mancha-a{left:calc(50% - 476px);top:521px}
+.tpn-mancha-b{left:calc(50% - 192px);top:419px}
+/* La opacidad de las manchas la lleva la voz (tu-placa-nombre.js). */
 /* Textos en blanco con «diferencia» y desenfoque leve, como en el diseño */
-.tpn-por,.tpn-nombre,.tpn-indicacion{left:50%;translate:-50% 0;white-space:nowrap;text-align:center;color:#fff;mix-blend-mode:difference;filter:blur(1.5px)}
+/* Sobre el fondo claro, el blanco en «diferencia» quedaba casi invisible: tinta oscura con un desenfoque leve. */
+.tpn-por,.tpn-nombre,.tpn-indicacion{left:50%;translate:-50% 0;white-space:nowrap;text-align:center;color:#0d0f17;filter:blur(.6px)}
+.tpn-por{opacity:.7}
 .tpn-por{top:331px;font:400 24px/24px Arimo,Arial,sans-serif}
 .tpn-nombre{top:388px;font:400 64px/64px Arimo,Arial,sans-serif;text-transform:uppercase}
 .tpn-linea{left:calc(50% - 307px);top:447px;width:614px;height:10px}
 .tpn-indicacion{top:999px;font:400 24px/24px Arimo,Arial,sans-serif}
-/* El micrófono: se mantiene apretado para hablar */
-.tpn-mic{all:unset;left:849px;top:655px;width:233px;height:233px;border-radius:50%;cursor:pointer;-webkit-touch-callout:none;transition:scale .2s}
-.tpn-mic img{display:block;width:233px;height:233px;pointer-events:none}
+.tpn-indicacion[hidden]{display:none}
+/* El micrófono: la superficie redonda de los botones del sistema (vidrio con borde desenfocado) y un glifo sintético */
+.tpn-mic{all:unset;left:calc(50% - 116.5px);top:655px;width:233px;height:233px;border-radius:50%;cursor:pointer;-webkit-touch-callout:none;transition:scale .2s;display:grid;place-items:center}
+#tpNombre .tpn-mic[hidden]{display:none}
+.tpn-mic-superficie{position:absolute;inset:0;border-radius:50%;background:rgb(242 240 232 / 55%);box-shadow:inset 0 0 0 1.5px rgb(19 21 27 / 22%);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);filter:blur(.6px)}
+.tpn-mic-superficie::after{content:'';position:absolute;inset:14px;border-radius:50%;border:1px dashed rgb(19 21 27 / 22%)}
+.tpn-mic-glifo{position:relative;filter:blur(.3px)}
 #tpNombre.escuchando .tpn-mic{scale:.94}
 .tpn-mic:focus-visible{outline:2px solid #0d0f17;outline-offset:6px}
-/* Confirmar y, solo si no se puede dictar, guardar sin nombre: textos-botón */
-.tpn-ok,.tpn-omitir{all:unset;position:absolute;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#0d0f17;text-transform:uppercase;min-height:var(--area-tactil);display:grid;place-items:center;cursor:pointer}
-.tpn-ok{left:calc(50% + 320px);top:428px}
-.tpn-omitir{left:50%;translate:-50% 0;top:1030px}
-#tpNombre .tpn-ok,#tpNombre .tpn-omitir{color:#0d0f17}
-#tpNombre .tpn-ok[hidden],#tpNombre .tpn-omitir[hidden]{display:none}
-.tpn-ok:focus-visible,.tpn-omitir:focus-visible{outline:2px solid #0d0f17;outline-offset:4px;border-radius:8px}
+/* ¿Está bien así? */
+.tpn-confirmar{left:50%;top:520px;translate:-50% 0;display:flex;flex-direction:column;align-items:center;gap:18px;color:#0d0f17}
+.tpn-confirmar[hidden]{display:none}
+.tpn-confirmar p{margin:0;font:400 var(--t-titulo)/var(--l-titulo) Arimo,Arial,sans-serif}
+.tpn-confirmar div{display:flex;align-items:center;gap:24px}
+.tpn-confirmar i{width:1px;height:22px;background:rgb(13 15 23 / 25%)}
+#tpNombre .tpn-confirmar button,.tpn-omitir{all:unset;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#0d0f17;text-transform:uppercase;min-height:var(--area-tactil);display:grid;place-items:center;cursor:pointer}
+.tpn-omitir{position:absolute;left:50%;translate:-50% 0;top:1030px}
+#tpNombre .tpn-omitir{color:#0d0f17}
+#tpNombre .tpn-omitir[hidden]{display:none}
+#tpNombre .tpn-confirmar button:focus-visible,.tpn-omitir:focus-visible{outline:2px solid #0d0f17;outline-offset:4px;border-radius:8px}
 @media(prefers-reduced-motion:reduce){.tpn-mancha,.tpn-mic{transition:none}}
-/* Recuerdo con el nombre */
-.tpn-pie{margin:0;font:400 var(--t-titulo)/var(--l-titulo) Arimo,Arial,sans-serif;color:#0d0f17}
+
+/* La página del recuerdo: la placa a la izquierda; a la derecha, quién la hizo, cuándo, IMPRIMIR RECUERDO y VOLVER A COMPONER. */
+#tpVistaRecuerdo.tpn-recuerdo .tp-recuerdo-interior{flex-direction:row;align-items:center;gap:96px}
+#tpVistaRecuerdo.tpn-recuerdo .tp-recuerdo-interior>img{height:100%;max-height:860px;width:auto}
+#tpVistaRecuerdo.tpn-recuerdo .tp-recuerdo-interior>div:not(.tpn-ficha){display:none}
+.tpn-ficha{display:flex;flex-direction:column;align-items:flex-start;gap:0;color:#0d0f17;width:520px;text-align:left}
+#tuPlaca .tpn-ficha p{margin:0}
+#tuPlaca .tpn-ficha-rotulo{font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.7}
+#tuPlaca .tpn-ficha-nombre{margin-top:12px;font:400 64px/64px Arimo,Arial,sans-serif;text-transform:uppercase;overflow-wrap:anywhere}
+#tuPlaca .tpn-ficha-fecha{margin-top:16px;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif;font-variant-numeric:tabular-nums}
+#tuPlaca .tpn-ficha-compartida{margin-top:40px;padding-top:16px;border-top:1px solid rgb(13 15 23 / 18%);width:100%;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif;opacity:.75}
+.tpn-ficha-acciones{display:flex;align-items:center;gap:24px;margin-top:28px}
+.tpn-ficha-acciones i{width:1px;height:22px;background:rgb(13 15 23 / 25%)}
+#tuPlaca .tpn-ficha-acciones button{all:unset;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;color:#0d0f17;text-transform:uppercase;min-height:var(--area-tactil);display:grid;place-items:center;cursor:pointer}
+#tuPlaca .tpn-imprimir[data-estado]{opacity:.6;cursor:default}
+#tuPlaca .tpn-ficha-acciones button:focus-visible{outline:2px solid #0d0f17;outline-offset:4px;border-radius:8px}

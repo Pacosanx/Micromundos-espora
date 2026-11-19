@@ -1,15 +1,27 @@
 // ───────── Propuesta: el nombre de la placa, dictado (diseño de Paco, Figma 621:863 «DICTADO DE NOMBRE») ─────────
 // Al tocar GUARDAR PLACA, antes del recuerdo aparece esta pantalla, con lo mínimo:
 //   «Placa creada por» · el nombre sobre una línea · el micrófono · «MANTENÉ APRETADO PARA DICTAR TU NOMBRE».
-// Se mantiene apretado el micrófono para hablar: mientras tanto escucha el reconocimiento de voz del navegador y las dos manchas
-// de color del diseño crecen con el volumen. Al soltar aparece el nombre; OK lo confirma y para corregirlo se vuelve a mantener.
-// Sin micrófono, sin permiso o sin conexión (en Chrome el dictado usa un servicio de Google) se avisa abajo y se puede guardar sin nombre.
-// El audio no se guarda ni se envía desde el Atlas: solo queda el texto. La pantalla con las placas de otras personas va aparte (CHECKLIST).
+// 19/11/2026 (segunda ronda de Paco):
+//  · SIMULACIÓN: mantener apretado el micrófono NO usa el micrófono. Se simula que la persona dice «Paco»: las manchas de atrás
+//    se van poniendo de color al ritmo de la voz y el nombre aparece en dos golpes, primero «PA» y después «PACO».
+//    El dictado real (reconocimiento de voz del navegador) queda solo con ?dictado en la dirección.
+//  · Con el nombre, pregunta si está bien (SÍ, ES MI NOMBRE / DICTAR DE NUEVO).
+//  · Después, la página del recuerdo: tu placa con tu nombre, la fecha y la hora, IMPRIMIR RECUERDO (simulado) y la placa
+//    se suma a las de los demás (queda guardada en este equipo; la pantalla con todas las placas todavía no está pensada).
 (() => {
   const $ = id => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  const DICTADO_REAL = params.has('dictado');
   const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
   const INDICACION = 'MANTENÉ APRETADO PARA DICTAR TU NOMBRE';
+  const NOMBRE_SIMULADO = 'Paco';
   let dejarPasar = false, nombre = '';
+
+  // Micrófono del sistema: una cápsula de trazo fino y, debajo, un arco punteado (el mismo lenguaje que los arcos de la placa).
+  const MIC = `<svg class="tpn-mic-glifo" viewBox="0 0 96 96" width="132" height="132" aria-hidden="true">
+      <rect x="37" y="18" width="22" height="40" rx="11" fill="none" stroke="#13151b" stroke-width="2"/>
+      <path d="M27 50a21 21 0 0 0 42 0" fill="none" stroke="#13151b" stroke-width="2" stroke-dasharray="1 6" stroke-linecap="round"/>
+      <path d="M48 71v8" stroke="#13151b" stroke-width="2" stroke-linecap="round"/></svg>`;
 
   const capa = document.createElement('div');
   capa.id = 'tpNombre';
@@ -18,69 +30,89 @@
   capa.setAttribute('aria-modal', 'true');
   capa.setAttribute('aria-label', 'Placa creada por');
   capa.innerHTML = `
-    <img class="tpn-mancha tpn-mancha-a" src="__TPN_ELIPSE__" width="763" height="763" alt="">
-    <img class="tpn-mancha tpn-mancha-b" src="__TPN_ELIPSE__" width="763" height="763" alt="">
+    <i class="tpn-mancha tpn-mancha-a" aria-hidden="true"></i>
+    <i class="tpn-mancha tpn-mancha-b" aria-hidden="true"></i>
     <p class="tpn-por">Placa creada por</p>
     <p class="tpn-nombre" aria-live="polite"></p>
     <img class="tpn-linea" src="__TPN_LINEA__" width="614" height="10" alt="">
-    <button type="button" class="tpn-ok" hidden>OK</button>
-    <button type="button" class="tpn-mic" aria-label="Mantené apretado para dictar tu nombre"><img src="__TPN_MICROFONO__" width="233" height="233" alt=""></button>
+    <div class="tpn-confirmar" hidden><p>¿Está bien así?</p><div><button type="button" class="tpn-si">SÍ, ES MI NOMBRE</button><i></i><button type="button" class="tpn-otra">DICTAR DE NUEVO</button></div></div>
+    <button type="button" class="tpn-mic" aria-label="Mantené apretado para dictar tu nombre"><span class="tpn-mic-superficie"></span>${MIC}</button>
     <p class="tpn-indicacion" aria-live="polite">${INDICACION}</p>
     <button type="button" class="tpn-omitir" hidden>GUARDAR SIN NOMBRE</button>`;
   const montar = () => { const tp = $('tuPlaca'); if (tp && !capa.isConnected) tp.appendChild(capa); return !!tp; };
   const mic = capa.querySelector('.tpn-mic'), salida = capa.querySelector('.tpn-nombre'), indicacion = capa.querySelector('.tpn-indicacion');
-  const ok = capa.querySelector('.tpn-ok'), omitir = capa.querySelector('.tpn-omitir');
+  const confirmar = capa.querySelector('.tpn-confirmar'), omitir = capa.querySelector('.tpn-omitir');
   const manchas = [...capa.querySelectorAll('.tpn-mancha')];
   const decir = t => { indicacion.textContent = t; };
-  const fijar = t => { nombre = t.replace(/\s+/g, ' ').trim().slice(0, 24); salida.textContent = nombre.toUpperCase(); ok.hidden = !nombre; };
+  const fijar = t => { nombre = t.replace(/\s+/g, ' ').trim().slice(0, 24); salida.textContent = nombre.toUpperCase(); };
   const avisar = t => { decir(t); omitir.hidden = false; };
+  const preguntar = () => { confirmar.hidden = !nombre; mic.hidden = !!nombre; indicacion.hidden = !!nombre; if (nombre) confirmar.querySelector('.tpn-si').focus({ preventScroll: true }); };
+  // Las manchas: grises en reposo; con la voz se ponen de color y crecen.
+  const pintarManchas = (nivel, t = performance.now()) => manchas.forEach((m, i) => {
+    m.style.scale = String(1 + Math.min(.3, nivel * .7) * (1 + .25 * Math.sin(t / 380 + i * 2)));
+    m.style.filter = `grayscale(${Math.max(0, 1 - nivel * 3).toFixed(2)})`; m.style.opacity = String(Math.min(1, .18 + nivel * 2.2));
+  });
+  const reposarManchas = () => manchas.forEach(m => { m.style.scale = ''; m.style.filter = ''; m.style.opacity = ''; });
 
-  // ── Voz: mantener apretado = escuchar; las manchas crecen con el volumen ──
-  let rec = null, flujo = null, contexto = null, cuadro = 0, apretado = false, parcial = '';
+  // ── Simulación: «Pa-co». Nivel de voz en el tiempo (ms) y cuándo aparece cada parte del nombre. ──
+  let simulando = 0, inicioSim = 0, apretado = false;
+  const nivelSimulado = t => {
+    const silaba = (c, a) => Math.exp(-(((t - c) / a) ** 2));
+    return .05 + .5 * silaba(700, 170) + .42 * silaba(1180, 200) + .03 * Math.sin(t / 37);
+  };
+  function simular() {
+    capa.classList.add('escuchando'); decir('TE ESCUCHO…'); fijar(''); confirmar.hidden = true;
+    inicioSim = performance.now();
+    const paso = ahora => {
+      const t = ahora - inicioSim;
+      pintarManchas(Math.max(0, nivelSimulado(t)), ahora);
+      if (t > 760 && !salida.textContent) salida.textContent = NOMBRE_SIMULADO.slice(0, 2).toUpperCase();
+      if (t > 1260 && salida.textContent.length < NOMBRE_SIMULADO.length) fijar(NOMBRE_SIMULADO);
+      if (t < 1700 || apretado) { simulando = requestAnimationFrame(paso); return; }
+      terminarSim();
+    };
+    simulando = requestAnimationFrame(paso);
+  }
+  function terminarSim() {
+    cancelAnimationFrame(simulando); simulando = 0; capa.classList.remove('escuchando'); reposarManchas();
+    fijar(NOMBRE_SIMULADO); decir(INDICACION); preguntar();
+  }
+
+  // ── Dictado real (solo con ?dictado): mantener apretado = escuchar; las manchas crecen con el volumen ──
+  let rec = null, flujo = null, contexto = null, cuadro = 0, parcial = '';
   const pararAudio = () => {
     cancelAnimationFrame(cuadro); cuadro = 0;
     flujo?.getTracks().forEach(t => t.stop()); flujo = null;
     contexto?.close().catch(() => {}); contexto = null;
-    manchas.forEach(m => { m.style.scale = ''; });
+    reposarManchas();
   };
-  const pararTodo = () => { try { rec?.abort(); } catch {} rec = null; pararAudio(); capa.classList.remove('escuchando'); };
-  const seguirVoz = analizador => {
-    const datos = new Uint8Array(analizador.fftSize);
-    let nivel = 0;
-    const paso = t => {
-      analizador.getByteTimeDomainData(datos);
-      let s = 0; for (const v of datos) s += ((v - 128) / 128) ** 2;
-      nivel = nivel * .8 + Math.sqrt(s / datos.length) * .2;
-      manchas.forEach((m, i) => { m.style.scale = String(1 + Math.min(.6, nivel * 4) * (1 + .25 * Math.sin(t / 380 + i * 2))); });
-      cuadro = requestAnimationFrame(paso);
-    };
-    cuadro = requestAnimationFrame(paso);
-  };
-  async function empezar(ev) {
-    if (apretado) return;
-    apretado = true; if (ev.pointerId != null) try { mic.setPointerCapture(ev.pointerId); } catch {}
-    omitir.hidden = true;
+  const pararTodo = () => { try { rec?.abort(); } catch {} rec = null; pararAudio(); cancelAnimationFrame(simulando); simulando = 0; capa.classList.remove('escuchando'); };
+  async function empezarReal() {
     if (!Reconocimiento || !navigator.mediaDevices?.getUserMedia) { apretado = false; avisar('ESTE NAVEGADOR NO PUEDE ESCUCHAR'); return; }
     capa.classList.add('escuchando'); parcial = ''; decir('TE ESCUCHO · SOLTÁ AL TERMINAR');
     try {
       flujo = await navigator.mediaDevices.getUserMedia({ audio: true });
-      if (!apretado) { pararAudio(); capa.classList.remove('escuchando'); decir(INDICACION); return; } // se soltó mientras se pedía permiso
+      if (!apretado) { pararAudio(); capa.classList.remove('escuchando'); decir(INDICACION); return; }
       contexto = new AudioContext();
       const analizador = contexto.createAnalyser(); analizador.fftSize = 1024;
       contexto.createMediaStreamSource(flujo).connect(analizador);
-      seguirVoz(analizador);
+      const datos = new Uint8Array(analizador.fftSize); let nivel = 0;
+      const paso = t => { analizador.getByteTimeDomainData(datos); let s = 0; for (const v of datos) s += ((v - 128) / 128) ** 2; nivel = nivel * .8 + Math.sqrt(s / datos.length) * .2; pintarManchas(nivel * 2.5, t); cuadro = requestAnimationFrame(paso); };
+      cuadro = requestAnimationFrame(paso);
     } catch { apretado = false; pararTodo(); avisar('NO HAY MICRÓFONO O NO SE DIO PERMISO'); return; }
     rec = new Reconocimiento(); rec.lang = 'es-AR'; rec.interimResults = true; rec.maxAlternatives = 1;
     rec.onresult = e => { parcial = [...e.results].map(x => x[0].transcript).join(' ').replace(/[^\p{L}\s'-]/gu, ''); salida.textContent = parcial.toUpperCase(); };
     rec.onerror = e => { if (e.error === 'aborted') return; if (e.error === 'network') avisar('SIN CONEXIÓN NO SE PUEDE DICTAR'); else if (e.error === 'not-allowed') avisar('NO SE DIO PERMISO PARA EL MICRÓFONO'); };
-    rec.onend = () => {
-      rec = null; pararAudio(); capa.classList.remove('escuchando');
-      if (parcial.trim()) { fijar(parcial); decir('MANTENÉ APRETADO PARA CORREGIRLO'); }
-      else { fijar(nombre); if (omitir.hidden) decir('NO TE ESCUCHÉ · ' + INDICACION); }
-    };
+    rec.onend = () => { rec = null; pararAudio(); capa.classList.remove('escuchando'); if (parcial.trim()) { fijar(parcial); decir(INDICACION); preguntar(); } else { fijar(nombre); if (omitir.hidden) decir('NO TE ESCUCHÉ · ' + INDICACION); } };
     try { rec.start(); } catch { apretado = false; pararTodo(); decir(INDICACION); }
   }
-  const soltar = () => { if (!apretado) return; apretado = false; try { rec?.stop(); } catch {} if (!rec) { pararAudio(); capa.classList.remove('escuchando'); } };
+  function empezar(ev) {
+    if (apretado) return;
+    apretado = true; if (ev.pointerId != null) try { mic.setPointerCapture(ev.pointerId); } catch {}
+    omitir.hidden = true;
+    if (DICTADO_REAL) empezarReal(); else simular();
+  }
+  const soltar = () => { if (!apretado) return; apretado = false; if (DICTADO_REAL) { try { rec?.stop(); } catch {} if (!rec) { pararAudio(); capa.classList.remove('escuchando'); } } };
   mic.addEventListener('pointerdown', ev => { if (ev.button > 0) return; ev.preventDefault(); empezar(ev); });
   for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) mic.addEventListener(t, soltar);
   mic.addEventListener('contextmenu', ev => ev.preventDefault());
@@ -90,10 +122,12 @@
   const cerrarNombre = () => { apretado = false; pararTodo(); capa.hidden = true; };
   const guardar = conNombre => {
     if (!conNombre) fijar('');
+    const fecha = new Date();
     cerrarNombre(); dejarPasar = true; $('tpRecuerdo').click(); dejarPasar = false;
-    setTimeout(despuesDelRecuerdo, 50);
+    setTimeout(() => despuesDelRecuerdo(fecha), 50);
   };
-  ok.addEventListener('click', () => guardar(true));
+  confirmar.querySelector('.tpn-si').addEventListener('click', () => guardar(true));
+  confirmar.querySelector('.tpn-otra').addEventListener('click', () => { fijar(''); confirmar.hidden = true; mic.hidden = false; indicacion.hidden = false; decir(INDICACION); mic.focus({ preventScroll: true }); });
   omitir.addEventListener('click', () => guardar(false));
   capa.addEventListener('keydown', ev => { if (ev.key === 'Escape') cerrarNombre(); });
 
@@ -103,16 +137,51 @@
     if (dejarPasar || !ev.isTrusted || !ev.target.closest?.('#tpRecuerdo') || $('tpRecuerdo')?.disabled || !montar()) return;
     ev.preventDefault(); ev.stopImmediatePropagation();
     $('tuPlaca').dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); // cierra menús y carteles de reacción
-    fijar(''); decir(INDICACION); omitir.hidden = true; capa.hidden = false;
+    fijar(''); decir(INDICACION); omitir.hidden = true; confirmar.hidden = true; mic.hidden = false; indicacion.hidden = false; capa.hidden = false;
     mic.focus({ preventScroll: true });
   }, true);
 
-  // El recuerdo lleva el nombre: «Placa de …».
-  function despuesDelRecuerdo() {
+  // ── La página del recuerdo: tu placa, tu nombre, fecha y hora, IMPRIMIR RECUERDO y la placa se suma a las de los demás ──
+  const CLAVE_PLACAS = 'micromundos-placas-guardadas';
+  const dos = n => String(n).padStart(2, '0');
+  function sumarALasDemas(url, fecha) {
+    // La pantalla con las placas de todos todavía no está pensada: por ahora la placa queda guardada en este equipo
+    // (miniatura, nombre y fecha), con la misma clave que usa la propuesta «Placas de otras personas».
+    if (typeof Image !== 'function') return;
+    const img = new Image();
+    img.onload = () => {
+      const s = 1600 / 860, c = document.createElement('canvas'); c.width = c.height = 360;
+      c.getContext('2d').drawImage(img, 20 * s, 2 * s, 820 * s, 820 * s, 0, 0, 360, 360);
+      let lista = []; try { lista = JSON.parse(localStorage.getItem(CLAVE_PLACAS) || '[]'); if (!Array.isArray(lista)) lista = []; } catch {}
+      lista.push({ img: c.toDataURL('image/jpeg', .84), nombre: nombre.trim(), fecha: fecha.getTime() });
+      try { localStorage.setItem(CLAVE_PLACAS, JSON.stringify(lista.slice(-4))); } catch {}
+    };
+    img.src = url;
+  }
+  function despuesDelRecuerdo(fecha = new Date()) {
     const vista = $('tpVistaRecuerdo');
     if (!vista || vista.hidden) return;
-    let pie = vista.querySelector('.tpn-pie');
-    if (!pie) { pie = document.createElement('p'); pie.className = 'tpn-pie'; vista.querySelector('.tp-recuerdo-interior')?.prepend(pie); }
-    pie.textContent = nombre.trim() ? `Placa de ${nombre.trim()}` : 'Tu placa';
+    vista.classList.add('tpn-recuerdo');
+    let ficha = vista.querySelector('.tpn-ficha');
+    if (!ficha) {
+      ficha = document.createElement('div'); ficha.className = 'tpn-ficha';
+      ficha.innerHTML = `<p class="tpn-ficha-rotulo">PLACA CREADA POR</p><p class="tpn-ficha-nombre"></p><p class="tpn-ficha-fecha"></p>
+        <p class="tpn-ficha-compartida">Tu placa ya está con las de los demás.</p>
+        <div class="tpn-ficha-acciones"><button type="button" class="tpn-imprimir">IMPRIMIR RECUERDO</button><i></i></div>`;
+      vista.querySelector('.tp-recuerdo-interior')?.appendChild(ficha);
+      const acciones = ficha.querySelector('.tpn-ficha-acciones'), volver = $('tpVolver');
+      if (volver) acciones.appendChild(volver);
+      const imprimir = ficha.querySelector('.tpn-imprimir');
+      imprimir.addEventListener('click', () => {
+        // Simulado: en el museo la imprime la impresora de la pantalla. Acá solo cambia el estado del botón.
+        if (imprimir.dataset.estado) return;
+        imprimir.dataset.estado = 'imprimiendo'; imprimir.textContent = 'IMPRIMIENDO…';
+        setTimeout(() => { imprimir.dataset.estado = 'listo'; imprimir.textContent = 'RECUERDO IMPRESO'; }, 2200);
+      });
+    }
+    const imprimir = ficha.querySelector('.tpn-imprimir'); delete imprimir.dataset.estado; imprimir.textContent = 'IMPRIMIR RECUERDO';
+    ficha.querySelector('.tpn-ficha-nombre').textContent = (nombre.trim() || 'Sin nombre').toUpperCase();
+    ficha.querySelector('.tpn-ficha-fecha').textContent = `${dos(fecha.getDate())}/${dos(fecha.getMonth() + 1)}/${fecha.getFullYear()} · ${dos(fecha.getHours())}:${dos(fecha.getMinutes())}`;
+    const url = $('tpGuardar')?.href; if (url) sumarALasDemas(url, fecha);
   }
 })();
