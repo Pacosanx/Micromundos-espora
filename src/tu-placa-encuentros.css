@@ -33,29 +33,20 @@
 
 /* GENERAR: tocar / mantener apretado (abanico de estructuras). */
 .tp-generar-ayuda{position:absolute;left:40px;top:978px;margin:0;font:400 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;opacity:.5;filter:blur(.4px);pointer-events:none}
-/* Cartel «Estructura» (19/11/2026): el abanico pasa a ser un cartel del sistema, con el material de los carteles
-   (vidrio con borde desenfocado y grano) en versión neutra, sin color de universo. Sale de GENERAR y queda sobre la biblioteca.
-   Cada estructura es una fila: ícono y nombre; la que está en uso va marcada. Tocar una genera la placa con ella. */
-#tuPlaca .tp-estructuras{--cartel-fondo:rgb(226 221 210 / 82%);--cartel-background-blur:14px;position:absolute;left:24px;bottom:calc(1100px - 940px);width:402px;z-index:12;color:#13151b;opacity:0;translate:0 12px;transition:opacity .3s,translate .35s cubic-bezier(.3,.9,.3,1)}
-#tuPlaca .tp-estructuras.vis{opacity:1;translate:0 0}
-.tp-estructuras[hidden]{display:none}
-.tp-estructuras .fi{max-height:none;overflow:visible;padding:28px 24px 18px}
-.tp-estructuras .cabCartel{margin-bottom:24px}
-.tp-estructuras .nom{font-size:var(--t-titulo);line-height:var(--l-titulo);text-transform:uppercase;filter:blur(.75px)}
-.tp-estructuras .cod{font-size:var(--t-etiqueta);line-height:var(--l-etiqueta);white-space:nowrap;padding-top:3px;filter:blur(.5px)}
-.tp-estructuras .reglaCartel{margin-bottom:10px}
-.tp-estructuras-lista{display:flex;flex-direction:column}
-#tuPlaca .tp-estructuras-lista button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:20px;min-height:56px;cursor:pointer;animation:tp-abanico .35s cubic-bezier(.3,.9,.3,1) both}
-#tuPlaca .tp-estructuras-lista button+button{border-top:1px solid rgb(19 21 27 / 14%)}
-.tp-estructuras-lista button:nth-child(2){animation-delay:.03s}.tp-estructuras-lista button:nth-child(3){animation-delay:.06s}.tp-estructuras-lista button:nth-child(4){animation-delay:.09s}.tp-estructuras-lista button:nth-child(5){animation-delay:.12s}
-.tp-estructuras-lista svg{flex:none;width:40px;height:40px;border-radius:50%;box-shadow:inset 0 0 0 1px rgb(19 21 27 / 45%);fill:#13151b;filter:blur(.4px)}
-.tp-estructuras-lista button[aria-checked="true"] svg{box-shadow:inset 0 0 0 2px #13151b}
-.tp-estructuras-lista span{font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif}
-.tp-estructuras-lista button[aria-checked="true"] span{font-weight:700}
-.tp-estructuras-lista button[aria-checked="true"]::after{content:'EN USO';margin-left:auto;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.6}
-#tuPlaca .tp-estructuras-lista button:focus-visible{outline:2px solid #13151b;outline-offset:2px;border-radius:8px}
-#tuPlaca .tp-estructuras p.tp-estructuras-uso{margin:10px 0 0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.6}
-@media(prefers-reduced-motion:reduce){#tuPlaca .tp-estructuras{transition:none}}
+/* Estructura (19/11/2026): el aro del menú contextual, alrededor de GENERAR. Cinco botones redondos con el ícono de cada
+   estructura y su nombre afuera; la que está en uso va rellena, como TRANSFORMAR en el aro de las colonias. */
+#tuPlaca .tp-menu-estructuras{left:330px;top:868px;z-index:12;pointer-events:none}
+.tp-menu-estructuras[hidden]{display:none}
+.tp-menu-estructuras .tp-menu-boton{animation:tp-aro-entra .4s cubic-bezier(.3,.9,.3,1) both;animation-delay:calc(var(--i) * 40ms)}
+.tp-menu-estructuras .tp-menu-icono{left:10px;top:10px;width:28px;height:28px;fill:#212121;filter:blur(.25px)}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"] .tp-menu-superficie{display:none}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"]::before{content:'';position:absolute;inset:0;border-radius:50%;background:#212121;filter:blur(.6px);box-shadow:0 2px 6px #0003}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"] .tp-menu-icono{fill:#f2f0e8}
+.tp-menu-estructuras .tp-menu-boton[aria-checked="true"] span{opacity:1}
+.tp-menu-estructuras .tp-menu-boton:focus-visible .tp-menu-superficie{filter:none;outline:2px solid #0d0f17;border-radius:50%}
+#tuPlaca .tp-estructuras-titulo{position:absolute;left:0;top:-6px;translate:-50% 0;margin:0;white-space:nowrap;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.7}
+@keyframes tp-aro-entra{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+@media(prefers-reduced-motion:reduce){.tp-menu-estructuras .tp-menu-boton{animation:none}}
 @keyframes tp-abanico{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* Nivel 2 · Transformar: la colonia se agranda en el centro y se edita con tiradores. */
