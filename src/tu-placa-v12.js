@@ -147,6 +147,7 @@ function prepararTuPlaca(){
   function abrirEstructuras(){menu.cerrar();editor.cerrar();abanico.hidden=false;for(const b of abanico.children)b.setAttribute('aria-checked',String(b.dataset.estructura===estructura));abanico.querySelector('[aria-checked="true"]')?.focus({preventScroll:true});$('tpGenerar').setAttribute('aria-expanded','true');}
   function cerrarEstructuras(){if(abanico.hidden)return;abanico.hidden=true;$('tpGenerar').setAttribute('aria-expanded','false');}
   function generar(){
+    const habia=items.length;
     iniciarCambio();cerrarMenus();cerrarReaccion();items.length=0;seleccionado=null;seleccion=[];
     if(estructura==='propuesta'){
       const composicion=generarComposicionTuPlaca(),dimension=784/composicion.diametroAro;
@@ -158,8 +159,20 @@ function prepararTuPlaca(){
       const ancho=estructura==='grid'?596:366/alcance,giro=azar()*Math.PI*2,sen=Math.sin(giro),cos=Math.cos(giro);
       for(const it of escena.items){if(it.type!=='shape')continue;const x=(it.x-.5)*ancho,y=(it.y-.5)*ancho;agregarGenerada(it.style,392+x*cos-y*sen,392+x*sen+y*cos,it.w*ancho,null,giro*180/Math.PI);}
     }
-    dibujar();terminarCambio();
+    dibujar();terminarCambio();if(habia)avisarGenerada(habia);
   }
+  // Generar sobre una placa armada reemplaza todo: se avisa y se ofrece recuperar la anterior (es un DESHACER).
+  let relojAvisoGenerar=0,cuadroAvisoGenerar=0;
+  function avisarGenerada(cuantas){
+    let aviso=$('tpAvisoGenerar');
+    if(!aviso){aviso=document.createElement('div');aviso.id='tpAvisoGenerar';aviso.className='tp-aviso-generar';aviso.setAttribute('role','status');
+      aviso.innerHTML='<p></p><button type="button">RECUPERAR LA ANTERIOR</button>';pagina.appendChild(aviso);
+      aviso.querySelector('button').addEventListener('click',ev=>{ev.stopPropagation();cerrarAvisoGenerar();deshacer();});}
+    aviso.querySelector('p').textContent=`Composición nueva. La anterior tenía ${cuantas} ${cuantas===1?'colonia':'colonias'}.`;
+    aviso.hidden=false;cancelAnimationFrame(cuadroAvisoGenerar);cuadroAvisoGenerar=requestAnimationFrame(()=>aviso.classList.add('visible'));
+    clearTimeout(relojAvisoGenerar);relojAvisoGenerar=setTimeout(cerrarAvisoGenerar,7000);
+  }
+  function cerrarAvisoGenerar(){const aviso=$('tpAvisoGenerar');if(!aviso)return;cancelAnimationFrame(cuadroAvisoGenerar);aviso.classList.remove('visible');clearTimeout(relojAvisoGenerar);setTimeout(()=>{if(!aviso.classList.contains('visible'))aviso.hidden=true;},300);}
   function agregarGenerada(estilo,x,y,ancho,grupoFamilia,giro=0){
     const grupo=grupoFamilia||{'#27633f':'M','#ff4c52':'B','#ff9c20':'L'}[estilo.c1];
     const it=crear(modelos.get((grupo||'B')+'-A-01'),x,y,ancho);if(!it)return;

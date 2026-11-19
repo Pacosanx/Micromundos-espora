@@ -103,3 +103,10 @@
 #tuPlaca{overflow:clip}
 
 #tpBiblioteca .tp-biblioteca__labels{grid-template-rows:none;grid-auto-rows:100px;align-content:start}
+
+/* Aviso al generar sobre una placa armada (propuesta, rama tuplaca-generar). */
+.tp-aviso-generar{position:absolute;left:40px;top:858px;z-index:6;display:flex;align-items:center;gap:20px;padding:12px 12px 12px 20px;border-radius:18px;background:#0d0f17;color:#f2f0e8;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s}
+.tp-aviso-generar[hidden]{display:none}.tp-aviso-generar.visible{opacity:1;transform:none}
+.tp-aviso-generar p{margin:0;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif}
+.tp-aviso-generar button{all:unset;min-height:var(--area-tactil);padding:0 20px;border-radius:999px;background:#f2f0e8;color:#0d0f17;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;cursor:pointer}
+@media(prefers-reduced-motion:reduce){.tp-aviso-generar{transition:none}}
