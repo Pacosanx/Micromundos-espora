@@ -33,6 +33,11 @@
     const l = Math.min(...rs.map(r => r.left)), t = Math.min(...rs.map(r => r.top)), rr = Math.max(...rs.map(r => r.right)), bb = Math.max(...rs.map(r => r.bottom));
     return { getBoundingClientRect: () => ({ left: l, top: t, right: rr, bottom: bb, width: rr - l, height: bb - t }) };
   };
+  const coloniaChica = () => { // en una composición generada la primera suele ser un fondo enorme: se elige la más chica (≥ 40 px)
+    let mejor = null, ancho = Infinity;
+    for (const el of document.querySelectorAll('#tuPlaca .tp-colonia')) { const w = el.getBoundingClientRect().width; if (w >= 40 && w < ancho && visible(el)) { ancho = w; mejor = el; } }
+    return mejor;
+  };
   const primeraVisible = s => [...document.querySelectorAll(s)].find(visible);
   const conFicha = () => document.body.classList.contains('con-cartel');
   const enCentro = () => { // la muestra visible más cercana al centro de la placa
@@ -91,7 +96,7 @@
     { id: 't-sembrar', texto: 'Arrastrá una forma al interior de la placa.', donde: 'derecha',
       cuando: () => seccion() === 'navTuPlaca' && !q('#tuPlaca .tp-colonia'), blanco: () => primeraVisible('#tuPlaca .tp-paleta-colonia')?.parentElement, hecha: () => !!q('#tuPlaca .tp-colonia') },
     { id: 't-editar', texto: 'Tocá una colonia para editarla.', donde: 'arriba',
-      cuando: () => seccion() === 'navTuPlaca' && $('tpMenu')?.hidden, blanco: () => primeraVisible('#tuPlaca .tp-colonia'), hecha: () => $('tpMenu') && !$('tpMenu').hidden },
+      cuando: () => seccion() === 'navTuPlaca' && $('tpMenu')?.hidden, blanco: coloniaChica, hecha: () => $('tpMenu') && !$('tpMenu').hidden },
     { id: 't-funcion', texto: 'Tocá una función y arrastrá para cambiar su valor.', donde: 'derecha',
       cuando: () => seccion() === 'navTuPlaca' && $('tpMenu') && !$('tpMenu').hidden, blanco: () => union('#tpMenu .tp-menu-boton'), hecha: () => señal.has('funcion') },
     { id: 't-deshacer', texto: 'Tocá DESHACER para volver un paso atrás.', donde: 'arriba',
