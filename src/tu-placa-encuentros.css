@@ -60,18 +60,29 @@
 .tp-editor-perilla{fill:#fffffff0;stroke:#212121;stroke-width:1.4;filter:drop-shadow(0 1px 3px #0003)}
 .tp-editor-tirador-activo .tp-editor-perilla{fill:#212121}
 .tp-editor-borde-interior{fill:none;stroke:#0d0f1799;stroke-width:1.2;stroke-dasharray:3 4}
-.tp-editor-etiqueta{font:700 var(--t-micro) Arimo,Arial,sans-serif;letter-spacing:.03em;fill:#0d0f17;paint-order:stroke;stroke:#f2f0e8;stroke-width:4px;stroke-linejoin:round}
+.tp-editor-etiqueta{font:400 var(--t-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;fill:#0d0f17;paint-order:stroke;stroke:#f2f0e8;stroke-width:4px;stroke-linejoin:round}
 .tp-editor-valor{font:400 var(--t-etiqueta) Arimo,Arial,sans-serif;fill:#0d0f17;paint-order:stroke;stroke:#f2f0e8;stroke-width:4px;stroke-linejoin:round}
 .tp-editor-pestanas,.tp-editor-opciones{position:absolute;left:0;top:0;width:784px;height:784px;pointer-events:none}
-#tuPlaca .tp-editor-pestanas button{all:unset;position:absolute;translate:-50% -50%;pointer-events:auto;cursor:pointer;padding:10px 6px;white-space:nowrap;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.5;filter:blur(.6px);transition:opacity .2s,filter .2s}
-#tuPlaca .tp-editor-pestanas button[aria-selected="true"]{opacity:1;filter:blur(.3px);font-weight:700}
-#tuPlaca .tp-editor-pestanas button[aria-selected="true"]::after{content:'';position:absolute;left:6px;right:6px;bottom:4px;height:2px;background:linear-gradient(90deg,#b5599f,#c9a6bd,#7fb7ab);filter:blur(.5px)}
+/* Títulos de TRANSFORMAR (19/11/2026): afuera, a la izquierda de la placa, con su ícono en la superficie redonda del aro.
+   El nombre va a la izquierda del ícono, alineado a la derecha. El elegido: superficie rellena (como TRANSFORMAR en el aro) y nombre en 700. */
+#tuPlaca .tp-editor-pestanas button{all:unset;position:absolute;right:calc(100% + 32px);translate:0 -50%;display:flex;align-items:center;gap:14px;pointer-events:auto;cursor:pointer;white-space:nowrap;animation:tp-aparecer .35s ease both}
+.tp-editor-pestana-texto{font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;color:#0d0f17;opacity:.7;transition:opacity .2s}
+.tp-editor-pestana-icono{position:relative;display:grid;place-items:center;width:48px;height:48px;flex:none}
+.tp-editor-pestana-superficie{position:absolute;left:-.8px;top:-.8px;width:49.6px;height:49.6px;filter:blur(1px);pointer-events:none}
+.tp-editor-pestana-icono svg{position:relative;filter:blur(.25px)}
+#tuPlaca .tp-editor-pestanas button[aria-selected="true"] .tp-editor-pestana-texto{font-weight:700;opacity:1}
+#tuPlaca .tp-editor-pestanas button[aria-selected="true"] .tp-editor-pestana-icono::before{content:'';position:absolute;inset:0;border-radius:50%;background:#212121;filter:blur(.6px);box-shadow:0 2px 6px #0003}
+#tuPlaca .tp-editor-pestanas button[aria-selected="true"] .tp-editor-pestana-superficie{display:none}
+#tuPlaca .tp-editor-pestanas button[aria-selected="true"] svg{stroke:#f2f0e8}
+#tuPlaca .tp-editor-pestanas button[aria-selected="true"] svg circle[fill]{fill:#f2f0e8}
 #tuPlaca .tp-editor-listo{all:unset;position:absolute;left:392px;top:744px;translate:-50% -50%;padding:12px 18px;cursor:pointer;font:700 var(--t-boton)/var(--l-boton) Arimo,Arial,sans-serif;filter:blur(.5px)}
-#tuPlaca .tp-editor-listo:focus-visible,#tuPlaca .tp-editor-pestanas button:focus-visible{background:#ed74a018;border-radius:10px}
+#tuPlaca .tp-editor-listo:focus-visible{background:#ed74a018;border-radius:10px}
+#tuPlaca .tp-editor-pestanas button:focus-visible .tp-editor-pestana-icono{outline:2px solid #0d0f17;outline-offset:3px;border-radius:50%}
 #tuPlaca .tp-editor-miniatura{all:unset;position:absolute;translate:-50% -50%;display:grid;justify-items:center;gap:3px;pointer-events:auto;cursor:pointer}
 .tp-editor-miniatura i{width:36px;height:36px;border-radius:50%;box-shadow:0 0 0 1px #21212199;filter:blur(.6px)}
 .tp-editor-miniatura[aria-pressed="true"] i{box-shadow:0 0 0 2.5px #212121}
-.tp-editor-miniatura span{font:700 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;text-transform:uppercase}
+.tp-editor-miniatura span{font:400 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.tp-editor-miniatura[aria-pressed="true"] span{font-weight:700}
 @keyframes tp-aparecer{from{opacity:0}to{opacity:1}}
 @keyframes tp-crecer{from{opacity:0;transform:scale(.5)}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.tp-editor-velo,.tp-editor-colonia,.tp-editor-guias,.tp-estructuras button{animation:none}}
