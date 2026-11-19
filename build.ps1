@@ -60,6 +60,9 @@ Import-Csv -LiteralPath (Join-Path $base 'base/especies.csv') -Delimiter ';' -En
   $catalogo[$_.especie] = @{ definicion = $_.definicion; donde_esta = $_.donde_esta; que_produce_o_transforma = $_.que_produce_o_transforma }
 }
 $t = $t.Replace('/*CARTELES*/', ('const CATALOGO_ESPECIES = ' + (ConvertTo-Json -InputObject $catalogo -Depth 4 -Compress) + ';' + [Environment]::NewLine + (Leer 'carteles.js')))
+# Propuesta: nombre de la placa dictado (src/tu-placa-nombre.js y .css; diseño de Paco, Figma 621:863).
+$finNombre = $t.LastIndexOf('</body>')
+$t = $t.Substring(0, $finNombre) + '<style id="tpNombreEstilos">' + (Leer 'tu-placa-nombre.css') + '</style><script id="tpNombreScript">' + (Leer 'tu-placa-nombre.js') + '</script>' + [Environment]::NewLine + $t.Substring($finNombre)
 $t = $t.Replace('/*VINCULOS*/', ('const DATOS_VINCULOS = ' + $jsonVinculos + ';' + [Environment]::NewLine + 'const GRUPOS_ESPECIES = ' + $jsonGrupos + ';' + [Environment]::NewLine + (Leer 'vinculos.js')))
 $t = $t.Replace('/*DATOS*/',    (Leer 'datos.js'))
 $t = $t.Replace('/*COLONIAS*/', (Leer 'colonias-core.js'))
@@ -91,6 +94,9 @@ $recursos = @{
   '__DE_PUNTO_ACTUAL__' = @('donde-estan/punto-actual.svg','image/svg+xml')
   '__DE_FLECHA_ANTERIOR__' = @('donde-estan/flecha-anterior.svg','image/svg+xml')
   '__DE_FLECHA_SIGUIENTE__' = @('donde-estan/flecha-siguiente.svg','image/svg+xml')
+  '__TPN_ELIPSE__' = @('nombre/elipse.svg','image/svg+xml')
+  '__TPN_LINEA__' = @('nombre/linea.svg','image/svg+xml')
+  '__TPN_MICROFONO__' = @('nombre/microfono.svg','image/svg+xml')
 }
 foreach($marca in $recursos.Keys){
   $recurso = $recursos[$marca]
