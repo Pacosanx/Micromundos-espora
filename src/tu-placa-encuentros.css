@@ -52,7 +52,7 @@
 /* Estructura (19/11/2026): el aro del menú contextual, alrededor de GENERAR. Cinco botones redondos con el ícono de cada
    estructura y su nombre afuera; la que está en uso va rellena, como TRANSFORMAR en el aro de las colonias. */
 /* 19/11/2026: en fila horizontal, a la derecha de GENERAR COMPOSICIÓN, con un eje punteado detrás. */
-#tuPlaca .tp-menu-estructuras{left:500px;top:964px;z-index:12;pointer-events:none}
+#tuPlaca .tp-menu-estructuras{left:500px;top:977px;z-index:12;pointer-events:none}
 .tp-estructuras-eje{position:absolute;left:0;top:-.5px;width:496px;height:0;border-top:1px dashed rgb(13 15 23 / 30%)}
 .tp-menu-estructuras .tp-menu-boton span{left:24px!important;right:auto!important;top:48px!important;transform:translateX(-50%)!important;font-weight:400;letter-spacing:.04em;white-space:normal!important;width:112px;text-align:center;line-height:16px}
 .tp-menu-estructuras[hidden]{display:none}
@@ -63,7 +63,6 @@
 .tp-menu-estructuras .tp-menu-boton[aria-checked="true"] .tp-menu-icono{fill:#f2f0e8}
 .tp-menu-estructuras .tp-menu-boton[aria-checked="true"] span{opacity:1}
 .tp-menu-estructuras .tp-menu-boton:focus-visible .tp-menu-superficie{filter:none;outline:2px solid #0d0f17;border-radius:50%}
-#tuPlaca .tp-estructuras-titulo{position:absolute;left:-24px;top:-58px;translate:0 0;margin:0;white-space:nowrap;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.08em;opacity:.7}
 @keyframes tp-aro-entra{from{opacity:0;translate:-10px 0}to{opacity:1;translate:0 0}}
 @media(prefers-reduced-motion:reduce){.tp-menu-estructuras .tp-menu-boton{animation:none}}
 @keyframes tp-abanico{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -112,5 +111,5 @@
 /* La reacción, dibujada en su cartel (19/11/2026). */
 .cartel-reaccion .tp-reaccion-figura{display:block;width:354px;height:200px;margin:-8px 0 16px}
 /* Jerarquía (19/11/2026): GENERAR COMPOSICIÓN más grande que su aclaración (una regla general de TU PLACA, #tuPlaca p, dejaba la aclaración en 20 px). */
-#tuPlaca .tp-generar{font:700 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif;top:946px}
-#tuPlaca p.tp-generar-ayuda{top:980px;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif}
+#tuPlaca .tp-generar{font:700 var(--t-lectura)/var(--l-lectura) Arimo,Arial,sans-serif;top:963px} /* el bloque apoya en la misma línea inferior que DESHACER y GUARDAR PLACA */
+#tuPlaca p.tp-generar-ayuda{top:997px;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif}
