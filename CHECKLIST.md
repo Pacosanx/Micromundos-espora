@@ -57,7 +57,7 @@ El muestrario de prueba permite comparar variantes. Queda pendiente elegir cuál
   - Privacidad: avisar que se usa el micrófono, no guardar el audio (solo el texto), decidir si el nombre se muestra a otros visitantes y si se filtran nombres inapropiados.
   - Las placas de otros usuarios las comparten todos los visitantes: decidir cuántas se muestran, por cuánto tiempo y cómo se evita que se llene o se desordene.
 - [x] Darle más protagonismo a TU PLACA. Revisar el título, la presencia del borde de la placa vacía, el peso de la biblioteca y la indicación de dónde soltar la primera colonia. *(En main el 19/11.)* Borde punteado que late con la placa vacía (tenue con colonias), resaltado del color del grupo al arrastrar y «ARRASTRÁ UNA COLONIA HASTA LA PLACA». Se siembra solo arrastrando.
-- [ ] **Leyendas de reacciones en TU PLACA.** Diseñarlas con la lógica de la guía de MUESTRAS («Cómo leer la placa»).
+- [x] **Leyendas de reacciones en TU PLACA.** Diseñarlas con la lógica de la guía de MUESTRAS («Cómo leer la placa»). *(En main el 19/11: sin leyenda fija; el cartel de cada reacción la muestra dibujada y con el color de sus universos.)*
 - [x] **Menú de colonias de TU PLACA.** Revisar su estructura y decidir qué información va fija y cuál como cartelito de ayuda. *(En main el 19/11.)*
 - [ ] **Menús contextuales y «reacciones en la placa».** Revisar su diseño y sumar opciones de edición de la placa entera, como girar o hacer zoom.
 - [ ] **Menú de edición de la colonia individual.** Los títulos no funcionan adentro del círculo: ponerlos afuera, a la izquierda, con un iconito cada uno, como en el menú contextual. Verificar el uso tipográfico.
@@ -78,9 +78,9 @@ El muestrario de prueba permite comparar variantes. Queda pendiente elegir cuál
 
 El diseño final se monta en una pantalla táctil de uso público, para visitantes que pasan. Esto condiciona varias de las tareas anteriores.
 
-- [ ] **Reinicio entre visitantes.** Volver a la portada tras un rato sin tocar (con aviso previo breve) y borrar lo que quedó a medio hacer: placa en curso, selección, fichas abiertas. Definir el tiempo de inactividad y qué se conserva (por ejemplo, las placas ya guardadas).
+- [x] **Reinicio entre visitantes.** Volver a la portada tras un rato sin tocar (con aviso previo breve) y borrar lo que quedó a medio hacer: placa en curso, selección, fichas abiertas. Definir el tiempo de inactividad y qué se conserva (por ejemplo, las placas ya guardadas). *(En main el 19/11.)*
 - [x] **Pantalla de reposo atractiva.** Que la portada invite a tocar y se entienda sin explicación ni instrucciones previas. *(En main el 19/11.)* Un anillo, como un toque, se expande sobre «TOCÁ PARA COMENZAR».
-- [ ] **Bloquear gestos y menús del navegador.** Pantalla completa, sin barra de direcciones, sin zoom por pellizco, sin selección de texto, sin menú contextual y sin salir por accidente.
+- [x] **Bloquear gestos y menús del navegador.** Pantalla completa, sin barra de direcciones, sin zoom por pellizco, sin selección de texto, sin menú contextual y sin salir por accidente. *(En main el 19/11.)*
 - [ ] **Áreas de toque y uso con muchos visitantes.** Botones grandes, tolerancia a toques erráticos o con varios dedos, y que ninguna acción importante requiera precisión fina.
 - [ ] **Funcionar sin conexión.** Incluir Arimo y todo lo necesario en el proyecto, y definir qué pasa si el reconocimiento de voz o el guardado dependen de internet.
 - [ ] **Estabilidad en jornadas largas.** Probar que no se degrade tras horas de uso (memoria, animaciones, placas acumuladas) y definir cómo se reinicia si falla.
@@ -121,7 +121,7 @@ El diseño final se monta en una pantalla táctil de uso público, para visitant
 - [ ] Documentar e instalar las dependencias de los verificadores para que otra persona pueda repetir la validación de la base, los flujos y las referencias. Sumar comprobaciones de primera visita, guía, gesto continuo y exportación al integrar esos cambios.
 - [ ] Hacer que el generador reproduzca el mismo resultado con la misma semilla. Comparar el motor de COLONIAS con el del Atlas antes de compartirlo y comprobar que las 146 muestras conservan su apariencia.
 - [ ] Al integrar las reacciones y las composiciones, revisar si conviene separar sus cambios de la lógica de siembra, historial y exportación. Inventariar módulos antiguos, recursos duplicados y pruebas antes de archivar o quitar lo que ya no usa el Atlas.
-- [ ] Escribir un README con qué es Micromundos, cómo abrirlo, reconstruirlo, probarlo y publicarlo, y dónde consultar créditos y fuentes. Poner al día el traspaso, la escala tipográfica, la documentación de la base y `PUBLICACION.md` según el estado real.
+- [x] Escribir un README con qué es Micromundos, cómo abrirlo, reconstruirlo, probarlo y publicarlo, y dónde consultar créditos y fuentes. Poner al día el traspaso, la escala tipográfica, la documentación de la base y `PUBLICACION.md` según el estado real. *(En main el 19/11.)*
 - [ ] Hacer el recorrido final en la versión publicada y verificar navegación, legibilidad, carga de recursos y claridad de las acciones en cada pantalla.
 - [ ] Para el video que prepara Paco, mostrar TU PLACA temprano y abreviar el resto del recorrido. Revisar una toma con mouse para comprobar que el cursor, los gestos y los cartelitos se lean y se entiendan.
 
