@@ -107,7 +107,7 @@
 /* Aviso al generar sobre una placa armada (propuesta, rama tuplaca-generar).
    Va sobre la propia placa, abajo y centrado: es lo que cambió. Material de los carteles (vidrio con borde desenfocado y grano),
    sin color de universo porque no remite a ninguno. La acción, como los textos-botón del sistema. */
-.cartel-neutro{--cartel-fondo:rgb(205 198 186 / 42%);--cartel-noise-opacity:.35}
+.cartel-neutro{--cartel-fondo:rgb(240 236 226 / 62%);--cartel-noise-opacity:.14} /* igual que los cartelitos de ayuda (bienvenida.css) */
 .tp-aviso-generar{position:absolute;left:calc(50% + 360.4px);top:812px;z-index:6;max-width:520px;color:#13151b;text-align:center;opacity:0;translate:-50% 8px;transition:opacity .3s,translate .3s}
 .tp-aviso-generar .fi{padding:16px 28px 6px;max-height:none;overflow:visible}
 .tp-aviso-generar .co{display:flex;flex-direction:column;align-items:center;gap:4px}
