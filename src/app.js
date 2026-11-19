@@ -352,9 +352,10 @@ function maquetar(){
     p.escVista=esc;
     p.el.style.transform = `translate(${(p.x - p.lado/2).toFixed(1)}px,${(p.y0 - p.lado/2).toFixed(1)}px)` + (esc !== 1 ? ` scale(${esc.toFixed(4)})` : '');
     p.el.style.opacity = op.toFixed(3);
-    // MUESTRARIO: código debajo de la colonia; aparece al final de la transición y se va primero.
+    // MUESTRARIO: código debajo de la colonia; aparece al final de la transición y se va primero. Todos los de una fila van
+    // a la misma altura (19/11/2026, Paco): bajo el centro de la celda + el radio de la colonia más grande (60/2), no bajo cada una.
     if(p.codEl){const ver=clamp((mezclaMuestrario-.6)/.4);p.codEl.style.opacity=(ver*.6).toFixed(3);
-      if(ver>0){const g=posicionMuestrario(p),r=p.grilla.diametro/2*g.factor/p.grilla.factor;p.codEl.style.transform=`translate(${p.x.toFixed(1)}px,${(p.y0+r+3).toFixed(1)}px)`;}}
+      if(ver>0){const g=posicionMuestrario(p),r=30*g.factor/p.grilla.factor;p.codEl.style.transform=`translate(${g.x.toFixed(1)}px,${(g.y+r+3).toFixed(1)}px)`;}}
   }
   dibujarAros(K);
   const am = (A1 - zoomT*(A1-A0)) * Math.PI/180;

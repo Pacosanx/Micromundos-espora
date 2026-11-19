@@ -260,6 +260,9 @@ body.con-cartel #zoomSvg, body.con-cartel .aros.linea, body.con-cartel #buscador
 #hilos[hidden]{display:none}
 .vista-vinculos #aros{display:none}
 .vista-muestrario #aros{display:none}
+/* MUESTRARIO sin LISTADO COMPLETO (19/11/2026). */
+#alternarListado{transition:opacity .4s,visibility .4s}
+.vista-muestrario #alternarListado{opacity:0;visibility:hidden;pointer-events:none}
 /* Códigos del MUESTRARIO: tamaño micro, tinta al 60 %, centrados debajo de cada colonia. Solo se ven en esa vista. */
 #codigosMuestrario{position:absolute;left:0;top:0;pointer-events:none}
 #codigosMuestrario span{position:absolute;left:0;top:0;translate:-50% 0;white-space:nowrap;font:400 var(--t-micro)/var(--l-micro) Arimo,Arial,sans-serif;letter-spacing:.02em;color:#0d0f17;opacity:0;will-change:transform,opacity}
