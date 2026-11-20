@@ -49435,6 +49435,12 @@ function prepararTuPlaca(){
   const aroCanvas=$('tpAroPlaca'),ladoAro=784/(estiloAro.size/100)/WF;aroCanvas.style.width=aroCanvas.style.height=ladoAro+'px';aroCanvas.style.left=aroCanvas.style.top=(784-ladoAro)/2+'px';
   mountColonias(aroCanvas,{recipe:pieza(estiloAro),maxResolution:1100});aroCanvas.style.width=aroCanvas.style.height=ladoAro+'px';
   const snapshot=()=>JSON.stringify({items,contador:secuencia,intensidad,estructura,zoom,giro});
+  // 20/11/2026 (Paco): si hay una placa armada que todavía no se compartió (GUARDAR PLACA), al cerrar la pestaña el navegador
+  // pregunta si se quiere salir. El texto del aviso lo pone el navegador (no se puede cambiar). En el kiosco no se avisa.
+  const CLAVE_COMPARTIDA='micromundos-tuplaca-compartida';
+  let compartida=null;try{compartida=localStorage.getItem(CLAVE_COMPARTIDA);}catch{}
+  document.addEventListener('placa-compartida',()=>{compartida=snapshot();try{localStorage.setItem(CLAVE_COMPARTIDA,compartida);}catch{}});
+  if(!new URLSearchParams(location.search).has('kiosco'))addEventListener('beforeunload',ev=>{if(!items.length||snapshot()===compartida)return;ev.preventDefault();ev.returnValue='';});
   function guardar(){try{localStorage.setItem(clave,snapshot());}catch{}}
   function iniciarCambio(){if(antes===null)antes=snapshot();}
   // Interruptor de REACCIONES (19/11/2026, Paco): círculo negro y palabra en negrita = activas; círculo en trazo y palabra
@@ -51614,6 +51620,7 @@ body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;
     ficha.querySelector('.tpn-ficha-nombre').textContent = (nombre.trim() || 'Sin nombre').toUpperCase();
     ficha.querySelector('.tpn-ficha-fecha').textContent = `${dos(fecha.getDate())}/${dos(fecha.getMonth() + 1)}/${fecha.getFullYear()} · ${dos(fecha.getHours())}:${dos(fecha.getMinutes())}`;
     const url = $('tpImagenRecuerdo')?.dataset.sinFondo || $('tpGuardar')?.href; if (url) sumarALasDemas(url, fecha);
+    document.dispatchEvent(new Event('placa-compartida')); // TU PLACA deja de avisar al cerrar la pestaña
   }
 })();
 </script>

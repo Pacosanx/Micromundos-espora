@@ -195,5 +195,6 @@
     ficha.querySelector('.tpn-ficha-nombre').textContent = (nombre.trim() || 'Sin nombre').toUpperCase();
     ficha.querySelector('.tpn-ficha-fecha').textContent = `${dos(fecha.getDate())}/${dos(fecha.getMonth() + 1)}/${fecha.getFullYear()} · ${dos(fecha.getHours())}:${dos(fecha.getMinutes())}`;
     const url = $('tpImagenRecuerdo')?.dataset.sinFondo || $('tpGuardar')?.href; if (url) sumarALasDemas(url, fecha);
+    document.dispatchEvent(new Event('placa-compartida')); // TU PLACA deja de avisar al cerrar la pestaña
   }
 })();
