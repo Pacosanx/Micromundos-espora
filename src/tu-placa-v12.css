@@ -114,6 +114,7 @@
 /* 19/11/2026 (Paco): una fila con desplazamiento horizontal infinito (tu-placa-v12.js, moverCarrusel); los bordes se desvanecen. */
 .tp-otras-grilla{position:absolute;left:0;top:300px;width:1920px;height:600px;margin:0;padding:0;list-style:none;overflow:hidden;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 160px,#000 calc(100% - 160px),transparent);mask-image:linear-gradient(90deg,transparent,#000 160px,#000 calc(100% - 160px),transparent)}
+#tuPlaca .tp-otras-vacio{position:absolute;left:0;right:0;top:250px;margin:0;text-align:center;font:400 var(--t-cuerpo)/var(--l-cuerpo) Arimo,Arial,sans-serif;opacity:.7}
 .tp-otras-grilla.arrastrando{cursor:grabbing}.tp-otras-grilla:focus-visible{outline:0}
 .tp-otras-pista{display:flex;gap:80px;width:max-content;padding-left:120px;will-change:transform}
 .tp-otras-grilla li{flex:none;width:400px;display:flex;flex-direction:column;align-items:center;gap:16px;animation:tp-aparecer .4s ease both}
