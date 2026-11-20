@@ -49552,7 +49552,12 @@ function prepararTuPlaca(){
   }
   pagina.addEventListener('pointerup',ev=>soltar(ev));pagina.addEventListener('pointercancel',ev=>soltar(ev,true));
   pagina.addEventListener('pointerdown',ev=>{if(!ev.target.closest('.tp-colonia,.tp-menu,.tp-editor,.tp-estructuras,#tpGenerar'))cerrarMenus();});
-  pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'){cerrarMenus();cerrarReaccion();}if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='z'){ev.preventDefault();ev.shiftKey?rehacer():deshacer();}});
+  pagina.addEventListener('keydown',ev=>{if(ev.key==='Escape'){cerrarMenus();cerrarReaccion();}});
+  // 20/11/2026 (Paco): Ctrl+Z deshace y Ctrl+Y o Ctrl+Shift+Z rehacen en cualquier momento con TU PLACA abierta (antes solo con el
+  // foco dentro de la página). No actúa sobre los campos de texto (el nombre) ni con el recuerdo, el nombre o las placas de otros abiertos.
+  document.addEventListener('keydown',ev=>{if(!(ev.ctrlKey||ev.metaKey)||ev.altKey||pagina.hidden)return;const k=ev.key.toLowerCase();if(k!=='z'&&k!=='y')return;
+    if(ev.target.closest?.('input,textarea,[contenteditable="true"]')||!$('tpVistaRecuerdo').hidden||!$('tpOtras').hidden||($('tpNombre')&&!$('tpNombre').hidden))return;
+    ev.preventDefault();if(k==='y'||ev.shiftKey)rehacer();else deshacer();});
 
   // GENERAR: tocar = otra semilla de la estructura actual; mantener = abanico de estructuras.
   const ESTRUCTURAS=[['propuesta','Placa propuesta'],['band','Banda'],['grid','Retícula'],['field','Campo disperso'],['radial','Campo radial']];
