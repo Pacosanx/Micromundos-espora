@@ -51237,13 +51237,14 @@ body .cartel.cartel-glosario.cartel-bienvenida.vis{visibility:visible!important;
 })();
 </script>
 <script id="dedoScript">// ───────── Modo dedo: el mouse se comporta como un dedo ─────────
-// Siempre activo (Paco, 19/11/2026): con mouse, el Atlas se usa como en la pantalla táctil. Para trabajar con el
-// mouse común, agregar ?mouse a la dirección (placa.html?mouse). Con un dedo de verdad no cambia nada.
+// 19/11/2026 (Paco): para compartir el link, lo predeterminado es la computadora con mouse común. El modo dedo (el mouse
+// como en la pantalla táctil) queda con ?dedo o ?kiosco en la dirección. Con un dedo de verdad no cambia nada.
 //  1. El cursor se reemplaza por una yema: un círculo suave que se marca al apretar y deja una estela corta al arrastrar.
 //  2. Arrastrar con el botón apretado desplaza el listado, las fichas largas y el glosario, con inercia (como el dedo).
 //  3. La rueda del mouse no hace nada: con el dedo no existe.
 (() => {
-  if (new URLSearchParams(location.search).has('mouse')) return;
+  const parametros = new URLSearchParams(location.search);
+  if (!parametros.has('dedo') && !parametros.has('kiosco')) return;
   document.documentElement.classList.add('modo-dedo');
 
   const estilo = document.createElement('style');
