@@ -111,9 +111,13 @@
 .tp-otras-cabeza span{grid-row:1 / span 2;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif}
 #tuPlaca .tp-otras-cabeza h2{margin:0;font:400 var(--t-titulo)/var(--l-titulo) Arimo,Arial,sans-serif;text-transform:uppercase}
 #tuPlaca .tp-otras-cabeza p{margin:0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.6}
-.tp-otras-grilla{position:absolute;left:150px;top:282px;width:1620px;margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(5,260px);column-gap:80px;row-gap:36px}
-.tp-otras-grilla li{display:flex;flex-direction:column;align-items:center;gap:10px;animation:tp-aparecer .4s ease both}
-.tp-otras-grilla img,.tp-otras-lienzo{display:block;width:285px;height:285px;margin:-12px}
+/* 19/11/2026 (Paco): una fila con desplazamiento horizontal infinito (tu-placa-v12.js, moverCarrusel); los bordes se desvanecen. */
+.tp-otras-grilla{position:absolute;left:0;top:300px;width:1920px;height:600px;margin:0;padding:0;list-style:none;overflow:hidden;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 160px,#000 calc(100% - 160px),transparent);mask-image:linear-gradient(90deg,transparent,#000 160px,#000 calc(100% - 160px),transparent)}
+.tp-otras-grilla.arrastrando{cursor:grabbing}.tp-otras-grilla:focus-visible{outline:0}
+.tp-otras-pista{display:flex;gap:80px;width:max-content;padding-left:120px;will-change:transform}
+.tp-otras-grilla li{flex:none;width:400px;display:flex;flex-direction:column;align-items:center;gap:16px;animation:tp-aparecer .4s ease both}
+.tp-otras-grilla img,.tp-otras-lienzo{display:block;width:430px;height:430px;margin:-15px;pointer-events:none}
 .tp-otras-lienzo canvas{display:block;width:100%;height:100%}
 #tuPlaca .tp-otras-grilla p{margin:0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.04em;opacity:.7}
 #tuPlaca .tp-otras-propia p{font-weight:700;opacity:1}

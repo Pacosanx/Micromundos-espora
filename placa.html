@@ -918,9 +918,13 @@ body:not(.seccion-glosario) .cartel-glosario:not(.cartel-referencia){visibility:
 .tp-otras-cabeza span{grid-row:1 / span 2;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif}
 #tuPlaca .tp-otras-cabeza h2{margin:0;font:400 var(--t-titulo)/var(--l-titulo) Arimo,Arial,sans-serif;text-transform:uppercase}
 #tuPlaca .tp-otras-cabeza p{margin:0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;opacity:.6}
-.tp-otras-grilla{position:absolute;left:150px;top:282px;width:1620px;margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(5,260px);column-gap:80px;row-gap:36px}
-.tp-otras-grilla li{display:flex;flex-direction:column;align-items:center;gap:10px;animation:tp-aparecer .4s ease both}
-.tp-otras-grilla img,.tp-otras-lienzo{display:block;width:285px;height:285px;margin:-12px}
+/* 19/11/2026 (Paco): una fila con desplazamiento horizontal infinito (tu-placa-v12.js, moverCarrusel); los bordes se desvanecen. */
+.tp-otras-grilla{position:absolute;left:0;top:300px;width:1920px;height:600px;margin:0;padding:0;list-style:none;overflow:hidden;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 160px,#000 calc(100% - 160px),transparent);mask-image:linear-gradient(90deg,transparent,#000 160px,#000 calc(100% - 160px),transparent)}
+.tp-otras-grilla.arrastrando{cursor:grabbing}.tp-otras-grilla:focus-visible{outline:0}
+.tp-otras-pista{display:flex;gap:80px;width:max-content;padding-left:120px;will-change:transform}
+.tp-otras-grilla li{flex:none;width:400px;display:flex;flex-direction:column;align-items:center;gap:16px;animation:tp-aparecer .4s ease both}
+.tp-otras-grilla img,.tp-otras-lienzo{display:block;width:430px;height:430px;margin:-15px;pointer-events:none}
 .tp-otras-lienzo canvas{display:block;width:100%;height:100%}
 #tuPlaca .tp-otras-grilla p{margin:0;font:400 var(--t-etiqueta)/var(--l-etiqueta) Arimo,Arial,sans-serif;letter-spacing:.04em;opacity:.7}
 #tuPlaca .tp-otras-propia p{font-weight:700;opacity:1}
@@ -49409,7 +49413,7 @@ function prepararTuPlaca(){
   pagina.innerHTML=`<div class="tp-indicacion"><span>[04.0]</span><div id="tpReacciones" hidden></div></div><aside id="tpBiblioteca"></aside>
     <div id="tpBoard" class="tp-board" aria-label="Tu placa. Arrastrá una forma de la biblioteca para sembrarla; arrastrá sobre la placa para elegir varias" tabindex="0"><div class="tp-superficies" aria-hidden="true"><canvas id="tpAroPlaca"></canvas></div><canvas id="tpEscena" class="tp-escena" aria-hidden="true"></canvas><div id="tpColonias"></div><svg id="tpLineas" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"></svg><div id="tpRotulos"></div><svg id="tpTrazo" width="784" height="784" viewBox="0 0 784 784" aria-hidden="true"><path/></svg><svg id="tpPerilla" class="tp-perilla" width="784" height="784" viewBox="0 0 784 784"></svg><p id="tpVacia">ARRASTRÁ UNA COLONIA\nHASTA LA PLACA</p><div id="tpMenu"></div><div id="tpEditor"></div><p id="tpAvisoQuitar" hidden>SOLTÁ PARA QUITAR</p></div>
     <button id="tpGenerar" class="tp-generar" type="button" aria-haspopup="true">GENERAR COMPOSICIÓN ↻</button><p class="tp-generar-ayuda" id="tpGenerarAyuda">MANTENÉ APRETADO PARA ELEGIR LA ESTRUCTURA</p><div id="tpEstructuras" class="tp-menu tp-menu-estructuras tp-estructuras" hidden role="menu" aria-label="Estructura de la composición"><i class="tp-estructuras-eje" aria-hidden="true"></i></div><div class="tp-acciones"><button id="tpDeshacer" type="button">DESHACER</button><i></i><button id="tpRehacer" type="button">REHACER</button><i></i><button id="tpReiniciar" type="button">VACIAR LA PLACA</button></div><button id="tpRecuerdo" class="tp-guardar" type="button">GUARDAR PLACA ${FLECHA_DIAGONAL}</button><span id="tpCuenta" class="tp-solo-lector" aria-live="polite"></span>
-    <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ${FLECHA_DIAGONAL}</a><button id="tpVerOtras" type="button">VER PLACAS DE OTRAS PERSONAS</button></div></div></div><section class="tp-otras" id="tpOtras" hidden role="dialog" aria-modal="true" aria-labelledby="tpOtrasTitulo"><header class="tp-otras-cabeza"><span>[04.2]</span><h2 id="tpOtrasTitulo">Placas de otras personas</h2><p>Las placas que armaron hoy otras personas que pasaron por Micromundos.</p></header><ol class="tp-otras-grilla"></ol><div class="tp-otras-acciones"><button id="tpOtrasVolver" type="button">VOLVER A COMPONER</button></div></section>`;
+    <div class="tp-recuerdo" id="tpVistaRecuerdo" hidden role="dialog" aria-modal="true" aria-label="Recuerdo de tu placa"><div class="tp-recuerdo-interior"><img id="tpImagenRecuerdo" alt="Tu composición de colonias"><div><button id="tpVolver" type="button">VOLVER A COMPONER</button><a id="tpGuardar" download="micromundos-tu-placa.png">GUARDAR IMAGEN ${FLECHA_DIAGONAL}</a><button id="tpVerOtras" type="button">VER PLACAS DE OTRAS PERSONAS</button></div></div></div><section class="tp-otras" id="tpOtras" hidden role="dialog" aria-modal="true" aria-labelledby="tpOtrasTitulo"><header class="tp-otras-cabeza"><span>[04.2]</span><h2 id="tpOtrasTitulo">Placas de otras personas</h2><p>Las placas que armaron hoy otras personas que pasaron por Micromundos.</p></header><ol class="tp-otras-grilla" data-gesto-propio tabindex="0" aria-label="Placas de otras personas: arrastrá para recorrerlas"></ol><div class="tp-otras-acciones"><button id="tpOtrasVolver" type="button">VOLVER A COMPONER</button></div></section>`;
   const board=$('tpBoard'),capa=$('tpColonias'),items=[],elementos=new Map(),historico=[],futuro=[];
   let zoom=100,giro=0,secuencia=0,seleccionado=null,seleccion=[],arrastre=null,siembra=null,lazo=null,antes=null,frame=0,pedido=false,intensidad=85,estructura='propuesta';
   const punto=ev=>{const r=board.getBoundingClientRect();return{x:(ev.clientX-r.left)*784/r.width,y:(ev.clientY-r.top)*784/r.height};};
@@ -49795,19 +49799,47 @@ function prepararTuPlaca(){
   // 19/11/2026: las compartidas vienen de Supabase (window.MicromundosPlacas, tu-placa-nombre.js). Mientras llegan, o si no hay
   // conexión, se muestran las guardadas en este equipo.
   let compartidas=null;
+  // 19/11/2026 (Paco): las placas van en una sola fila con desplazamiento horizontal infinito (se arrastra con el dedo o el mouse,
+  // con inercia; también la rueda y las flechas del teclado). La fila se repite las veces necesarias y la posición da la vuelta.
+  let carrusel=null;
   function armarOtras(){
-    const ol=$('tpOtras').querySelector('.tp-otras-grilla');ol.replaceChildren();
-    const propias=(compartidas||leerPropias().slice().reverse()).slice(0,TOTAL_OTRAS),pendientes=[];
-    propias.forEach(p=>{const li=document.createElement('li');li.className='tp-otras-propia';const im=document.createElement('img');im.src=p.img;im.alt='Placa guardada en esta pantalla';
-      const t=document.createElement('p');t.textContent=hora(p.fecha,p.nombre);li.append(im,t);ol.appendChild(li);});
+    const ol=$('tpOtras').querySelector('.tp-otras-grilla');ol.replaceChildren();carrusel?.parar();
+    const propias=(compartidas||leerPropias().slice().reverse()).slice(0,TOTAL_OTRAS);
     // 19/11/2026 (Paco): las de otras personas llevan nombre y una hora de hoy (al azar, fija durante el día y anterior a ahora),
     // de la más reciente a la más vieja. Siguen siendo composiciones generadas (todas distintas, con las reacciones activas).
     const otras=otrasDeHoy().slice(0,Math.max(0,TOTAL_OTRAS-propias.length));
-    for(let n=0;n<otras.length;n++){const li=document.createElement('li');const caja=document.createElement('div');caja.className='tp-otras-lienzo';
-      const t=document.createElement('p');t.textContent=hora(otras[n].fecha,otras[n].nombre);li.append(caja,t);li.setAttribute('aria-label','Placa de '+otras[n].nombre);ol.appendChild(li);pendientes.push([otras[n].semilla,caja]);}
-    // Se dibujan de a una para no trabar la pantalla.
-    const siguiente=()=>{const p=pendientes.shift();if(!p||$('tpOtras').hidden)return;const [n,caja]=p;let cv=simuladas.get(n);if(!cv){cv=placaSimulada(n,400);simuladas.set(n,cv);}caja.appendChild(cv);setTimeout(siguiente,30);};
+    const fichas=[...propias.map(p=>({propia:true,img:p.img,texto:hora(p.fecha,p.nombre),nombre:p.nombre})),...otras.map(o=>({semilla:o.semilla,texto:hora(o.fecha,o.nombre),nombre:o.nombre}))];
+    const pista=document.createElement('div');pista.className='tp-otras-pista';ol.appendChild(pista);
+    const PASO=480,ANCHO=fichas.length*PASO,copias=Math.max(2,Math.ceil(1920/Math.max(1,ANCHO))+1),lienzos=new Map();
+    for(let c=0;c<copias;c++)fichas.forEach((f,i)=>{
+      const li=document.createElement('li');if(f.propia)li.className='tp-otras-propia';if(c>0)li.setAttribute('aria-hidden','true');
+      let vista;if(f.propia){vista=document.createElement('img');vista.src=f.img;vista.alt=c?'':(f.nombre?'Placa de '+f.nombre:'Placa guardada');vista.draggable=false;}
+      else{vista=document.createElement('div');vista.className='tp-otras-lienzo';if(!c)li.setAttribute('aria-label','Placa de '+f.nombre);if(!lienzos.has(i))lienzos.set(i,[]);lienzos.get(i).push(vista);}
+      const t=document.createElement('p');t.textContent=f.texto;li.append(vista,t);pista.appendChild(li);});
+    // Se dibujan de a una para no trabar la pantalla; las copias de la fila reciben una copia del mismo dibujo.
+    const pendientes=[...lienzos.entries()];
+    const siguiente=()=>{const p=pendientes.shift();if(!p||$('tpOtras').hidden)return;const [i,cajas]=p,n=fichas[i].semilla;let cv=simuladas.get(n);if(!cv){cv=placaSimulada(n,400);simuladas.set(n,cv);}
+      cajas.forEach((caja,k)=>{if(!k){caja.appendChild(cv);return;}const copia=document.createElement('canvas');copia.width=cv.width;copia.height=cv.height;copia.getContext('2d').drawImage(cv,0,0);caja.appendChild(copia);});setTimeout(siguiente,30);};
     setTimeout(siguiente,60);
+    carrusel=moverCarrusel(ol,pista,ANCHO);
+  }
+  function moverCarrusel(caja,pista,ancho){
+    let pos=0,vel=0,cuadro=0,toque=null,ultimo=0;
+    const pintar=()=>{const x=((pos%ancho)+ancho)%ancho;pista.style.transform=`translateX(${-x}px)`;};
+    const escalaDe=()=>caja.getBoundingClientRect().width/caja.offsetWidth||1;
+    const inercia=t=>{const dt=Math.min(48,t-(ultimo||t));ultimo=t;pos+=vel*dt;vel*=Math.pow(.94,dt/16);pintar();cuadro=Math.abs(vel)>.01?requestAnimationFrame(inercia):0;};
+    const lanzar=()=>{cancelAnimationFrame(cuadro);ultimo=0;if(Math.abs(vel)>.01&&!(typeof movimientoReducido==='function'&&movimientoReducido()))cuadro=requestAnimationFrame(inercia);};
+    const abajo=e=>{if(e.button>0)return;cancelAnimationFrame(cuadro);cuadro=0;vel=0;toque={x:e.clientX,t:performance.now(),k:escalaDe()};caja.classList.add('arrastrando');try{caja.setPointerCapture(e.pointerId);}catch{}};
+    const mover=e=>{if(!toque)return;const ahora=performance.now(),dx=(e.clientX-toque.x)/toque.k,dt=Math.max(1,ahora-toque.t);pos-=dx;vel=vel*.5+(-dx/dt)*.5;toque.x=e.clientX;toque.t=ahora;pintar();};
+    const arriba=()=>{if(!toque)return;if(performance.now()-toque.t>80)vel=0;toque=null;caja.classList.remove('arrastrando');lanzar();};
+    const rueda=e=>{e.preventDefault();cancelAnimationFrame(cuadro);cuadro=0;pos+=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;pintar();};
+    const tecla=e=>{if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;e.preventDefault();vel=(e.key==='ArrowRight'?1:-1)*1.6;lanzar();};
+    caja.addEventListener('pointerdown',abajo);caja.addEventListener('pointermove',mover);
+    for(const t of ['pointerup','pointercancel','lostpointercapture'])caja.addEventListener(t,arriba);
+    caja.addEventListener('wheel',rueda,{passive:false});caja.addEventListener('keydown',tecla);
+    pintar();
+    return {parar(){cancelAnimationFrame(cuadro);caja.removeEventListener('pointerdown',abajo);caja.removeEventListener('pointermove',mover);
+      for(const t of ['pointerup','pointercancel','lostpointercapture'])caja.removeEventListener(t,arriba);caja.removeEventListener('wheel',rueda);caja.removeEventListener('keydown',tecla);}};
   }
   function abrirOtras(){$('tpVistaRecuerdo').hidden=true;$('tpOtras').hidden=false;armarOtras();$('tpOtrasVolver').focus({preventScroll:true});
     window.MicromundosPlacas?.leer(TOTAL_OTRAS).then(l=>{if(!l||$('tpOtras').hidden)return;const antes=JSON.stringify(compartidas?.map(p=>p.fecha));compartidas=l;if(JSON.stringify(l.map(p=>p.fecha))!==antes)armarOtras();});}
