@@ -41,8 +41,17 @@ function prepararTuPlaca(){
   interruptor.addEventListener('click',()=>{iniciarCambio();intensidad=intensidad>0?0:INTENSIDAD_REACCIONES;dibujar();terminarCambio();});
   function terminarCambio(){if(antes!==null&&antes!==snapshot()){historico.push(antes);if(historico.length>60)historico.shift();futuro.length=0;}antes=null;actualizar();guardar();}
   function restaurar(texto){const s=JSON.parse(texto);zoom=Number.isFinite(s.zoom)?s.zoom:100;giro=Number.isFinite(s.giro)?s.giro:0;items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);intensidad=Number.isFinite(s.intensidad)?s.intensidad:85;estructura=s.estructura||estructura;seleccionado=null;seleccion=[];cerrarMenus();dibujar();actualizar();guardar();}
-  function deshacer(){if(historico.length){futuro.push(snapshot());restaurar(historico.pop());}}
-  function rehacer(){if(futuro.length){historico.push(snapshot());restaurar(futuro.pop());}}
+  // 20/11/2026 (Paco): deshacer y rehacer (botones o Ctrl+Z / Ctrl+Y) mientras se edita una colonia (TRANSFORMAR): el editor queda
+  // abierto sobre la misma colonia y muestra los valores restaurados. Si la colonia ya no existe, se cierra como siempre.
+  function restaurarEditando(texto){
+    const id=seleccionado?.id,ids=seleccion.map(i=>i.id);
+    if(!editor?.abierto()||id==null){restaurar(texto);return;}
+    const s=JSON.parse(texto);if(!s.items.some(i=>i.id===id)){restaurar(texto);return;}
+    zoom=Number.isFinite(s.zoom)?s.zoom:100;giro=Number.isFinite(s.giro)?s.giro:0;items.splice(0,items.length,...s.items);secuencia=Math.max(secuencia,s.contador||0);intensidad=Number.isFinite(s.intensidad)?s.intensidad:85;estructura=s.estructura||estructura;
+    seleccionado=items.find(i=>i.id===id);seleccion=items.filter(i=>ids.includes(i.id));if(!seleccion.length)seleccion=[seleccionado];
+    dibujar();actualizar();guardar();editor.refrescar();}
+  function deshacer(){if(historico.length){futuro.push(snapshot());restaurarEditando(historico.pop());}}
+  function rehacer(){if(futuro.length){historico.push(snapshot());restaurarEditando(futuro.pop());}}
   function crear(e,x,y,tamano=e.tamano,parent=null){if(items.length>=120)return null;const it={id:++secuencia,modelo:e.id,x,y,tamano,escala:100,rot:0,foco:100,opacidad:100,seed:e.style.seed%1000,parent,manual:false,org:0,sinReacciones:!!e.composicion&&e.estado!=='AF'};items.push(it);return it;}
   function quitar(it){if(!it)return;const ids=new Set([it.id]);for(const a of items)if(ids.has(a.parent))ids.add(a.id);for(let i=items.length-1;i>=0;i--)if(ids.has(items[i].id))items.splice(i,1);if(ids.has(seleccionado?.id))seleccionado=null;seleccion=seleccion.filter(s=>!ids.has(s.id));cerrarMenus();dibujar();}
   const hijos=it=>items.filter(i=>i.parent===it.id);

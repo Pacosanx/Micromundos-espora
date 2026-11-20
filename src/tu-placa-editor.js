@@ -211,5 +211,7 @@ function montarEditorTuPlaca(host,{base,cambiar,empezar,terminar,alCerrar=()=>{}
   return {
     abrir(){pestana='forma';refrescarEstado();host.hidden=false;pintar(false);dibujar();tabs.querySelector('[aria-selected="true"]')?.focus({preventScroll:true});},
     cerrar,abierto:()=>!host.hidden,
+    // Después de deshacer o rehacer (Ctrl+Z) con el editor abierto: vuelve a leer la colonia y redibuja (20/11/2026).
+    refrescar(){if(host.hidden)return;refrescarEstado();pintar(false);dibujar();},
   };
 }
